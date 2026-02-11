@@ -41,4 +41,7 @@ pnpm-debug.log*
 
 # --- OS & TEMPORARY FILES ---
 Thumbs.db
-db.lck
+db.lck.next/
+.next/
+node_modules/
+
