@@ -30,10 +30,10 @@ export const EventList = () => {
               {event.fecha}
             </span>
             <div className="flex flex-col">
-              <h4 className="text-xl md:text-2xl font-bold uppercase tracking-tighter group-hover:italic transition-all leading-none">
+              <h4 className="text-xl md:text-2xl font-bold uppercase tracking-tighter group-hover:italic transition-all leading-none text-manso-black">
                 {event.titulo}
               </h4>
-              <span className="text-[9px] uppercase tracking-widest text-manso-black/40 mt-1">
+              <span className="text-[9px] uppercase tracking-widest text-manso-black/60 mt-1">
                 {event.categoria}
               </span>
             </div>
@@ -41,11 +41,11 @@ export const EventList = () => {
 
           <div className="mt-4 md:mt-0 flex items-center gap-4">
             {!event.disponible ? (
-              <span className="text-[10px] uppercase font-bold text-manso-black/30 border border-manso-black/10 px-3 py-1">
+              <span className="text-[10px] uppercase font-bold text-manso-black/60 border border-manso-black/20 px-3 py-1">
                 Sold Out
               </span>
             ) : (
-              <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest group-hover:text-manso-terra transition-colors">
+              <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest group-hover:text-manso-terra transition-colors text-manso-black">
                 Tickets <ArrowRight size={14} className="shrink-0" />
               </button>
             )}

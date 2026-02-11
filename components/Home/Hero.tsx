@@ -31,41 +31,46 @@ export const Hero = () => {
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
-    // Usamos setTimeout en lugar de setInterval para evitar que se pisen los hilos
     const timer = setTimeout(() => {
       setCurrent((prev) => (prev + 1) % HERO_SLIDES.length);
     }, 5000); 
-
-    // Limpieza atómica: al cambiar 'current', el timer viejo muere antes de crear el nuevo
     return () => clearTimeout(timer);
-  }, [current]); // Dependencia en 'current' para reiniciar el ciclo limpiamente
+  }, [current]);
 
   return (
-    <section id="quienes-somos" className="relative min-h-screen flex flex-col justify-center px-6 md:px-20 py-20 overflow-hidden bg-black">
-      <div className="absolute inset-0 bg-manso-gradient opacity-95 pointer-events-none"></div>
-      <div className="absolute top-20 right-10 w-64 h-64 bg-manso-cream opacity-5 rounded-full blur-3xl pointer-events-none"></div>
+    <section id="hero" className="relative min-h-screen flex flex-col justify-center px-6 md:px-20 py-20 overflow-hidden" style={{ backgroundColor: '#1D1D1B' }}>
+      {/* Gradiente exacto de la imagen original */}
+      <div
+        className="absolute inset-0 z-0"
+        style={{
+          background: `linear-gradient(to right, hsl(10, 60%, 30%), hsl(330, 20%, 20%), hsl(260, 40%, 15%))`, // Gradiente de la imagen original
+        }}
+      ></div>
+      
+      {/* Aura de refuerzo del cobre en centro-derecha */}
+      <div className="absolute top-1/2 right-1/4 transform translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-manso-terra opacity-10 rounded-full blur-[120px] pointer-events-none" />
       
       <div className="relative z-10 w-full max-w-6xl mx-auto">
         <AnimatePresence mode="wait">
           <motion.div
             key={current}
-            initial={{ opacity: 0, x: 40 }}
+            initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -40 }}
+            exit={{ opacity: 0, x: 20 }}
             transition={transitionConfig}
           >
             <header className="mb-8">
               <span className="text-[10px] md:text-xs uppercase tracking-[0.4em] text-manso-cream/60 font-bold block mb-4">
                 {HERO_SLIDES[current].tag}
               </span>
-              <h2 className="text-[16vw] md:text-[11vw] leading-[0.8] font-bold uppercase tracking-tighter text-manso-cream">
-                {HERO_SLIDES[current].title[0]} <br /> 
+              <h1 className="text-[16vw] md:text-[11vw] leading-[0.8] font-bold uppercase tracking-tighter text-manso-cream">
+                {HERO_SLIDES[current].title[0]} <br />
                 <span className="italic font-light opacity-80">{HERO_SLIDES[current].title[1]}</span>
-              </h2>
+              </h1>
             </header>
 
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 mt-4">
-              <p className="max-w-[450px text-manso-cream/80 text-base md:text-xl leading-relaxed font-light min-h-[100px]">
+              <p className="max-w-[450px] text-manso-cream/80 text-base md:text-xl leading-relaxed font-light min-h-[100px]">
                 {HERO_SLIDES[current].description}
               </p>
               
@@ -80,10 +85,9 @@ export const Hero = () => {
                       key={i} 
                       animate={{ 
                         width: i === current ? 32 : 12,
-                        backgroundColor: i === current ? "#F5F5DC" : "rgba(245, 245, 220, 0.2)" 
+                        backgroundColor: i === current ? "#FFFCDC" : "rgba(255, 252, 220, 0.2)" 
                       }}
-                      transition={transitionConfig}
-                      className="h-[1px rounded-full" 
+                      className="h-[1px] rounded-full" 
                     />
                   ))}
                 </div>
@@ -96,12 +100,6 @@ export const Hero = () => {
             </div>
           </motion.div>
         </AnimatePresence>
-      </div>
-
-      <div className="hidden lg:block absolute right-10 bottom-40 rotate-90 origin-right">
-        <span className="text-[10px] uppercase tracking-[1em] text-manso-cream/20 font-bold">
-          BUENOS AIRES — ARGENTINA
-        </span>
       </div>
     </section>
   );

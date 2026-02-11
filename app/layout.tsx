@@ -15,12 +15,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="es">
-      <body className="antialiased bg-black text-manso-cream selection:bg-manso-cream selection:text-black">
+    /* Layout con colores correctos y footer visible */
+    <html lang="es" className="scroll-smooth">
+      <body className="antialiased text-manso-cream selection:bg-manso-terra selection:text-manso-white min-h-screen flex flex-col bg-white">
         <Navbar />
-        {children}
+        <main className="flex-auto bg-white">
+          {children}
+          <FooterPlayer /> {/* Movido acá para que herede el flujo de la página */}
+        </main>
         <WhatsAppButton />
-        <FooterPlayer />
       </body>
     </html>
   );

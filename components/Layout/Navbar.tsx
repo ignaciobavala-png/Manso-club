@@ -41,7 +41,9 @@ export const Navbar = () => {
             alt="Manso Club Logo" 
             className="h-10 w-auto transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3"
           />
-          <h1 className="text-xl font-black uppercase tracking-tighter leading-none italic">
+          <h1 className={`text-xl font-black uppercase tracking-tighter leading-none italic transition-colors duration-500 ${
+            isScrolled ? 'text-manso-black' : 'text-manso-cream'
+          }`}>
             Manso Club_
           </h1>
         </a>
@@ -52,7 +54,9 @@ export const Navbar = () => {
             <a 
               key={link.name} 
               href={link.href} 
-              className="text-[10px] font-black uppercase tracking-[0.4em] hover:text-orange-600 transition-colors"
+              className={`text-[10px] font-black uppercase tracking-[0.4em] hover:text-orange-600 transition-colors duration-500 ${
+                isScrolled ? 'text-manso-black' : 'text-manso-cream'
+              }`}
             >
               {link.name}
             </a>
@@ -63,7 +67,9 @@ export const Navbar = () => {
         <div className="flex items-center gap-6">
           <ShoppingBag 
             size={18} 
-            className="cursor-pointer hover:text-orange-600 transition-colors" 
+            className={`cursor-pointer hover:text-orange-600 transition-colors duration-500 ${
+              isScrolled ? 'text-manso-black' : 'text-manso-cream'
+            }`} 
           />
           <button 
             onClick={() => setIsMenuOpen(!isMenuOpen)}

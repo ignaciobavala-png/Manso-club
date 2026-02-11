@@ -51,8 +51,8 @@ export function SectionsGrid() {
             onClick={() => setCategoriaActiva(cat)}
             className={`px-6 py-2 rounded-full text-[10px] font-black uppercase tracking-widest transition-all border ${
               categoriaActiva === cat
-                ? 'bg-black text-white border-black'
-                : 'bg-transparent text-zinc-400 border-zinc-100 hover:border-zinc-300'
+                ? 'bg-manso-black text-white border-manso-black'
+                : 'bg-transparent text-manso-black/60 border-manso-black/20 hover:border-manso-black/40'
             }`}
           >
             {cat}
@@ -63,7 +63,7 @@ export function SectionsGrid() {
       {loading ? (
         <div className="py-20 flex flex-col items-center opacity-20">
           <Loader2 className="animate-spin mb-2" size={24} />
-          <p className="text-[9px] font-bold uppercase tracking-widest">Sincronizando...</p>
+          <p className="text-[9px] font-bold uppercase tracking-widest text-manso-black/40">Sincronizando...</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-12">
@@ -82,10 +82,10 @@ export function SectionsGrid() {
                 </div>
               </div>
               <div className="flex justify-between items-start px-1">
-                <h3 className="text-sm font-black uppercase tracking-tight leading-tight max-w-[70%]">
+                <h3 className="text-sm font-black uppercase tracking-tight leading-tight max-w-[70%] text-manso-black">
                   {prod.nombre}
                 </h3>
-                <span className="font-mono font-bold text-xs bg-zinc-100 px-2 py-1 rounded">
+                <span className="font-mono font-bold text-xs bg-manso-black/10 px-2 py-1 rounded text-manso-black">
                   ${prod.precio}
                 </span>
               </div>
@@ -96,7 +96,7 @@ export function SectionsGrid() {
 
       {!loading && productos.length === 0 && (
         <div className="py-20 text-center border-2 border-dashed border-zinc-100 rounded-[2rem">
-          <p className="text-zinc-300 font-black uppercase tracking-widest text-[10px]">Sin stock en {categoriaActiva}</p>
+          <p className="text-manso-black/40 font-black uppercase tracking-widest text-[10px]">Sin stock en {categoriaActiva}</p>
         </div>
       )}
     </div>
