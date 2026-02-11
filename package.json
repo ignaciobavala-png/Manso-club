@@ -4,15 +4,16 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.48.1",
     "framer-motion": "^12.34.0",
     "lucide-react": "^0.475.0",
+    "next": "^16.1.6",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
   },
