@@ -29,12 +29,12 @@ export function FormEvento() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-white p-8 rounded-[2.5rem] border border-zinc-100 shadow-xl shadow-zinc-200/50">
+    <div className="max-w-2xl mx-auto bg-manso-cream/5 p-8 rounded-[2.5rem] border border-manso-cream/10 shadow-xl">
       <form onSubmit={handleSubmit} className="space-y-6">
         
         {/* Aquí integramos el Drag & Drop */}
         <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-widest text-zinc-400 ml-2">Flyer / Arte del evento</label>
+          <label className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2">Flyer / Arte del evento</label>
           <ImageUploader 
             onUpload={(url) => setFormData({...formData, imagen_url: url})} 
           />
@@ -44,7 +44,7 @@ export function FormEvento() {
           <input 
             type="text" 
             placeholder="TÍTULO DEL EVENTO"
-            className="w-full text-2xl font-black bg-zinc-50 p-4 rounded-2xl border-none focus:ring-2 focus:ring-orange-500 outline-none"
+            className="w-full text-2xl font-black bg-manso-cream/10 p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/40"
             value={formData.titulo}
             onChange={e => setFormData({...formData, titulo: e.target.value})}
             required
@@ -52,7 +52,7 @@ export function FormEvento() {
           
           <input 
             type="datetime-local"
-            className="w-full p-4 bg-zinc-50 rounded-2xl border-none focus:ring-2 focus:ring-orange-500 outline-none font-mono text-sm"
+            className="w-full p-4 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream"
             value={formData.fecha}
             onChange={e => setFormData({...formData, fecha: e.target.value})}
             required
@@ -60,7 +60,7 @@ export function FormEvento() {
 
           <textarea 
             placeholder="DESCRIPCIÓN Y LINE UP"
-            className="w-full p-4 bg-zinc-50 rounded-2xl border-none focus:ring-2 focus:ring-orange-500 outline-none h-32 resize-none"
+            className="w-full p-4 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none h-32 resize-none text-manso-cream placeholder:text-manso-cream/40"
             value={formData.descripcion}
             onChange={e => setFormData({...formData, descripcion: e.target.value})}
           />
@@ -68,7 +68,7 @@ export function FormEvento() {
 
         <button 
           disabled={loading}
-          className="w-full bg-black text-white py-5 rounded-3xl font-black uppercase tracking-[0.2em] hover:bg-zinc-800 transition-all active:scale-95 disabled:opacity-50"
+          className="w-full bg-manso-terra text-manso-cream py-5 rounded-3xl font-black uppercase tracking-[0.2em] hover:bg-manso-cream hover:text-manso-black transition-all active:scale-95 disabled:opacity-50"
         >
           {loading ? 'Subiendo...' : 'Publicar en Agenda'}
         </button>

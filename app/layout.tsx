@@ -1,8 +1,9 @@
+// app/layout.tsx
 import type { Metadata } from "next";
 import "./globals.css";
 import { Navbar } from "@/components/Layout/Navbar";
 import { FooterPlayer } from "@/components/Layout/FooterPlayer";
-import { WhatsAppButton } from "@/components/UI/WhatsAppButton";
+import { WhatsAppButton } from "@/components/UI/WhatsAppButton"; // Importación añadida
 
 export const metadata: Metadata = {
   title: "Manso Club | Espacio Creativo",
@@ -15,14 +16,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    /* Layout con colores correctos y footer visible */
     <html lang="es" className="scroll-smooth">
       <body className="antialiased text-manso-cream selection:bg-manso-terra selection:text-manso-white min-h-screen flex flex-col bg-white">
         <Navbar />
-        <main className="flex-auto bg-white">
+        
+        {/* IMPORTANTE: El main tiene 'relative' y el FooterPlayer está FUERA 
+            para evitar que sus capas fijas tapen los inputs del Login.
+        */}
+        <main className="flex-auto relative bg-white">
           {children}
-          <FooterPlayer /> {/* Movido acá para que herede el flujo de la página */}
         </main>
+
+        <FooterPlayer /> 
         <WhatsAppButton />
       </body>
     </html>

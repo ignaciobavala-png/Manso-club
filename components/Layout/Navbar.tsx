@@ -2,10 +2,15 @@
 
 import { Menu, X, ShoppingBag } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 
 export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const pathname = usePathname();
+  
+  // Detectar si estamos en página de admin
+  const isAdminPage = pathname?.includes('/mansoadm');
 
   // Efecto de scroll para cambiar la apariencia del Navbar
   useEffect(() => {
@@ -42,7 +47,7 @@ export const Navbar = () => {
             className="h-10 w-auto transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3"
           />
           <h1 className={`text-xl font-black uppercase tracking-tighter leading-none italic transition-colors duration-500 ${
-            isScrolled ? 'text-manso-black' : 'text-manso-cream'
+            isAdminPage ? 'text-manso-black' : isScrolled ? 'text-manso-black' : 'text-manso-cream'
           }`}>
             Manso Club_
           </h1>
@@ -55,7 +60,7 @@ export const Navbar = () => {
               key={link.name} 
               href={link.href} 
               className={`text-[10px] font-black uppercase tracking-[0.4em] hover:text-orange-600 transition-colors duration-500 ${
-                isScrolled ? 'text-manso-black' : 'text-manso-cream'
+                isAdminPage ? 'text-manso-black' : isScrolled ? 'text-manso-black' : 'text-manso-cream'
               }`}
             >
               {link.name}
@@ -68,7 +73,7 @@ export const Navbar = () => {
           <ShoppingBag 
             size={18} 
             className={`cursor-pointer hover:text-orange-600 transition-colors duration-500 ${
-              isScrolled ? 'text-manso-black' : 'text-manso-cream'
+              isAdminPage ? 'text-manso-black' : isScrolled ? 'text-manso-black' : 'text-manso-cream'
             }`} 
           />
           <button 
