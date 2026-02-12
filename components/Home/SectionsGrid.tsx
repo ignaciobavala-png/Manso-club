@@ -19,21 +19,35 @@ export function SectionsGrid() {
   const [productos, setProductos] = useState<Producto[]>([]);
   const [loading, setLoading] = useState(true);
   const [categoriaActiva, setCategoriaActiva] = useState<Categoria>(CATEGORIAS_TIENDA[0]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchProductos() {
       setLoading(true);
       try {
+        // Verificar que Supabase esté configurado
+        if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+          throw new Error('Supabase no está configurado. Faltan variables de entorno.');
+        }
+
         const { data, error } = await supabase
           .from('productos')
           .select('*')
           .eq('categoria', categoriaActiva)
           .order('created_at', { ascending: false });
 
-        if (error) throw error;
-        setProductos((data as Producto[]) || []); // Cast para eliminar el 'any'
+        if (error) {
+          console.error('Error de Supabase:', error);
+          throw new Error(`Error de base de datos: ${error.message}`);
+        }
+        
+        setProductos((data as Producto[]) || []);
+        setError(null); // Limpiar error si todo va bien
       } catch (error) {
-        console.error('Error:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
+        console.error('Error al cargar productos:', error);
+        setError(errorMessage);
+        setProductos([]); // Asegurar que no quede undefined
       } finally {
         setLoading(false);
       }
@@ -59,6 +73,12 @@ export function SectionsGrid() {
           </button>
         ))}
       </nav>
+
+      {error && (
+        <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+          <p className="text-red-600 text-xs font-medium">{error}</p>
+        </div>
+      )}
 
       {loading ? (
         <div className="py-20 flex flex-col items-center opacity-20">

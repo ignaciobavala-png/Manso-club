@@ -9,8 +9,13 @@ export const Navbar = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const pathname = usePathname();
   
-  // Detectar si estamos en página de admin
-  const isAdminPage = pathname?.includes('/mansoadm');
+  // Detectar si estamos en páginas con fondo blanco
+  const isWhiteBgPage = pathname?.includes('/mansoadm') || 
+                        pathname?.includes('/about') || 
+                        pathname?.includes('/agenda') || 
+                        pathname?.includes('/artistas') || 
+                        pathname?.includes('/membresias') || 
+                        pathname?.includes('/tienda');
 
   // Efecto de scroll para cambiar la apariencia del Navbar
   useEffect(() => {
@@ -22,14 +27,13 @@ export const Navbar = () => {
   }, []);
 
   // Enlaces que coinciden con las IDs de tu App.tsx
-  const navLinks = [
-    { name: 'about us', href: '#manifesto' },
-    { name: 'membresias', href: '#agenda' },
-    { name: 'agenda', href: '#shop' },
-    { name: 'artistas', href: '#shop' },
-    { name: 'tienda', href: '#shop' },
-
-  ];
+const navLinks = [
+  { name: 'about us', href: '/about' },
+  { name: 'membresias', href: '/membresias' },
+  { name: 'agenda', href: '/agenda' },
+  { name: 'artistas', href: '/artistas' },
+  { name: 'tienda', href: '/tienda' },
+];
 
   return (
     <nav className={`fixed top-0 w-full z-50 transition-all duration-500 ${
@@ -47,7 +51,7 @@ export const Navbar = () => {
             className="h-10 w-auto transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3"
           />
           <h1 className={`text-xl font-black uppercase tracking-tighter leading-none italic transition-colors duration-500 ${
-            isAdminPage ? 'text-manso-black' : isScrolled ? 'text-manso-black' : 'text-manso-cream'
+            isWhiteBgPage ? 'text-manso-black' : isScrolled ? 'text-manso-black' : 'text-manso-cream'
           }`}>
             Manso Club_
           </h1>
@@ -60,7 +64,7 @@ export const Navbar = () => {
               key={link.name} 
               href={link.href} 
               className={`text-[10px] font-black uppercase tracking-[0.4em] hover:text-orange-600 transition-colors duration-500 ${
-                isAdminPage ? 'text-manso-black' : isScrolled ? 'text-manso-black' : 'text-manso-cream'
+                isWhiteBgPage ? 'text-manso-black' : isScrolled ? 'text-manso-black' : 'text-manso-cream'
               }`}
             >
               {link.name}
@@ -73,7 +77,7 @@ export const Navbar = () => {
           <ShoppingBag 
             size={18} 
             className={`cursor-pointer hover:text-orange-600 transition-colors duration-500 ${
-              isAdminPage ? 'text-manso-black' : isScrolled ? 'text-manso-black' : 'text-manso-cream'
+              isWhiteBgPage ? 'text-manso-black' : isScrolled ? 'text-manso-black' : 'text-manso-cream'
             }`} 
           />
           <button 
