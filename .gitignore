@@ -45,3 +45,4 @@ db.lck.next/
 .next/
 node_modules/
 
+.vercel
