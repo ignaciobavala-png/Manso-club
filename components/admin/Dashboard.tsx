@@ -5,12 +5,14 @@ import { logoutAction } from '../../app/mansoadm/actions';
 import { FormProducto } from './FormProducto';
 import { FormArtista } from './FormArtista';
 import { FormEventoHome } from './FormEventoHome';
+import { FormAgenda } from './FormAgenda';
 import { ItemList } from './ItemList';
 import { EventosHomeList } from './EventosHomeList';
-import { LogOut, ShoppingBag, User, Home } from 'lucide-react';
+import { AgendaList } from './AgendaList';
+import { LogOut, ShoppingBag, User, Home, Calendar } from 'lucide-react';
 
 export function Dashboard() {
-  const [tab, setTab] = useState<'home' | 'tienda' | 'artistas'>('home');
+  const [tab, setTab] = useState<'home' | 'tienda' | 'artistas' | 'agenda'>('home');
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#1D1D1B' }}>
@@ -70,6 +72,15 @@ export function Dashboard() {
             <User size={14} />
             Artistas
           </button>
+          <button 
+            onClick={() => setTab('agenda')} 
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+              tab === 'agenda' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
+            }`}
+          >
+            <Calendar size={14} />
+            Agenda
+          </button>
         </div>
 
         {/* Grid Principal: Formulario + Lista de Gestión */}
@@ -77,10 +88,10 @@ export function Dashboard() {
           {/* Columna Izquierda: Formularios de Creación */}
           <div className="lg:col-span-5">
             <h2 className="text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-6 ml-2">
-              Nuevo {tab === 'home' ? 'Evento del Home' : tab === 'tienda' ? 'Producto' : 'Artista'}
+              Nuevo {tab === 'home' ? 'Evento del Home' : tab === 'tienda' ? 'Producto' : tab === 'artistas' ? 'Artista' : 'Evento de Agenda'}
             </h2>
             <div className="sticky top-8">
-              {tab === 'home' ? <FormEventoHome /> : tab === 'tienda' ? <FormProducto /> : <FormArtista />}
+              {tab === 'home' ? <FormEventoHome /> : tab === 'tienda' ? <FormProducto /> : tab === 'artistas' ? <FormArtista /> : <FormAgenda />}
             </div>
           </div>
 
@@ -93,8 +104,10 @@ export function Dashboard() {
               <EventosHomeList />
             ) : tab === 'tienda' ? (
               <ItemList table="productos" title="Inventario de Tienda" />
-            ) : (
+            ) : tab === 'artistas' ? (
               <ItemList table="artistas" title="Comunidad de Artistas" />
+            ) : (
+              <AgendaList />
             )}
           </div>
         </div>

@@ -51,7 +51,6 @@ return (
             <div className="flex flex-col gap-2 text-[10px] uppercase tracking-widest font-medium text-manso-cream/60">
               <a href="/tienda" className="hover:text-manso-cream transition-colors">Tienda</a>
               <a href="#agenda" className="hover:text-manso-cream transition-colors">Club</a>
-              <a href="#agenda" className="hover:text-manso-cream transition-colors">Vinos</a>
             </div>
           </div>
         </div>
