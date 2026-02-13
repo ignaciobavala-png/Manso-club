@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { AdaptiveSectionLayout } from '@/components/ui/AdaptiveSectionLayout';
 import { User, Instagram, ExternalLink, Play } from 'lucide-react';
-import { ArtistModal } from '@/components/ArtistModal';
+import { ArtistModal } from '@/components/ui/ArtistModal';
 
 interface Artist {
   id: string;

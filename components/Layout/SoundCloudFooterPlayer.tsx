@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { SoundCloudPlayer } from '../SoundCloudPlayer';
+import { SoundCloudPlayer } from '../ui/SoundCloudPlayer';
 import { X, Music, ChevronUp, ChevronDown } from 'lucide-react';
 
 interface CurrentTrack {

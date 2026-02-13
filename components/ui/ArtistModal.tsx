@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { X, Music, Instagram, ExternalLink, Play } from 'lucide-react';
 import { SoundCloudPlayer } from './SoundCloudPlayer';
-import { useFooterPlayer } from './Layout/SoundCloudFooterPlayer';
+import { useFooterPlayer } from '../Layout/SoundCloudFooterPlayer';
 
 interface Artist {
   id: string;

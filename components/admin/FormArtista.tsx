@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { ImageUploader } from './ImageUploader';
-import { SoundCloudPlayer } from '../SoundCloudPlayer';
+import { SoundCloudPlayer } from '../ui/SoundCloudPlayer';
 import { User, Music, Instagram, Globe, Eye } from 'lucide-react';
 
 export function FormArtista() {
