@@ -2,14 +2,15 @@
 
 import { useState } from 'react';
 import { logoutAction } from '../../app/mansoadm/actions';
-import { FormEvento } from './FormEvento';
 import { FormProducto } from './FormProducto';
 import { FormArtista } from './FormArtista';
+import { FormEventoHome } from './FormEventoHome';
 import { ItemList } from './ItemList';
-import { LogOut, Calendar, ShoppingBag, User } from 'lucide-react';
+import { EventosHomeList } from './EventosHomeList';
+import { LogOut, ShoppingBag, User, Home } from 'lucide-react';
 
 export function Dashboard() {
-  const [tab, setTab] = useState<'eventos' | 'tienda' | 'artistas'>('eventos');
+  const [tab, setTab] = useState<'home' | 'tienda' | 'artistas'>('home');
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#1D1D1B' }}>
@@ -20,27 +21,36 @@ export function Dashboard() {
             <h1 className="text-4xl font-black italic tracking-tighter uppercase text-manso-cream mb-2">Manso Admin_</h1>
             <p className="text-[10px] font-bold text-manso-cream/60 uppercase tracking-[0.3em]">Panel de Control Centralizado</p>
           </div>
-          <form action={logoutAction}>
-            <button 
-              type="submit"
-              className="flex items-center gap-2 px-4 py-2 bg-manso-cream text-manso-black border border-manso-cream/20 rounded-xl text-xs font-bold uppercase hover:bg-manso-white transition-all shadow-sm"
+          <div className="flex items-center gap-3">
+            <a 
+              href="/mansoadm/login?force=true"
+              className="flex items-center gap-2 px-3 py-2 bg-manso-cream/10 text-manso-cream/80 border border-manso-cream/20 rounded-xl text-[10px] font-bold uppercase hover:bg-manso-cream/20 transition-all"
+              title="Forzar acceso a login"
             >
-              <LogOut size={14} />
-              Salir
-            </button>
-          </form>
+              🔐 Login
+            </a>
+            <form action={logoutAction}>
+              <button 
+                type="submit"
+                className="flex items-center gap-2 px-4 py-2 bg-manso-cream text-manso-black border border-manso-cream/20 rounded-xl text-xs font-bold uppercase hover:bg-manso-white transition-all shadow-sm"
+              >
+                <LogOut size={14} />
+                Salir
+              </button>
+            </form>
+          </div>
         </div>
 
         {/* Selector de Pestañas Estilizado */}
         <div className="flex gap-2 mb-10 bg-manso-cream/10 p-1 rounded-2xl w-fit">
           <button 
-            onClick={() => setTab('eventos')} 
+            onClick={() => setTab('home')} 
             className={`flex items-center gap-2 px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
-              tab === 'eventos' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
+              tab === 'home' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
             }`}
           >
-            <Calendar size={14} />
-            Agenda
+            <Home size={14} />
+            Home
           </button>
           <button 
             onClick={() => setTab('tienda')} 
@@ -67,10 +77,10 @@ export function Dashboard() {
           {/* Columna Izquierda: Formularios de Creación */}
           <div className="lg:col-span-5">
             <h2 className="text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-6 ml-2">
-              Nuevo {tab === 'eventos' ? 'Evento' : tab === 'tienda' ? 'Producto' : 'Artista'}
+              Nuevo {tab === 'home' ? 'Evento del Home' : tab === 'tienda' ? 'Producto' : 'Artista'}
             </h2>
             <div className="sticky top-8">
-              {tab === 'eventos' ? <FormEvento /> : tab === 'tienda' ? <FormProducto /> : <FormArtista />}
+              {tab === 'home' ? <FormEventoHome /> : tab === 'tienda' ? <FormProducto /> : <FormArtista />}
             </div>
           </div>
 
@@ -79,8 +89,8 @@ export function Dashboard() {
             <h2 className="text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-6 ml-2">
               Gestionar Existentes
             </h2>
-            {tab === 'eventos' ? (
-              <ItemList table="eventos" title="Eventos en Agenda" />
+            {tab === 'home' ? (
+              <EventosHomeList />
             ) : tab === 'tienda' ? (
               <ItemList table="productos" title="Inventario de Tienda" />
             ) : (

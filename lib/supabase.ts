@@ -10,5 +10,6 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
     detectSessionInUrl: true,
     // Esto asegura que la sesión se guarde en una cookie que el middleware pueda leer
     storageKey: 'sb-manso-auth-token',
+    debug: true, // Activar modo debug para ver qué pasa
   }
 });

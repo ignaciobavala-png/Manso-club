@@ -38,10 +38,8 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
   };
 
   const handleClearCart = () => {
-    if (window.confirm('¿Estás seguro de que quieres vaciar el carrito?')) {
-      clearCart();
-      onClose();
-    }
+    clearCart();
+    onClose();
   };
 
   const handleCheckout = () => {

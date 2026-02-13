@@ -40,15 +40,17 @@ export async function middleware(request: NextRequest) {
 
   const isLoginRoute = request.nextUrl.pathname === '/mansoadm/login'
   const isAdminRoute = request.nextUrl.pathname.startsWith('/mansoadm')
+  const forceLogin = request.nextUrl.searchParams.get('force') === 'true'
 
-  console.log('📍 Route analysis:', { isLoginRoute, isAdminRoute, pathname: request.nextUrl.pathname });
+  console.log('📍 Route analysis:', { isLoginRoute, isAdminRoute, forceLogin, pathname: request.nextUrl.pathname });
 
   if (isAdminRoute && !isLoginRoute && !user) {
     console.log('🔄 Redirecting to login - no user found');
     return NextResponse.redirect(new URL('/mansoadm/login', request.url))
   }
 
-  if (isLoginRoute && user) {
+  // Solo redirigir al dashboard si está autenticado Y no está forzando el login
+  if (isLoginRoute && user && !forceLogin) {
     console.log('✅ Redirecting to dashboard - user authenticated');
     return NextResponse.redirect(new URL('/mansoadm', request.url))
   }
