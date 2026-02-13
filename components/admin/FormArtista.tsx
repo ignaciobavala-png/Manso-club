@@ -3,10 +3,13 @@
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { ImageUploader } from './ImageUploader';
-import { User, Music, Instagram, Globe } from 'lucide-react';
+import { SoundCloudPlayer } from '../SoundCloudPlayer';
+import { User, Music, Instagram, Globe, Eye } from 'lucide-react';
 
 export function FormArtista() {
   const [loading, setLoading] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [soundcloudError, setSoundcloudError] = useState('');
   const [formData, setFormData] = useState({
     nombre: '',
     bio: '',
@@ -16,11 +19,37 @@ export function FormArtista() {
     soundcloud: ''
   });
 
+  const validateSoundCloudUrl = (url: string) => {
+    if (!url) return true; // Es opcional
+    
+    const soundCloudRegex = /^https?:\/\/(soundcloud\.com\/|snd\.sc\/)/;
+    return soundCloudRegex.test(url);
+  };
+
+  const handleSoundCloudChange = (value: string) => {
+    setFormData({...formData, soundcloud: value});
+    
+    if (value && !validateSoundCloudUrl(value)) {
+      setSoundcloudError('URL inválida. Debe ser una URL de SoundCloud (soundcloud.com/...)');
+      console.log('❌ URL inválida de SoundCloud:', value);
+    } else {
+      setSoundcloudError('');
+      if (value) {
+        console.log('✅ URL válida de SoundCloud:', value);
+      }
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!formData.imagen_url) {
       alert('Por favor, sube una imagen del artista.');
+      return;
+    }
+
+    if (formData.soundcloud && !validateSoundCloudUrl(formData.soundcloud)) {
+      alert('Por favor, corrige la URL de SoundCloud.');
       return;
     }
 
@@ -129,12 +158,22 @@ export function FormArtista() {
               <Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-manso-cream/60" size={20} />
               <input 
                 type="text" 
-                placeholder="URL de SoundCloud / Web"
-                className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream placeholder:text-manso-cream/40"
+                placeholder="https://soundcloud.com/usuario (perfil, playlist o track)"
+                className={`w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border ${
+                  soundcloudError 
+                    ? 'border-red-500/50 focus:ring-red-500' 
+                    : 'border-manso-cream/20 focus:ring-manso-terra'
+                } outline-none font-mono text-sm text-manso-cream placeholder:text-manso-cream/40`}
                 value={formData.soundcloud}
-                onChange={e => setFormData({...formData, soundcloud: e.target.value})}
+                onChange={e => handleSoundCloudChange(e.target.value)}
               />
             </div>
+            
+            {soundcloudError && (
+              <p className="text-red-400 text-xs font-medium mt-2 ml-2">
+                {soundcloudError}
+              </p>
+            )}
           </div>
         </div>
 
@@ -146,6 +185,37 @@ export function FormArtista() {
           {loading ? 'AGREGANDO ARTISTA...' : 'AGREGAR ARTISTA'}
         </button>
       </form>
+
+      {/* Vista previa del reproductor */}
+      {formData.soundcloud && (
+        <div className="mt-6 space-y-4">
+          <div className="flex items-center justify-between">
+            <p className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60">
+              Vista previa del reproductor
+            </p>
+            <button
+              type="button"
+              onClick={() => setShowPreview(!showPreview)}
+              className="flex items-center gap-2 px-3 py-1 bg-manso-cream/10 border border-manso-cream/20 rounded-full text-manso-cream/80 hover:bg-manso-cream/20 transition-colors"
+            >
+              <Eye size={12} />
+              <span className="text-xs font-medium">
+                {showPreview ? 'Ocultar' : 'Mostrar'}
+              </span>
+            </button>
+          </div>
+          
+          {showPreview && (
+            <div className="bg-manso-cream/5 rounded-2xl p-4 border border-manso-cream/10">
+              <SoundCloudPlayer 
+                url={formData.soundcloud} 
+                autoPlay={false}
+                showControls={true}
+              />
+            </div>
+          )}
+        </div>
+      )}
     </div>
   );
 }

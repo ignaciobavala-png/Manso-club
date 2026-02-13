@@ -3,7 +3,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Navbar } from "@/components/Layout/Navbar";
 import { FooterPlayer } from "@/components/Layout/FooterPlayer";
-import { WhatsAppButton } from "@/components/UI/WhatsAppButton"; // Importación añadida
+import { SoundCloudFooterPlayer } from "@/components/Layout/SoundCloudFooterPlayer";
+import { WhatsAppButton } from "@/components/ui/WhatsAppButton"; // Importación añadida
 
 export const metadata: Metadata = {
   title: "Manso Club | Espacio Creativo",
@@ -28,6 +29,7 @@ export default function RootLayout({
         </main>
 
         <FooterPlayer /> 
+        <SoundCloudFooterPlayer />
         <WhatsAppButton />
       </body>
     </html>

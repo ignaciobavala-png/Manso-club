@@ -1,7 +1,7 @@
 "use client";
 
 import { Hero } from "@/components/Home/Hero";
-import { Manifesto } from "@/components/Home/Manifesto";
+import { Gallery } from "@/components/Home/Gallery";
 import { EventList } from "@/components/Home/EventList";
 import { SectionsGrid } from "@/components/Home/SectionsGrid";
 
@@ -15,9 +15,9 @@ export default function Home() {
         <Hero />
       </section>
       
-      {/* Slide 2: Manifesto */}
-      <section id="manifiesto" className="min-h-[60vh] md:min-h-screen">
-        <Manifesto />
+      {/* Slide 2: Gallery */}
+      <section id="galeria" className="min-h-[60vh] md:min-h-screen">
+        <Gallery />
       </section>
 
       {/* Slide 3: Cronograma + Carrito */}
