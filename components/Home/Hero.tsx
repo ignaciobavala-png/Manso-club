@@ -38,7 +38,7 @@ export const Hero = () => {
   }, [current]);
 
   return (
-    <section id="hero" className="relative min-h-screen flex flex-col justify-center px-6 md:px-20 py-20 overflow-hidden" style={{ backgroundColor: '#1D1D1B' }}>
+    <section id="hero" className="relative min-h-screen flex flex-col justify-center px-8 md:px-20 py-20 overflow-hidden" style={{ backgroundColor: '#1D1D1B' }}>
       {/* Gradiente exacto de la imagen original */}
       <div
         className="absolute inset-0 z-0"

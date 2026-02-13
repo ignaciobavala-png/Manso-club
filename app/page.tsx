@@ -11,17 +11,18 @@ export default function Home() {
     <div className="min-h-screen">
       
       {/* Slide 1: Hero */}
-      <section className="min-h-screen">
+      <section id="quienes-somos" className="min-h-screen">
         <Hero />
       </section>
       
       {/* Slide 2: Manifesto */}
-      <section className="min-h-screen">
+      <section id="manifiesto" className="min-h-[60vh] md:min-h-screen">
         <Manifesto />
       </section>
 
       {/* Slide 3: Cronograma + Carrito */}
       <section 
+        id="agenda"
         className="min-h-screen flex flex-col md:flex-row"
         style={{ backgroundColor: '#FFFFFF' }}
       >

@@ -4,11 +4,12 @@ import { useState } from 'react';
 import { logoutAction } from '../../app/mansoadm/actions';
 import { FormEvento } from './FormEvento';
 import { FormProducto } from './FormProducto';
+import { FormArtista } from './FormArtista';
 import { ItemList } from './ItemList';
-import { LogOut, Calendar, ShoppingBag } from 'lucide-react';
+import { LogOut, Calendar, ShoppingBag, User } from 'lucide-react';
 
 export function Dashboard() {
-  const [tab, setTab] = useState<'eventos' | 'tienda'>('eventos');
+  const [tab, setTab] = useState<'eventos' | 'tienda' | 'artistas'>('eventos');
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#1D1D1B' }}>
@@ -50,6 +51,15 @@ export function Dashboard() {
             <ShoppingBag size={14} />
             Tienda
           </button>
+          <button 
+            onClick={() => setTab('artistas')} 
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+              tab === 'artistas' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
+            }`}
+          >
+            <User size={14} />
+            Artistas
+          </button>
         </div>
 
         {/* Grid Principal: Formulario + Lista de Gestión */}
@@ -57,10 +67,10 @@ export function Dashboard() {
           {/* Columna Izquierda: Formularios de Creación */}
           <div className="lg:col-span-5">
             <h2 className="text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-6 ml-2">
-              Nuevo {tab === 'eventos' ? 'Evento' : 'Producto'}
+              Nuevo {tab === 'eventos' ? 'Evento' : tab === 'tienda' ? 'Producto' : 'Artista'}
             </h2>
             <div className="sticky top-8">
-              {tab === 'eventos' ? <FormEvento /> : <FormProducto />}
+              {tab === 'eventos' ? <FormEvento /> : tab === 'tienda' ? <FormProducto /> : <FormArtista />}
             </div>
           </div>
 
@@ -71,8 +81,10 @@ export function Dashboard() {
             </h2>
             {tab === 'eventos' ? (
               <ItemList table="eventos" title="Eventos en Agenda" />
-            ) : (
+            ) : tab === 'tienda' ? (
               <ItemList table="productos" title="Inventario de Tienda" />
+            ) : (
+              <ItemList table="artistas" title="Comunidad de Artistas" />
             )}
           </div>
         </div>

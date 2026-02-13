@@ -19,7 +19,7 @@ const MOCK_EVENTS: Evento[] = [
 
 export const EventList = () => {
   return (
-    <div className="flex flex-col w-full">
+    <div className="flex flex-col w-full px-8 md:px-20 py-8">
       {MOCK_EVENTS.map((event) => (
         <div 
           key={event.id} 

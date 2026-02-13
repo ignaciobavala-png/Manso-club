@@ -53,6 +53,10 @@ export const Navbar = () => {
     { name: 'tienda', href: '/tienda' },
   ];
 
+  // Lógica de colores unificada para desktop y mobile
+  const getTextColor = (baseCondition: boolean) => 
+    baseCondition ? 'text-manso-black' : 'text-manso-cream';
+
   return (
     <nav className={`fixed top-0 w-full z-40 transition-all duration-500 ${
       isCartOpen || isScrolled
@@ -69,7 +73,7 @@ export const Navbar = () => {
             className="h-10 w-auto transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3"
           />
           <h1 className={`text-xl font-black uppercase tracking-tighter leading-none italic transition-colors duration-500 ${
-            isCartOpen || isLightBgPage || isScrolled ? 'text-manso-black' : 'text-manso-cream'
+            getTextColor(isCartOpen || isLightBgPage || isScrolled)
           }`}>
             Manso Club_
           </h1>
@@ -82,7 +86,7 @@ export const Navbar = () => {
               key={link.name} 
               href={link.href} 
               className={`text-[10px] font-black uppercase tracking-[0.4em] hover:text-orange-600 transition-colors duration-500 ${
-                isCartOpen || isLightBgPage || isScrolled ? 'text-manso-black' : 'text-manso-cream'
+                getTextColor(isCartOpen || isLightBgPage || isScrolled)
               }`}
             >
               {link.name}
@@ -91,18 +95,19 @@ export const Navbar = () => {
         </div>
 
         {/* ACCIONES Y MENÚ MOBILE */}
-        <div className="flex items-center gap-6">
+        <div className="flex items-center gap-4 md:gap-6">
+          {/* Botón Login - Solo visible en desktop */}
+          <button className={`hidden md:block px-6 py-2 text-[10px] font-black uppercase tracking-widest border transition-all duration-300 ${
+            getTextColor(isCartOpen || isLightBgPage || isScrolled)
+          } hover:bg-manso-black hover:text-manso-cream hover:border-manso-black`}>
+            Login
+          </button>
+          
           <div className="relative group cursor-pointer" onClick={() => setIsCartOpen(true)}>
             <ShoppingBag 
               size={18} 
               className={`transition-colors duration-500 hover:text-orange-600 ${
-                isCartOpen 
-                  ? 'text-manso-black' 
-                  : isLightBgPage 
-                    ? 'text-manso-black' 
-                    : isScrolled 
-                      ? 'text-manso-black' 
-                      : 'text-manso-cream'
+                getTextColor(isCartOpen || isLightBgPage || isScrolled)
               }`} 
             />
             {/* Burbuja de notificación con el conteo de ítems */}
@@ -115,8 +120,8 @@ export const Navbar = () => {
 
           <button 
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className={`md:hidden focus:outline-none ${
-              isCartOpen || isLightBgPage || isScrolled ? 'text-black' : 'text-white'
+            className={`md:hidden focus:outline-none transition-colors duration-500 hover:text-orange-600 ${
+              getTextColor(isCartOpen || isLightBgPage || isScrolled)
             }`}
           >
             {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -126,17 +131,36 @@ export const Navbar = () => {
 
       {/* MENÚ MOBILE DESPLEGABLE */}
       {isMenuOpen && (
-        <div className="absolute top-full left-0 w-full bg-white border-b border-zinc-100 flex flex-col p-8 gap-8 text-center shadow-xl animate-in fade-in slide-in-from-top-4 duration-300">
-          {navLinks.map((link) => (
-            <a 
-              key={link.name} 
-              href={link.href} 
+        <div className="fixed inset-0 w-full h-full bg-white z-50 flex flex-col">
+          {/* Header del menú móvil */}
+          <div className="flex justify-between items-center p-6 border-b border-zinc-100">
+            <h2 className="text-xl font-black uppercase tracking-tighter text-manso-black">Menú</h2>
+            <button 
               onClick={() => setIsMenuOpen(false)}
-              className="text-sm font-black uppercase tracking-[0.4em] hover:text-orange-600"
+              className="text-manso-black hover:text-orange-600 transition-colors duration-300"
             >
-              {link.name}
-            </a>
-          ))}
+              <X size={24} />
+            </button>
+          </div>
+          
+          {/* Contenido del menú */}
+          <div className="flex-1 flex flex-col p-8 gap-6 overflow-y-auto">
+            {/* Botón Login en móvil */}
+            <button className="px-6 py-3 text-[10px] font-black uppercase tracking-widest border border-manso-black text-manso-black hover:bg-manso-black hover:text-white transition-all duration-300">
+              Login
+            </button>
+            
+            {navLinks.map((link) => (
+              <a 
+                key={link.name} 
+                href={link.href} 
+                onClick={() => setIsMenuOpen(false)}
+                className="text-sm font-black uppercase tracking-[0.4em] text-manso-black hover:text-orange-600 transition-colors duration-500 py-2 min-h-[44px] flex items-center justify-center"
+              >
+                {link.name}
+              </a>
+            ))}
+          </div>
         </div>
       )}
 

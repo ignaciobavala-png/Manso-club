@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Trash2, Loader2, Calendar, Package } from 'lucide-react';
+import { Trash2, Loader2, Calendar, Package, User } from 'lucide-react';
 
 interface Props {
-  table: 'eventos' | 'productos';
+  table: 'eventos' | 'productos' | 'artistas';
   title: string;
 }
 
@@ -57,7 +57,7 @@ export function ItemList({ table, title }: Props) {
     <div className="bg-manso-cream/5 rounded-[2.5rem] border border-manso-cream/10 overflow-hidden shadow-sm mt-8">
       <div className="p-6 border-b border-manso-cream/10 flex justify-between items-center bg-manso-cream/5">
         <h3 className="font-black uppercase tracking-tighter flex items-center gap-2 text-manso-cream">
-          {table === 'eventos' ? <Calendar size={16} /> : <Package size={16} />}
+          {table === 'eventos' ? <Calendar size={16} /> : table === 'artistas' ? <User size={16} /> : <Package size={16} />}
           {title} ({items.length})
         </h3>
       </div>
@@ -74,7 +74,7 @@ export function ItemList({ table, title }: Props) {
               <div>
                 <p className="font-bold uppercase text-xs tracking-tight text-manso-cream">{item.titulo || item.nombre}</p>
                 <p className="text-[10px] text-manso-cream/60 font-mono">
-                  {item.fecha ? new Date(item.fecha).toLocaleDateString() : `$${item.precio}`}
+                  {item.fecha ? new Date(item.fecha).toLocaleDateString() : item.precio ? `$${item.precio}` : item.bio ? `${item.bio.substring(0, 30)}...` : 'Artista'}
                 </p>
               </div>
             </div>
