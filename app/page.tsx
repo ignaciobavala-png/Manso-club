@@ -9,7 +9,7 @@ export default function Home() {
     <div className="min-h-screen">
       
       {/* Slide 1: Hero */}
-      <section id="quienes-somos" className="min-h-screen">
+      <section id="quienes-somos" className="min-h-screen relative">
         <Hero />
       </section>
       

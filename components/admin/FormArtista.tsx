@@ -10,7 +10,15 @@ interface ArtistaEdit {
   id: string;
   nombre: string;
   bio?: string;
+  estilo?: string;
   imagen_url?: string;
+  soundcloud_url?: string;
+  social_links?: {
+    instagram?: string;
+    spotify?: string;
+    soundcloud?: string;
+  };
+  // Legacy compat
   redes_sociales?: {
     instagram?: string;
     spotify?: string;
@@ -28,6 +36,7 @@ export function FormArtista() {
   const [formData, setFormData] = useState({
     nombre: '',
     bio: '',
+    estilo: '',
     imagen_url: '',
     instagram: '',
     spotify: '',
@@ -38,13 +47,15 @@ export function FormArtista() {
     const handleEditEvent = (event: CustomEvent<ArtistaEdit>) => {
       const artista = event.detail;
       setEditingId(artista.id);
+      const links = artista.social_links || artista.redes_sociales;
       setFormData({
         nombre: artista.nombre || '',
         bio: artista.bio || '',
+        estilo: artista.estilo || '',
         imagen_url: artista.imagen_url || '',
-        instagram: artista.redes_sociales?.instagram || '',
-        spotify: artista.redes_sociales?.spotify || '',
-        soundcloud: artista.redes_sociales?.soundcloud || ''
+        instagram: links?.instagram || '',
+        spotify: links?.spotify || '',
+        soundcloud: artista.soundcloud_url || links?.soundcloud || ''
       });
       setImageKey(prev => prev + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -58,7 +69,7 @@ export function FormArtista() {
 
   const resetForm = () => {
     setEditingId(null);
-    setFormData({ nombre: '', bio: '', imagen_url: '', instagram: '', spotify: '', soundcloud: '' });
+    setFormData({ nombre: '', bio: '', estilo: '', imagen_url: '', instagram: '', spotify: '', soundcloud: '' });
     setImageKey(prev => prev + 1);
     setSoundcloudError('');
   };
@@ -83,11 +94,6 @@ export function FormArtista() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.imagen_url) {
-      alert('Por favor, sube una imagen del artista.');
-      return;
-    }
-
     if (formData.soundcloud && !validateSoundCloudUrl(formData.soundcloud)) {
       alert('Por favor, corrige la URL de SoundCloud.');
       return;
@@ -95,11 +101,20 @@ export function FormArtista() {
 
     setLoading(true);
 
-    const artistaData = {
+    const slug = formData.nombre
+      .toLowerCase()
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/(^-|-$)/g, '');
+
+    const artistaData: Record<string, unknown> = {
       nombre: formData.nombre,
-      bio: formData.bio,
-      imagen_url: formData.imagen_url,
-      redes_sociales: {
+      slug,
+      bio: formData.bio || null,
+      estilo: formData.estilo || null,
+      imagen_url: formData.imagen_url || null,
+      soundcloud_url: formData.soundcloud || null,
+      social_links: {
         instagram: formData.instagram || null,
         spotify: formData.spotify || null,
         soundcloud: formData.soundcloud || null
@@ -174,6 +189,18 @@ export function FormArtista() {
               value={formData.nombre}
               onChange={e => setFormData({...formData, nombre: e.target.value})}
               required
+            />
+          </div>
+
+          {/* Estilo / Género */}
+          <div className="relative">
+            <Music className="absolute left-4 top-1/2 -translate-y-1/2 text-manso-cream/60" size={20} />
+            <input 
+              type="text" 
+              placeholder="ESTILO / GÉNERO (ej: Techno / House)"
+              className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all"
+              value={formData.estilo}
+              onChange={e => setFormData({...formData, estilo: e.target.value})}
             />
           </div>
 

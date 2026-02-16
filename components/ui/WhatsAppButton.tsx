@@ -13,7 +13,7 @@ export const WhatsAppButton: React.FC = () => {
       href={waUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-8 right-8 z-[90 group flex items-center justify-center"
+      className="fixed bottom-[52px] right-8 z-[90] group flex items-center justify-center"
       aria-label="Contactar por WhatsApp"
     >
       {/* Animación de pulso externa */}

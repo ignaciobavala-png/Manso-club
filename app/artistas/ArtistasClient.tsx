@@ -33,13 +33,13 @@ interface ArtistasClientProps {
 }
 
 const placeholderArtists: Artist[] = [
-  { id: 'p1', nombre: 'Ana Hagen', slug: 'ana-hagen', estilo: 'Techno / House / EBM' },
-  { id: 'p2', nombre: 'Porti', slug: 'porti', estilo: 'Progressive / Techno / Live Hybrid' },
-  { id: 'p3', nombre: 'Lucas Romero', slug: 'lucas-romero', estilo: 'Melodic Techno' },
-  { id: 'p4', nombre: 'Lu Russo', slug: 'lu-russo', estilo: 'Minimal / House' },
-  { id: 'p5', nombre: 'Joaquinn', slug: 'joaquinn', estilo: 'Raw Techno / Industrial' },
+  { id: 'p1', nombre: 'Ana Hagen', slug: 'ana-hagen', estilo: 'Techno / House / EBM', social_links: { instagram: 'anahagen__' } },
+  { id: 'p2', nombre: 'Porti', slug: 'porti', estilo: 'Progressive / Techno / Live Hybrid', social_links: { instagram: 'johnny.driver_' } },
+  { id: 'p3', nombre: 'Lucas Romero', slug: 'lucas-romero', estilo: 'Melodic Techno', social_links: { instagram: 'lucasromero____' } },
+  { id: 'p4', nombre: 'Lu Russo', slug: 'lu-russo', estilo: 'Minimal / House', social_links: { instagram: 'run_luli_run' } },
+  { id: 'p5', nombre: 'Joaquinn', slug: 'joaquinn', estilo: 'Raw Techno / Industrial', social_links: { instagram: 'joaquinn_______' } },
   { id: 'p6', nombre: 'Manu Alvarez', slug: 'manu-alvarez', estilo: 'House / Tech-House' },
-  { id: 'p7', nombre: 'Fabi Sarinelli', slug: 'fabi-sarinelli', estilo: 'Techno / House / Vinyl Select' },
+  { id: 'p7', nombre: 'Fabi Sarinelli', slug: 'fabi-sarinelli', estilo: 'Techno / House / Vinyl Select', social_links: { instagram: 'fabustin' } },
   { id: 'p8', nombre: 'Lau Loinaz', slug: 'lau-loinaz', estilo: 'Ecléctico / Electronic' },
 ];
 
@@ -140,8 +140,8 @@ export function ArtistasClient({ artistas }: ArtistasClientProps) {
                 )}
               </div>
               
-              {/* Nombre visible siempre */}
-              <div className="absolute bottom-4 left-4 right-4">
+              {/* Nombre visible siempre, se oculta en hover */}
+              <div className="absolute bottom-4 left-4 right-4 group-hover:opacity-0 transition-opacity duration-300">
                 <h3 className="text-white font-black text-sm uppercase tracking-tighter drop-shadow-lg">
                   {artista.nombre}
                 </h3>

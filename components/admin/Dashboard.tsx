@@ -10,10 +10,12 @@ import { ItemList } from './ItemList';
 import { EventosHomeList } from './EventosHomeList';
 import { AgendaList } from './AgendaList';
 import { ArtistasList } from './ArtistasList';
-import { LogOut, ShoppingBag, User, Home, Calendar } from 'lucide-react';
+import { FormMainMusic } from './FormMainMusic';
+import { MainMusicList } from './MainMusicList';
+import { LogOut, ShoppingBag, User, Home, Calendar, Music } from 'lucide-react';
 
 export function Dashboard() {
-  const [tab, setTab] = useState<'home' | 'tienda' | 'artistas' | 'agenda'>('home');
+  const [tab, setTab] = useState<'home' | 'tienda' | 'artistas' | 'agenda' | 'musica'>('home');
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#1D1D1B' }}>
@@ -82,6 +84,15 @@ export function Dashboard() {
             <Calendar size={14} />
             Agenda
           </button>
+          <button 
+            onClick={() => setTab('musica')} 
+            className={`flex items-center gap-2 px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all ${
+              tab === 'musica' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
+            }`}
+          >
+            <Music size={14} />
+            Música
+          </button>
         </div>
 
         {/* Grid Principal: Formulario + Lista de Gestión */}
@@ -89,10 +100,10 @@ export function Dashboard() {
           {/* Columna Izquierda: Formularios de Creación */}
           <div className="lg:col-span-5">
             <h2 className="text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-6 ml-2">
-              Nuevo {tab === 'home' ? 'Evento del Home' : tab === 'tienda' ? 'Producto' : tab === 'artistas' ? 'Artista' : 'Evento de Agenda'}
+              Nuevo {tab === 'home' ? 'Evento del Home' : tab === 'tienda' ? 'Producto' : tab === 'artistas' ? 'Artista' : tab === 'agenda' ? 'Evento de Agenda' : 'Track para el Home'}
             </h2>
             <div className="sticky top-8">
-              {tab === 'home' ? <FormEventoHome /> : tab === 'tienda' ? <FormProducto /> : tab === 'artistas' ? <FormArtista /> : <FormAgenda />}
+              {tab === 'home' ? <FormEventoHome /> : tab === 'tienda' ? <FormProducto /> : tab === 'artistas' ? <FormArtista /> : tab === 'agenda' ? <FormAgenda /> : <FormMainMusic />}
             </div>
           </div>
 
@@ -107,8 +118,10 @@ export function Dashboard() {
               <ItemList table="productos" title="Inventario de Tienda" />
             ) : tab === 'artistas' ? (
               <ArtistasList />
-            ) : (
+            ) : tab === 'agenda' ? (
               <AgendaList />
+            ) : (
+              <MainMusicList />
             )}
           </div>
         </div>

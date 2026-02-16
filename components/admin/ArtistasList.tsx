@@ -8,7 +8,15 @@ interface Artista {
   id: string;
   nombre: string;
   bio?: string;
+  estilo?: string;
   imagen_url?: string;
+  soundcloud_url?: string;
+  social_links?: {
+    instagram?: string;
+    spotify?: string;
+    soundcloud?: string;
+  };
+  // Legacy compat
   redes_sociales?: {
     instagram?: string;
     spotify?: string;
@@ -131,12 +139,17 @@ export function ArtistasList() {
                   {artista.nombre}
                 </h4>
                 <div className="flex flex-wrap gap-2 mt-1">
-                  {artista.redes_sociales?.instagram && (
+                  {(artista.social_links?.instagram || artista.redes_sociales?.instagram) && (
                     <span className="text-[9px] uppercase tracking-widest text-manso-cream/60 px-2 py-0.5 border border-manso-cream/20 rounded">
-                      @{artista.redes_sociales.instagram.replace('@', '')}
+                      @{(artista.social_links?.instagram || artista.redes_sociales?.instagram || '').replace('@', '')}
                     </span>
                   )}
-                  {artista.redes_sociales?.soundcloud && (
+                  {artista.estilo && (
+                    <span className="text-[9px] uppercase tracking-widest text-manso-cream/60 px-2 py-0.5 border border-manso-cream/20 rounded">
+                      {artista.estilo}
+                    </span>
+                  )}
+                  {(artista.soundcloud_url || artista.social_links?.soundcloud || artista.redes_sociales?.soundcloud) && (
                     <span className="text-[9px] uppercase tracking-widest text-manso-terra px-2 py-0.5 border border-manso-terra/30 rounded">
                       SoundCloud
                     </span>

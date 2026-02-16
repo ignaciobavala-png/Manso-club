@@ -18,14 +18,31 @@ interface Producto {
 export function SectionsGrid() {
   const [productos, setProductos] = useState<Producto[]>([]);
   const [loading, setLoading] = useState(true);
-  const [categoriaActiva, setCategoriaActiva] = useState<Categoria>(CATEGORIAS_TIENDA[0]);
+  const [categorias, setCategorias] = useState<string[]>([...CATEGORIAS_TIENDA]);
+  const [categoriaActiva, setCategoriaActiva] = useState<string>(CATEGORIAS_TIENDA[0]);
   const [error, setError] = useState<string | null>(null);
+
+  // Cargar categorias dinamicas desde la DB
+  useEffect(() => {
+    async function fetchCategorias() {
+      const { data } = await supabase
+        .from('productos')
+        .select('categoria');
+
+      if (data) {
+        const dbCats = [...new Set(data.map(p => p.categoria).filter(Boolean))] as string[];
+        const defaultCats = [...CATEGORIAS_TIENDA] as string[];
+        const merged = [...new Set([...defaultCats, ...dbCats])];
+        setCategorias(merged);
+      }
+    }
+    fetchCategorias();
+  }, []);
 
   useEffect(() => {
     async function fetchProductos() {
       setLoading(true);
       try {
-        // Verificar que Supabase esté configurado
         if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
           throw new Error('Supabase no está configurado. Faltan variables de entorno.');
         }
@@ -41,11 +58,11 @@ export function SectionsGrid() {
         }
         
         setProductos((data as Producto[]) || []);
-        setError(null); // Limpiar error si todo va bien
+        setError(null);
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
         setError(errorMessage);
-        setProductos([]); // Asegurar que no quede undefined
+        setProductos([]);
       } finally {
         setLoading(false);
       }
@@ -57,7 +74,7 @@ export function SectionsGrid() {
     <div className="w-full px-8 md:px-20 py-8">
       {/* Filtros locales */}
       <nav className="flex gap-2 overflow-x-auto no-scrollbar mb-10 pb-2">
-        {CATEGORIAS_TIENDA.map((cat) => (
+        {categorias.map((cat) => (
           <button
             key={cat}
             onClick={() => setCategoriaActiva(cat)}

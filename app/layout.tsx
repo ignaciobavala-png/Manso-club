@@ -5,6 +5,7 @@ import "./globals.css";
 import { Navbar } from "@/components/Layout/Navbar";
 import { FooterPlayer } from "@/components/Layout/FooterPlayer";
 import { SoundCloudFooterPlayer } from "@/components/Layout/SoundCloudFooterPlayer";
+import { GlobalMusicPlayer } from "@/components/Layout/GlobalMusicPlayer";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton"; // Importación añadida
 
 export const metadata: Metadata = {
@@ -46,6 +47,7 @@ export default function RootLayout({
 
         <FooterPlayer /> 
         <SoundCloudFooterPlayer />
+        <GlobalMusicPlayer />
         <WhatsAppButton />
 
         {/* ── Google Tag Manager ── */}
