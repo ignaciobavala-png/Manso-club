@@ -2,8 +2,6 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
-  console.log('🔍 Middleware running for:', request.nextUrl.pathname);
-  
   let response = NextResponse.next({
     request: { headers: request.headers },
   })
@@ -14,12 +12,9 @@ export async function middleware(request: NextRequest) {
     {
       cookies: {
         getAll() { 
-          const cookies = request.cookies.getAll();
-          console.log('🍪 All cookies:', cookies.map(c => ({ name: c.name })));
-          return cookies;
+          return request.cookies.getAll();
         },
         setAll(cookiesToSet) {
-          console.log('🍪 Setting cookies:', cookiesToSet.map(c => ({ name: c.name })));
           cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
           response = NextResponse.next({ request })
           cookiesToSet.forEach(({ name, value, options }) =>
@@ -30,35 +25,57 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  // Usamos getUser() para validar la sesión en el servidor
-  const { data: { user }, error } = await supabase.auth.getUser()
-  
-  console.log('👤 User from middleware:', user ? { id: user.id, email: user.email } : 'No user');
-  if (error) {
-    console.error('❌ Middleware auth error:', error);
+  let user = null
+  try {
+    const { data } = await supabase.auth.getUser()
+    user = data.user
+  } catch {
+    // silently fail
   }
 
-  const isLoginRoute = request.nextUrl.pathname === '/mansoadm/login'
-  const isAdminRoute = request.nextUrl.pathname.startsWith('/mansoadm')
+  const pathname = request.nextUrl.pathname
+  const isAdminLoginRoute = pathname === '/mansoadm/login'
+  const isAdminRoute = pathname.startsWith('/mansoadm')
+  const isLoginRoute = pathname === '/login'
   const forceLogin = request.nextUrl.searchParams.get('force') === 'true'
 
-  console.log('📍 Route analysis:', { isLoginRoute, isAdminRoute, forceLogin, pathname: request.nextUrl.pathname });
-
-  if (isAdminRoute && !isLoginRoute && !user) {
-    console.log('🔄 Redirecting to login - no user found');
-    return NextResponse.redirect(new URL('/mansoadm/login', request.url))
+  // Helper: obtener rol via funcion SECURITY DEFINER (bypasea RLS)
+  const getUserRole = async (userId: string): Promise<string | null> => {
+    const { data } = await supabase.rpc('get_user_role', { user_id: userId })
+    return data as string | null
   }
 
-  // Solo redirigir al dashboard si está autenticado Y no está forzando el login
+  // /login: si ya esta logueado, redirigir segun rol
   if (isLoginRoute && user && !forceLogin) {
-    console.log('✅ Redirecting to dashboard - user authenticated');
-    return NextResponse.redirect(new URL('/mansoadm', request.url))
+    const role = await getUserRole(user.id)
+
+    if (role === 'admin') {
+      return NextResponse.redirect(new URL('/mansoadm', request.url))
+    }
+    return NextResponse.redirect(new URL('/membresias', request.url))
   }
 
-  console.log('✅ Allowing request to proceed');
+  // /mansoadm/*: requiere usuario autenticado con rol admin
+  if (isAdminRoute && !isAdminLoginRoute) {
+    if (!user) {
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
+
+    const role = await getUserRole(user.id)
+
+    if (role !== 'admin') {
+      return NextResponse.redirect(new URL('/membresias', request.url))
+    }
+  }
+
+  // /mansoadm/login legacy: redirigir a /login
+  if (isAdminLoginRoute) {
+    return NextResponse.redirect(new URL('/login', request.url))
+  }
+
   return response
 }
 
 export const config = {
-  matcher: ['/mansoadm/:path*'],
+  matcher: ['/mansoadm/:path*', '/login'],
 }

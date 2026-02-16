@@ -4,8 +4,8 @@ import { useState } from 'react';
 import { loginAction } from './actions';
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('mansoclub@proton.me');
-  const [password, setPassword] = useState('adminadmin');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
 
@@ -21,17 +21,12 @@ export default function LoginPage() {
     try {
       const result = await loginAction(null, formData);
 
-      // Si llegamos aquí, el login falló (porque el redirect exitoso no retorna)
-      if (result.error) {
+      // Si llegamos aquí, el login falló (el redirect exitoso no retorna)
+      if (result?.error) {
         setMessage('❌ ' + result.error);
       }
-    } catch (err) {
-      // El redirect exitoso lanza un error, lo cual es esperado
-      if ((err as Error).message.includes('NEXT_REDIRECT')) {
-        // El redirect está en proceso, no mostrar error
-        return;
-      }
-      setMessage('❌ Error de conexión: ' + (err as Error).message);
+    } catch {
+      // redirect() puede lanzar en algunos casos, es comportamiento esperado
     } finally {
       setLoading(false);
     }

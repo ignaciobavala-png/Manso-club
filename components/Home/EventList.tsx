@@ -1,3 +1,5 @@
+'use client';
+
 import { ArrowRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
@@ -29,7 +31,6 @@ export const EventList = () => {
       .order('orden', { ascending: true });
 
     if (error) {
-      console.error('Error fetching eventos:', error);
       // Fallback a mock data si hay error
       setEventos([
         { id: '1', fecha: '12 FEB', titulo: 'Degustación & Vinilos', categoria: 'Club', disponible: true, orden: 1, activo: true },

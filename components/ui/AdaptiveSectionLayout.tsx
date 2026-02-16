@@ -86,11 +86,11 @@ export function AdaptiveSectionLayout({
   return (
     <main className={`min-h-screen ${theme.bg} pt-32 pb-20 px-4 md:px-8 transition-colors duration-500`}>
       <div className="max-w-[1400px] mx-auto">
-        <div className="mb-16">
-          <h1 className={`text-6xl md:text-9xl font-black uppercase italic tracking-tighter leading-none ${theme.titleColor}`}>
+        <div className="mb-10">
+          <h1 className={`text-4xl md:text-6xl font-black uppercase italic tracking-tighter leading-none ${theme.titleColor}`}>
             {title}<span className="text-zinc-200">_</span>
           </h1>
-          <p className={`text-[10px] font-black uppercase tracking-[0.5em] ${theme.subtitleColor} mt-6 ml-2 italic`}>
+          <p className={`text-[10px] font-black uppercase tracking-[0.5em] ${theme.subtitleColor} mt-4 ml-2 italic`}>
             {subtitle}
           </p>
         </div>

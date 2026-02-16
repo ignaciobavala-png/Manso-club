@@ -19,48 +19,7 @@ export function EventosHomeList() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Forzar sincronización completa de sesión
-    const initializeSession = async () => {
-      console.log('🚀 Inicializando sesión...');
-      
-      // 1. Primero intentar obtener sesión actual
-      const { data: { session }, error } = await supabase.auth.getSession();
-      console.log('🔍 Session inicial:', { session: !!session, error: error?.message });
-      
-      if (!session) {
-        console.log('❌ No hay sesión en cliente, intentando refrescar...');
-        
-        // 2. Forzar refresh completo
-        const { data: { session: refreshedSession }, error: refreshError } = await supabase.auth.refreshSession();
-        console.log('🔄 Refresh result:', { session: !!refreshedSession, error: refreshError?.message });
-        
-        if (!refreshedSession) {
-          console.log('🚨 No se pudo refrescar, intentando setUser...');
-          
-          // 3. Último intento: forzar sesión desde middleware
-          try {
-            // Hacer una petición al servidor para obtener la sesión
-            const response = await fetch('/api/auth/session');
-            if (response.ok) {
-              const sessionData = await response.json();
-              console.log('📡 Sesión desde servidor:', sessionData);
-              
-              if (sessionData.session) {
-                // Forzar la sesión en el cliente
-                await supabase.auth.setSession(sessionData.session);
-                console.log('✅ Sesión forzada exitosamente');
-              }
-            }
-          } catch (err) {
-            console.error('❌ Error obteniendo sesión del servidor:', err);
-          }
-        }
-      }
-      
-      fetchEventos();
-    };
-    
-    initializeSession();
+    fetchEventos();
   }, []);
 
   const fetchEventos = async () => {
@@ -69,41 +28,21 @@ export function EventosHomeList() {
       .select('*')
       .order('orden', { ascending: true });
 
-    if (error) {
-      console.error('Error fetching eventos:', error);
-    } else {
+    if (!error) {
       setEventos(data || []);
     }
     setLoading(false);
   };
 
   const toggleActivo = async (id: string, activo: boolean) => {
-    console.log('👁️ Iniciando toggleActivo:', { id, activo });
-    
-    // Verificar sesión antes de operar
-    const { data: { session }, error: sessionError } = await supabase.auth.getSession();
-    console.log('🔍 Sesión en toggleActivo:', { 
-      session: !!session, 
-      userId: session?.user?.id,
-      error: sessionError?.message 
-    });
-    
-    if (!session) {
-      alert('❌ No hay sesión activa. Por favor inicia sesión nuevamente.');
-      window.location.href = '/mansoadm/login';
-      return;
-    }
-    
     const { error } = await supabase
       .from('eventos_home')
       .update({ activo: !activo })
       .eq('id', id);
 
     if (error) {
-      console.error('❌ Error al actualizar estado:', error);
-      alert('Error al actualizar estado: ' + error.message + ' (Código: ' + error.code + ')');
+      alert('Error al actualizar estado: ' + error.message);
     } else {
-      console.log('✅ Estado actualizado exitosamente');
       fetchEventos();
     }
   };
@@ -130,7 +69,6 @@ export function EventosHomeList() {
       .eq('id', id);
 
     if (error) {
-      console.error('❌ Error al eliminar evento:', error);
       alert('Error al eliminar evento: ' + error.message);
     } else {
       fetchEventos();

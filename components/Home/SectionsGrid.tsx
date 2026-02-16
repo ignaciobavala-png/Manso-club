@@ -37,7 +37,6 @@ export function SectionsGrid() {
           .order('created_at', { ascending: false });
 
         if (error) {
-          console.error('Error de Supabase:', error);
           throw new Error(`Error de base de datos: ${error.message}`);
         }
         
@@ -45,7 +44,6 @@ export function SectionsGrid() {
         setError(null); // Limpiar error si todo va bien
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : 'Error desconocido';
-        console.error('Error al cargar productos:', error);
         setError(errorMessage);
         setProductos([]); // Asegurar que no quede undefined
       } finally {

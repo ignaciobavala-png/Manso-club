@@ -9,6 +9,7 @@ import { FormAgenda } from './FormAgenda';
 import { ItemList } from './ItemList';
 import { EventosHomeList } from './EventosHomeList';
 import { AgendaList } from './AgendaList';
+import { ArtistasList } from './ArtistasList';
 import { LogOut, ShoppingBag, User, Home, Calendar } from 'lucide-react';
 
 export function Dashboard() {
@@ -105,7 +106,7 @@ export function Dashboard() {
             ) : tab === 'tienda' ? (
               <ItemList table="productos" title="Inventario de Tienda" />
             ) : tab === 'artistas' ? (
-              <ItemList table="artistas" title="Comunidad de Artistas" />
+              <ArtistasList />
             ) : (
               <AgendaList />
             )}

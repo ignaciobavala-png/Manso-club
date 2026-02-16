@@ -31,9 +31,6 @@ export function ArtistModal({ artist, isOpen, onClose }: ArtistModalProps) {
 
   const handlePlayInFooter = () => {
     if (artist.redes_sociales?.soundcloud) {
-      console.log('🎵 Reproduciendo artista:', artist.nombre);
-      console.log('🔗 URL SoundCloud:', artist.redes_sociales.soundcloud);
-      
       playTrack({
         url: artist.redes_sociales.soundcloud,
         artistName: artist.nombre,
@@ -41,8 +38,6 @@ export function ArtistModal({ artist, isOpen, onClose }: ArtistModalProps) {
         imageUrl: artist.imagen_url
       });
       setIsPlayingInFooter(true);
-    } else {
-      console.log('❌ Este artista no tiene URL de SoundCloud');
     }
   };
 

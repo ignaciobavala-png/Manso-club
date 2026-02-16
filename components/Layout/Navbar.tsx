@@ -10,11 +10,17 @@ export const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [hasMounted, setHasMounted] = useState(false);
   const pathname = usePathname();
   
   // Accedemos a los ítems del carrito para calcular el total de productos
   const cartItems = useCart((state) => state.items);
   const itemCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
+
+  // Evitar hydration mismatch: el badge del carrito solo se muestra después del mount
+  useEffect(() => {
+    setHasMounted(true);
+  }, []);
   
   // Detectar si estamos en páginas con fondo claro
   const isLightBgPage = pathname?.includes('/about') || 
@@ -97,11 +103,14 @@ export const Navbar = () => {
         {/* ACCIONES Y MENÚ MOBILE */}
         <div className="flex items-center gap-4 md:gap-6">
           {/* Botón Login - Solo visible en desktop */}
-          <button className={`hidden md:block px-6 py-2 text-[10px] font-black uppercase tracking-widest border transition-all duration-300 ${
-            getTextColor(isCartOpen || isLightBgPage || isScrolled)
-          } hover:bg-manso-black hover:text-manso-cream hover:border-manso-black`}>
+          <a 
+            href="/login"
+            className={`hidden md:block px-6 py-2 text-[10px] font-black uppercase tracking-widest border transition-all duration-300 ${
+              getTextColor(isCartOpen || isLightBgPage || isScrolled)
+            } hover:bg-manso-black hover:text-manso-cream hover:border-manso-black`}
+          >
             Login
-          </button>
+          </a>
           
           <div className="relative group cursor-pointer" onClick={() => setIsCartOpen(true)}>
             <ShoppingBag 
@@ -111,7 +120,7 @@ export const Navbar = () => {
               }`} 
             />
             {/* Burbuja de notificación con el conteo de ítems */}
-            {itemCount > 0 && (
+            {hasMounted && itemCount > 0 && (
               <span className="absolute -top-2 -right-2 bg-orange-600 text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center animate-in zoom-in duration-300 z-10">
                 {itemCount}
               </span>
@@ -146,9 +155,13 @@ export const Navbar = () => {
           {/* Contenido del menú */}
           <div className="flex-1 flex flex-col p-8 gap-6 overflow-y-auto">
             {/* Botón Login en móvil */}
-            <button className="px-6 py-3 text-[10px] font-black uppercase tracking-widest border border-manso-black text-manso-black hover:bg-manso-black hover:text-white transition-all duration-300">
+            <a 
+              href="/login"
+              onClick={() => setIsMenuOpen(false)}
+              className="px-6 py-3 text-[10px] font-black uppercase tracking-widest border border-manso-black text-manso-black hover:bg-manso-black hover:text-white transition-all duration-300 text-center"
+            >
               Login
-            </button>
+            </a>
             
             {navLinks.map((link) => (
               <a 

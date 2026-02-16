@@ -38,10 +38,11 @@ export function ItemList({ table, title }: Props) {
     
     if (!dbError) {
       // 2. Opcional: Borrar imagen del storage si es una URL de Supabase
-      if (imageUrl.includes('storage/v1/object/public/flyers/')) {
-        const fileName = imageUrl.split('/').pop();
-        if (fileName) {
-          await supabase.storage.from('flyers').remove([fileName]);
+      if (imageUrl.includes('storage/v1/object/public/')) {
+        const bucketMatch = imageUrl.match(/\/storage\/v1\/object\/public\/([^/]+)\/(.+)/);
+        if (bucketMatch) {
+          const [, bucketName, filePath] = bucketMatch;
+          await supabase.storage.from(bucketName).remove([filePath]);
         }
       }
       setItems(items.filter(item => item.id !== id));

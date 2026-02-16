@@ -1,9 +1,10 @@
 // app/tienda/page.tsx
 import { AdaptiveSectionLayout } from '@/components/ui/AdaptiveSectionLayout';
-import { supabase } from '@/lib/supabase';
+import { createSupabaseAnon } from '@/lib/supabase-anon';
 import { ProductCard } from '@/components/shop/ProductCard';
 
 export default async function TiendaPage() {
+  const supabase = createSupabaseAnon();
   const { data: productos } = await supabase
     .from('productos')
     .select('*')

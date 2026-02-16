@@ -46,22 +46,16 @@ export function SoundCloudPlayer({ url, autoPlay = false, showControls = true, c
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
   useEffect(() => {
-    console.log('🎵 SoundCloudPlayer - Inicializando con URL:', url);
-    
-    // Cargar el script de SoundCloud Widget API
     if (!window.SC) {
-      console.log('📦 Cargando script de SoundCloud API...');
       const script = document.createElement('script');
       script.src = 'https://w.soundcloud.com/player/api.js';
       script.async = true;
       document.body.appendChild(script);
 
       script.onload = () => {
-        console.log('✅ Script de SoundCloud API cargado');
         initializeWidget();
       };
     } else {
-      console.log('✅ Script de SoundCloud API ya disponible');
       initializeWidget();
     }
   }, [url]);
@@ -69,12 +63,10 @@ export function SoundCloudPlayer({ url, autoPlay = false, showControls = true, c
   const initializeWidget = () => {
     if (!iframeRef.current || !window.SC) return;
 
-    console.log('🎛️ Inicializando widget de SoundCloud...');
     const widgetInstance = window.SC.Widget(iframeRef.current);
     setWidget(widgetInstance);
 
     widgetInstance.bind((window as any).SC.Widget.Events.READY, () => {
-      console.log('🎧 Widget de SoundCloud listo!');
       setIsLoading(false);
       
       // Obtener duración y volumen inicial
@@ -137,12 +129,8 @@ export function SoundCloudPlayer({ url, autoPlay = false, showControls = true, c
   };
 
   const getEmbedUrl = (soundcloudUrl: string) => {
-    console.log('🔗 Convirtiendo URL a embed:', soundcloudUrl);
-    
-    // Validar que sea una URL de SoundCloud válida
     const soundCloudRegex = /^https?:\/\/(soundcloud\.com\/|snd\.sc\/)/;
     if (!soundCloudRegex.test(soundcloudUrl)) {
-      console.error('❌ URL inválida de SoundCloud:', soundcloudUrl);
       return null;
     }
     
@@ -159,7 +147,6 @@ export function SoundCloudPlayer({ url, autoPlay = false, showControls = true, c
     });
     
     const embedUrl = baseUrl + params.toString();
-    console.log('✅ URL de embed generada:', embedUrl);
     return embedUrl;
   };
 

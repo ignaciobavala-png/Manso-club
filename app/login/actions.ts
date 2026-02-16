@@ -35,23 +35,40 @@ export async function loginAction(prevState: { error: string } | null, formData:
     password,
   });
 
-  console.log('[LOGIN] signIn result:', { hasSession: !!data.session, error: error?.message });
-
   if (error) {
-    console.log('[LOGIN] Error:', error.message);
     return { error: error.message };
   }
 
   if (!data.session) {
-    console.log('[LOGIN] No session created');
     return { error: 'No se pudo crear la sesión' };
   }
 
-  // Verificar que las cookies se setearon
-  const allCookies = cookieStore.getAll();
-  const sbCookies = allCookies.filter(c => c.name.startsWith('sb-'));
-  console.log('[LOGIN] Cookies after signIn:', sbCookies.map(c => c.name));
-  console.log('[LOGIN] Redirecting to /mansoadm...');
+  // Consultar el rol del usuario en user_profiles
+  const { data: profile, error: profileError } = await supabase
+    .from('user_profiles')
+    .select('role')
+    .eq('id', data.user.id)
+    .single();
 
-  redirect('/mansoadm');
+  if (profileError || !profile) {
+    // Si no tiene perfil, es un usuario nuevo (member por defecto via trigger)
+    // Intentar leer de nuevo por si el trigger ya lo creo
+    const { data: retryProfile } = await supabase
+      .from('user_profiles')
+      .select('role')
+      .eq('id', data.user.id)
+      .single();
+
+    if (retryProfile?.role === 'admin') {
+      redirect('/mansoadm');
+    }
+    redirect('/membresias');
+  }
+
+  if (profile.role === 'admin') {
+    redirect('/mansoadm');
+  }
+
+  // Miembro: redirigir a zona de miembros
+  redirect('/membresias');
 }

@@ -22,26 +22,23 @@ export async function GET() {
       }
     );
 
-    // Obtener sesión del servidor (donde sí existe)
     const { data: { session }, error } = await supabase.auth.getSession();
 
     if (error) {
-      console.error('❌ Error en API session:', error);
-      return NextResponse.json({ error: error.message }, { status: 500 });
+      return NextResponse.json({ error: 'Authentication error' }, { status: 500 });
     }
 
-    console.log('📡 API Session - Sesión encontrada:', !!session);
-    
+    // Solo devolver estado de autenticación y datos mínimos del usuario
+    // NUNCA exponer access_token ni refresh_token
     return NextResponse.json({ 
-      session: session ? {
-        access_token: session.access_token,
-        refresh_token: session.refresh_token,
-        user: session.user
+      authenticated: !!session,
+      user: session ? {
+        id: session.user.id,
+        email: session.user.email,
       } : null 
     });
 
   } catch (err) {
-    console.error('❌ Error en API session:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }

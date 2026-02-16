@@ -44,9 +44,7 @@ export function AgendaList() {
       .select('*')
       .order('created_at', { ascending: false });
 
-    if (error) {
-      console.error('Error fetching eventos:', error);
-    } else {
+    if (!error) {
       setEventos(data || []);
       // Cargar inscripciones para cada evento
       data?.forEach(evento => {

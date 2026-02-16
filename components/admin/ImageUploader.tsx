@@ -7,11 +7,14 @@ import { Upload, Loader2, CheckCircle2 } from 'lucide-react';
 interface Props {
   onUpload: (url: string) => void;
   bucket?: string;
+  folder?: string;
+  maxWidth?: number;
+  initialPreview?: string | null;
 }
 
-export function ImageUploader({ onUpload, bucket = 'flyers' }: Props) {
+export function ImageUploader({ onUpload, bucket = 'flyers', folder, maxWidth = 1920, initialPreview = null }: Props) {
   const [isUploading, setIsUploading] = useState(false);
-  const [preview, setPreview] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | null>(initialPreview);
 
   const convertToWebP = (file: File): Promise<File> => {
     return new Promise((resolve) => {
@@ -20,9 +23,17 @@ export function ImageUploader({ onUpload, bucket = 'flyers' }: Props) {
       const img = new Image();
       
       img.onload = () => {
-        canvas.width = img.width;
-        canvas.height = img.height;
-        ctx.drawImage(img, 0, 0);
+        let w = img.width;
+        let h = img.height;
+
+        if (w > maxWidth) {
+          h = Math.round(h * (maxWidth / w));
+          w = maxWidth;
+        }
+
+        canvas.width = w;
+        canvas.height = h;
+        ctx.drawImage(img, 0, 0, w, h);
         
         canvas.toBlob((blob) => {
           const webpFile = new File([blob!], file.name.replace(/\.[^/.]+$/, '.webp'), {
@@ -47,7 +58,7 @@ export function ImageUploader({ onUpload, bucket = 'flyers' }: Props) {
 
       // Crear un nombre único para el archivo WebP
       const fileName = `${Math.random().toString(36).substring(2)}.webp`;
-      const filePath = `${fileName}`;
+      const filePath = folder ? `${folder}/${fileName}` : fileName;
 
       // 1. Subir al Storage
       const { error: uploadError } = await supabase.storage
@@ -63,7 +74,6 @@ export function ImageUploader({ onUpload, bucket = 'flyers' }: Props) {
       onUpload(data.publicUrl);
 
     } catch (error) {
-      console.error('Error subiendo:', error);
       alert('Error al subir la imagen');
     } finally {
       setIsUploading(false);

@@ -11,17 +11,19 @@ export default function DebugPage() {
     cookies: 'Iniciando...'
   });
 
+  const isDev = process.env.NODE_ENV === 'development';
+
   useEffect(() => {
+    if (!isDev) return;
+
     async function runCheck() {
       const results: any = {};
 
-      // 1. Verificar variables de entorno
       results.env = {
         url: process.env.NEXT_PUBLIC_SUPABASE_URL ? "✅ CARGADA" : "❌ VACÍA",
         key: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ? "✅ CARGADA" : "❌ VACÍA"
       };
 
-      // 2. Probar conexión básica
       try {
         const { data, error } = await supabase.from('eventos').select('*').limit(1);
         results.connection = error ? `❌ ERROR: ${error.message}` : "✅ CONECTADO (Tablas accesibles)";
@@ -29,13 +31,11 @@ export default function DebugPage() {
         results.connection = `❌ FALLO CRÍTICO: ${e.message}`;
       }
 
-      // 3. Verificar Sesión Actual
       const { data: { session } } = await supabase.auth.getSession();
       results.session = session 
         ? `✅ LOGUEADO como: ${session.user.email}` 
         : "❌ NO HAY SESIÓN (Usuario no autenticado)";
 
-      // 4. Leer Cookies del navegador
       results.cookies = document.cookie.includes('sb-') 
         ? "✅ COOKIES DE SUPABASE DETECTADAS" 
         : "⚠️ NO SE ENCONTRARON COOKIES DE AUTH";
@@ -43,7 +43,15 @@ export default function DebugPage() {
       setReport(results);
     }
     runCheck();
-  }, []);
+  }, [isDev]);
+
+  if (!isDev) {
+    return (
+      <div className="min-h-screen bg-black text-red-500 flex items-center justify-center font-mono">
+        <p>DEBUG DESHABILITADO EN PRODUCCIÓN</p>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-black text-green-500 p-10 font-mono text-xs">

@@ -1,15 +1,30 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { ImageUploader } from './ImageUploader';
 import { SoundCloudPlayer } from '../ui/SoundCloudPlayer';
 import { User, Music, Instagram, Globe, Eye } from 'lucide-react';
 
+interface ArtistaEdit {
+  id: string;
+  nombre: string;
+  bio?: string;
+  imagen_url?: string;
+  redes_sociales?: {
+    instagram?: string;
+    spotify?: string;
+    soundcloud?: string;
+  };
+  active: boolean;
+}
+
 export function FormArtista() {
   const [loading, setLoading] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [soundcloudError, setSoundcloudError] = useState('');
+  const [imageKey, setImageKey] = useState(0);
   const [formData, setFormData] = useState({
     nombre: '',
     bio: '',
@@ -18,6 +33,35 @@ export function FormArtista() {
     spotify: '',
     soundcloud: ''
   });
+
+  useEffect(() => {
+    const handleEditEvent = (event: CustomEvent<ArtistaEdit>) => {
+      const artista = event.detail;
+      setEditingId(artista.id);
+      setFormData({
+        nombre: artista.nombre || '',
+        bio: artista.bio || '',
+        imagen_url: artista.imagen_url || '',
+        instagram: artista.redes_sociales?.instagram || '',
+        spotify: artista.redes_sociales?.spotify || '',
+        soundcloud: artista.redes_sociales?.soundcloud || ''
+      });
+      setImageKey(prev => prev + 1);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    window.addEventListener('editArtista', handleEditEvent as EventListener);
+    return () => {
+      window.removeEventListener('editArtista', handleEditEvent as EventListener);
+    };
+  }, []);
+
+  const resetForm = () => {
+    setEditingId(null);
+    setFormData({ nombre: '', bio: '', imagen_url: '', instagram: '', spotify: '', soundcloud: '' });
+    setImageKey(prev => prev + 1);
+    setSoundcloudError('');
+  };
 
   const validateSoundCloudUrl = (url: string) => {
     if (!url) return true; // Es opcional
@@ -31,12 +75,8 @@ export function FormArtista() {
     
     if (value && !validateSoundCloudUrl(value)) {
       setSoundcloudError('URL inválida. Debe ser una URL de SoundCloud (soundcloud.com/...)');
-      console.log('❌ URL inválida de SoundCloud:', value);
     } else {
       setSoundcloudError('');
-      if (value) {
-        console.log('✅ URL válida de SoundCloud:', value);
-      }
     }
   };
 
@@ -67,27 +107,45 @@ export function FormArtista() {
       active: true
     };
 
-    const { error } = await supabase.from('artistas').insert([artistaData]);
+    try {
+      if (editingId) {
+        const { error } = await supabase
+          .from('artistas')
+          .update(artistaData)
+          .eq('id', editingId);
 
-    if (error) {
-      alert(error.message);
-    } else {
-      alert('¡Artista agregado a Manso Club!');
-      setFormData({ 
-        nombre: '', 
-        bio: '', 
-        imagen_url: '', 
-        instagram: '', 
-        spotify: '', 
-        soundcloud: '' 
-      });
+        if (error) throw error;
+        alert('¡Artista actualizado correctamente!');
+      } else {
+        const { error } = await supabase.from('artistas').insert([artistaData]);
+
+        if (error) throw error;
+        alert('¡Artista agregado a Manso Club!');
+      }
+
+      resetForm();
       window.location.reload();
+    } catch (error: any) {
+      alert(error.message);
     }
+
     setLoading(false);
   };
 
   return (
     <div className="max-w-2xl mx-auto bg-manso-cream/5 p-8 rounded-[2.5rem] border border-manso-cream/10 shadow-xl">
+      {/* Header dinamico */}
+      <div className="mb-6">
+        <h2 className="text-2xl font-black uppercase tracking-tighter text-manso-cream mb-2">
+          {editingId ? 'Editar Artista' : 'Nuevo Artista'}
+        </h2>
+        {editingId && (
+          <p className="text-sm text-manso-cream/60">
+            Modificando el perfil de {formData.nombre}
+          </p>
+        )}
+      </div>
+
       <form onSubmit={handleSubmit} className="space-y-6">
         
         {/* Zona de Carga de Imagen */}
@@ -95,8 +153,12 @@ export function FormArtista() {
           <label className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2">
             Foto del Artista
           </label>
-          <ImageUploader 
-            bucket="flyers" 
+          <ImageUploader
+            key={imageKey}
+            bucket="artist" 
+            folder="profiles"
+            maxWidth={1200}
+            initialPreview={formData.imagen_url || null}
             onUpload={(url) => setFormData({...formData, imagen_url: url})} 
           />
         </div>
@@ -177,13 +239,28 @@ export function FormArtista() {
           </div>
         </div>
 
-        {/* Botón de Acción */}
-        <button 
-          disabled={loading}
-          className="w-full bg-manso-terra text-manso-cream py-5 rounded-3xl font-black uppercase tracking-[0.2em] hover:bg-manso-cream hover:text-manso-black transition-all active:scale-95 disabled:opacity-50"
-        >
-          {loading ? 'AGREGANDO ARTISTA...' : 'AGREGAR ARTISTA'}
-        </button>
+        {/* Botones dinamicos */}
+        <div className="flex gap-4">
+          {editingId && (
+            <button
+              type="button"
+              onClick={resetForm}
+              className="flex-1 bg-manso-cream/20 text-manso-cream py-5 rounded-3xl font-black uppercase tracking-[0.2em] hover:bg-manso-cream/30 transition-all active:scale-95"
+            >
+              Cancelar
+            </button>
+          )}
+          <button 
+            type="submit"
+            disabled={loading}
+            className="flex-1 bg-manso-terra text-manso-cream py-5 rounded-3xl font-black uppercase tracking-[0.2em] hover:bg-manso-cream hover:text-manso-black transition-all active:scale-95 disabled:opacity-50"
+          >
+            {loading
+              ? (editingId ? 'ACTUALIZANDO...' : 'AGREGANDO ARTISTA...')
+              : (editingId ? 'ACTUALIZAR ARTISTA' : 'AGREGAR ARTISTA')
+            }
+          </button>
+        </div>
       </form>
 
       {/* Vista previa del reproductor */}

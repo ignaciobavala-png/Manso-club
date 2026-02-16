@@ -19,10 +19,6 @@ export function SoundCloudFooterPlayer() {
   // Escuchar eventos globales para controlar el reproductor
   useEffect(() => {
     const handlePlayTrack = (event: CustomEvent<CurrentTrack>) => {
-      console.log('🎶 Footer Player - Recibiendo track:', event.detail);
-      console.log('🎤 Artista:', event.detail.artistName);
-      console.log('🔗 URL:', event.detail.url);
-      
       setCurrentTrack(event.detail);
       setIsVisible(true);
       setIsMinimized(false);
