@@ -90,7 +90,7 @@ export function FormProducto() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-manso-cream/5 p-8 rounded-[2.5rem] border border-manso-cream/10 shadow-xl">
+    <div className="w-full max-w-full sm:max-w-lg lg:max-w-2xl mx-auto bg-manso-cream/5 p-4 sm:p-6 lg:p-8 rounded-[2.5rem] border border-manso-cream/10 shadow-xl">
       <form onSubmit={handleSubmit} className="space-y-6">
         
         {/* Zona de Carga de Imagen */}
@@ -107,11 +107,11 @@ export function FormProducto() {
         <div className="grid grid-cols-1 gap-4">
           {/* Nombre del Producto */}
           <div className="relative">
-            <Package className="absolute left-4 top-1/2 -translate-y-1/2 text-manso-cream/60" size={20} />
+            <Package className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-manso-cream/60" size={16} className="sm:size-20" />
             <input 
               type="text" 
               placeholder="NOMBRE DEL ARTÍCULO"
-              className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all"
+              className="w-full bg-manso-cream/10 p-3 sm:p-4 pl-10 sm:pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all text-sm sm:text-base"
               value={formData.nombre}
               onChange={e => setFormData({...formData, nombre: e.target.value})}
               required
@@ -123,13 +123,13 @@ export function FormProducto() {
             <p className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2 flex items-center gap-2">
               <Tag size={14} /> Categoria
             </p>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1 sm:gap-2">
               {categorias.map(cat => (
                 <button
                   key={cat}
                   type="button"
                   onClick={() => setFormData({...formData, categoria: cat})}
-                  className={`group flex items-center gap-1.5 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${
+                  className={`group flex items-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all border ${
                     formData.categoria === cat
                       ? 'bg-manso-terra text-manso-cream border-manso-terra'
                       : 'bg-manso-cream/10 text-manso-cream/60 border-manso-cream/20 hover:border-manso-cream/40'
@@ -142,11 +142,11 @@ export function FormProducto() {
                       className="ml-1 opacity-0 group-hover:opacity-100 transition-opacity hover:text-red-400"
                       title="Eliminar categoria"
                     >
-                      <X size={10} />
+                      <X size={8} className="sm:size-10" />
                     </span>
                   )}
                   {catsConProductos.has(cat) && (
-                    <span className="ml-1 w-1.5 h-1.5 bg-green-400 rounded-full" title="Tiene productos"></span>
+                    <span className="ml-1 w-1 sm:w-1.5 h-1 sm:h-1.5 bg-green-400 rounded-full" title="Tiene productos"></span>
                   )}
                 </button>
               ))}
@@ -156,16 +156,16 @@ export function FormProducto() {
               <button
                 type="button"
                 onClick={() => setShowNewCat(true)}
-                className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-widest text-manso-terra hover:text-manso-cream transition-colors ml-2"
+                className="flex items-center gap-1 text-[8px] sm:text-[9px] font-bold uppercase tracking-widest text-manso-terra hover:text-manso-cream transition-colors ml-2"
               >
-                <Plus size={12} /> Nueva categoria
+                <Plus size={10} className="sm:size-12" /> Nueva categoria
               </button>
             ) : (
               <div className="flex gap-2">
                 <input
                   type="text"
                   placeholder="Nombre de la categoria"
-                  className="flex-1 bg-manso-cream/10 p-3 rounded-xl border border-manso-terra/30 outline-none text-xs font-bold text-manso-cream placeholder:text-manso-cream/40 focus:ring-2 focus:ring-manso-terra"
+                  className="flex-1 bg-manso-cream/10 p-2 sm:p-3 rounded-xl border border-manso-terra/30 outline-none text-[10px] sm:text-xs font-bold text-manso-cream placeholder:text-manso-cream/40 focus:ring-2 focus:ring-manso-terra"
                   value={newCatName}
                   onChange={e => setNewCatName(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), handleAddCategory())}
@@ -174,14 +174,14 @@ export function FormProducto() {
                 <button
                   type="button"
                   onClick={handleAddCategory}
-                  className="px-3 py-2 bg-manso-terra text-manso-cream rounded-xl text-[9px] font-black uppercase hover:bg-manso-cream hover:text-manso-black transition-all"
+                  className="px-2 sm:px-3 py-2 bg-manso-terra text-manso-cream rounded-xl text-[8px] sm:text-[9px] font-black uppercase hover:bg-manso-cream hover:text-manso-black transition-all"
                 >
                   Crear
                 </button>
                 <button
                   type="button"
                   onClick={() => { setShowNewCat(false); setNewCatName(''); }}
-                  className="px-3 py-2 bg-manso-cream/10 text-manso-cream/60 rounded-xl text-[9px] font-black uppercase hover:bg-manso-cream/20 transition-all"
+                  className="px-2 sm:px-3 py-2 bg-manso-cream/10 text-manso-cream/60 rounded-xl text-[8px] sm:text-[9px] font-black uppercase hover:bg-manso-cream/20 transition-all"
                 >
                   X
                 </button>
@@ -191,11 +191,11 @@ export function FormProducto() {
 
           {/* Precio en Moneda */}
           <div className="relative">
-            <DollarSign className="absolute left-4 top-1/2 -translate-y-1/2 text-manso-cream/60" size={20} />
+            <DollarSign className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-manso-cream/60" size={16} className="sm:size-20" />
             <input 
               type="number" 
               placeholder="PRECIO"
-              className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono font-bold text-manso-cream placeholder:text-manso-cream/40"
+              className="w-full bg-manso-cream/10 p-3 sm:p-4 pl-10 sm:pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono font-bold text-manso-cream placeholder:text-manso-cream/40 text-sm sm:text-base"
               value={formData.precio === 0 ? '' : formData.precio}
               onChange={e => setFormData({...formData, precio: Number(e.target.value)})}
               required
@@ -206,7 +206,7 @@ export function FormProducto() {
         {/* Boton de Accion */}
         <button 
           disabled={loading}
-          className="w-full bg-manso-terra text-manso-cream py-5 rounded-3xl font-black uppercase tracking-[0.2em] hover:bg-manso-cream hover:text-manso-black transition-all active:scale-95 disabled:opacity-50"
+          className="w-full bg-manso-terra text-manso-cream py-4 sm:py-5 rounded-3xl font-black uppercase tracking-[0.2em] hover:bg-manso-cream hover:text-manso-black transition-all active:scale-95 disabled:opacity-50 text-sm sm:text-base"
         >
           {loading ? 'PROCESANDO...' : 'PUBLICAR PRODUCTO'}
         </button>

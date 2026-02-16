@@ -1,3 +1,6 @@
+'use client';
+
+import Link from 'next/link';
 
 export function FooterPlayer() {  //
 return (
@@ -31,9 +34,9 @@ return (
           <div className="flex flex-col gap-3">
             <span className="text-[10px] font-bold uppercase tracking-widest text-manso-terra">Manso</span>
             <div className="flex flex-col gap-2 text-[10px] uppercase tracking-widest font-medium text-manso-cream/60">
-              <a href="/about" className="hover:text-manso-cream transition-colors">Nosotros</a>
+              <Link href="/about" className="hover:text-manso-cream transition-colors">Nosotros</Link>
               <a href="#manifiesto" className="hover:text-manso-cream transition-colors">Manifiesto</a>
-              <a href="/artistas" className="hover:text-manso-cream transition-colors">Artistas</a>
+              <Link href="/artistas" className="hover:text-manso-cream transition-colors">Artistas</Link>
             </div>
           </div>
           
@@ -41,7 +44,7 @@ return (
             <span className="text-[10px] font-bold uppercase tracking-widest text-manso-terra">Servicios</span>
             <div className="flex flex-col gap-2 text-[10px] uppercase tracking-widest font-medium text-manso-cream/60">
               <a href="#agenda" className="hover:text-manso-cream transition-colors">Coworking</a>
-              <a href="/membresias" className="hover:text-manso-cream transition-colors">Membresías</a>
+              <Link href="/membresias" className="hover:text-manso-cream transition-colors">Membresías</Link>
               <a href="#agenda" className="hover:text-manso-cream transition-colors">Talleres</a>
             </div>
           </div>
@@ -49,7 +52,7 @@ return (
           <div className="flex flex-col gap-3">
             <span className="text-[10px] font-bold uppercase tracking-widest text-manso-terra">Cultura</span>
             <div className="flex flex-col gap-2 text-[10px] uppercase tracking-widest font-medium text-manso-cream/60">
-              <a href="/tienda" className="hover:text-manso-cream transition-colors">Tienda</a>
+              <Link href="/tienda" className="hover:text-manso-cream transition-colors">Tienda</Link>
               <a href="#agenda" className="hover:text-manso-cream transition-colors">Club</a>
             </div>
           </div>
