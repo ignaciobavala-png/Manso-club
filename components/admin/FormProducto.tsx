@@ -107,7 +107,7 @@ export function FormProducto() {
         <div className="grid grid-cols-1 gap-4">
           {/* Nombre del Producto */}
           <div className="relative">
-            <Package className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-manso-cream/60" size={16} className="sm:size-20" />
+            <Package className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-manso-cream/60 sm:size-20" size={16} />
             <input 
               type="text" 
               placeholder="NOMBRE DEL ARTÍCULO"
@@ -191,7 +191,7 @@ export function FormProducto() {
 
           {/* Precio en Moneda */}
           <div className="relative">
-            <DollarSign className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-manso-cream/60" size={16} className="sm:size-20" />
+            <DollarSign className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-manso-cream/60 sm:size-20" size={16} />
             <input 
               type="number" 
               placeholder="PRECIO"
