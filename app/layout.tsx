@@ -63,6 +63,22 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           }}
         />
 
+        {/* ── Google Analytics ── */}
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-ELTTJ2QYM8"
+          strategy="afterInteractive"
+        />
+        <Script
+          id="google-analytics"
+          strategy="afterInteractive"
+          dangerouslySetInnerHTML={{
+            __html: `window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-ELTTJ2QYM8');`,
+          }}
+        />
+
         {/* ── Meta (Facebook) Pixel ── */}
         <Script
           id="meta-pixel"
