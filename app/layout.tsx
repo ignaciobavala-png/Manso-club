@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import Script from "next/script";
 import "./globals.css";
 import { Navbar } from "@/components/Layout/Navbar";
-import { FooterPlayer } from "@/components/Layout/FooterPlayer";
+import { Footer } from "@/components/Layout/Footer";
 import { SoundCloudFooterPlayer } from "@/components/Layout/SoundCloudFooterPlayer";
 import { GlobalMusicPlayer } from "@/components/Layout/GlobalMusicPlayer";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton"; // Importación añadida
@@ -38,14 +38,14 @@ export default function RootLayout({
 
         <Navbar />
         
-        {/* IMPORTANTE: El main tiene 'relative' y el FooterPlayer está FUERA 
+        {/* IMPORTANTE: El main tiene 'relative' y el Footer está FUERA 
             para evitar que sus capas fijas tapen los inputs del Login.
         */}
         <main className="flex-auto relative bg-white">
           {children}
         </main>
 
-        <FooterPlayer /> 
+        <Footer /> 
         <SoundCloudFooterPlayer />
         <GlobalMusicPlayer />
         <WhatsAppButton />

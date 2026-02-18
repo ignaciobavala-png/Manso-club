@@ -145,7 +145,7 @@ interface CartStore {
 ### 🎯 Componentes UI
 
 **Estado**: **MODERNO**
-- **Layout**: Navbar + FooterPlayer con diseño consistente
+- **Layout**: Navbar + Footer con diseño consistente
 - **WhatsAppButton**: Integración con WhatsApp
 - **AdaptiveSectionLayout**: Layouts adaptativos
 - **Iconos**: Lucide React para iconografía moderna
