@@ -1,7 +1,6 @@
 'use server';
 
-import { createServerClient } from '@supabase/ssr';
-import { cookies } from 'next/headers';
+import { createSupabaseServer } from '@/lib/supabase';
 import { redirect } from 'next/navigation';
 
 export async function loginAction(prevState: { error: string } | null, formData: FormData) {
@@ -12,23 +11,7 @@ export async function loginAction(prevState: { error: string } | null, formData:
     return { error: 'Email y contraseña son requeridos' };
   }
 
-  const cookieStore = await cookies();
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        getAll() {
-          return cookieStore.getAll();
-        },
-        setAll(cookiesToSet) {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            cookieStore.set(name, value, options);
-          });
-        },
-      },
-    }
-  );
+  const supabase = await createSupabaseServer();
 
   const { data, error } = await supabase.auth.signInWithPassword({
     email,
@@ -48,9 +31,6 @@ export async function loginAction(prevState: { error: string } | null, formData:
   }
 
   // Verificar que las cookies se setearon
-  const allCookies = cookieStore.getAll();
-  const sbCookies = allCookies.filter(c => c.name.startsWith('sb-'));
-  console.log('[LOGIN] Cookies after signIn:', sbCookies.map(c => c.name));
   console.log('[LOGIN] Redirecting to /mansoadm...');
 
   redirect('/mansoadm');

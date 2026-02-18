@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { ArtistasClient } from './ArtistasClient';
-import { createSupabaseAnon } from '@/lib/supabase-anon';
+import { createSupabaseAnon } from '@/lib/supabase';
 
 export const metadata: Metadata = {
   title: 'Artistas | Manso Club',

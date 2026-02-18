@@ -1,6 +1,6 @@
 // app/tienda/page.tsx
 import { AdaptiveSectionLayout } from '@/components/ui/AdaptiveSectionLayout';
-import { createSupabaseAnon } from '@/lib/supabase-anon';
+import { createSupabaseAnon } from '@/lib/supabase';
 import { ProductCard } from '@/components/shop/ProductCard';
 
 export default async function TiendaPage() {

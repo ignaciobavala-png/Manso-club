@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { supabase } from '../../lib/supabase';
+import { supabase } from '@/lib/supabase';
 import { Edit, Trash2, Users, Eye } from 'lucide-react';
 
 interface AgendaEvent {

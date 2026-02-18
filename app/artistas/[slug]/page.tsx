@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { createSupabaseAnon } from '@/lib/supabase-anon';
+import { createSupabaseAnon } from '@/lib/supabase';
 import { ArrowLeft, Instagram, ExternalLink, Music } from 'lucide-react';
 import { ArtistProfilePlayer } from './ArtistProfilePlayer';
 import { ArtistTrackEmitter } from '@/components/ui/ArtistTrackEmitter';
