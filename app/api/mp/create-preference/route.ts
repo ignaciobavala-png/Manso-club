@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseAnon } from '../../../../lib/supabase';
 import { nanoid } from 'nanoid';
+import { paymentRateLimit, createRateLimitMiddleware } from '../../../../lib/rate-limit';
 
 interface CreatePreferenceRequest {
   items: Array<{
@@ -17,6 +18,14 @@ interface CreatePreferenceRequest {
 }
 
 export async function POST(request: NextRequest) {
+  // 🔴 ALTO 1 - Rate limiting en endpoint de pagos
+  const rateLimitMiddleware = createRateLimitMiddleware(paymentRateLimit);
+  const rateLimitResult = rateLimitMiddleware(request);
+  
+  if (!rateLimitResult.allowed) {
+    return rateLimitResult.response;
+  }
+
   try {
     const body: CreatePreferenceRequest = await request.json();
     const { items, email, nombre, telefono } = body;
@@ -28,8 +37,117 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Leer credenciales desde configuración
+    // 🚨 CRÍTICO 3 - Validación de precios en backend
     const supabase = createSupabaseAnon();
+    let totalCalculado = 0;
+
+    // Validar cada item y obtener precio real desde Supabase
+    for (const item of items) {
+      let precioReal = 0;
+
+      if (item.tipo === 'producto') {
+        // Obtener precio desde tabla productos
+        const { data: producto, error: productoError } = await supabase
+          .from('productos')
+          .select('precio')
+          .eq('id', item.referencia_id || item.id)
+          .single();
+
+        if (productoError || !producto) {
+          return NextResponse.json(
+            { error: `Producto no encontrado: ${item.id}` },
+            { status: 400 }
+          );
+        }
+        precioReal = producto.precio;
+
+      } else if (item.tipo === 'membresia') {
+        // Obtener precio desde configuración o hardcoded
+        const { data: membresiaConfig, error: membresiaError } = await supabase
+          .from('configuracion')
+          .select('valor')
+          .eq('clave', 'precio_membresia')
+          .single();
+
+        if (membresiaError || !membresiaConfig?.valor) {
+          // Precio default si no está configurado
+          precioReal = 1500;
+        } else {
+          precioReal = parseFloat(membresiaConfig.valor);
+        }
+
+      } else if (item.tipo === 'entrada') {
+        // Obtener precio desde tabla agenda
+        const { data: evento, error: eventoError } = await supabase
+          .from('agenda')
+          .select('precio')
+          .eq('id', item.referencia_id || item.id)
+          .single();
+
+        if (eventoError || !evento) {
+          return NextResponse.json(
+            { error: `Evento no encontrado: ${item.id}` },
+            { status: 400 }
+          );
+        }
+        precioReal = evento.precio;
+
+      } else {
+        return NextResponse.json(
+          { error: `Tipo de item no válido: ${item.tipo}` },
+          { status: 400 }
+        );
+      }
+
+      // Validar que el precio recibido coincida con el precio real
+      if (Math.abs(item.precio - precioReal) > 0.01) {
+        console.error('❌ Discrepancia de precios detectada:', {
+          item: item.nombre,
+          recibido: item.precio,
+          real: precioReal,
+          tipo: item.tipo
+        });
+
+        return NextResponse.json(
+          { 
+            error: 'Discrepancia de precios detectada',
+            details: {
+              item: item.nombre,
+              precio_recibido: item.precio,
+              precio_real: precioReal
+            }
+          },
+          { status: 400 }
+        );
+      }
+
+      totalCalculado += precioReal * item.cantidad;
+    }
+
+    // Verificar que el total calculado coincida con el total recibido
+    const totalRecibido = items.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+    
+    if (Math.abs(totalCalculado - totalRecibido) > 0.01) {
+      console.error('❌ Discrepancia en total:', {
+        total_recibido: totalRecibido,
+        total_calculado: totalCalculado
+      });
+
+      return NextResponse.json(
+        { 
+          error: 'Discrepancia en total de la orden',
+          details: {
+            total_recibido: totalRecibido,
+            total_calculado: totalCalculado
+          }
+        },
+        { status: 400 }
+      );
+    }
+
+    console.log('✅ Validación de precios exitosa:', { total: totalCalculado });
+
+    // Leer credenciales desde configuración (reutilizar supabase existente)
     const { data: configs, error: configError } = await supabase
       .from('configuracion')
       .select('clave, valor')
@@ -52,8 +170,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Calcular total
-    const total = items.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+    // Calcular total (usar el total validado)
+    const total = totalCalculado;
 
     // Crear orden en base de datos
     const { data: orden, error: ordenError } = await supabase
@@ -170,6 +288,8 @@ export async function POST(request: NextRequest) {
       preference_id: preference.id,
       init_point: modoSandbox ? preference.sandbox_init_point : preference.init_point,
       orden_id: orden.id,
+    }, {
+      headers: rateLimitResult.headers // Agregar headers de rate limit
     });
 
   } catch (error) {

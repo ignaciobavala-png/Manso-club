@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createSupabaseAnon } from '../../../../lib/supabase';
 import { nanoid } from 'nanoid';
+import { createHmac } from 'crypto';
+import { webhookRateLimit, createRateLimitMiddleware } from '../../../../lib/rate-limit';
 
 interface WebhookNotification {
   type: string;
@@ -10,8 +12,73 @@ interface WebhookNotification {
 }
 
 export async function POST(request: NextRequest) {
+  // 🔴 ALTO 1 - Rate limiting en webhook (más permisivo)
+  const rateLimitMiddleware = createRateLimitMiddleware(webhookRateLimit);
+  const rateLimitResult = rateLimitMiddleware(request);
+  
+  if (!rateLimitResult.allowed) {
+    return rateLimitResult.response;
+  }
+
   try {
+    // 🚨 CRÍTICO 2 - Verificación de firma webhook MP
+    const xSignature = request.headers.get('x-signature');
+    const xRequestId = request.headers.get('x-request-id');
+    
+    if (!xSignature) {
+      console.error('❌ Webhook sin firma x-signature');
+      return NextResponse.json(
+        { error: 'Firma requerida' },
+        { status: 400 }
+      );
+    }
+
+    // Obtener webhook secret desde configuración
+    const supabase = createSupabaseAnon();
+    const { data: config, error: configError } = await supabase
+      .from('configuracion')
+      .select('valor')
+      .eq('clave', 'mp_webhook_secret')
+      .single();
+
+    if (configError || !config?.valor) {
+      console.error('❌ Webhook secret no configurado');
+      return NextResponse.json(
+        { error: 'Configuración incompleta' },
+        { status: 500 }
+      );
+    }
+
+    const webhookSecret = config.valor;
+
+    // Parsear la firma para obtener ts y hash
+    const [ts, hash] = xSignature.split(',');
+    const timestamp = ts.replace('ts=', '');
+    const signatureHash = hash.replace('v1=', '');
+
+    // Construir el manifest
     const body: WebhookNotification = await request.json();
+    const manifest = `id:${body.data.id};request-id:${xRequestId};ts:${timestamp};`;
+
+    // Calcular HMAC-SHA256
+    const calculatedHash = createHmac('sha256', webhookSecret)
+      .update(manifest)
+      .digest('hex');
+
+    // Verificar firma
+    if (calculatedHash !== signatureHash) {
+      console.error('❌ Firma webhook inválida');
+      console.error('Manifest:', manifest);
+      console.error('Expected:', calculatedHash);
+      console.error('Received:', signatureHash);
+      
+      return NextResponse.json(
+        { error: 'Firma inválida' },
+        { status: 400 }
+      );
+    }
+
+    console.log('✅ Firma webhook verificada correctamente');
     const { type, data } = body;
 
     console.log('Webhook recibido:', { type, data });
@@ -21,20 +88,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ received: true }, { status: 200 });
     }
 
-    // Leer credenciales desde configuración
-    const supabase = createSupabaseAnon();
-    const { data: config, error: configError } = await supabase
+    // Leer credenciales desde configuración (reutilizar supabase existente)
+    const { data: mpConfig, error: mpConfigError } = await supabase
       .from('configuracion')
       .select('valor')
       .eq('clave', 'mp_access_token')
       .single();
 
-    if (configError || !config?.valor) {
+    if (mpConfigError || !mpConfig?.valor) {
       console.error('Access Token no configurado');
       return NextResponse.json({ received: true }, { status: 200 });
     }
 
-    const accessToken = config.valor;
+    const accessToken = mpConfig.valor;
 
     // Consultar información del pago a Mercado Pago
     const paymentResponse = await fetch(`https://api.mercadopago.com/v1/payments/${data.id}`, {
@@ -175,7 +241,10 @@ export async function POST(request: NextRequest) {
     }
 
     // Siempre devolver 200 OK (requisito de Mercado Pago)
-    return NextResponse.json({ received: true }, { status: 200 });
+    return NextResponse.json({ received: true }, { 
+      status: 200,
+      headers: rateLimitResult.headers // Agregar headers de rate limit
+    });
 
   } catch (error) {
     console.error('Error procesando webhook:', error);
