@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { X, Music, Instagram, ExternalLink, Play } from 'lucide-react';
 import { SoundCloudPlayer } from './SoundCloudPlayer';
-import { useFooterPlayer } from '../Layout/SoundCloudFooterPlayer';
 
 interface Artist {
   id: string;
@@ -25,18 +24,19 @@ interface ArtistModalProps {
 
 export function ArtistModal({ artist, isOpen, onClose }: ArtistModalProps) {
   const [isPlayingInFooter, setIsPlayingInFooter] = useState(false);
-  const { playTrack } = useFooterPlayer();
 
   if (!isOpen || !artist) return null;
 
   const handlePlayInFooter = () => {
     if (artist.redes_sociales?.soundcloud) {
-      playTrack({
-        url: artist.redes_sociales.soundcloud,
-        artistName: artist.nombre,
-        trackTitle: undefined, // SoundCloud lo mostrará automáticamente
-        imageUrl: artist.imagen_url
+      // Disparar evento para el GlobalMusicPlayer
+      const event = new CustomEvent('globalPlayer:artistOverride', {
+        detail: {
+          artistName: artist.nombre,
+          soundcloud_url: artist.redes_sociales.soundcloud
+        }
       });
+      window.dispatchEvent(event);
       setIsPlayingInFooter(true);
     }
   };

@@ -78,7 +78,7 @@ export function GlobalMusicPlayer() {
   if (tracks.length === 0) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40">
+    <div className="fixed bottom-0 left-0 right-0 z-40" data-player="global">
       <HomeMusicPlayer
         key={artistOverride ? `artist-${artistOverride.soundcloud_url}` : 'main'}
         tracks={tracks}

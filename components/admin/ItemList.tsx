@@ -29,12 +29,15 @@ export function ItemList({ table, title }: Props) {
   }, [table]);
 
   const handleDelete = async (id: string, imageUrl: string) => {
-    if (!confirm('¿Estás segura de eliminar este item? Esta acción no se puede deshacer.')) return;
+    if (!confirm('¿Estás segura de desactivar este producto? Ya no será visible en la tienda.')) return;
     
     setDeletingId(id);
     
-    // 1. Borrar de la tabla
-    const { error: dbError } = await supabase.from(table).delete().eq('id', id);
+    // 1. Desactivar en la tabla (soft delete)
+    const { error: dbError } = await supabase
+      .from(table)
+      .update({ active: false })
+      .eq('id', id);
     
     if (!dbError) {
       // 2. Opcional: Borrar imagen del storage si es una URL de Supabase

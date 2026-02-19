@@ -1,7 +1,6 @@
 'use client';
 
 import { SoundCloudPlayer } from '@/components/ui/SoundCloudPlayer';
-import { useFooterPlayer } from '@/components/Layout/SoundCloudFooterPlayer';
 import { Play } from 'lucide-react';
 import { useState } from 'react';
 
@@ -12,16 +11,17 @@ interface ArtistProfilePlayerProps {
 }
 
 export function ArtistProfilePlayer({ url, artistName, imageUrl }: ArtistProfilePlayerProps) {
-  const { playTrack } = useFooterPlayer();
   const [sentToFooter, setSentToFooter] = useState(false);
 
   const handlePlayInFooter = () => {
-    playTrack({
-      url,
-      artistName,
-      trackTitle: undefined,
-      imageUrl,
+    // Disparar evento para el GlobalMusicPlayer
+    const event = new CustomEvent('globalPlayer:artistOverride', {
+      detail: {
+        artistName,
+        soundcloud_url: url
+      }
     });
+    window.dispatchEvent(event);
     setSentToFooter(true);
   };
 

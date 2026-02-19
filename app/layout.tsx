@@ -4,7 +4,6 @@ import Script from "next/script";
 import "./globals.css";
 import { Navbar } from "@/components/Layout/Navbar";
 import { Footer } from "@/components/Layout/Footer";
-import { SoundCloudFooterPlayer } from "@/components/Layout/SoundCloudFooterPlayer";
 import { GlobalMusicPlayer } from "@/components/Layout/GlobalMusicPlayer";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton"; // Importación añadida
 
@@ -46,7 +45,6 @@ export default function RootLayout({
         </main>
 
         <Footer /> 
-        <SoundCloudFooterPlayer />
         <GlobalMusicPlayer />
         <WhatsAppButton />
 

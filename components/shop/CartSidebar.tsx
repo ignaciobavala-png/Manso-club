@@ -16,8 +16,8 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
   // Detectar si el reproductor del footer está visible
   useEffect(() => {
     const checkFooterPlayer = () => {
-      // Buscar específicamente el reproductor de SoundCloud en el footer
-      const footerPlayer = document.querySelector('div[class*="fixed bottom-0"][class*="z-50"][class*="bg-manso-black"]');
+      // Buscar el reproductor global usando data-attribute
+      const footerPlayer = document.querySelector('[data-player="global"]');
       if (footerPlayer) {
         const height = footerPlayer.getBoundingClientRect().height;
         setFooterPlayerHeight(height);
