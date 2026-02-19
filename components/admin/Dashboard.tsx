@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { logoutAction } from '../../app/mansoadm/actions';
 import { FormProducto } from './FormProducto';
 import { FormArtista } from './FormArtista';
@@ -19,6 +19,24 @@ import { LogOut, ShoppingBag, User, Home, Calendar, Music, Crown, Settings } fro
 
 export function Dashboard() {
   const [tab, setTab] = useState<'home' | 'tienda' | 'artistas' | 'agenda' | 'musica' | 'membresias' | 'config'>('home');
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    // Obtener información del usuario actual
+    const fetchUser = async () => {
+      try {
+        const response = await fetch('/api/auth/session');
+        const data = await response.json();
+        if (data.authenticated && data.user?.email) {
+          setUserEmail(data.user.email);
+        }
+      } catch (error) {
+        console.error('Error fetching user session:', error);
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   return (
     <div className="min-h-screen" style={{ backgroundColor: '#1D1D1B' }}>
@@ -29,13 +47,19 @@ export function Dashboard() {
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black italic tracking-tighter uppercase text-manso-cream mb-2">Manso Admin_</h1>
             <p className="text-[9px] sm:text-[10px] font-bold text-manso-cream/60 uppercase tracking-[0.3em]">Panel de Control Centralizado</p>
           </div>
-          <div className="flex items-center gap-2 sm:gap-3 w-full sm:w-auto">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
+            {userEmail && (
+              <div className="hidden sm:flex items-center gap-2 px-3 py-2 bg-manso-cream/5 text-manso-cream/60 rounded-xl text-[9px] font-medium">
+                <User size={12} />
+                <span className="truncate max-w-[120px]">{userEmail}</span>
+              </div>
+            )}
             <a 
-              href="/mansoadm/login?force=true"
+              href="/mansoadm/login"
               className="flex-1 sm:flex-none items-center justify-center gap-2 px-3 py-2 bg-manso-cream/10 text-manso-cream/80 border border-manso-cream/20 rounded-xl text-[10px] font-bold uppercase hover:bg-manso-cream/20 transition-all"
-              title="Forzar acceso a login"
+              title="Cambiar de usuario"
             >
-              🔐 Login
+              👤 Cambiar Usuario
             </a>
             <form action={logoutAction} className="flex-1 sm:flex-none">
               <button 

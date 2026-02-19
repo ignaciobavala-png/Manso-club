@@ -2,6 +2,7 @@
 
 import { X, Plus, Minus, Trash2, ShoppingBag, ArrowRight } from 'lucide-react';
 import { useCart } from '@/store/useCart';
+import { useState, useEffect } from 'react';
 
 interface CartSidebarProps {
   isOpen: boolean;
@@ -10,6 +11,45 @@ interface CartSidebarProps {
 
 export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
   const { items, removeItem, addItem, clearCart, total } = useCart();
+  const [footerPlayerHeight, setFooterPlayerHeight] = useState(0);
+
+  // Detectar si el reproductor del footer está visible
+  useEffect(() => {
+    const checkFooterPlayer = () => {
+      // Buscar específicamente el reproductor de SoundCloud en el footer
+      const footerPlayer = document.querySelector('div[class*="fixed bottom-0"][class*="z-50"][class*="bg-manso-black"]');
+      if (footerPlayer) {
+        const height = footerPlayer.getBoundingClientRect().height;
+        setFooterPlayerHeight(height);
+      } else {
+        setFooterPlayerHeight(0);
+      }
+    };
+
+    // Verificar inicialmente y cuando el carrito se abre/cierra
+    if (isOpen) {
+      checkFooterPlayer();
+      // También verificar después de un pequeño delay por si el reproductor aparece tarde
+      const timeoutId = setTimeout(checkFooterPlayer, 100);
+      return () => clearTimeout(timeoutId);
+    }
+
+    // Escuchar cambios en el DOM (cuando el reproductor aparece/desaparece)
+    const observer = new MutationObserver(() => {
+      if (isOpen) {
+        checkFooterPlayer();
+      }
+    });
+    
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ['class', 'style']
+    });
+
+    return () => observer.disconnect();
+  }, [isOpen]);
 
   const handleQuantityChange = (productId: string, currentQuantity: number, change: number) => {
     const newQuantity = currentQuantity + change;
@@ -70,8 +110,8 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
       {/* Sidebar */}
       <div className={`fixed top-0 right-0 h-screen w-full max-w-md bg-white shadow-2xl z-[60] transform transition-all duration-300 ease-in-out ${
         isOpen ? 'translate-x-0' : 'translate-x-full'
-      }`}>
-        <div className="flex flex-col h-screen">
+      }`} style={{ paddingBottom: footerPlayerHeight > 0 ? `${footerPlayerHeight}px` : '0px' }}>
+        <div className="flex flex-col h-screen" style={{ height: `calc(100vh - ${footerPlayerHeight}px)` }}>
           {/* Header */}
           <div className="flex items-center justify-between p-6 border-b border-zinc-100 bg-zinc-50/50">
             <div className="flex items-center gap-3">
