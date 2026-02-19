@@ -20,11 +20,6 @@ interface Artista {
     spotify?: string;
     soundcloud?: string;
   };
-  redes_sociales?: {
-    instagram?: string;
-    spotify?: string;
-    soundcloud?: string;
-  };
 }
 
 interface Props {
@@ -35,12 +30,25 @@ async function getArtista(slug: string): Promise<Artista | null> {
   const supabase = createSupabaseAnon();
   const { data } = await supabase
     .from('artistas')
-    .select('id, nombre, slug, bio, estilo, imagen_url, soundcloud_url, social_links, redes_sociales')
+    .select('id, nombre, slug, bio, estilo, imagen_url, soundcloud_url, social_links')
     .eq('slug', slug)
     .eq('active', true)
     .single();
 
   return data;
+}
+
+export async function generateStaticParams() {
+  const supabase = createSupabaseAnon();
+  const { data: artistas } = await supabase
+    .from('artistas')
+    .select('slug')
+    .eq('active', true)
+    .order('nombre', { ascending: true });
+
+  return (artistas || []).map((artista) => ({
+    slug: artista.slug,
+  }));
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -69,7 +77,7 @@ export default async function ArtistaPage({ params }: Props) {
 
   if (!artista) notFound();
 
-  const links = artista.social_links || artista.redes_sociales;
+  const links = artista.social_links;
   const scUrl = artista.soundcloud_url || links?.soundcloud;
   const igHandle = links?.instagram;
   const spotifyUrl = links?.spotify;
