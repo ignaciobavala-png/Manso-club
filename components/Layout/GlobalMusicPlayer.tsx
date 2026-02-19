@@ -83,6 +83,7 @@ export function GlobalMusicPlayer() {
         key={artistOverride ? `artist-${artistOverride.soundcloud_url}` : 'main'}
         tracks={tracks}
         autoPlay
+        isArtistMode={!!artistOverride}
       />
     </div>
   );

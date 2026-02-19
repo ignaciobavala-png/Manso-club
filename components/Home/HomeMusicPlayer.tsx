@@ -13,12 +13,13 @@ interface Track {
 interface HomeMusicPlayerProps {
   tracks: Track[];
   autoPlay?: boolean;
+  isArtistMode?: boolean;
 }
 
 // Re-use the SC global declared in SoundCloudPlayer.tsx
 // Access Events via (window as any).SC.Widget.Events
 
-export function HomeMusicPlayer({ tracks, autoPlay = false }: HomeMusicPlayerProps) {
+export function HomeMusicPlayer({ tracks, autoPlay = false, isArtistMode = false }: HomeMusicPlayerProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -219,6 +220,9 @@ export function HomeMusicPlayer({ tracks, autoPlay = false }: HomeMusicPlayerPro
           <div className="flex-1 min-w-0 flex items-center gap-2">
             <Music size={11} className="text-manso-terra flex-shrink-0" />
             <span className="text-[10px] text-manso-cream/70 truncate">
+              {isArtistMode && (
+                <span className="text-manso-terra/80 font-medium">Escuchando a </span>
+              )}
               <span className="font-bold text-manso-cream">{currentTrack.artista}</span>
               <span className="mx-1.5 text-manso-cream/30">—</span>
               {currentTrack.titulo}

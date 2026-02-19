@@ -5,7 +5,7 @@ import { notFound } from 'next/navigation';
 import { createSupabaseAnon } from '@/lib/supabase';
 import { ArrowLeft, Instagram, ExternalLink, Music } from 'lucide-react';
 import { ArtistProfilePlayer } from './ArtistProfilePlayer';
-import { ArtistTrackEmitter } from '@/components/ui/ArtistTrackEmitter';
+import { ArtistTrackManager } from '@/components/artistas/ArtistTrackManager';
 
 interface Artista {
   id: string;
@@ -84,8 +84,8 @@ export default async function ArtistaPage({ params }: Props) {
 
   return (
     <main className="min-h-screen bg-manso-black">
-      {/* Emite al reproductor global: si el artista tiene SC, lo swapea */}
-      <ArtistTrackEmitter artistName={artista.nombre} soundcloudUrl={scUrl} />
+      {/* Maneja el track del artista en el reproductor global */}
+      <ArtistTrackManager artist={artista} />
 
       {/* Back button */}
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 pt-28 pb-4">
