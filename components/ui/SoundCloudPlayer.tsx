@@ -178,7 +178,7 @@ export function SoundCloudPlayer({ url, autoPlay = false, showControls = true, c
         <div className="bg-manso-black border-t border-manso-cream/20 p-4">
           <div className="max-w-4xl mx-auto">
             {/* Controles principales */}
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-3">
               <div className="flex items-center gap-4">
                 {/* Botones de reproducción */}
                 <div className="flex items-center gap-2">
@@ -225,7 +225,7 @@ export function SoundCloudPlayer({ url, autoPlay = false, showControls = true, c
               </div>
 
               {/* Control de volumen */}
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-2 sm:ml-auto">
                 <Volume2 size={16} className="text-manso-cream/60" />
                 <input
                   type="range"
@@ -233,7 +233,7 @@ export function SoundCloudPlayer({ url, autoPlay = false, showControls = true, c
                   max="100"
                   value={volume}
                   onChange={(e) => handleVolumeChange(parseInt(e.target.value))}
-                  className="w-20 h-1 bg-manso-cream/20 rounded-full appearance-none cursor-pointer slider"
+                  className="w-20 sm:w-24 h-1 bg-manso-cream/20 rounded-full appearance-none cursor-pointer slider"
                   style={{
                     background: `linear-gradient(to right, #D4A574 0%, #D4A574 ${volume}%, rgba(212, 165, 116, 0.2) ${volume}%, rgba(212, 165, 116, 0.2) 100%)`
                   }}
@@ -243,8 +243,8 @@ export function SoundCloudPlayer({ url, autoPlay = false, showControls = true, c
 
             {/* Barra de progreso */}
             <div className="relative">
-              <div className="flex items-center gap-3">
-                <span className="text-xs font-mono text-manso-cream/60 min-w-[40px]">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <span className="text-xs font-mono text-manso-cream/60 min-w-[35px] sm:min-w-[40px]">
                   {formatTime(currentTime)}
                 </span>
                 
@@ -262,7 +262,7 @@ export function SoundCloudPlayer({ url, autoPlay = false, showControls = true, c
                   />
                 </div>
                 
-                <span className="text-xs font-mono text-manso-cream/60 min-w-[40px]">
+                <span className="text-xs font-mono text-manso-cream/60 min-w-[35px] sm:min-w-[40px]">
                   {formatTime(duration)}
                 </span>
               </div>
