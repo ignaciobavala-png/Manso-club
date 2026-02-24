@@ -169,7 +169,7 @@ export const EventosHome = () => {
                 eventosFecha.map((evento) => (
                   <div key={evento.id} className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                     {/* Flyer del evento */}
-                    <div className="relative h-48 bg-gray-100">
+                    <div className="relative w-full aspect-square bg-gray-100">
                       {evento.imagen_url ? (
                         <Image
                           src={evento.imagen_url}
