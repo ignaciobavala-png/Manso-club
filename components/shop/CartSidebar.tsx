@@ -1,6 +1,6 @@
 'use client';
 
-import { X, Plus, Minus, Trash2, ShoppingBag, ArrowRight } from 'lucide-react';
+import { X, Plus, Minus, Trash2, ShoppingBag, MessageCircle } from 'lucide-react';
 import { useCart } from '@/store/useCart';
 import { useState, useEffect } from 'react';
 
@@ -10,7 +10,7 @@ interface CartSidebarProps {
 }
 
 export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
-  const { items, removeItem, addItem, clearCart, total } = useCart();
+  const { items, removeItem, addItem, clearCart, total, checkout } = useCart();
   const [footerPlayerHeight, setFooterPlayerHeight] = useState(0);
 
   // Detectar si el reproductor del footer está visible
@@ -83,9 +83,7 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
   };
 
   const handleCheckout = () => {
-    // Aquí puedes implementar la lógica de checkout
-    // Por ahora, solo mostramos una alerta
-    alert('Procediendo al checkout...');
+    checkout();
   };
 
   const formatPrice = (price: number) => {
@@ -154,7 +152,7 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                   className="bg-black text-white px-8 py-4 rounded-2xl font-black uppercase tracking-wider hover:bg-orange-600 transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
                 >
                   Ir a la Tienda
-                  <ArrowRight size={16} />
+                  <MessageCircle size={16} />
                 </button>
               </div>
             ) : (
@@ -246,10 +244,10 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
               {/* Checkout Button */}
               <button
                 onClick={handleCheckout}
-                className="w-full bg-black text-white py-4 rounded-2xl font-black uppercase tracking-wider hover:bg-orange-600 transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center gap-3 group"
+                className="w-full bg-[#25D366] text-white py-4 rounded-2xl font-black uppercase tracking-wider hover:bg-[#128C7E] transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center gap-3 group"
               >
-                Proceder al Pago
-                <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                Consultar por WhatsApp
+                <MessageCircle size={18} className="group-hover:scale-110 transition-transform" />
               </button>
             </div>
           )}

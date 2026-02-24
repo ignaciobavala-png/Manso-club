@@ -16,11 +16,10 @@ import { FormMembresia } from './FormMembresia';
 import { MembresiasList } from './MembresiasList';
 import { FormEvento } from './FormEvento';
 import { EventosList } from './EventosList';
-import { ConfiguracionPanel } from './ConfiguracionPanel';
 import { LogOut, ShoppingBag, User, Home, Calendar, Music, Crown, Settings, Star } from 'lucide-react';
 
 export function Dashboard() {
-  const [tab, setTab] = useState<'home' | 'tienda' | 'artistas' | 'agenda' | 'eventos' | 'musica' | 'membresias' | 'config'>('home');
+  const [tab, setTab] = useState<'home' | 'tienda' | 'artistas' | 'agenda' | 'eventos' | 'musica' | 'membresias'>('home');
   const [userEmail, setUserEmail] = useState<string | null>(null);
 
   useEffect(() => {
@@ -140,22 +139,10 @@ export function Dashboard() {
             <Crown size={12} className="sm:size-14" />
             <span className="hidden sm:inline">Membresías</span>
           </button>
-          <button 
-            onClick={() => setTab('config')} 
-            className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
-              tab === 'config' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
-            }`}
-          >
-            <Settings size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Config</span>
-          </button>
         </div>
 
-        {/* Contenido Principal - Full Width para Config, Grid para demás */}
-        {tab === 'config' ? (
-          <ConfiguracionPanel />
-        ) : (
-          <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-12">
+        {/* Contenido Principal */}
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-12">
             {/* Columna Izquierda: Formularios de Creación */}
             <div className="xl:col-span-5">
               <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
@@ -187,8 +174,7 @@ export function Dashboard() {
                 <MembresiasList />
               )}
             </div>
-          </div>
-        )}
+        </div>
       </div>
     </div>
   );

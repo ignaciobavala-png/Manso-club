@@ -19,6 +19,7 @@ interface CartStore {
   removeItem: (id: string) => void;
   clearCart: () => void;
   total: () => number;
+  checkout: () => void;
 }
 
 export const useCart = create<CartStore>()(
@@ -42,6 +43,16 @@ export const useCart = create<CartStore>()(
       removeItem: (id) => set({ items: get().items.filter((item) => item.id !== id) }),
       clearCart: () => set({ items: [] }),
       total: () => get().items.reduce((acc, item) => acc + item.precio * item.quantity, 0),
+      checkout: () => {
+        const items = get().items
+        const texto = items.map(i => 
+          `• ${i.nombre} x${i.quantity} — $${i.precio}` 
+        ).join('\n')
+        const mensaje = encodeURIComponent(
+          `Hola! Quiero hacer un pedido:\n\n${texto}\n\nTotal: $${get().total()}` 
+        )
+        window.open(`https://wa.me/5491130232533?text=${mensaje}`, '_blank')
+      },
     }),
     { name: 'manso-cart-storage' } // Nombre de la cookie/localStorage
   )
