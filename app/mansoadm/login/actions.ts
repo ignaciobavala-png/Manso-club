@@ -18,20 +18,16 @@ export async function loginAction(prevState: { error: string } | null, formData:
     password,
   });
 
-  console.log('[LOGIN] signIn result:', { hasSession: !!data.session, error: error?.message });
 
   if (error) {
-    console.log('[LOGIN] Error:', error.message);
     return { error: error.message };
   }
 
   if (!data.session) {
-    console.log('[LOGIN] No session created');
     return { error: 'No se pudo crear la sesión' };
   }
 
   // Verificar que las cookies se setearon
-  console.log('[LOGIN] Redirecting to /mansoadm...');
 
   redirect('/mansoadm');
 }

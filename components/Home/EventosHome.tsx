@@ -58,61 +58,9 @@ export const EventosHome = () => {
       setEventosRecurrentes(eventosHome || []);
       setEventosFecha(eventosConFecha || []);
     } catch (error) {
-      // Fallback a mock data si hay error
-      const mockRecurrentes: EventoHome[] = [
-        { 
-          id: '1', 
-          titulo: 'Degustación & Vinilos', 
-          categoria: 'Club', 
-          disponible: true, 
-          orden: 1, 
-          activo: true,
-          link_tickets: 'https://example.com/tickets'
-        },
-        { 
-          id: '2', 
-          titulo: 'Techno Workshop: Ableton 12', 
-          categoria: 'Talleres', 
-          disponible: true, 
-          orden: 2, 
-          activo: true,
-          link_tickets: 'https://example.com/tickets'
-        },
-        { 
-          id: '3', 
-          titulo: 'Open Decks Session', 
-          categoria: 'Club', 
-          disponible: false, 
-          orden: 3, 
-          activo: true
-        },
-      ];
-
-      const mockConFecha: EventoFecha[] = [
-        { 
-          id: '4', 
-          fecha: '2026-03-22', 
-          titulo: 'Manso Live: Special Guest', 
-          categoria: 'Club', 
-          disponible: true, 
-          activo: true,
-          imagen_url: '/assets/manso1.webp',
-          link_tickets: 'https://example.com/tickets'
-        },
-        { 
-          id: '5', 
-          fecha: '2026-04-01', 
-          titulo: 'Feria de Diseño & Libros', 
-          categoria: 'Tienda', 
-          disponible: true, 
-          activo: true,
-          imagen_url: '/assets/manso2.webp',
-          link_tickets: 'https://example.com/tickets'
-        },
-      ];
-
-      setEventosRecurrentes(mockRecurrentes);
-      setEventosFecha(mockConFecha);
+      // Si hay error, mostrar arrays vacíos
+      setEventosRecurrentes([]);
+      setEventosFecha([]);
     }
     setLoading(false);
   };
@@ -157,7 +105,7 @@ export const EventosHome = () => {
             <div className="space-y-1">
               {eventosRecurrentes.length === 0 ? (
                 <div className="text-center text-gray-500 py-8">
-                  No hay eventos recurrentes
+                  No hay eventos disponibles
                 </div>
               ) : (
                 eventosRecurrentes.map((evento, index) => (
@@ -215,7 +163,7 @@ export const EventosHome = () => {
             <div className="space-y-6">
               {eventosFecha.length === 0 ? (
                 <div className="text-center text-gray-500 py-8">
-                  No hay próximos eventos
+                  No hay eventos disponibles
                 </div>
               ) : (
                 eventosFecha.map((evento) => (

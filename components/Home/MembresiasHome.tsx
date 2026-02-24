@@ -4,24 +4,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-
-interface MembresiaBeneficio {
-  texto: string;
-  incluido: boolean;
-  orden: number;
-}
-
-interface Membresia {
-  id: string;
-  nombre: string;
-  precio: number;
-  periodo: string;
-  descripcion?: string;
-  orden: number;
-  activo: boolean;
-  destacado?: boolean;
-  membresia_beneficios?: MembresiaBeneficio[];
-}
+import { Membresia, MembresiaBeneficio } from '@/lib/types/membresia';
 
 export const MembresiasHome = () => {
   const [membresias, setMembresias] = useState<Membresia[]>([]);

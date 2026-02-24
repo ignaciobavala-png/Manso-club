@@ -103,9 +103,7 @@ export function GlobalMusicPlayer() {
   if (!loaded) return null;
 
   // Ocultar reproductor en páginas de artista
-  console.log('GlobalMusicPlayer pathname:', pathname);
   if (pathname && pathname.startsWith('/artistas/')) {
-    console.log('Ocultando reproductor global en página de artista');
     return null;
   }
 
