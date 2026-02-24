@@ -1,9 +1,10 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { HomeMusicPlayer } from '@/components/Home/HomeMusicPlayer';
+import { Music } from 'lucide-react';
 
 interface Track {
   id: string;
@@ -22,6 +23,10 @@ export function GlobalMusicPlayer() {
   const [mainTracks, setMainTracks] = useState<Track[]>([]);
   const [artistOverride, setArtistOverride] = useState<ArtistOverride | null>(null);
   const [loaded, setLoaded] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Fetch main_music tracks on mount
   useEffect(() => {
@@ -39,6 +44,41 @@ export function GlobalMusicPlayer() {
     };
 
     fetchTracks();
+  }, []);
+
+  // Detectar dispositivo mobile
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768 || 'ontouchstart' in window);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Manejo de hover para mostrar/ocultar reproductor
+  const handleMouseEnter = () => {
+    if (hideTimeoutRef.current) {
+      clearTimeout(hideTimeoutRef.current);
+      hideTimeoutRef.current = null;
+    }
+    setIsVisible(true);
+  };
+
+  const handleMouseLeave = () => {
+    hideTimeoutRef.current = setTimeout(() => {
+      setIsVisible(false);
+    }, 2000);
+  };
+
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (hideTimeoutRef.current) {
+        clearTimeout(hideTimeoutRef.current);
+      }
+    };
   }, []);
 
   // Listen for artist page override events
@@ -86,14 +126,70 @@ export function GlobalMusicPlayer() {
 
   if (tracks.length === 0) return null;
 
+  if (isMobile) {
+    // Mobile: botón flotante
+    return (
+      <>
+        {/* Botón flotante */}
+        <button
+          onClick={() => setIsVisible(!isVisible)}
+          className={`
+            fixed bottom-4 left-4 w-12 h-12 bg-gray-800 
+            rounded-full flex items-center justify-center text-white shadow-lg z-40
+            transition-all duration-300 ease-in-out hover:scale-110
+            ${isPlaying ? 'animate-pulse' : ''}
+          `}
+        >
+          <Music size={20} />
+        </button>
+
+        {/* Reproductor completo en overlay */}
+        {isVisible && (
+          <div 
+            className="fixed inset-0 bg-black/50 z-40 flex items-end justify-center"
+            onClick={() => setIsVisible(false)}
+          >
+            <div 
+              className="bg-white w-full max-h-80 overflow-hidden"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <HomeMusicPlayer
+                key={artistOverride ? `artist-${artistOverride.soundcloud_url}` : 'main'}
+                tracks={tracks}
+                autoPlay={false}
+                isArtistMode={!!artistOverride}
+                onPlayStateChange={(playing: boolean) => setIsPlaying(playing)}
+              />
+            </div>
+          </div>
+        )}
+      </>
+    );
+  }
+
+  // Desktop: comportamiento tipo taskbar
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40" data-player="global">
-      <HomeMusicPlayer
-        key={artistOverride ? `artist-${artistOverride.soundcloud_url}` : 'main'}
-        tracks={tracks}
-        autoPlay={false}
-        isArtistMode={!!artistOverride}
-      />
+    <div 
+      className="fixed bottom-0 left-0 right-0 z-40"
+      data-player="global"
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      {/* Contenedor del reproductor con animación */}
+      <div 
+        className={`
+          transition-transform duration-300 ease-in-out
+          ${isVisible ? 'translate-y-0' : 'translate-y-full'}
+        `}
+      >
+        <HomeMusicPlayer
+          key={artistOverride ? `artist-${artistOverride.soundcloud_url}` : 'main'}
+          tracks={tracks}
+          autoPlay={false}
+          isArtistMode={!!artistOverride}
+          onPlayStateChange={(playing: boolean) => setIsPlaying(playing)}
+        />
+      </div>
     </div>
   );
 }

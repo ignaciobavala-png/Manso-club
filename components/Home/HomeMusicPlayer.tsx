@@ -14,12 +14,13 @@ interface HomeMusicPlayerProps {
   tracks: Track[];
   autoPlay?: boolean;
   isArtistMode?: boolean;
+  onPlayStateChange?: (playing: boolean) => void;
 }
 
 // Re-use the SC global declared in SoundCloudPlayer.tsx
 // Access Events via (window as any).SC.Widget.Events
 
-export function HomeMusicPlayer({ tracks, autoPlay = false, isArtistMode = false }: HomeMusicPlayerProps) {
+export function HomeMusicPlayer({ tracks, autoPlay = false, isArtistMode = false, onPlayStateChange }: HomeMusicPlayerProps) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -65,8 +66,14 @@ export function HomeMusicPlayer({ tracks, autoPlay = false, isArtistMode = false
       }
     });
 
-    w.bind(Events.PLAY, () => setIsPlaying(true));
-    w.bind(Events.PAUSE, () => setIsPlaying(false));
+    w.bind(Events.PLAY, () => {
+      setIsPlaying(true);
+      onPlayStateChange?.(true);
+    });
+    w.bind(Events.PAUSE, () => {
+      setIsPlaying(false);
+      onPlayStateChange?.(false);
+    });
     w.bind(Events.FINISH, () => {
       // Auto-advance to next track
       if (currentIndex < tracks.length - 1) {
