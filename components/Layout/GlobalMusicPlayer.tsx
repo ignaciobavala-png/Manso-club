@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { HomeMusicPlayer } from '@/components/Home/HomeMusicPlayer';
 
@@ -17,6 +18,7 @@ interface ArtistOverride {
 }
 
 export function GlobalMusicPlayer() {
+  const pathname = usePathname();
   const [mainTracks, setMainTracks] = useState<Track[]>([]);
   const [artistOverride, setArtistOverride] = useState<ArtistOverride | null>(null);
   const [loaded, setLoaded] = useState(false);
@@ -60,6 +62,13 @@ export function GlobalMusicPlayer() {
 
   if (!loaded) return null;
 
+  // Ocultar reproductor en páginas de artista
+  console.log('GlobalMusicPlayer pathname:', pathname);
+  if (pathname && pathname.startsWith('/artistas/')) {
+    console.log('Ocultando reproductor global en página de artista');
+    return null;
+  }
+
   // Build the effective track list
   let tracks: Track[];
 
@@ -82,7 +91,7 @@ export function GlobalMusicPlayer() {
       <HomeMusicPlayer
         key={artistOverride ? `artist-${artistOverride.soundcloud_url}` : 'main'}
         tracks={tracks}
-        autoPlay
+        autoPlay={false}
         isArtistMode={!!artistOverride}
       />
     </div>

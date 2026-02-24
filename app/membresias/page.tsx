@@ -16,13 +16,20 @@ export default function MembresiasPage() {
         .from('membresias')
         .select(`
           *,
-          membresia_beneficios (*)
+          membresia_beneficios (
+            id,
+            texto,
+            incluido
+          )
         `)
         .eq('activo', true)
         .order('orden', { ascending: true });
 
-      if (!error && data) {
-        setMembresias(data);
+      if (error) {
+        console.error('Error fetching membresías:', error);
+        setMembresias([]);
+      } else {
+        setMembresias(data || []);
       }
       setLoading(false);
     };
@@ -86,8 +93,8 @@ export default function MembresiasPage() {
             )}
             
             <div className="space-y-4 mb-10 text-[10px] font-bold uppercase tracking-widest text-zinc-400 text-center">
-              {membresia.membresia_beneficios?.map((beneficio, index) => (
-                <p key={index} className="flex items-center justify-center gap-2">
+              {membresia.membresia_beneficios?.map((beneficio) => (
+                <p key={beneficio.id} className="flex items-center justify-center gap-2">
                   {beneficio.incluido ? (
                     <span className="text-green-400">✓</span>
                   ) : (

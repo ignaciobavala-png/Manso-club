@@ -22,6 +22,13 @@ interface Artista {
   };
 }
 
+interface ArtistTrack {
+  id: string;
+  titulo: string;
+  soundcloud_url: string;
+  orden: number;
+}
+
 interface Props {
   params: Promise<{ slug: string }>;
 }
@@ -36,6 +43,18 @@ async function getArtista(slug: string): Promise<Artista | null> {
     .single();
 
   return data;
+}
+
+async function getArtistTracks(artistaId: string): Promise<ArtistTrack[]> {
+  const supabase = createSupabaseAnon();
+  const { data } = await supabase
+    .from('artistas_tracks')
+    .select('id, titulo, soundcloud_url, orden')
+    .eq('artista_id', artistaId)
+    .eq('activo', true)
+    .order('orden', { ascending: true });
+
+  return data || [];
 }
 
 export async function generateStaticParams() {
@@ -76,6 +95,9 @@ export default async function ArtistaPage({ params }: Props) {
   const artista = await getArtista(slug);
 
   if (!artista) notFound();
+
+  // Obtener tracks del artista
+  const tracks = await getArtistTracks(artista.id);
 
   const links = artista.social_links;
   const scUrl = artista.soundcloud_url || links?.soundcloud;
@@ -170,6 +192,7 @@ export default async function ArtistaPage({ params }: Props) {
                     url={scUrl}
                     artistName={artista.nombre}
                     imageUrl={artista.imagen_url}
+                    tracks={tracks}
                   />
                 </div>
               </div>

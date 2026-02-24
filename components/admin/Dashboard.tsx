@@ -14,11 +14,13 @@ import { FormMainMusic } from './FormMainMusic';
 import { MainMusicList } from './MainMusicList';
 import { FormMembresia } from './FormMembresia';
 import { MembresiasList } from './MembresiasList';
+import { FormEvento } from './FormEvento';
+import { EventosList } from './EventosList';
 import { ConfiguracionPanel } from './ConfiguracionPanel';
-import { LogOut, ShoppingBag, User, Home, Calendar, Music, Crown, Settings } from 'lucide-react';
+import { LogOut, ShoppingBag, User, Home, Calendar, Music, Crown, Settings, Star } from 'lucide-react';
 
 export function Dashboard() {
-  const [tab, setTab] = useState<'home' | 'tienda' | 'artistas' | 'agenda' | 'musica' | 'membresias' | 'config'>('home');
+  const [tab, setTab] = useState<'home' | 'tienda' | 'artistas' | 'agenda' | 'eventos' | 'musica' | 'membresias' | 'config'>('home');
   const [userEmail, setUserEmail] = useState<string | null>(null);
 
   useEffect(() => {
@@ -112,6 +114,15 @@ export function Dashboard() {
             <span className="hidden sm:inline">Agenda</span>
           </button>
           <button 
+            onClick={() => setTab('eventos')} 
+            className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
+              tab === 'eventos' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
+            }`}
+          >
+            <Star size={12} className="sm:size-14" />
+            <span className="hidden sm:inline">Eventos</span>
+          </button>
+          <button 
             onClick={() => setTab('musica')} 
             className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
               tab === 'musica' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
@@ -148,10 +159,10 @@ export function Dashboard() {
             {/* Columna Izquierda: Formularios de Creación */}
             <div className="xl:col-span-5">
               <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
-                Nuevo {tab === 'home' ? 'Evento del Home' : tab === 'tienda' ? 'Producto' : tab === 'artistas' ? 'Artista' : tab === 'agenda' ? 'Evento de Agenda' : tab === 'musica' ? 'Track para el Home' : 'Membresía'}
+                Nuevo {tab === 'home' ? 'Evento del Home' : tab === 'tienda' ? 'Producto' : tab === 'artistas' ? 'Artista' : tab === 'agenda' ? 'Evento de Agenda' : tab === 'eventos' ? 'Evento' : tab === 'musica' ? 'Track para el Home' : 'Membresía'}
               </h2>
               <div className="sticky top-4 sm:top-8">
-                {tab === 'home' ? <FormEventoHome /> : tab === 'tienda' ? <FormProducto /> : tab === 'artistas' ? <FormArtista /> : tab === 'agenda' ? <FormAgenda /> : tab === 'musica' ? <FormMainMusic /> : <FormMembresia />}
+                {tab === 'home' ? <FormEventoHome /> : tab === 'tienda' ? <FormProducto /> : tab === 'artistas' ? <FormArtista /> : tab === 'agenda' ? <FormAgenda /> : tab === 'eventos' ? <FormEvento /> : tab === 'musica' ? <FormMainMusic /> : <FormMembresia />}
               </div>
             </div>
 
@@ -168,6 +179,8 @@ export function Dashboard() {
                 <ArtistasList />
               ) : tab === 'agenda' ? (
                 <AgendaList />
+              ) : tab === 'eventos' ? (
+                <EventosList />
               ) : tab === 'musica' ? (
                 <MainMusicList />
               ) : (

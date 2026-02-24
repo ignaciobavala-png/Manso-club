@@ -4,6 +4,8 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { ImageUploader } from './ImageUploader';
 import { SoundCloudPlayer } from '../ui/SoundCloudPlayer';
+import { ArtistasTracksList } from './ArtistasTracksList';
+import { FormArtistaTrack } from './FormArtistaTrack';
 import { User, Music, Instagram, Globe, Eye } from 'lucide-react';
 
 interface ArtistaEdit {
@@ -33,6 +35,9 @@ export function FormArtista() {
   const [showPreview, setShowPreview] = useState(false);
   const [soundcloudError, setSoundcloudError] = useState('');
   const [imageKey, setImageKey] = useState(0);
+  const [tracksRefreshTrigger, setTracksRefreshTrigger] = useState(0);
+  const [showTrackForm, setShowTrackForm] = useState(false);
+  const [editingTrack, setEditingTrack] = useState<any>(null);
   const [formData, setFormData] = useState({
     nombre: '',
     bio: '',
@@ -72,6 +77,7 @@ export function FormArtista() {
     setFormData({ nombre: '', bio: '', estilo: '', imagen_url: '', instagram: '', spotify: '', soundcloud: '' });
     setImageKey(prev => prev + 1);
     setSoundcloudError('');
+    setTracksRefreshTrigger(prev => prev + 1);
   };
 
   const validateSoundCloudUrl = (url: string) => {
@@ -89,6 +95,25 @@ export function FormArtista() {
     } else {
       setSoundcloudError('');
     }
+  };
+
+  const handleNewTrack = () => {
+    setEditingTrack(null);
+    setShowTrackForm(true);
+  };
+
+  const handleEditTrack = (track: any) => {
+    setEditingTrack(track);
+    setShowTrackForm(true);
+  };
+
+  const handleTrackFormClose = () => {
+    setShowTrackForm(false);
+    setEditingTrack(null);
+  };
+
+  const handleTrackSaved = () => {
+    setTracksRefreshTrigger(prev => prev + 1);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -148,18 +173,19 @@ export function FormArtista() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto bg-manso-cream/5 p-8 rounded-[2.5rem] border border-manso-cream/10 shadow-xl">
-      {/* Header dinamico */}
-      <div className="mb-6">
-        <h2 className="text-2xl font-black uppercase tracking-tighter text-manso-cream mb-2">
-          {editingId ? 'Editar Artista' : 'Nuevo Artista'}
-        </h2>
-        {editingId && (
-          <p className="text-sm text-manso-cream/60">
-            Modificando el perfil de {formData.nombre}
-          </p>
-        )}
-      </div>
+    <>
+      <div className="max-w-2xl mx-auto bg-manso-cream/5 p-8 rounded-[2.5rem] border border-manso-cream/10 shadow-xl">
+        {/* Header dinamico */}
+        <div className="mb-6">
+          <h2 className="text-2xl font-black uppercase tracking-tighter text-manso-cream mb-2">
+            {editingId ? 'Editar Artista' : 'Nuevo Artista'}
+          </h2>
+          {editingId && (
+            <p className="text-sm text-manso-cream/60">
+              Modificando el perfil de {formData.nombre}
+            </p>
+          )}
+        </div>
 
       <form onSubmit={handleSubmit} className="space-y-6">
         
@@ -321,5 +347,31 @@ export function FormArtista() {
         </div>
       )}
     </div>
+
+    {/* Gestión de tracks - solo visible cuando se está editando */}
+    {editingId && (
+      <div className="mt-8">
+        <ArtistasTracksList
+          artistaId={editingId}
+          artistaNombre={formData.nombre}
+          onEditTrack={handleEditTrack}
+          onNewTrack={handleNewTrack}
+          refreshTrigger={tracksRefreshTrigger}
+        />
+      </div>
+    )}
+
+    {/* Formulario de tracks */}
+    {showTrackForm && (
+      <FormArtistaTrack
+        artistaId={editingId!}
+        artistaNombre={formData.nombre}
+        track={editingTrack}
+        isOpen={showTrackForm}
+        onClose={handleTrackFormClose}
+        onSave={handleTrackSaved}
+      />
+    )}
+    </>
   );
 }

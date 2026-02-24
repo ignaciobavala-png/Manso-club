@@ -1,7 +1,9 @@
 import { Hero } from "@/components/Home/Hero";
 import { Gallery } from "@/components/Home/Gallery";
-import { EventList } from "@/components/Home/EventList";
-import { SectionsGrid } from "@/components/Home/SectionsGrid";
+import { EventosHome } from "@/components/Home/EventosHome";
+import { MembresiasHome } from "@/components/Home/MembresiasHome";
+import { PorQueManso } from "@/components/Home/PorQueManso";
+import { TiendaHome } from "@/components/Home/TiendaHome";
 
 export default function Home() {
   return (
@@ -18,18 +20,24 @@ export default function Home() {
         <Gallery />
       </section>
 
-      {/* Slide 3: Cronograma + Carrito */}
-      <section 
-        id="agenda"
-        className="min-h-screen flex flex-col md:flex-row"
-        style={{ backgroundColor: '#FFFFFF' }}
-      >
-        <div className="w-full md:w-1/2">
-          <EventList />
-        </div>
-        <div className="w-full md:w-1/2">
-          <SectionsGrid />
-        </div>
+      {/* Slide 3: Agenda/Eventos */}
+      <section id="agenda">
+        <EventosHome />
+      </section>
+
+      {/* Slide 4: Membresías */}
+      <section id="membresias">
+        <MembresiasHome />
+      </section>
+
+      {/* Slide 5: ¿Por qué Manso? */}
+      <section id="por-que-manso">
+        <PorQueManso />
+      </section>
+
+      {/* Slide 6: Seleccionados de la Tienda */}
+      <section id="tienda">
+        <TiendaHome />
       </section>
 
     </div>
