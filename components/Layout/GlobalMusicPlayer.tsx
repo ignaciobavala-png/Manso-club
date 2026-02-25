@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { HomeMusicPlayer } from '@/components/Home/HomeMusicPlayer';
-import { Music } from 'lucide-react';
+import { Play, Pause } from 'lucide-react';
 
 interface Track {
   id: string;
@@ -26,6 +26,9 @@ export function GlobalMusicPlayer() {
   const [isVisible, setIsVisible] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+  const [sdkReady, setSdkReady] = useState(false);
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+  const widgetRef = useRef<any>(null);
   const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // Fetch main_music tracks on mount
@@ -57,6 +60,59 @@ export function GlobalMusicPlayer() {
     return () => window.removeEventListener('resize', checkMobile);
   }, []);
 
+  // Load SoundCloud SDK
+  useEffect(() => {
+    if (typeof window !== 'undefined' && window.SC) {
+      setSdkReady(true);
+      return;
+    }
+
+    const script = document.createElement('script');
+    script.src = 'https://w.soundcloud.com/player/api.js';
+    script.async = true;
+    script.onload = () => setSdkReady(true);
+    document.body.appendChild(script);
+  }, []);
+
+  // Initialize widget when SDK is ready
+  useEffect(() => {
+    if (!sdkReady || !iframeRef.current || !window.SC) return;
+
+    const w = window.SC.Widget(iframeRef.current);
+    widgetRef.current = w;
+    const Events = (window as any).SC.Widget.Events;
+
+    w.bind(Events.READY, () => {
+      w.setVolume(50);
+    });
+
+    w.bind(Events.PLAY, () => {
+      setIsPlaying(true);
+    });
+    w.bind(Events.PAUSE, () => {
+      setIsPlaying(false);
+    });
+  }, [sdkReady]);
+
+  // Load track when track changes
+  useEffect(() => {
+    if (!widgetRef.current) return;
+
+    const currentTrack = artistOverride ? {
+      id: 'artist-override',
+      titulo: artistOverride.artistName,
+      artista: artistOverride.artistName,
+      soundcloud_url: artistOverride.soundcloud_url,
+    } : mainTracks[0];
+
+    if (!currentTrack) return;
+
+    widgetRef.current.load(currentTrack.soundcloud_url, {
+      auto_play: false,
+      show_artwork: false,
+    });
+  }, [artistOverride, mainTracks]);
+
   // Manejo de hover para mostrar/ocultar reproductor
   const handleMouseEnter = () => {
     if (hideTimeoutRef.current) {
@@ -80,6 +136,19 @@ export function GlobalMusicPlayer() {
       }
     };
   }, []);
+
+  const getEmbedUrl = (scUrl: string) => {
+    const params = new URLSearchParams({
+      url: scUrl,
+      auto_play: 'false',
+      hide_related: 'true',
+      show_comments: 'false',
+      show_user: 'false',
+      show_reposts: 'false',
+      visual: 'false',
+    });
+    return `https://w.soundcloud.com/player/?${params.toString()}`;
+  };
 
   // Listen for artist page override events
   useEffect(() => {
@@ -125,42 +194,43 @@ export function GlobalMusicPlayer() {
   if (tracks.length === 0) return null;
 
   if (isMobile) {
-    // Mobile: botón flotante
+    // Mobile: botón lateral simple para play/pause
     return (
       <>
-        {/* Botón flotante */}
+        {/* Botón lateral derecho simple */}
         <button
-          onClick={() => setIsVisible(!isVisible)}
+          onClick={() => {
+            if (!widgetRef.current) return;
+            if (isPlaying) {
+              widgetRef.current.pause();
+              setIsPlaying(false);
+            } else {
+              widgetRef.current.play();
+              setIsPlaying(true);
+            }
+          }}
           className={`
-            fixed bottom-4 left-4 w-12 h-12 bg-gray-800 
-            rounded-full flex items-center justify-center text-white shadow-lg z-40
-            transition-all duration-300 ease-in-out hover:scale-110
+            md:hidden fixed right-0 top-1/2 -translate-y-1/2 w-4 h-16 
+            bg-gray-800 rounded-l-lg flex items-center justify-center text-white 
+            shadow-lg z-40 transition-all duration-300 hover:w-5
             ${isPlaying ? 'animate-pulse' : ''}
           `}
+          style={{ width: '16px', height: '64px' }}
         >
-          <Music size={20} />
+          {isPlaying ? (
+            <Pause size={14} className="transform rotate-90" />
+          ) : (
+            <Play size={14} className="transform rotate-90 ml-0.5" />
+          )}
         </button>
 
-        {/* Reproductor completo en overlay */}
-        {isVisible && (
-          <div 
-            className="fixed inset-0 bg-black/50 z-40 flex items-end justify-center"
-            onClick={() => setIsVisible(false)}
-          >
-            <div 
-              className="bg-white w-full max-h-80 overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <HomeMusicPlayer
-                key={artistOverride ? `artist-${artistOverride.soundcloud_url}` : 'main'}
-                tracks={tracks}
-                autoPlay={false}
-                isArtistMode={!!artistOverride}
-                onPlayStateChange={(playing: boolean) => setIsPlaying(playing)}
-              />
-            </div>
-          </div>
-        )}
+        {/* Hidden iframe for SoundCloud */}
+        <iframe
+          ref={iframeRef}
+          src={getEmbedUrl(artistOverride ? artistOverride.soundcloud_url : mainTracks[0]?.soundcloud_url || '')}
+          className="hidden"
+          allow="autoplay"
+        />
       </>
     );
   }
@@ -168,7 +238,7 @@ export function GlobalMusicPlayer() {
   // Desktop: comportamiento tipo taskbar
   return (
     <div 
-      className="fixed bottom-0 left-0 right-0 z-40"
+      className="hidden md:block fixed bottom-0 left-0 right-0 z-40"
       data-player="global"
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}

@@ -48,6 +48,50 @@ export default function AboutPage() {
           />
         </div>
       </div>
+
+      {/* Team Section */}
+      <div className="mt-16 md:mt-24">
+        <h2 className="text-3xl md:text-4xl font-black uppercase italic tracking-tighter leading-none text-manso-black mb-12">
+          Team<span className="text-zinc-200">_</span>
+        </h2>
+        
+        <div className="flex flex-wrap justify-center gap-8 md:gap-12 lg:gap-16">
+          {/* Team Member 1 */}
+          <div className="flex flex-col items-center">
+            <div className="w-24 h-24 md:w-32 md:h-32 bg-zinc-800 rounded-full mb-4"></div>
+            <p className="text-manso-black font-medium text-center">Nombre</p>
+            <p className="text-zinc-600 text-sm text-center">Rol</p>
+          </div>
+          
+          {/* Team Member 2 */}
+          <div className="flex flex-col items-center">
+            <div className="w-24 h-24 md:w-32 md:h-32 bg-zinc-800 rounded-full mb-4"></div>
+            <p className="text-manso-black font-medium text-center">Nombre</p>
+            <p className="text-zinc-600 text-sm text-center">Rol</p>
+          </div>
+          
+          {/* Team Member 3 */}
+          <div className="flex flex-col items-center">
+            <div className="w-24 h-24 md:w-32 md:h-32 bg-zinc-800 rounded-full mb-4"></div>
+            <p className="text-manso-black font-medium text-center">Nombre</p>
+            <p className="text-zinc-600 text-sm text-center">Rol</p>
+          </div>
+          
+          {/* Team Member 4 */}
+          <div className="flex flex-col items-center">
+            <div className="w-24 h-24 md:w-32 md:h-32 bg-zinc-800 rounded-full mb-4"></div>
+            <p className="text-manso-black font-medium text-center">Nombre</p>
+            <p className="text-zinc-600 text-sm text-center">Rol</p>
+          </div>
+          
+          {/* Team Member 5 */}
+          <div className="flex flex-col items-center">
+            <div className="w-24 h-24 md:w-32 md:h-32 bg-zinc-800 rounded-full mb-4"></div>
+            <p className="text-manso-black font-medium text-center">Nombre</p>
+            <p className="text-zinc-600 text-sm text-center">Rol</p>
+          </div>
+        </div>
+      </div>
     </AdaptiveSectionLayout>
   );
 }
