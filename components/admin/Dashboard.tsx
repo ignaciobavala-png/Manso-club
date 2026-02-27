@@ -15,11 +15,13 @@ import { MainMusicList } from './MainMusicList';
 import { FormMembresia } from './FormMembresia';
 import { MembresiasList } from './MembresiasList';
 import { FormEvento } from './FormEvento';
+import { FormTeam } from './FormTeam';
 import { EventosList } from './EventosList';
-import { LogOut, ShoppingBag, User, Home, Calendar, Music, Crown, Settings, Star } from 'lucide-react';
+import { TeamList } from './TeamList';
+import { LogOut, ShoppingBag, User, Home, Calendar, Music, Crown, Settings, Star, Users } from 'lucide-react';
 
 export function Dashboard() {
-  const [tab, setTab] = useState<'home' | 'tienda' | 'artistas' | 'agenda' | 'eventos' | 'musica' | 'membresias'>('home');
+  const [tab, setTab] = useState<'home' | 'tienda' | 'artistas' | 'agenda' | 'eventos' | 'musica' | 'membresias' | 'team'>('home');
   const [userEmail, setUserEmail] = useState<string | null>(null);
 
   useEffect(() => {
@@ -139,6 +141,15 @@ export function Dashboard() {
             <Crown size={12} className="sm:size-14" />
             <span className="hidden sm:inline">Membresías</span>
           </button>
+          <button 
+            onClick={() => setTab('team')} 
+            className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
+              tab === 'team' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
+            }`}
+          >
+            <Users size={12} className="sm:size-14" />
+            <span className="hidden sm:inline">Team</span>
+          </button>
         </div>
 
         {/* Contenido Principal */}
@@ -146,10 +157,10 @@ export function Dashboard() {
             {/* Columna Izquierda: Formularios de Creación */}
             <div className="xl:col-span-5">
               <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
-                Nuevo {tab === 'home' ? 'Evento del Home' : tab === 'tienda' ? 'Producto' : tab === 'artistas' ? 'Artista' : tab === 'agenda' ? 'Evento de Agenda' : tab === 'eventos' ? 'Evento' : tab === 'musica' ? 'Track para el Home' : 'Membresía'}
+                Nuevo {tab === 'home' ? 'Evento del Home' : tab === 'tienda' ? 'Producto' : tab === 'artistas' ? 'Artista' : tab === 'agenda' ? 'Evento de Agenda' : tab === 'eventos' ? 'Evento' : tab === 'musica' ? 'Track para el Home' : tab === 'membresias' ? 'Membresía' : 'Miembro del Team'}
               </h2>
               <div className="sticky top-4 sm:top-8">
-                {tab === 'home' ? <FormEventoHome /> : tab === 'tienda' ? <FormProducto /> : tab === 'artistas' ? <FormArtista /> : tab === 'agenda' ? <FormAgenda /> : tab === 'eventos' ? <FormEvento /> : tab === 'musica' ? <FormMainMusic /> : <FormMembresia />}
+                {tab === 'home' ? <FormEventoHome /> : tab === 'tienda' ? <FormProducto /> : tab === 'artistas' ? <FormArtista /> : tab === 'agenda' ? <FormAgenda /> : tab === 'eventos' ? <FormEvento /> : tab === 'musica' ? <FormMainMusic /> : tab === 'membresias' ? <FormMembresia /> : <FormTeam />}
               </div>
             </div>
 
@@ -170,8 +181,10 @@ export function Dashboard() {
                 <EventosList />
               ) : tab === 'musica' ? (
                 <MainMusicList />
-              ) : (
+              ) : tab === 'membresias' ? (
                 <MembresiasList />
+              ) : (
+                <TeamList />
               )}
             </div>
         </div>

@@ -1,7 +1,10 @@
 import Image from 'next/image';
 import { AdaptiveSectionLayout } from '@/components/ui/AdaptiveSectionLayout';
+import { getTeamMembers } from '@/lib/team';
 
-export default function AboutPage() {
+export default async function AboutPage() {
+  const teamMembers = await getTeamMembers();
+
   return (
     <AdaptiveSectionLayout title="About Us" subtitle="Quiénes somos_">
       {/* Text + Casa */}
@@ -56,40 +59,37 @@ export default function AboutPage() {
         </h2>
         
         <div className="flex flex-wrap justify-center gap-8 md:gap-12 lg:gap-16">
-          {/* Team Member 1 */}
-          <div className="flex flex-col items-center">
-            <div className="w-24 h-24 md:w-32 md:h-32 bg-zinc-800 rounded-full mb-4"></div>
-            <p className="text-manso-black font-medium text-center">Nombre</p>
-            <p className="text-zinc-600 text-sm text-center">Rol</p>
-          </div>
-          
-          {/* Team Member 2 */}
-          <div className="flex flex-col items-center">
-            <div className="w-24 h-24 md:w-32 md:h-32 bg-zinc-800 rounded-full mb-4"></div>
-            <p className="text-manso-black font-medium text-center">Nombre</p>
-            <p className="text-zinc-600 text-sm text-center">Rol</p>
-          </div>
-          
-          {/* Team Member 3 */}
-          <div className="flex flex-col items-center">
-            <div className="w-24 h-24 md:w-32 md:h-32 bg-zinc-800 rounded-full mb-4"></div>
-            <p className="text-manso-black font-medium text-center">Nombre</p>
-            <p className="text-zinc-600 text-sm text-center">Rol</p>
-          </div>
-          
-          {/* Team Member 4 */}
-          <div className="flex flex-col items-center">
-            <div className="w-24 h-24 md:w-32 md:h-32 bg-zinc-800 rounded-full mb-4"></div>
-            <p className="text-manso-black font-medium text-center">Nombre</p>
-            <p className="text-zinc-600 text-sm text-center">Rol</p>
-          </div>
-          
-          {/* Team Member 5 */}
-          <div className="flex flex-col items-center">
-            <div className="w-24 h-24 md:w-32 md:h-32 bg-zinc-800 rounded-full mb-4"></div>
-            <p className="text-manso-black font-medium text-center">Nombre</p>
-            <p className="text-zinc-600 text-sm text-center">Rol</p>
-          </div>
+          {teamMembers.map((member) => (
+            <div key={member.id} className="flex flex-col items-center">
+              {member.photo_url ? (
+                <div className="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden mb-4">
+                  <Image
+                    src={member.photo_url}
+                    alt={member.name}
+                    width={128}
+                    height={128}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="w-24 h-24 md:w-32 md:h-32 bg-zinc-800 rounded-full mb-4"></div>
+              )}
+              <p className="text-manso-black font-medium text-center">{member.name}</p>
+              <p className="text-zinc-600 text-sm text-center">{member.role}</p>
+            </div>
+          ))}
+          {/* Si no hay miembros, mostrar placeholders */}
+          {teamMembers.length === 0 && (
+            <>
+              {[1, 2, 3, 4, 5].map((i) => (
+                <div key={i} className="flex flex-col items-center">
+                  <div className="w-24 h-24 md:w-32 md:h-32 bg-zinc-800 rounded-full mb-4"></div>
+                  <p className="text-manso-black font-medium text-center">Nombre</p>
+                  <p className="text-zinc-600 text-sm text-center">Rol</p>
+                </div>
+              ))}
+            </>
+          )}
         </div>
       </div>
     </AdaptiveSectionLayout>
