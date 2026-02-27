@@ -62,7 +62,7 @@ export default async function AboutPage() {
           {teamMembers.map((member) => (
             <div key={member.id} className="flex flex-col items-center">
               {member.photo_url ? (
-                <div className="w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden mb-4">
+                <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden mb-4">
                   <Image
                     src={member.photo_url}
                     alt={member.name}
@@ -72,7 +72,7 @@ export default async function AboutPage() {
                   />
                 </div>
               ) : (
-                <div className="w-24 h-24 md:w-32 md:h-32 bg-zinc-800 rounded-full mb-4"></div>
+                <div className="w-32 h-32 md:w-40 md:h-40 bg-zinc-800 rounded-full mb-4"></div>
               )}
               <p className="text-manso-black font-medium text-center">{member.name}</p>
               <p className="text-zinc-600 text-sm text-center">{member.role}</p>
@@ -81,9 +81,9 @@ export default async function AboutPage() {
           {/* Si no hay miembros, mostrar placeholders */}
           {teamMembers.length === 0 && (
             <>
-              {[1, 2, 3, 4, 5].map((i) => (
+              {[1, 2, 3, 4].map((i) => (
                 <div key={i} className="flex flex-col items-center">
-                  <div className="w-24 h-24 md:w-32 md:h-32 bg-zinc-800 rounded-full mb-4"></div>
+                  <div className="w-32 h-32 md:w-40 md:h-40 bg-zinc-800 rounded-full mb-4"></div>
                   <p className="text-manso-black font-medium text-center">Nombre</p>
                   <p className="text-zinc-600 text-sm text-center">Rol</p>
                 </div>

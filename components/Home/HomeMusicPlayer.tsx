@@ -37,44 +37,65 @@ export function HomeMusicPlayer({ tracks, autoPlay = false, isArtistMode = false
 
   // Load SoundCloud SDK
   useEffect(() => {
+    console.log('HomeMusicPlayer: Loading SoundCloud SDK...');
     if (typeof window !== 'undefined' && window.SC) {
+      console.log('HomeMusicPlayer: SoundCloud SDK already loaded');
       setSdkReady(true);
       return;
     }
 
+    console.log('HomeMusicPlayer: Loading SoundCloud SDK script...');
     const script = document.createElement('script');
     script.src = 'https://w.soundcloud.com/player/api.js';
     script.async = true;
-    script.onload = () => setSdkReady(true);
+    script.onload = () => {
+      console.log('HomeMusicPlayer: SoundCloud SDK loaded successfully');
+      setSdkReady(true);
+    };
+    script.onerror = () => {
+      console.error('HomeMusicPlayer: Failed to load SoundCloud SDK');
+    };
     document.body.appendChild(script);
   }, []);
 
   // Initialize widget when SDK is ready
   useEffect(() => {
-    if (!sdkReady || !iframeRef.current || !window.SC) return;
+    if (!sdkReady || !iframeRef.current || !window.SC) {
+      console.log('HomeMusicPlayer: Widget init conditions not met', { sdkReady, hasIframe: !!iframeRef.current, hasSC: !!window.SC });
+      return;
+    }
 
+    console.log('HomeMusicPlayer: Initializing widget...');
     const w = window.SC.Widget(iframeRef.current);
     widgetRef.current = w;
     const Events = (window as any).SC.Widget.Events;
 
     w.bind(Events.READY, () => {
+      console.log('HomeMusicPlayer: Widget ready');
       setIsLoading(false);
       w.setVolume(volume);
       w.getDuration((dur: number) => setDuration(dur));
       if (autoPlay) {
+        console.log('HomeMusicPlayer: Auto-playing track');
         w.play();
       }
     });
 
     w.bind(Events.PLAY, () => {
+      console.log('HomeMusicPlayer: Track started playing');
       setIsPlaying(true);
       onPlayStateChange?.(true);
     });
     w.bind(Events.PAUSE, () => {
+      console.log('HomeMusicPlayer: Track paused');
       setIsPlaying(false);
       onPlayStateChange?.(false);
     });
+    w.bind(Events.ERROR, (error: any) => {
+      console.error('HomeMusicPlayer: Widget error', error);
+    });
     w.bind(Events.FINISH, () => {
+      console.log('HomeMusicPlayer: Track finished');
       // Auto-advance to next track
       if (currentIndex < tracks.length - 1) {
         setCurrentIndex((prev) => prev + 1);
@@ -89,7 +110,12 @@ export function HomeMusicPlayer({ tracks, autoPlay = false, isArtistMode = false
 
   // Load new track when currentIndex changes (after initial load)
   useEffect(() => {
-    if (!widgetRef.current || !currentTrack) return;
+    if (!widgetRef.current || !currentTrack) {
+      console.log('HomeMusicPlayer: Skip track load - no widget or track', { hasWidget: !!widgetRef.current, hasTrack: !!currentTrack });
+      return;
+    }
+    
+    console.log('HomeMusicPlayer: Loading track:', currentTrack.titulo, currentTrack.soundcloud_url);
     setIsLoading(true);
     setCurrentTime(0);
     setDuration(0);
@@ -98,6 +124,7 @@ export function HomeMusicPlayer({ tracks, autoPlay = false, isArtistMode = false
       auto_play: isPlaying,
       show_artwork: false,
       callback: () => {
+        console.log('HomeMusicPlayer: Track loaded callback');
         setIsLoading(false);
         widgetRef.current?.getDuration((dur: number) => setDuration(dur));
         widgetRef.current?.setVolume(isMuted ? 0 : volume);
@@ -106,10 +133,16 @@ export function HomeMusicPlayer({ tracks, autoPlay = false, isArtistMode = false
   }, [currentIndex]);
 
   const handlePlayPause = () => {
-    if (!widgetRef.current) return;
+    console.log('HomeMusicPlayer: Play/Pause clicked', { isPlaying, hasWidget: !!widgetRef.current });
+    if (!widgetRef.current) {
+      console.error('HomeMusicPlayer: No widget available for play/pause');
+      return;
+    }
     if (isPlaying) {
+      console.log('HomeMusicPlayer: Pausing track');
       widgetRef.current.pause();
     } else {
+      console.log('HomeMusicPlayer: Playing track');
       widgetRef.current.play();
     }
   };
@@ -163,7 +196,9 @@ export function HomeMusicPlayer({ tracks, autoPlay = false, isArtistMode = false
       show_reposts: 'false',
       visual: 'false',
     });
-    return `https://w.soundcloud.com/player/?${params.toString()}`;
+    const embedUrl = `https://w.soundcloud.com/player/?${params.toString()}`;
+    console.log('HomeMusicPlayer: Generated embed URL:', embedUrl);
+    return embedUrl;
   };
 
   if (!tracks || tracks.length === 0) return null;

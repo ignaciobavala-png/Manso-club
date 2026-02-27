@@ -5,7 +5,7 @@ import "./globals.css";
 import { Navbar } from "@/components/Layout/Navbar";
 import { Footer } from "@/components/Layout/Footer";
 import { GlobalMusicPlayer } from "@/components/Layout/GlobalMusicPlayer";
-import { WhatsAppButton } from "@/components/ui/WhatsAppButton"; // Importación añadida
+import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 
 export const metadata: Metadata = {
   title: "Manso Club | Espacio Creativo",

@@ -27,6 +27,7 @@ export function GlobalMusicPlayer() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [sdkReady, setSdkReady] = useState(false);
+  const [widgetReady, setWidgetReady] = useState(false);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const widgetRef = useRef<any>(null);
   const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
@@ -34,13 +35,22 @@ export function GlobalMusicPlayer() {
   // Fetch main_music tracks on mount
   useEffect(() => {
     const fetchTracks = async () => {
-      const { data } = await supabase
+      console.log('GlobalMusicPlayer: Fetching tracks...');
+      const { data, error } = await supabase
         .from('main_music')
         .select('id, titulo, artista, soundcloud_url')
         .eq('active', true)
         .order('orden', { ascending: true });
 
+      if (error) {
+        console.error('GlobalMusicPlayer: Error fetching tracks:', error);
+        setLoaded(true);
+        return;
+      }
+
+      console.log('GlobalMusicPlayer: Tracks fetched:', data?.length || 0);
       if (data && data.length > 0) {
+        console.log('GlobalMusicPlayer: First track:', data[0]);
         setMainTracks(data);
       }
       setLoaded(true);
@@ -76,23 +86,89 @@ export function GlobalMusicPlayer() {
 
   // Initialize widget when SDK is ready
   useEffect(() => {
-    if (!sdkReady || !iframeRef.current || !window.SC) return;
+    if (!sdkReady || !iframeRef.current || !window.SC) {
+      console.log('GlobalMusicPlayer: Widget init conditions not met', { 
+        sdkReady, 
+        hasIframe: !!iframeRef.current, 
+        hasSC: !!window.SC, 
+        isMobile,
+        widgetReady 
+      });
+      return;
+    }
 
+    console.log('GlobalMusicPlayer: Initializing widget for', isMobile ? 'mobile' : 'desktop');
     const w = window.SC.Widget(iframeRef.current);
     widgetRef.current = w;
     const Events = (window as any).SC.Widget.Events;
 
+    console.log('GlobalMusicPlayer: Widget created, binding events...');
+    
     w.bind(Events.READY, () => {
+      console.log('GlobalMusicPlayer: Widget ready for', isMobile ? 'mobile' : 'desktop');
       w.setVolume(50);
+      setWidgetReady(true);
+      console.log('GlobalMusicPlayer: Widget ready state set to true');
+      
+      // Load the initial track when widget is ready
+      const currentTrack = artistOverride ? {
+        id: 'artist-override',
+        titulo: artistOverride.artistName,
+        artista: artistOverride.artistName,
+        soundcloud_url: artistOverride.soundcloud_url,
+      } : mainTracks[0];
+
+      if (currentTrack) {
+        console.log('GlobalMusicPlayer: Loading initial track for mobile:', currentTrack.titulo);
+        w.load(currentTrack.soundcloud_url, {
+          auto_play: false,
+          show_artwork: false,
+        });
+      }
     });
 
     w.bind(Events.PLAY, () => {
+      console.log('GlobalMusicPlayer: Mobile track started playing');
       setIsPlaying(true);
     });
     w.bind(Events.PAUSE, () => {
+      console.log('GlobalMusicPlayer: Mobile track paused');
       setIsPlaying(false);
     });
-  }, [sdkReady]);
+    w.bind(Events.ERROR, (error: any) => {
+      console.error('GlobalMusicPlayer: Mobile widget error', error);
+    });
+  }, [sdkReady, isMobile]);
+
+  // Force widget initialization when tracks are loaded (for mobile)
+  useEffect(() => {
+    if (isMobile && sdkReady && mainTracks.length > 0 && !widgetReady && iframeRef.current) {
+      console.log('GlobalMusicPlayer: Mobile tracks loaded, forcing widget initialization');
+      // Re-initialize widget for mobile when tracks are available
+      const w = window.SC.Widget(iframeRef.current);
+      widgetRef.current = w;
+      const Events = (window as any).SC.Widget.Events;
+
+      w.bind(Events.READY, () => {
+        console.log('GlobalMusicPlayer: Mobile widget ready (delayed init)');
+        w.setVolume(50);
+        setWidgetReady(true);
+        
+        const currentTrack = mainTracks[0];
+        if (currentTrack) {
+          console.log('GlobalMusicPlayer: Loading track for delayed mobile init:', currentTrack.titulo);
+          w.load(currentTrack.soundcloud_url, {
+            auto_play: false,
+            show_artwork: false,
+          });
+        }
+      });
+
+      w.bind(Events.ERROR, (error: any) => {
+        console.error('GlobalMusicPlayer: Mobile widget error (delayed init)', error);
+      });
+    }
+  }, [isMobile, sdkReady, mainTracks, widgetReady]);
 
   // Load track when track changes
   useEffect(() => {
@@ -200,27 +276,34 @@ export function GlobalMusicPlayer() {
         {/* Botón lateral derecho simple */}
         <button
           onClick={() => {
-            if (!widgetRef.current) return;
+            console.log('GlobalMusicPlayer: Mobile play/pause clicked', { isPlaying, hasWidget: !!widgetRef.current, widgetReady });
+            if (!widgetRef.current || !widgetReady) {
+              console.error('GlobalMusicPlayer: Widget not ready for mobile play/pause', { hasWidget: !!widgetRef.current, widgetReady });
+              return;
+            }
             if (isPlaying) {
+              console.log('GlobalMusicPlayer: Mobile - pausing track');
               widgetRef.current.pause();
               setIsPlaying(false);
             } else {
+              console.log('GlobalMusicPlayer: Mobile - playing track');
               widgetRef.current.play();
               setIsPlaying(true);
             }
           }}
+          disabled={!widgetReady}
           className={`
-            md:hidden fixed right-0 top-1/2 -translate-y-1/2 w-4 h-16 
-            bg-gray-800 rounded-l-lg flex items-center justify-center text-white 
-            shadow-lg z-40 transition-all duration-300 hover:w-5
+            md:hidden fixed right-0 bottom-24 w-12 h-12 
+            bg-manso-black rounded-full flex items-center justify-center text-white 
+            shadow-lg z-40 transition-all duration-300 active:scale-95
             ${isPlaying ? 'animate-pulse' : ''}
+            ${!widgetReady ? 'opacity-50 cursor-not-allowed' : ''}
           `}
-          style={{ width: '16px', height: '64px' }}
         >
           {isPlaying ? (
-            <Pause size={14} className="transform rotate-90" />
+            <Pause size={20} />
           ) : (
-            <Play size={14} className="transform rotate-90 ml-0.5" />
+            <Play size={20} className="ml-0.5" />
           )}
         </button>
 
