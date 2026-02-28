@@ -15,6 +15,7 @@ interface ArtistaEdit {
   estilo?: string;
   imagen_url?: string;
   soundcloud_url?: string;
+  tipo?: string;
   social_links?: {
     instagram?: string;
     spotify?: string;
