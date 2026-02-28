@@ -45,7 +45,8 @@ export function FormArtista() {
     imagen_url: '',
     instagram: '',
     spotify: '',
-    soundcloud: ''
+    soundcloud: '',
+    tipo: 'DJ'
   });
 
   useEffect(() => {
@@ -60,7 +61,8 @@ export function FormArtista() {
         imagen_url: artista.imagen_url || '',
         instagram: links?.instagram || '',
         spotify: links?.spotify || '',
-        soundcloud: artista.soundcloud_url || links?.soundcloud || ''
+        soundcloud: artista.soundcloud_url || links?.soundcloud || '',
+        tipo: artista.tipo || 'DJ'
       });
       setImageKey(prev => prev + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -74,7 +76,7 @@ export function FormArtista() {
 
   const resetForm = () => {
     setEditingId(null);
-    setFormData({ nombre: '', bio: '', estilo: '', imagen_url: '', instagram: '', spotify: '', soundcloud: '' });
+    setFormData({ nombre: '', bio: '', estilo: '', imagen_url: '', instagram: '', spotify: '', soundcloud: '', tipo: 'DJ' });
     setImageKey(prev => prev + 1);
     setSoundcloudError('');
     setTracksRefreshTrigger(prev => prev + 1);
@@ -139,6 +141,7 @@ export function FormArtista() {
       estilo: formData.estilo || null,
       imagen_url: formData.imagen_url || null,
       soundcloud_url: formData.soundcloud || null,
+      tipo: formData.tipo,
       social_links: {
         instagram: formData.instagram || null,
         spotify: formData.spotify || null,
@@ -164,7 +167,7 @@ export function FormArtista() {
       }
 
       resetForm();
-      window.location.reload();
+      window.dispatchEvent(new CustomEvent('dashboardRefresh'));
     } catch (error: any) {
       alert(error.message);
     }
@@ -216,6 +219,18 @@ export function FormArtista() {
               onChange={e => setFormData({...formData, nombre: e.target.value})}
               required
             />
+          </div>
+
+          {/* Tipo de Artista */}
+          <div className="relative">
+            <select
+              className="w-full bg-manso-cream/10 p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream"
+              value={formData.tipo}
+              onChange={e => setFormData({...formData, tipo: e.target.value})}
+            >
+              <option value="DJ">DJ</option>
+              <option value="Artista Visual">Artista Visual</option>
+            </select>
           </div>
 
           {/* Estilo / Género */}

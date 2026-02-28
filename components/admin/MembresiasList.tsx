@@ -5,7 +5,11 @@ import { supabase } from '@/lib/supabase';
 import { Crown, Pencil, Trash2, Star, DollarSign } from 'lucide-react';
 import { Membresia } from '@/lib/types/membresia';
 
-export function MembresiasList() {
+interface MembresiasListProps {
+  refreshTrigger?: number;
+}
+
+export function MembresiasList({ refreshTrigger }: MembresiasListProps) {
   const [membresias, setMembresias] = useState<Membresia[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -27,7 +31,7 @@ export function MembresiasList() {
 
   useEffect(() => {
     fetchMembresias();
-  }, []);
+  }, [refreshTrigger]);
 
   const handleDelete = async (id: string, nombre: string) => {
     if (!confirm(`¿Eliminar "${nombre}" y todos sus beneficios?`)) return;

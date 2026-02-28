@@ -22,11 +22,11 @@ export interface MembresiaBeneficio {
 
 export interface MembresiaForm {
   nombre: string;
-  precio: number;
+  precio: number | string;
   periodo: 'mes' | 'año';
   descripcion: string;
   destacado: boolean;
   activo: boolean;
-  orden: number;
+  orden: number | string;
   beneficios: MembresiaBeneficio[];
 }

@@ -14,7 +14,11 @@ interface MainMusicTrack {
   created_at: string;
 }
 
-export function MainMusicList() {
+interface MainMusicListProps {
+  refreshTrigger?: number;
+}
+
+export function MainMusicList({ refreshTrigger }: MainMusicListProps) {
   const [tracks, setTracks] = useState<MainMusicTrack[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -33,7 +37,7 @@ export function MainMusicList() {
 
   useEffect(() => {
     fetchTracks();
-  }, []);
+  }, [refreshTrigger]);
 
   const handleDelete = async (id: string, titulo: string) => {
     if (!confirm(`¿Eliminar "${titulo}" del reproductor del Home?`)) return;

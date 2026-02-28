@@ -10,7 +10,7 @@ interface TeamMemberEdit {
   name: string;
   role: string;
   photo_url?: string;
-  order_index: number;
+  order_index: number | string;
   active: boolean;
 }
 
@@ -21,7 +21,7 @@ export function FormTeam() {
   const [formData, setFormData] = useState({
     name: '',
     role: '',
-    order_index: 1,
+    order_index: '1',
     photo_url: ''
   });
 
@@ -32,7 +32,7 @@ export function FormTeam() {
       setFormData({
         name: member.name || '',
         role: member.role || '',
-        order_index: member.order_index || 1,
+        order_index: member.order_index.toString(),
         photo_url: member.photo_url || ''
       });
       setImageKey(prev => prev + 1);
@@ -47,7 +47,7 @@ export function FormTeam() {
 
   const resetForm = () => {
     setEditingId(null);
-    setFormData({ name: '', role: '', order_index: 1, photo_url: '' });
+    setFormData({ name: '', role: '', order_index: '1', photo_url: '' });
     setImageKey(prev => prev + 1);
   };
 
@@ -60,14 +60,14 @@ export function FormTeam() {
         id: editingId || undefined,
         name: formData.name,
         role: formData.role,
-        order_index: formData.order_index,
+        order_index: parseInt(String(formData.order_index)) || 1,
         photo_url: formData.photo_url || undefined,
         active: true
       });
 
       alert(editingId ? '¡Miembro del team actualizado correctamente!' : '¡Miembro del team agregado correctamente!');
       resetForm();
-      window.location.reload();
+      window.dispatchEvent(new CustomEvent('dashboardRefresh'));
     } catch (error: any) {
       alert(error.message);
     }
@@ -144,7 +144,7 @@ export function FormTeam() {
               min="1"
               className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all"
               value={formData.order_index}
-              onChange={e => setFormData({...formData, order_index: parseInt(e.target.value) || 1})}
+              onChange={e => setFormData({...formData, order_index: e.target.value})}
               required
             />
           </div>

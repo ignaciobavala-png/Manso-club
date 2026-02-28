@@ -28,7 +28,11 @@ interface Inscripcion {
   created_at: string;
 }
 
-export function AgendaList() {
+interface AgendaListProps {
+  refreshTrigger?: number;
+}
+
+export function AgendaList({ refreshTrigger }: AgendaListProps) {
   const [eventos, setEventos] = useState<AgendaEvent[]>([]);
   const [inscripciones, setInscripciones] = useState<Record<string, Inscripcion[]>>({});
   const [loading, setLoading] = useState(true);
@@ -36,7 +40,7 @@ export function AgendaList() {
 
   useEffect(() => {
     fetchEventos();
-  }, []);
+  }, [refreshTrigger]);
 
   const fetchEventos = async () => {
     const { data, error } = await supabase
@@ -85,7 +89,7 @@ export function AgendaList() {
       alert('Error al eliminar evento: ' + error.message);
     } else {
       alert('Evento eliminado correctamente');
-      window.location.reload();
+      window.dispatchEvent(new CustomEvent('dashboardRefresh'));
     }
   };
 

@@ -7,9 +7,10 @@ import { Trash2, Loader2, Calendar, Package, User } from 'lucide-react';
 interface Props {
   table: 'eventos' | 'productos' | 'artistas';
   title: string;
+  refreshTrigger?: number;
 }
 
-export function ItemList({ table, title }: Props) {
+export function ItemList({ table, title, refreshTrigger }: Props) {
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -26,7 +27,7 @@ export function ItemList({ table, title }: Props) {
 
   useEffect(() => {
     fetchItems();
-  }, [table]);
+  }, [table, refreshTrigger]);
 
   const handleDelete = async (id: string, imageUrl: string) => {
     if (!confirm('¿Estás segura de desactivar este producto? Ya no será visible en la tienda.')) return;

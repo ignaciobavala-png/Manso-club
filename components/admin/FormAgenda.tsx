@@ -10,9 +10,9 @@ interface AgendaEvent {
   categoria: string;
   duracion: string;
   frecuencia: string;
-  precio: number;
+  precio: number | string;
   activo: boolean;
-  cupos_maximos?: number;
+  cupos_maximos?: number | string;
   whatsapp_contacto?: string;
 }
 
@@ -25,8 +25,8 @@ export function FormAgenda() {
     categoria: 'Taller',
     duracion: '2 horas',
     frecuencia: 'Mensual',
-    precio: 0,
-    cupos_maximos: 0,
+    precio: '0',
+    cupos_maximos: '0',
     whatsapp_contacto: ''
   });
 
@@ -44,8 +44,8 @@ export function FormAgenda() {
         categoria: evento.categoria,
         duracion: evento.duracion,
         frecuencia: evento.frecuencia,
-        precio: evento.precio,
-        cupos_maximos: evento.cupos_maximos || 0,
+        precio: evento.precio.toString(),
+        cupos_maximos: (evento.cupos_maximos || 0).toString(),
         whatsapp_contacto: evento.whatsapp_contacto || ''
       });
     };
@@ -65,8 +65,8 @@ export function FormAgenda() {
       categoria: 'Taller',
       duracion: '2 horas',
       frecuencia: 'Mensual',
-      precio: 0,
-      cupos_maximos: 0,
+      precio: '0',
+      cupos_maximos: '0',
       whatsapp_contacto: ''
     });
   };
@@ -79,7 +79,11 @@ export function FormAgenda() {
       if (editingId) {
         const { error } = await supabase
           .from('agenda')
-          .update(formData)
+          .update({
+            ...formData,
+            precio: parseInt(String(formData.precio)) || 0,
+            cupos_maximos: parseInt(String(formData.cupos_maximos)) || 0
+          })
           .eq('id', editingId);
 
         if (error) throw error;
@@ -87,6 +91,8 @@ export function FormAgenda() {
       } else {
         const { error } = await supabase.from('agenda').insert([{
           ...formData,
+          precio: parseInt(String(formData.precio)) || 0,
+          cupos_maximos: parseInt(String(formData.cupos_maximos)) || 0,
           activo: true
         }]);
 
@@ -95,7 +101,7 @@ export function FormAgenda() {
       }
 
       resetForm();
-      window.location.reload();
+      window.dispatchEvent(new CustomEvent('dashboardRefresh'));
     } catch (error: any) {
       alert(error.message);
     }
@@ -178,7 +184,7 @@ export function FormAgenda() {
               placeholder="PRECIO (0 = gratis)"
               className="w-full p-4 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream placeholder:text-manso-cream/40"
               value={formData.precio || ''}
-              onChange={e => setFormData({...formData, precio: parseInt(e.target.value) || 0})}
+              onChange={e => setFormData({...formData, precio: e.target.value})}
               min="0"
               step="100"
             />
@@ -190,7 +196,7 @@ export function FormAgenda() {
               placeholder="CUPOS MÁXIMOS (0 = ilimitado)"
               className="w-full p-4 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream placeholder:text-manso-cream/40"
               value={formData.cupos_maximos || ''}
-              onChange={e => setFormData({...formData, cupos_maximos: parseInt(e.target.value) || 0})}
+              onChange={e => setFormData({...formData, cupos_maximos: e.target.value})}
               min="0"
             />
 

@@ -63,11 +63,9 @@ export default async function AboutPage() {
             <div key={member.id} className="flex flex-col items-center">
               {member.photo_url ? (
                 <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden mb-4">
-                  <Image
-                    src={member.photo_url}
+                  <img
+                    src={member.photo_url!}
                     alt={member.name}
-                    width={128}
-                    height={128}
                     className="w-full h-full object-cover"
                   />
                 </div>

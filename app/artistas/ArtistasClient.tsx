@@ -15,6 +15,7 @@ interface Artist {
   estilo?: string;
   imagen_url?: string;
   soundcloud_url?: string;
+  tipo?: string;
   social_links?: {
     instagram?: string;
     spotify?: string;
@@ -78,6 +79,10 @@ export function ArtistasClient({ artistas }: ArtistasClientProps) {
   
   const displayArtists = artistas && artistas.length > 0 ? artistas : placeholderArtists;
 
+  // Separar artistas por tipo
+  const djs = displayArtists.filter(artista => artista.tipo === 'DJ' || !artista.tipo);
+  const artistasVisuales = displayArtists.filter(artista => artista.tipo === 'Artista Visual');
+
   const handleArtistClick = (artist: Artist) => {
     setSelectedArtist(artist);
     setIsModalOpen(true);
@@ -91,63 +96,137 @@ export function ArtistasClient({ artistas }: ArtistasClientProps) {
   return (
     <>
       <AdaptiveSectionLayout title="Artistas" subtitle="Comunidad Manso_">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 py-10">
-          {displayArtists.map((artista) => (
-            <Link
-              href={`/artistas/${artista.slug}`}
-              key={artista.id} 
-              className="aspect-[3/4] bg-zinc-800/50 rounded-[40px] overflow-hidden border border-zinc-700 group relative cursor-pointer block"
-            >
-              <ArtistImage
-                src={artista.imagen_url}
-                alt={artista.nombre}
-              />
-              
-              {/* Overlay con información */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4">
-                <h3 className="text-white font-black text-lg uppercase tracking-tighter mb-1">
-                  {artista.nombre}
-                </h3>
-                {artista.estilo && (
-                  <p className="text-white/80 text-xs font-medium line-clamp-2 mb-3">
-                    {artista.estilo}
-                  </p>
-                )}
-                
-                {/* Redes sociales */}
-                <div className="flex gap-2">
-                  {(artista.social_links?.instagram || artista.redes_sociales?.instagram) && (
-                    <span
-                      className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center"
-                    >
-                      <Instagram size={14} className="text-white" />
-                    </span>
-                  )}
-                  {(artista.soundcloud_url || artista.social_links?.soundcloud || artista.redes_sociales?.soundcloud) && (
-                    <span
-                      className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center"
-                    >
-                      <ExternalLink size={14} className="text-white" />
-                    </span>
-                  )}
-                </div>
+        {djs.length > 0 && (
+          <>
+            <h2 className="text-3xl md:text-4xl font-black uppercase italic tracking-tighter leading-none text-manso-black mb-8 mt-16">
+              DJS_
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 py-10">
+              {djs.map((artista) => (
+                <Link
+                  href={`/artistas/${artista.slug}`}
+                  key={artista.id} 
+                  className="aspect-[3/4] bg-zinc-800/50 rounded-[40px] overflow-hidden border border-zinc-700 group relative cursor-pointer block"
+                >
+                  <ArtistImage
+                    src={artista.imagen_url}
+                    alt={artista.nombre}
+                  />
+                  
+                  {/* Overlay con información */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4">
+                    <h3 className="text-white font-black text-lg uppercase tracking-tighter mb-1">
+                      {artista.nombre}
+                    </h3>
+                    {artista.estilo && (
+                      <p className="text-white/80 text-xs font-medium line-clamp-2 mb-3">
+                        {artista.estilo}
+                      </p>
+                    )}
+                    
+                    {/* Redes sociales */}
+                    <div className="flex gap-2">
+                      {(artista.social_links?.instagram || artista.redes_sociales?.instagram) && (
+                        <span
+                          className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center"
+                        >
+                          <Instagram size={14} className="text-white" />
+                        </span>
+                      )}
+                      {(artista.soundcloud_url || artista.social_links?.soundcloud || artista.redes_sociales?.soundcloud) && (
+                        <span
+                          className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center"
+                        >
+                          <ExternalLink size={14} className="text-white" />
+                        </span>
+                      )}
+                    </div>
 
-                {/* Indicador de música */}
-                {(artista.soundcloud_url || artista.social_links?.soundcloud || artista.redes_sociales?.soundcloud) && (
-                  <div className="absolute top-4 right-4 w-8 h-8 bg-manso-terra/80 backdrop-blur-sm rounded-full flex items-center justify-center">
-                    <Play size={14} className="text-white" />
+                    {/* Indicador de música */}
+                    {(artista.soundcloud_url || artista.social_links?.soundcloud || artista.redes_sociales?.soundcloud) && (
+                      <div className="absolute top-4 right-4 w-8 h-8 bg-manso-terra/80 backdrop-blur-sm rounded-full flex items-center justify-center">
+                        <Play size={14} className="text-white" />
+                      </div>
+                    )}
                   </div>
-                )}
-              </div>
-              
-              {/* Nombre visible siempre, se oculta en hover */}
-              <div className="absolute bottom-4 left-4 right-4 group-hover:opacity-0 transition-opacity duration-300">
-                <h3 className="text-white font-black text-sm uppercase tracking-tighter drop-shadow-lg">
-                  {artista.nombre}
-                </h3>
-              </div>
-            </Link>
-          ))}
+                  
+                  {/* Nombre visible siempre, se oculta en hover */}
+                  <div className="absolute bottom-4 left-4 right-4 group-hover:opacity-0 transition-opacity duration-300">
+                    <h3 className="text-white font-black text-sm uppercase tracking-tighter drop-shadow-lg">
+                      {artista.nombre}
+                    </h3>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </>
+        )}
+
+        {artistasVisuales.length > 0 && (
+          <>
+            <h2 className="text-3xl md:text-4xl font-black uppercase italic tracking-tighter leading-none text-manso-black mb-8 mt-16">
+              Artistas Visuales_
+            </h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 py-10">
+              {artistasVisuales.map((artista) => (
+                <Link
+                  href={`/artistas/${artista.slug}`}
+                  key={artista.id} 
+                  className="aspect-[3/4] bg-zinc-800/50 rounded-[40px] overflow-hidden border border-zinc-700 group relative cursor-pointer block"
+                >
+                  <ArtistImage
+                    src={artista.imagen_url}
+                    alt={artista.nombre}
+                  />
+                  
+                  {/* Overlay con información */}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4">
+                    <h3 className="text-white font-black text-lg uppercase tracking-tighter mb-1">
+                      {artista.nombre}
+                    </h3>
+                    {artista.estilo && (
+                      <p className="text-white/80 text-xs font-medium line-clamp-2 mb-3">
+                        {artista.estilo}
+                      </p>
+                    )}
+                    
+                    {/* Redes sociales */}
+                    <div className="flex gap-2">
+                      {(artista.social_links?.instagram || artista.redes_sociales?.instagram) && (
+                        <span
+                          className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center"
+                        >
+                          <Instagram size={14} className="text-white" />
+                        </span>
+                      )}
+                      {(artista.soundcloud_url || artista.social_links?.soundcloud || artista.redes_sociales?.soundcloud) && (
+                        <span
+                          className="w-8 h-8 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center"
+                        >
+                          <ExternalLink size={14} className="text-white" />
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Indicador de música */}
+                    {(artista.soundcloud_url || artista.social_links?.soundcloud || artista.redes_sociales?.soundcloud) && (
+                      <div className="absolute top-4 right-4 w-8 h-8 bg-manso-terra/80 backdrop-blur-sm rounded-full flex items-center justify-center">
+                        <Play size={14} className="text-white" />
+                      </div>
+                    )}
+                  </div>
+                  
+                  {/* Nombre visible siempre, se oculta en hover */}
+                  <div className="absolute bottom-4 left-4 right-4 group-hover:opacity-0 transition-opacity duration-300">
+                    <h3 className="text-white font-black text-sm uppercase tracking-tighter drop-shadow-lg">
+                      {artista.nombre}
+                    </h3>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </>
+        )}
 
           {displayArtists.length === 0 && (
             <div className="col-span-full text-center py-20">
@@ -160,7 +239,6 @@ export function ArtistasClient({ artistas }: ArtistasClientProps) {
               </p>
             </div>
           )}
-        </div>
       </AdaptiveSectionLayout>
 
       {/* Modal del artista */}

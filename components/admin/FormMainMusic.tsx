@@ -11,19 +11,19 @@ export function FormMainMusic() {
     titulo: '',
     artista: '',
     soundcloud_url: '',
-    orden: 0,
+    orden: '0',
   });
 
   // Listen for edit events from the list
   useEffect(() => {
-    const handleEdit = (event: CustomEvent<{ id: string; titulo: string; artista: string; soundcloud_url: string; orden: number }>) => {
+    const handleEdit = (event: CustomEvent<{ id: string; titulo: string; artista: string; soundcloud_url: string; orden: number | string }>) => {
       const item = event.detail;
       setEditingId(item.id);
       setFormData({
         titulo: item.titulo || '',
         artista: item.artista || '',
         soundcloud_url: item.soundcloud_url || '',
-        orden: item.orden || 0,
+        orden: item.orden.toString(),
       });
       window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -36,7 +36,7 @@ export function FormMainMusic() {
 
   const resetForm = () => {
     setEditingId(null);
-    setFormData({ titulo: '', artista: '', soundcloud_url: '', orden: 0 });
+    setFormData({ titulo: '', artista: '', soundcloud_url: '', orden: '0' });
   };
 
   const validateSoundCloudUrl = (url: string) => {
@@ -58,7 +58,7 @@ export function FormMainMusic() {
       titulo: formData.titulo,
       artista: formData.artista,
       soundcloud_url: formData.soundcloud_url,
-      orden: formData.orden,
+      orden: parseInt(String(formData.orden)) || 0,
       active: true,
     };
 
@@ -77,7 +77,7 @@ export function FormMainMusic() {
       }
 
       resetForm();
-      window.location.reload();
+      window.dispatchEvent(new CustomEvent('dashboardRefresh'));
     } catch (error: any) {
       alert(error.message);
     }
@@ -155,7 +155,7 @@ export function FormMainMusic() {
           <input
             type="number"
             value={formData.orden}
-            onChange={(e) => setFormData({ ...formData, orden: parseInt(e.target.value) || 0 })}
+            onChange={(e) => setFormData({ ...formData, orden: e.target.value })}
             className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 pl-10 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra/50 transition-colors"
           />
         </div>

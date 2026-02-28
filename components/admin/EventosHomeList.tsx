@@ -14,13 +14,17 @@ interface EventoHome {
   activo: boolean;
 }
 
-export function EventosHomeList() {
+interface EventosHomeListProps {
+  refreshTrigger?: number;
+}
+
+export function EventosHomeList({ refreshTrigger }: EventosHomeListProps) {
   const [eventos, setEventos] = useState<EventoHome[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchEventos();
-  }, []);
+  }, [refreshTrigger]);
 
   const fetchEventos = async () => {
     const { data, error } = await supabase

@@ -10,7 +10,7 @@ interface ArtistTrack {
   artista_id: string;
   titulo: string;
   soundcloud_url: string;
-  orden: number;
+  orden: number | string;
   activo: boolean;
 }
 
@@ -38,7 +38,7 @@ export function FormArtistaTrack({
   const [formData, setFormData] = useState({
     titulo: '',
     soundcloud_url: '',
-    orden: 1,
+    orden: '1',
     activo: true
   });
 
@@ -48,7 +48,7 @@ export function FormArtistaTrack({
       setFormData({
         titulo: track.titulo,
         soundcloud_url: track.soundcloud_url,
-        orden: track.orden,
+        orden: track.orden.toString(),
         activo: track.activo
       });
     } else {
@@ -57,7 +57,7 @@ export function FormArtistaTrack({
       setFormData({
         titulo: '',
         soundcloud_url: '',
-        orden: nextOrden,
+        orden: nextOrden.toString(),
         activo: true
       });
     }
@@ -76,7 +76,7 @@ export function FormArtistaTrack({
       
       const maxOrden = data?.[0]?.orden || 0;
       setNextOrden(maxOrden + 1);
-      setFormData(prev => ({ ...prev, orden: maxOrden + 1 }));
+      setFormData(prev => ({ ...prev, orden: (maxOrden + 1).toString() }));
     } catch (error) {
       console.error('Error getting next orden:', error);
     }
@@ -103,7 +103,7 @@ export function FormArtistaTrack({
     setFormData({
       titulo: '',
       soundcloud_url: '',
-      orden: nextOrden,
+      orden: nextOrden.toString(),
       activo: true
     });
     setSoundcloudError('');
@@ -129,7 +129,7 @@ export function FormArtistaTrack({
       artista_id: artistaId,
       titulo: formData.titulo.trim(),
       soundcloud_url: formData.soundcloud_url.trim() || null,
-      orden: formData.orden,
+      orden: parseInt(String(formData.orden)) || 0,
       activo: formData.activo
     };
 
@@ -239,7 +239,7 @@ export function FormArtistaTrack({
                 min="1"
                 className="w-full bg-manso-cream/10 p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all"
                 value={formData.orden}
-                onChange={e => setFormData({...formData, orden: parseInt(e.target.value) || 1})}
+                onChange={e => setFormData({...formData, orden: e.target.value})}
                 required
               />
             </div>

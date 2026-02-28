@@ -7,21 +7,21 @@ export const PorQueManso = () => {
   const features = [
     {
       icon: Users,
-      number: '500+',
-      label: 'CREATIVOS',
-      description: 'Comunidad activa de artistas, diseñadores y tecnólogos'
+      number: 'XXX',
+      label: 'XXXX',
+      description: 'XXXX'
     },
     {
       icon: Headphones,
-      number: '24/7',
-      label: 'CULTURA ELECTRÓNICA',
-      description: 'Curadura sonora de vanguardia y experiencias inmersivas'
+      number: 'XXX',
+      label: 'XXXX',
+      description: 'XXXX'
     },
     {
       icon: Zap,
-      number: '2x',
-      label: 'ESPACIO HÍBRIDO',
-      description: 'Coworking de día, club nocturno de noche'
+      number: 'XXX',
+      label: 'XXXX',
+      description: 'XXXX'
     }
   ];
 
@@ -29,7 +29,6 @@ export const PorQueManso = () => {
     <section className="py-20 px-8 md:px-20" style={{ backgroundColor: '#FFFFFF' }}>
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <span className="text-[10px] uppercase tracking-widest text-black/60 font-bold mb-4 block">05. ¿Por qué Manso?</span>
           <h2 className="text-3xl md:text-6xl lg:text-7xl font-bold uppercase tracking-tighter italic text-black leading-[0.8] mb-8">
             Espacio Híbrido
             <br />
@@ -81,19 +80,17 @@ export const PorQueManso = () => {
         {/* Texto central destacado */}
         <div className="text-center mb-16">
           <p className="text-xl md:text-2xl font-light text-gray-700 leading-relaxed max-w-4xl mx-auto mb-8">
-            Manso es un ecosistema nacido en Buenos Aires donde conviven el diseño, 
-            la tecnología y la cultura electrónica. Un espacio de pertenencia para mentes 
-            creativas que buscan impactar localmente con visión global.
+            XXXX
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-8 text-gray-500">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-gray-700 rounded-full" />
-              <span className="text-sm font-bold uppercase tracking-wider">San Telmo, Buenos Aires</span>
+              <span className="text-sm font-bold uppercase tracking-wider"> CABA</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-gray-700 rounded-full" />
-              <span className="text-sm font-bold uppercase tracking-wider">Desde 2024</span>
+              <span className="text-sm font-bold uppercase tracking-wider">Desde 2025</span>
             </div>
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-gray-700 rounded-full" />

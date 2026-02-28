@@ -92,7 +92,7 @@ export function FormMembresia() {
       return;
     }
 
-    if (formData.precio < 0) {
+    if (parseFloat(String(formData.precio)) < 0) {
       setFeedback({ type: 'error', message: 'El precio no puede ser negativo' });
       return;
     }
@@ -107,12 +107,12 @@ export function FormMembresia() {
           .from('membresias')
           .update({
             nombre: formData.nombre,
-            precio: formData.precio,
+            precio: parseFloat(String(formData.precio)) || 0,
             periodo: formData.periodo,
             descripcion: formData.descripcion,
             destacado: formData.destacado,
             activo: formData.activo,
-            orden: formData.orden,
+            orden: parseInt(String(formData.orden)) || 0,
           })
           .eq('id', editingId);
 
@@ -149,12 +149,12 @@ export function FormMembresia() {
           .from('membresias')
           .insert({
             nombre: formData.nombre,
-            precio: formData.precio,
+            precio: parseFloat(String(formData.precio)) || 0,
             periodo: formData.periodo,
             descripcion: formData.descripcion,
             destacado: formData.destacado,
             activo: formData.activo,
-            orden: formData.orden,
+            orden: parseInt(String(formData.orden)) || 0,
           })
           .select()
           .single();
@@ -182,7 +182,7 @@ export function FormMembresia() {
 
       setTimeout(() => {
         resetForm();
-        window.location.reload();
+        window.dispatchEvent(new CustomEvent('dashboardRefresh'));
       }, 1500);
     } catch (error: any) {
       setFeedback({ type: 'error', message: error.message });
@@ -237,7 +237,7 @@ export function FormMembresia() {
           <input
             type="number"
             value={formData.precio}
-            onChange={(e) => setFormData({ ...formData, precio: parseFloat(e.target.value) || 0 })}
+            onChange={(e) => setFormData({ ...formData, precio: e.target.value })}
             placeholder="0.00"
             min="0"
             step="0.01"
@@ -292,7 +292,7 @@ export function FormMembresia() {
           <input
             type="number"
             value={formData.orden}
-            onChange={(e) => setFormData({ ...formData, orden: parseInt(e.target.value) || 0 })}
+            onChange={(e) => setFormData({ ...formData, orden: e.target.value })}
             className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 pl-10 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra/50 transition-colors"
           />
         </div>

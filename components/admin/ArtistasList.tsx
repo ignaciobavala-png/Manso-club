@@ -26,13 +26,17 @@ interface Artista {
   created_at: string;
 }
 
-export function ArtistasList() {
+interface ArtistasListProps {
+  refreshTrigger?: number;
+}
+
+export function ArtistasList({ refreshTrigger }: ArtistasListProps) {
   const [artistas, setArtistas] = useState<Artista[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchArtistas();
-  }, []);
+  }, [refreshTrigger]);
 
   const fetchArtistas = async () => {
     const { data, error } = await supabase

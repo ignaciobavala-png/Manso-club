@@ -23,6 +23,7 @@ import { LogOut, ShoppingBag, User, Home, Calendar, Music, Crown, Settings, Star
 export function Dashboard() {
   const [tab, setTab] = useState<'home' | 'tienda' | 'artistas' | 'agenda' | 'eventos' | 'musica' | 'membresias' | 'team'>('home');
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   useEffect(() => {
     // Obtener información del usuario actual
@@ -39,6 +40,18 @@ export function Dashboard() {
     };
 
     fetchUser();
+  }, []);
+
+  useEffect(() => {
+    // Escuchar eventos de actualización del dashboard
+    const handleDashboardRefresh = () => {
+      setRefreshTrigger(prev => prev + 1);
+    };
+
+    window.addEventListener('dashboardRefresh', handleDashboardRefresh);
+    return () => {
+      window.removeEventListener('dashboardRefresh', handleDashboardRefresh);
+    };
   }, []);
 
   return (
@@ -170,21 +183,21 @@ export function Dashboard() {
                 Gestionar Existentes
               </h2>
               {tab === 'home' ? (
-                <EventosHomeList />
+                <EventosHomeList refreshTrigger={refreshTrigger} />
               ) : tab === 'tienda' ? (
-                <ItemList table="productos" title="Inventario de Tienda" />
+                <ItemList table="productos" title="Inventario de Tienda" refreshTrigger={refreshTrigger} />
               ) : tab === 'artistas' ? (
-                <ArtistasList />
+                <ArtistasList refreshTrigger={refreshTrigger} />
               ) : tab === 'agenda' ? (
-                <AgendaList />
+                <AgendaList refreshTrigger={refreshTrigger} />
               ) : tab === 'eventos' ? (
-                <EventosList />
+                <EventosList refreshTrigger={refreshTrigger} />
               ) : tab === 'musica' ? (
-                <MainMusicList />
+                <MainMusicList refreshTrigger={refreshTrigger} />
               ) : tab === 'membresias' ? (
-                <MembresiasList />
+                <MembresiasList refreshTrigger={refreshTrigger} />
               ) : (
-                <TeamList />
+                <TeamList refreshTrigger={refreshTrigger} />
               )}
             </div>
         </div>

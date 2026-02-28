@@ -84,7 +84,7 @@ export function FormProducto() {
         precio: 0, 
         imagen_url: '' 
       });
-      window.location.reload();
+      window.dispatchEvent(new CustomEvent('dashboardRefresh'));
     }
     setLoading(false);
   };

@@ -18,13 +18,17 @@ interface Evento {
   created_at: string;
 }
 
-export function EventosList() {
+interface EventosListProps {
+  refreshTrigger?: number;
+}
+
+export function EventosList({ refreshTrigger }: EventosListProps) {
   const [eventos, setEventos] = useState<Evento[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchEventos();
-  }, []);
+  }, [refreshTrigger]);
 
   const fetchEventos = async () => {
     const { data, error } = await supabase

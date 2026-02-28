@@ -9,7 +9,7 @@ interface EventoHome {
   titulo: string;
   categoria: string;
   disponible: boolean;
-  orden: number;
+  orden: number | string;
   activo: boolean;
 }
 
@@ -21,7 +21,7 @@ export function FormEventoHome() {
     titulo: '',
     categoria: 'Club',
     disponible: true,
-    orden: 0
+    orden: '0'
   });
 
   const categorias = ['Club', 'Talleres', 'Tienda'];
@@ -32,11 +32,11 @@ export function FormEventoHome() {
       const evento: EventoHome = event.detail;
       setEditingId(evento.id);
       setFormData({
-        fecha: evento.fecha,
+        fecha: evento.fecha ? new Date(evento.fecha).toISOString().split('T')[0] : '',
         titulo: evento.titulo,
         categoria: evento.categoria,
         disponible: evento.disponible,
-        orden: evento.orden
+        orden: evento.orden.toString(),
       });
     };
 
@@ -49,7 +49,7 @@ export function FormEventoHome() {
 
   const resetForm = () => {
     setEditingId(null);
-    setFormData({ fecha: '', titulo: '', categoria: 'Club', disponible: true, orden: 0 });
+    setFormData({ fecha: '', titulo: '', categoria: 'Club', disponible: true, orden: '0' });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -68,7 +68,7 @@ export function FormEventoHome() {
         alert('¡Evento actualizado correctamente!');
       } else {
         // Modo creación
-        let finalOrden = formData.orden;
+        let finalOrden = parseInt(String(formData.orden)) || 0;
         if (finalOrden === 0) {
           const { data: maxOrden } = await supabase
             .from('eventos_home')
@@ -80,7 +80,7 @@ export function FormEventoHome() {
         
         const { error } = await supabase.from('eventos_home').insert([{
           ...formData,
-          orden: finalOrden,
+          orden: parseInt(String(formData.orden)) || 0,
           activo: true
         }]);
 
@@ -89,7 +89,7 @@ export function FormEventoHome() {
       }
 
       resetForm();
-      window.location.reload();
+      window.dispatchEvent(new CustomEvent('dashboardRefresh'));
     } catch (error: any) {
       alert(error.message);
     }
@@ -128,9 +128,8 @@ export function FormEventoHome() {
           
           <div className="grid grid-cols-2 gap-4">
             <input 
-              type="text" 
-              placeholder="FECHA (Ej: 12 FEB)"
-              className="w-full p-4 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream placeholder:text-manso-cream/40"
+              type="date"
+              className="w-full p-4 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream placeholder:text-manso-cream/40 [color-scheme:dark]"
               value={formData.fecha}
               onChange={e => setFormData({...formData, fecha: e.target.value})}
               required
@@ -153,7 +152,7 @@ export function FormEventoHome() {
               placeholder="ORDEN (opcional, auto-asignado)"
               className="w-full p-4 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream placeholder:text-manso-cream/40"
               value={formData.orden || ''}
-              onChange={e => setFormData({...formData, orden: parseInt(e.target.value) || 0})}
+              onChange={e => setFormData({...formData, orden: e.target.value})}
               min="0"
             />
 

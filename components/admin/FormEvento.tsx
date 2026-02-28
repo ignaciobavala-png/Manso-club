@@ -8,6 +8,7 @@ interface Evento {
   id: string;
   titulo: string;
   fecha: string;
+  fecha_fin?: string;
   descripcion?: string;
   imagen_url?: string;
   categoria?: string;
@@ -23,15 +24,17 @@ export function FormEvento() {
   const [formData, setFormData] = useState({
     titulo: '',
     fecha: '',
+    fecha_fin: '',
     descripcion: '',
     imagen_url: '',
     categoria: '',
     link_tickets: '',
     disponible: true,
-    orden: 0
+    orden: 0 as number | string
   });
 
-  const categorias = ['Concierto', 'Festival', 'Workshop', 'Exposición', 'Show', 'Torneo', 'Otro'];
+  const [categorias, setCategorias] = useState(['Concierto', 'Festival', 'Workshop', 'Exposición', 'Show', 'Torneo', 'Otro']);
+  const [nuevaCategoria, setNuevaCategoria] = useState('');
 
   useEffect(() => {
     const handleEditEvent = (event: CustomEvent) => {
@@ -40,6 +43,7 @@ export function FormEvento() {
       setFormData({
         titulo: evento.titulo,
         fecha: evento.fecha ? new Date(evento.fecha).toISOString().slice(0, 16) : '',
+        fecha_fin: evento.fecha_fin ? new Date(evento.fecha_fin).toISOString().slice(0, 16) : '',
         descripcion: evento.descripcion || '',
         imagen_url: evento.imagen_url || '',
         categoria: evento.categoria || '',
@@ -47,6 +51,10 @@ export function FormEvento() {
         disponible: evento.disponible,
         orden: evento.orden
       });
+      
+      if (evento.categoria && !categorias.includes(evento.categoria)) {
+        setCategorias(prev => [...prev, evento.categoria!]);
+      }
     };
 
     window.addEventListener('editEvento', handleEditEvent as EventListener);
@@ -61,6 +69,7 @@ export function FormEvento() {
     setFormData({
       titulo: '',
       fecha: '',
+      fecha_fin: '',
       descripcion: '',
       imagen_url: '',
       categoria: '',
@@ -77,7 +86,9 @@ export function FormEvento() {
     try {
       const submitData = {
         ...formData,
-        fecha: new Date(formData.fecha).toISOString()
+        fecha: new Date(formData.fecha).toISOString(),
+        fecha_fin: formData.fecha_fin || null,
+        orden: parseInt(String(formData.orden)) || 0
       };
 
       if (editingId) {
@@ -99,7 +110,7 @@ export function FormEvento() {
       }
 
       resetForm();
-      window.location.reload();
+      window.dispatchEvent(new CustomEvent('dashboardRefresh'));
     } catch (error: any) {
       alert(error.message);
     }
@@ -135,13 +146,30 @@ export function FormEvento() {
             required
           />
           
-          <input 
-            type="datetime-local" 
-            className="w-full bg-manso-cream/10 p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream"
-            value={formData.fecha}
-            onChange={e => setFormData({...formData, fecha: e.target.value})}
-            required
-          />
+          <div className="space-y-2">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/60">
+              FECHA DE INICIO
+            </label>
+            <input 
+              type="datetime-local" 
+              className="w-full bg-manso-cream/10 p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream"
+              value={formData.fecha}
+              onChange={e => setFormData({...formData, fecha: e.target.value})}
+              required
+            />
+          </div>
+
+          <div className="space-y-2">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/60">
+              FECHA DE FINALIZACIÓN (opcional)
+            </label>
+            <input 
+              type="datetime-local"
+              className="w-full bg-manso-cream/10 p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream"
+              value={formData.fecha_fin}
+              onChange={e => setFormData({...formData, fecha_fin: e.target.value})}
+            />
+          </div>
           
           <textarea 
             placeholder="DESCRIPCIÓN DEL EVENTO"
@@ -151,24 +179,78 @@ export function FormEvento() {
             onChange={e => setFormData({...formData, descripcion: e.target.value})}
           />
 
-          <div className="grid grid-cols-2 gap-4">
-            <select 
-              className="w-full p-4 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream"
-              value={formData.categoria}
-              onChange={e => setFormData({...formData, categoria: e.target.value})}
-            >
-              <option value="">Seleccionar categoría</option>
+          <div className="space-y-3">
+            <label className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/60">
+              CATEGORÍA
+            </label>
+            
+            <div className="flex flex-wrap gap-2">
               {categorias.map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
+                <div key={cat} className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setFormData({...formData, categoria: cat})}
+                    className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
+                      formData.categoria === cat 
+                        ? 'bg-manso-terra text-manso-cream' 
+                        : 'bg-manso-cream/20 text-manso-cream hover:bg-manso-cream/30'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setCategorias(prev => prev.filter(c => c !== cat));
+                      if (formData.categoria === cat) {
+                        setFormData({...formData, categoria: ''});
+                      }
+                    }}
+                    className="text-manso-cream/60 hover:text-manso-cream text-xs leading-none"
+                  >
+                    ×
+                  </button>
+                </div>
               ))}
-            </select>
+            </div>
+            
+            <div className="flex gap-2">
+              <input
+                type="text"
+                placeholder="Nueva categoría"
+                value={nuevaCategoria}
+                onChange={e => setNuevaCategoria(e.target.value)}
+                onKeyPress={(e) => {
+                  if (e.key === 'Enter' && nuevaCategoria.trim()) {
+                    setCategorias(prev => [...prev, nuevaCategoria.trim()]);
+                    setNuevaCategoria('');
+                  }
+                }}
+                className="flex-1 bg-manso-cream/10 px-3 py-2 rounded-xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-sm text-manso-cream placeholder:text-manso-cream/40"
+              />
+              <button
+                type="button"
+                onClick={() => {
+                  if (nuevaCategoria.trim()) {
+                    setCategorias(prev => [...prev, nuevaCategoria.trim()]);
+                    setNuevaCategoria('');
+                  }
+                }}
+                disabled={!nuevaCategoria.trim()}
+                className="px-4 py-2 bg-manso-terra text-manso-cream rounded-xl font-medium text-sm hover:bg-manso-cream hover:text-manso-black transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                +
+              </button>
+            </div>
+          </div>
 
+          <div className="flex items-center gap-3">
+            <label className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 whitespace-nowrap">Orden</label>
             <input 
-              type="number" 
-              placeholder="ORDEN (0 = primero)"
-              className="w-full p-4 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream placeholder:text-manso-cream/40"
+              type="number"
+              className="w-24 p-3 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream text-center"
               value={formData.orden}
-              onChange={e => setFormData({...formData, orden: parseInt(e.target.value) || 0})}
+              onChange={e => setFormData({...formData, orden: e.target.value})}
               min="0"
             />
           </div>

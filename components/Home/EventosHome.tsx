@@ -89,7 +89,6 @@ export const EventosHome = () => {
     <section className="py-20 px-8 md:px-20" style={{ backgroundColor: '#F5F0E8' }}>
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <span className="text-[10px] uppercase tracking-widest text-black/60 font-bold mb-4 block">03. Agenda</span>
           <h2 className="text-2xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-black">
             Eventos
           </h2>
@@ -169,13 +168,13 @@ export const EventosHome = () => {
                 eventosFecha.map((evento) => (
                   <div key={evento.id} className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                     {/* Flyer del evento */}
-                    <div className="relative w-full aspect-square bg-gray-100">
+                    <div className="relative w-full h-48 bg-gray-900">
                       {evento.imagen_url ? (
                         <Image
                           src={evento.imagen_url}
                           alt={evento.titulo}
                           fill
-                          className="object-cover"
+                          className="object-contain"
                         />
                       ) : (
                         // Placeholder oscuro para eventos sin imagen

@@ -4,13 +4,17 @@ import { useState, useEffect } from 'react';
 import { getAllTeamMembers, toggleTeamMemberActive, deleteTeamMember, TeamMember } from '@/lib/team';
 import { Edit2, Trash2, Eye, EyeOff, Users, Briefcase } from 'lucide-react';
 
-export function TeamList() {
+interface TeamListProps {
+  refreshTrigger?: number;
+}
+
+export function TeamList({ refreshTrigger }: TeamListProps) {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     fetchTeamMembers();
-  }, []);
+  }, [refreshTrigger]);
 
   const fetchTeamMembers = async () => {
     try {
