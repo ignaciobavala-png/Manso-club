@@ -1,6 +1,4 @@
-'use client';
-
-import Image from 'next/image';
+import { getGalleryImages } from '@/lib/gallery';
 
 const galleryImages = [
   { id: 1, src: "/assets/manso1.webp" },
@@ -11,10 +9,15 @@ const galleryImages = [
   { id: 6, src: "/assets/manso8.webp" },
 ];
 
-const leftColumn = [galleryImages[0], galleryImages[2], galleryImages[4]];
-const rightColumn = [galleryImages[1], galleryImages[3], galleryImages[5]];
+export const Gallery = async () => {
+  const dbImages = await getGalleryImages();
+  const hasDbImages = dbImages.length > 0;
+  
+  // Use DB images if available, otherwise fallback to hardcoded images
+  const imagesToDisplay = hasDbImages 
+    ? dbImages.map(img => ({ id: img.id, src: img.photo_url }))
+    : galleryImages;
 
-export const Gallery = () => {
   return (
     <section 
       className="py-12 md:py-24 px-8 md:px-20"
@@ -28,16 +31,14 @@ export const Gallery = () => {
         </div>
         
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-          {galleryImages.map((image) => (
+          {imagesToDisplay.map((image) => (
             <div 
               key={image.id}
               className="group relative overflow-hidden rounded-lg cursor-pointer transition-all duration-300 hover:shadow-xl"
             >
-              <Image
+              <img
                 src={image.src}
                 alt={`Manso Club ${image.id}`}
-                width={400}
-                height={500}
                 className="w-full h-48 md:h-64 object-cover transition-transform duration-300 group-hover:scale-[1.03]"
               />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300" />

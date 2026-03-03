@@ -1,27 +1,28 @@
-'use client';
-
 import { ArrowRight, Headphones, Users, Zap } from 'lucide-react';
 import Link from 'next/link';
+import { getSiteConfig } from '@/lib/siteConfig';
 
-export const PorQueManso = () => {
+export const PorQueManso = async () => {
+  const config = await getSiteConfig();
+  
   const features = [
     {
       icon: Users,
-      number: 'XXX',
-      label: 'XXXX',
-      description: 'XXXX'
+      number: config.porque_stat1_numero || 'XXX',
+      label: config.porque_stat1_label || 'XXXX',
+      description: config.porque_stat1_desc || 'XXXX'
     },
     {
       icon: Headphones,
-      number: 'XXX',
-      label: 'XXXX',
-      description: 'XXXX'
+      number: config.porque_stat2_numero || 'XXX',
+      label: config.porque_stat2_label || 'XXXX',
+      description: config.porque_stat2_desc || 'XXXX'
     },
     {
       icon: Zap,
-      number: 'XXX',
-      label: 'XXXX',
-      description: 'XXXX'
+      number: config.porque_stat3_numero || 'XXX',
+      label: config.porque_stat3_label || 'XXXX',
+      description: config.porque_stat3_desc || 'XXXX'
     }
   ];
 
@@ -80,7 +81,7 @@ export const PorQueManso = () => {
         {/* Texto central destacado */}
         <div className="text-center mb-16">
           <p className="text-xl md:text-2xl font-light text-gray-700 leading-relaxed max-w-4xl mx-auto mb-8">
-            XXXX
+            {config.porque_main_text || 'XXXX'}
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-8 text-gray-500">

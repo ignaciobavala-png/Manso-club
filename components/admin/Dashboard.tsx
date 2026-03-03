@@ -18,10 +18,15 @@ import { FormEvento } from './FormEvento';
 import { FormTeam } from './FormTeam';
 import { EventosList } from './EventosList';
 import { TeamList } from './TeamList';
-import { LogOut, ShoppingBag, User, Home, Calendar, Music, Crown, Settings, Star, Users } from 'lucide-react';
+import { FormHero } from './FormHero';
+import { HeroList } from './HeroList';
+import { FormGallery } from './FormGallery';
+import { GalleryList } from './GalleryList';
+import { FormSiteConfig } from './FormSiteConfig';
+import { LogOut, ShoppingBag, User, Home, Calendar, Music, Crown, Settings, Star, Users, Image, Layout } from 'lucide-react';
 
 export function Dashboard() {
-  const [tab, setTab] = useState<'home' | 'tienda' | 'artistas' | 'agenda' | 'eventos' | 'musica' | 'membresias' | 'team'>('home');
+  const [tab, setTab] = useState<'home' | 'tienda' | 'artistas' | 'agenda' | 'eventos' | 'musica' | 'membresias' | 'team' | 'hero' | 'galeria' | 'sitio'>('home');
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
@@ -163,6 +168,33 @@ export function Dashboard() {
             <Users size={12} className="sm:size-14" />
             <span className="hidden sm:inline">Team</span>
           </button>
+          <button 
+            onClick={() => setTab('hero')} 
+            className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
+              tab === 'hero' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
+            }`}
+          >
+            <Layout size={12} className="sm:size-14" />
+            <span className="hidden sm:inline">Hero</span>
+          </button>
+          <button 
+            onClick={() => setTab('galeria')} 
+            className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
+              tab === 'galeria' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
+            }`}
+          >
+            <Image size={12} className="sm:size-14" />
+            <span className="hidden sm:inline">Galería</span>
+          </button>
+          <button 
+            onClick={() => setTab('sitio')} 
+            className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
+              tab === 'sitio' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
+            }`}
+          >
+            <Settings size={12} className="sm:size-14" />
+            <span className="hidden sm:inline">Sitio</span>
+          </button>
         </div>
 
         {/* Contenido Principal */}
@@ -170,10 +202,10 @@ export function Dashboard() {
             {/* Columna Izquierda: Formularios de Creación */}
             <div className="xl:col-span-5">
               <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
-                Nuevo {tab === 'home' ? 'Evento del Home' : tab === 'tienda' ? 'Producto' : tab === 'artistas' ? 'Artista' : tab === 'agenda' ? 'Evento de Agenda' : tab === 'eventos' ? 'Evento' : tab === 'musica' ? 'Track para el Home' : tab === 'membresias' ? 'Membresía' : 'Miembro del Team'}
+                Nuevo {tab === 'home' ? 'Evento del Home' : tab === 'tienda' ? 'Producto' : tab === 'artistas' ? 'Artista' : tab === 'agenda' ? 'Evento de Agenda' : tab === 'eventos' ? 'Evento' : tab === 'musica' ? 'Track para el Home' : tab === 'membresias' ? 'Membresía' : tab === 'team' ? 'Miembro del Team' : tab === 'hero' ? 'Slide del Hero' : tab === 'galeria' ? 'Foto de Galería' : 'Configuración del Sitio'}
               </h2>
               <div className="sticky top-4 sm:top-8">
-                {tab === 'home' ? <FormEventoHome /> : tab === 'tienda' ? <FormProducto /> : tab === 'artistas' ? <FormArtista /> : tab === 'agenda' ? <FormAgenda /> : tab === 'eventos' ? <FormEvento /> : tab === 'musica' ? <FormMainMusic /> : tab === 'membresias' ? <FormMembresia /> : <FormTeam />}
+                {tab === 'home' ? <FormEventoHome /> : tab === 'tienda' ? <FormProducto /> : tab === 'artistas' ? <FormArtista /> : tab === 'agenda' ? <FormAgenda /> : tab === 'eventos' ? <FormEvento /> : tab === 'musica' ? <FormMainMusic /> : tab === 'membresias' ? <FormMembresia /> : tab === 'team' ? <FormTeam /> : tab === 'hero' ? <FormHero /> : tab === 'galeria' ? <FormGallery /> : <FormSiteConfig />}
               </div>
             </div>
 
@@ -196,8 +228,14 @@ export function Dashboard() {
                 <MainMusicList refreshTrigger={refreshTrigger} />
               ) : tab === 'membresias' ? (
                 <MembresiasList refreshTrigger={refreshTrigger} />
-              ) : (
+              ) : tab === 'team' ? (
                 <TeamList refreshTrigger={refreshTrigger} />
+              ) : tab === 'hero' ? (
+                <HeroList refreshTrigger={refreshTrigger} />
+              ) : tab === 'galeria' ? (
+                <GalleryList refreshTrigger={refreshTrigger} />
+              ) : (
+                <div></div>
               )}
             </div>
         </div>

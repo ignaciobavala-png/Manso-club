@@ -44,12 +44,13 @@ export const EventosHome = () => {
         .eq('activo', true)
         .order('orden', { ascending: true });
 
-      // Obtener eventos con fecha específica de eventos
+      // Obtener eventos con fecha específica de eventos (limitado a 2)
       const { data: eventosConFecha, error: errorFecha } = await supabase
         .from('eventos')
         .select('*')
         .eq('activo', true)
-        .order('fecha', { ascending: true });
+        .order('fecha', { ascending: true })
+        .limit(2);
 
       if (errorHome || errorFecha) {
         throw new Error('Error fetching eventos');
@@ -154,18 +155,14 @@ export const EventosHome = () => {
           <div className="hidden md:block absolute left-1/2 top-0 bottom-0 w-px bg-gray-300 transform -translate-x-1/2" />
 
           {/* COLUMNA DERECHA: PRÓXIMOS EVENTOS (FLYERS) */}
-          <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-gray-600 mb-6">
-              PRÓXIMOS EVENTOS
-            </h3>
-            
-            <div className="space-y-6">
-              {eventosFecha.length === 0 ? (
-                <div className="text-center text-gray-500 py-8">
-                  No hay eventos disponibles
-                </div>
-              ) : (
-                eventosFecha.map((evento) => (
+          {eventosFecha.length > 0 && (
+            <div>
+              <h3 className="text-sm font-bold uppercase tracking-wider text-gray-600 mb-6">
+                PRÓXIMOS EVENTOS
+              </h3>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {eventosFecha.map((evento) => (
                   <div key={evento.id} className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                     {/* Flyer del evento */}
                     <div className="relative w-full h-48 bg-gray-900">
@@ -222,10 +219,10 @@ export const EventosHome = () => {
                       )}
                     </div>
                   </div>
-                ))
-              )}
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </section>
