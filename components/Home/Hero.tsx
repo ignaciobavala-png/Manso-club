@@ -2,6 +2,7 @@ import { ArrowDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getHeroSlides } from '@/lib/hero';
 import { HeroCarousel } from '@/components/Home/HeroCarousel';
+import Link from 'next/link';
 
 const HERO_SLIDES = [
   {
@@ -70,9 +71,12 @@ export const Hero = async () => {
             )}
             
             <div className="flex flex-col items-start gap-6">
-              <button className="bg-manso-cream text-manso-black px-10 py-5 text-[10px] font-black uppercase tracking-widest hover:bg-manso-white transition-all transform hover:-translate-y-1 active:scale-95">
+              <Link 
+                href="/membresias"
+                className="bg-manso-cream text-manso-black px-6 py-3 text-[9px] font-black uppercase tracking-widest rounded-full hover:bg-manso-white transition-all transform hover:-translate-y-1 active:scale-95"
+              >
                 Membresías 2026
-              </button>
+              </Link>
               
               <div className="flex items-center gap-4 text-manso-cream/40 animate-bounce mt-4 md:mt-0">
                 <span className="text-[9px] uppercase tracking-widest font-bold">Scroll para explorar</span>
@@ -122,9 +126,12 @@ export const Hero = async () => {
             )}
             
             <div className="flex flex-col items-start gap-6">
-              <button className="bg-manso-cream text-manso-black px-10 py-5 text-[10px] font-black uppercase tracking-widest hover:bg-manso-white transition-all transform hover:-translate-y-1 active:scale-95">
+              <Link 
+                href="/membresias"
+                className="bg-manso-cream text-manso-black px-6 py-3 text-[9px] font-black uppercase tracking-widest rounded-full hover:bg-manso-white transition-all transform hover:-translate-y-1 active:scale-95"
+              >
                 Membresías 2026
-              </button>
+              </Link>
               
               <div className="flex items-center gap-4 text-manso-cream/40 animate-bounce mt-4 md:mt-0">
                 <span className="text-[9px] uppercase tracking-widest font-bold">Scroll para explorar</span>

@@ -13,6 +13,7 @@ interface EventoHome {
   orden: number;
   activo: boolean;
   link_tickets?: string;
+  fecha?: string;
 }
 
 interface EventoFecha {
@@ -111,13 +112,23 @@ export const EventosHome = () => {
                 eventosRecurrentes.map((evento, index) => (
                   <div key={evento.id}>
                     <div className="flex items-center justify-between py-4 group">
+                      {/* Fecha a la izquierda */}
+                      <div className="w-16 shrink-0 mr-4">
+                        {evento.fecha ? (
+                          <span className="text-[10px] font-black uppercase tracking-widest text-red-600 block leading-tight">
+                            {new Date(evento.fecha).getDate()}{' '}
+                            {['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'][new Date(evento.fecha).getMonth()]}
+                          </span>
+                        ) : (
+                          <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 block leading-tight">
+                            {evento.categoria}
+                          </span>
+                        )}
+                      </div>
                       <div className="flex-1">
-                        <h4 className="text-lg font-bold text-black leading-none mb-1">
+                        <h4 className="text-lg font-black text-black leading-none mb-1 uppercase tracking-tighter">
                           {evento.titulo}
                         </h4>
-                        <span className="text-[9px] uppercase tracking-widest text-gray-500">
-                          {evento.categoria}
-                        </span>
                       </div>
                       
                       <div className="ml-4">
