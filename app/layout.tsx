@@ -11,6 +11,7 @@ export const metadata: Metadata = {
   title: "Manso Club | Espacio Creativo",
   description: "Cultura electrónica y diseño en Buenos Aires",
   verification: {
+    google: '_WJR-FPgtK6p2hcrhWfWvegrKEyMxw5Jkyx6Qqj4XZo',
     other: {
       "facebook-domain-verification": "nvn6bg2zurylkrkhpkuusxsrida80v",
     },
