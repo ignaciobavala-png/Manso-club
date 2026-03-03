@@ -10,6 +10,10 @@ import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 export const metadata: Metadata = {
   title: "Manso Club | Espacio Creativo",
   description: "Cultura electrónica y diseño en Buenos Aires",
+  icons: {
+    icon: '/manso.png',
+    apple: '/manso.png',
+  },
   verification: {
     google: '_WJR-FPgtK6p2hcrhWfWvegrKEyMxw5Jkyx6Qqj4XZo',
     other: {
