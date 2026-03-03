@@ -139,9 +139,8 @@ export const Hero = async () => {
   
   // For text slides or multiple slides, use carousel behavior
   const carouselSlides = slides.map(slide => ({
-    tag: slide.tag || '',
-    title: [slide.title_line1, slide.title_line2 || ''].filter(Boolean),
-    description: slide.description || ''
+    ...slide,
+    title: [slide.title_line1, slide.title_line2 || ''].filter(Boolean)
   }));
   
   return <HeroCarousel slides={carouselSlides} />;
