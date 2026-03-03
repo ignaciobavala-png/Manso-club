@@ -2,6 +2,8 @@ import Image from 'next/image';
 import { AdaptiveSectionLayout } from '@/components/ui/AdaptiveSectionLayout';
 import { getTeamMembers } from '@/lib/team';
 
+export const revalidate = 60; // revalida cada 60 segundos
+
 export default async function AboutPage() {
   const teamMembers = await getTeamMembers();
 

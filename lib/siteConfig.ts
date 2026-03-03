@@ -12,6 +12,8 @@ export async function getSiteConfig(): Promise<Record<string, string>> {
   return config;
 }
 
+export const revalidate = 60; // revalida cada 60 segundos
+
 export async function setSiteConfig(key: string, value: string): Promise<void> {
   const { error } = await supabase
     .from('site_config')

@@ -49,20 +49,26 @@ export function GalleryList({ refreshTrigger }: GalleryListProps) {
 
     try {
       // Borrar archivo de storage si existe
-      if (image.photo_url && image.photo_url.includes('storage/v1/object/public/')) {
-        const urlParts = image.photo_url.split('/');
-        const bucketIndex = urlParts.findIndex(part => part === 'public') + 1;
-        if (bucketIndex < urlParts.length) {
-          const bucket = urlParts[bucketIndex];
-          const filePath = urlParts.slice(bucketIndex + 1).join('/');
-          
-          const { error: storageError } = await supabase.storage
-            .from(bucket)
-            .remove([filePath]);
-          
-          if (storageError) {
-            console.warn('Error al eliminar archivo de storage:', storageError);
+      if (image.photo_url && image.photo_url.includes('supabase.co/storage/v1')) {
+        try {
+          // Extraer path del archivo de la URL
+          const url = new URL(image.photo_url);
+          const pathParts = url.pathname.split('/');
+          const objectIndex = pathParts.findIndex(part => part === 'object') + 2;
+          if (objectIndex < pathParts.length) {
+            const filePath = pathParts.slice(objectIndex).join('/');
+            const bucket = pathParts[objectIndex - 1];
+            
+            const { error: storageError } = await supabase.storage
+              .from(bucket)
+              .remove([filePath]);
+            
+            if (storageError) {
+              console.warn('Error al eliminar archivo de storage:', storageError);
+            }
           }
+        } catch (storageError) {
+          console.warn('Error procesando URL de storage:', storageError);
         }
       }
 

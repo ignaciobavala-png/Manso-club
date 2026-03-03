@@ -17,6 +17,8 @@ export async function getGalleryImages(): Promise<GalleryImage[]> {
   return data ?? [];
 }
 
+export const revalidate = 60; // revalida cada 60 segundos
+
 export async function getAllGalleryImages(): Promise<GalleryImage[]> {
   const { data, error } = await supabase
     .from('gallery_images')
