@@ -1,8 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createSupabaseAnon } from '@/lib/supabase';
 
-export const runtime = 'edge';
-
 export async function GET(request: Request) {
   // Verificar que es una llamada autorizada de Vercel Cron
   const authHeader = request.headers.get('authorization');

@@ -48,6 +48,16 @@ export function FormSiteConfig() {
       
       // Disparar dashboardRefresh
       window.dispatchEvent(new CustomEvent('dashboardRefresh'));
+      
+      // Revalidar cache
+      try {
+        await fetch('/api/revalidate', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${process.env.NEXT_PUBLIC_REVALIDATE_SECRET}` }
+        });
+      } catch (error) {
+        console.warn('Error revalidando cache:', error);
+      }
     } catch (error: any) {
       setMessage({ type: 'error', text: 'Error al guardar: ' + error.message });
     } finally {

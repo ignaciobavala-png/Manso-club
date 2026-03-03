@@ -103,6 +103,16 @@ export function FormHero() {
       alert(editingId ? '¡Slide actualizado correctamente!' : '¡Slide agregado correctamente!');
       resetForm();
       window.dispatchEvent(new CustomEvent('dashboardRefresh'));
+      
+      // Revalidar cache
+      try {
+        await fetch('/api/revalidate', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${process.env.NEXT_PUBLIC_REVALIDATE_SECRET}` }
+        });
+      } catch (error) {
+        console.warn('Error revalidando cache:', error);
+      }
     } catch (error: any) {
       alert(error.message);
     }
@@ -159,16 +169,19 @@ export function FormHero() {
               </button>
             ))}
           </div>
+          <p className="text-[10px] text-manso-cream/40 ml-2 mt-1">
+            Seleccioná primero el tipo de slide antes de subir contenido
+          </p>
         </div>
 
         {/* Zona de Media segun el tipo */}
-        {(formData.tipo === 'imagen' || formData.tipo === 'video') && (
+        {formData.tipo === 'imagen' && (
           <div className="space-y-2">
             <label className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2 flex items-center gap-2">
-              {getTipoIcon(formData.tipo)}
-              {formData.tipo === 'imagen' ? 'Imagen del Slide' : 'URL del Video'}
+              {getTipoIcon('imagen')}
+              Imagen del Slide
             </label>
-            {formData.tipo === 'imagen' ? (
+            <div className={`${!formData.media_url ? 'ring-2 ring-manso-terra/50 rounded-3xl' : ''}`}>
               <ImageUploader
                 key={imageKey}
                 bucket="hero-media"
@@ -177,19 +190,39 @@ export function FormHero() {
                 initialPreview={formData.media_url || null}
                 onUpload={(url) => setFormData({...formData, media_url: url})} 
               />
-            ) : (
-              <div className="relative">
-                <Video className="absolute left-4 top-1/2 -translate-y-1/2 text-manso-cream/60" size={20} />
-                <input 
-                  type="url" 
-                  placeholder="URL DEL VIDEO (MP4)"
-                  className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all"
-                  value={formData.media_url}
-                  onChange={e => setFormData({...formData, media_url: e.target.value})}
-                  required
-                />
-              </div>
-            )}
+            </div>
+          </div>
+        )}
+
+        {formData.tipo === 'video' && (
+          <div className="space-y-2">
+            <label className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2 flex items-center gap-2">
+              {getTipoIcon('video')}
+              URL del Video
+            </label>
+            <div className="relative">
+              <Video className="absolute left-4 top-1/2 -translate-y-1/2 text-manso-cream/60" size={20} />
+              <input 
+                type="url" 
+                placeholder="URL DEL VIDEO (MP4)"
+                className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all"
+                value={formData.media_url}
+                onChange={e => setFormData({...formData, media_url: e.target.value})}
+                required
+              />
+            </div>
+          </div>
+        )}
+
+        {formData.tipo === 'texto' && (
+          <div className="space-y-2">
+            <label className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2 flex items-center gap-2">
+              {getTipoIcon('texto')}
+              Contenido del Slide
+            </label>
+            <div className="bg-manso-cream/5 rounded-2xl p-4 border border-manso-cream/10 text-center text-manso-cream/40 text-xs">
+              Los slides de tipo TEXTO no llevan imagen ni video
+            </div>
           </div>
         )}
 

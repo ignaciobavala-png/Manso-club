@@ -5,7 +5,7 @@ import { MembresiasHome } from "@/components/Home/MembresiasHome";
 import { PorQueManso } from "@/components/Home/PorQueManso";
 import { TiendaHome } from "@/components/Home/TiendaHome";
 
-export const revalidate = 60; // revalida cada 60 segundos
+export const revalidate = 30; // revalida cada 30 segundos
 
 export default function Home() {
   return (

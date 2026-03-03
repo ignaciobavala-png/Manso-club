@@ -22,7 +22,7 @@ export async function getHeroSlides(): Promise<HeroSlide[]> {
   return data ?? [];
 }
 
-export const revalidate = 60; // revalida cada 60 segundos
+export const revalidate = 30; // revalida cada 30 segundos
 
 export async function getAllHeroSlides(): Promise<HeroSlide[]> {
   const { data, error } = await supabase

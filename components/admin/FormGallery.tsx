@@ -47,6 +47,16 @@ export function FormGallery() {
       alert('¡Imagen agregada correctamente a la galería!');
       resetForm();
       window.dispatchEvent(new CustomEvent('dashboardRefresh'));
+      
+      // Revalidar cache
+      try {
+        await fetch('/api/revalidate', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${process.env.NEXT_PUBLIC_REVALIDATE_SECRET}` }
+        });
+      } catch (error) {
+        console.warn('Error revalidando cache:', error);
+      }
     } catch (error: any) {
       alert(error.message);
     }
