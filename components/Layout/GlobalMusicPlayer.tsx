@@ -250,12 +250,12 @@ export function GlobalMusicPlayer() {
     if (typeof window === 'undefined') return;
     const isMobileView = window.innerWidth < 768;
     if (isMobileView) {
-      document.body.style.paddingBottom = '56px';
+      document.body.style.paddingBottom = showMobileBar ? '56px' : '0px';
     }
     return () => {
       document.body.style.paddingBottom = '';
     };
-  }, []);
+  }, [showMobileBar]);
 
   if (!loaded) return null;
 
