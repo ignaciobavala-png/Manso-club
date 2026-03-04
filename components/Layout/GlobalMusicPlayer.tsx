@@ -245,6 +245,18 @@ export function GlobalMusicPlayer() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Apply dynamic padding to body on mobile
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const isMobileView = window.innerWidth < 768;
+    if (isMobileView) {
+      document.body.style.paddingBottom = '56px';
+    }
+    return () => {
+      document.body.style.paddingBottom = '';
+    };
+  }, []);
+
   if (!loaded) return null;
 
   // Ocultar reproductor en páginas de artista
