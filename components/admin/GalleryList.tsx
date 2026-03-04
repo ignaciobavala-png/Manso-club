@@ -3,7 +3,8 @@
 import { useState, useEffect } from 'react';
 import { getAllGalleryImages, GalleryImage } from '@/lib/gallery';
 import { supabase } from '@/lib/supabase';
-import { Trash2, Eye, EyeOff, Image as ImageIcon } from 'lucide-react';
+import { Trash2, Eye, EyeOff, Image as ImageIcon, Pencil } from 'lucide-react';
+import { ImageUploader } from './ImageUploader';
 
 interface GalleryListProps {
   refreshTrigger?: number;
@@ -12,6 +13,7 @@ interface GalleryListProps {
 export function GalleryList({ refreshTrigger }: GalleryListProps) {
   const [galleryImages, setGalleryImages] = useState<GalleryImage[]>([]);
   const [loading, setLoading] = useState(true);
+  const [replacingId, setReplacingId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchGalleryImages();
@@ -161,6 +163,14 @@ export function GalleryList({ refreshTrigger }: GalleryListProps) {
                     >
                       <Trash2 size={14} className="text-red-400" />
                     </button>
+
+                    <button
+                      onClick={() => setReplacingId(replacingId === image.id ? null : image.id)}
+                      className="p-2 rounded-full bg-blue-500/20 hover:bg-blue-500/40 text-blue-400 transition-all"
+                      title="Reemplazar foto"
+                    >
+                      <Pencil size={14} />
+                    </button>
                   </div>
                 </div>
               </div>
@@ -171,6 +181,27 @@ export function GalleryList({ refreshTrigger }: GalleryListProps) {
                   image.active ? 'bg-green-500' : 'bg-red-500'
                 }`} />
               </div>
+
+              {replacingId === image.id && (
+                <div className="mt-2 p-3 bg-manso-cream/5 rounded-2xl border border-manso-cream/10">
+                  <p className="text-[10px] text-manso-cream/40 uppercase tracking-widest mb-2">Nueva foto</p>
+                  <ImageUploader
+                    bucket="gallery-images"
+                    folder="photos"
+                    maxWidth={1200}
+                    onUpload={async (url) => {
+                      const { error } = await supabase
+                        .from('gallery_images')
+                        .update({ photo_url: url })
+                        .eq('id', image.id);
+                      if (!error) {
+                        setReplacingId(null);
+                        window.dispatchEvent(new CustomEvent('dashboardRefresh'));
+                      }
+                    }}
+                  />
+                </div>
+              )}
             </div>
           ))}
         </div>

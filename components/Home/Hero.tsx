@@ -34,7 +34,7 @@ export const Hero = async () => {
   // If single video slide
   if (slides.length === 1 && slides[0].tipo === 'video' && slides[0].media_url) {
     return (
-      <section id="hero" className="relative min-h-screen flex flex-col justify-center px-8 md:px-20 py-20 overflow-hidden">
+      <section id="hero" className="relative min-h-screen flex flex-col justify-end md:justify-center px-8 md:px-20 py-10 md:py-20 overflow-hidden">
         <video
           autoPlay
           muted
@@ -55,7 +55,7 @@ export const Hero = async () => {
                 {slides[0].tag}
               </span>
             )}
-            <h1 className="text-[16vw] md:text-[11vw] leading-[0.8] font-bold uppercase tracking-tighter text-manso-cream">
+            <h1 className="text-[clamp(2.5rem,12vw,8rem)] md:text-[11vw] leading-[0.85] font-bold uppercase tracking-tighter text-manso-cream break-words">
               {slides[0].title_line1} <br />
               {slides[0].title_line2 && (
                 <span className="italic font-light opacity-80">{slides[0].title_line2}</span>
@@ -92,7 +92,7 @@ export const Hero = async () => {
   // If single image slide
   if (slides.length === 1 && slides[0].tipo === 'imagen' && slides[0].media_url) {
     return (
-      <section id="hero" className="relative min-h-screen flex flex-col justify-center px-8 md:px-20 py-20 overflow-hidden">
+      <section id="hero" className="relative min-h-screen flex flex-col justify-end md:justify-center px-8 md:px-20 py-10 md:py-20 overflow-hidden">
         <div
           className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
           style={{ 
@@ -110,7 +110,7 @@ export const Hero = async () => {
                 {slides[0].tag}
               </span>
             )}
-            <h1 className="text-[16vw] md:text-[11vw] leading-[0.8] font-bold uppercase tracking-tighter text-manso-cream">
+            <h1 className="text-[clamp(2.5rem,12vw,8rem)] md:text-[11vw] leading-[0.85] font-bold uppercase tracking-tighter text-manso-cream break-words">
               {slides[0].title_line1} <br />
               {slides[0].title_line2 && (
                 <span className="italic font-light opacity-80">{slides[0].title_line2}</span>

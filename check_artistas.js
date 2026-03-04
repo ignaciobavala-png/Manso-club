@@ -20,14 +20,6 @@ async function checkArtistas() {
       return;
     }
 
-    console.log('Artistas encontrados:', artistas.length);
-    console.log('=== Artistas con imágenes ===');
-    artistas.forEach(artista => {
-      console.log(`${artista.nombre}: ${artista.imagen_url ? '✅ Tiene imagen' : '❌ Sin imagen'}`);
-      if (artista.imagen_url) {
-        console.log(`  URL: ${artista.imagen_url}`);
-      }
-    });
   } catch (err) {
     console.error('Error al verificar artistas:', err);
   }

@@ -41,7 +41,6 @@ return (
               <Link href="/about" className="hover:text-manso-cream transition-colors">Nosotros</Link>
               <Link href="/artistas" className="hover:text-manso-cream transition-colors">Artistas</Link>
               <Link href="/agenda" className="hover:text-manso-cream transition-colors">Agenda</Link>
-              <Link href="#" className="hover:text-manso-cream transition-colors">FAQS</Link>
             </div>
           </div>
           
@@ -54,6 +53,20 @@ return (
           </div>
         </div>
 
+      </div>
+      
+      <div className="border-t border-manso-cream/10 mt-6 pt-4 text-center">
+        <p className="text-[9px] uppercase tracking-widest text-manso-cream/30">
+          Sitio desarrollado por{' '}
+          <a
+            href="https://petralabs.xyz"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-manso-cream/50 hover:text-manso-cream transition-colors"
+          >
+            Petra-Labs
+          </a>
+        </p>
       </div>
     </footer>
   );

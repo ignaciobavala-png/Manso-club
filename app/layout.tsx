@@ -29,7 +29,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" className="scroll-smooth">
-      <body className="antialiased text-manso-cream selection:bg-manso-terra selection:text-manso-white min-h-screen flex flex-col bg-white">
+      <body className="antialiased text-manso-cream selection:bg-manso-terra selection:text-manso-white min-h-screen flex flex-col bg-white pb-14 md:pb-0">
         {/* GTM — noscript fallback (must be right after <body>) */}
         <noscript>
           <iframe
