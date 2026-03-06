@@ -21,7 +21,8 @@ export function FormProducto() {
     categoria: CATEGORIAS_TIENDA[0] as string,
     precio: 0,
     descripcion: '',
-    imagenes_urls: [] as string[]
+    imagenes_urls: [] as string[],
+    stock: 10 // Stock por defecto
   });
 
   // Cargar categorias unicas desde la DB + las default
@@ -77,7 +78,8 @@ export function FormProducto() {
       categoria: product.categoria || CATEGORIAS_TIENDA[0],
       precio: product.precio || 0,
       descripcion: product.descripcion || '',
-      imagenes_urls: product.imagenes_urls || []
+      imagenes_urls: product.imagenes_urls || [],
+      stock: product.stock || 10 // Stock por defecto si no existe
     });
     setError(null);
     setSuccess(false);
@@ -91,7 +93,8 @@ export function FormProducto() {
       categoria: categorias[0] || CATEGORIAS_TIENDA[0],
       precio: 0,
       descripcion: '',
-      imagenes_urls: []
+      imagenes_urls: [],
+      stock: 10 // Stock por defecto
     });
     setError(null);
     setSuccess(false);
@@ -356,6 +359,23 @@ export function FormProducto() {
                 setFormData({...formData, precio: Number(e.target.value)});
                 setError(null); // Limpiar error al escribir precio
               }}
+              required
+            />
+          </div>
+
+          {/* Stock */}
+          <div className="relative">
+            <Package className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-manso-cream/60 w-4 h-4" size={16} />
+            <input 
+              type="number" 
+              placeholder="STOCK"
+              className="w-full bg-manso-cream/10 p-3 sm:p-4 pl-10 sm:pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono font-bold text-manso-cream placeholder:text-manso-cream/40 text-sm sm:text-base"
+              value={formData.stock === 0 ? '' : formData.stock}
+              onChange={e => {
+                setFormData({...formData, stock: Number(e.target.value)});
+                setError(null); // Limpiar error al escribir stock
+              }}
+              min="0"
               required
             />
           </div>

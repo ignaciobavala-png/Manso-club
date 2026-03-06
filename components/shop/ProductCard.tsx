@@ -4,6 +4,7 @@
 import { useCart } from '@/store/useCart';
 import { Plus, ShoppingBag, Check } from 'lucide-react';
 import { useState } from 'react';
+import Link from 'next/link';
 
 interface ProductProps {
   producto: {
@@ -52,23 +53,24 @@ export function ProductCard({ producto }: ProductProps) {
 
   return (
     <div className="group bg-white rounded-[40px] border border-zinc-100 overflow-hidden transition-all duration-500 hover:shadow-2xl hover:scale-[1.02] cursor-pointer">
-      {/* Contenedor principal clickeable */}
-      <div onClick={handleAddToCart} className="relative">
-        {/* Contenedor de Imagen */}
-        <div className="aspect-square w-full bg-zinc-50 relative overflow-hidden">
-          <img 
-            src={currentImage} 
-            alt={producto.nombre}
-            className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110"
-            onError={(e) => {
-              console.error(`Error cargando imagen: ${currentImage}`);
-              // Fallback a manso.png si falla
-              e.currentTarget.src = '/manso.png';
-            }}
-            onLoad={() => {
-              console.log(`Imagen cargada exitosamente: ${currentImage}`);
-            }}
-          />
+      {/* Contenedor principal clickeable - ahora redirige al detalle del producto */}
+      <Link href={`/producto/${producto.id}`}>
+        <div className="relative">
+          {/* Contenedor de Imagen */}
+          <div className="aspect-square w-full bg-zinc-50 relative overflow-hidden">
+            <img 
+              src={currentImage} 
+              alt={producto.nombre}
+              className="w-full h-full object-cover transition-all duration-700"
+              onError={(e) => {
+                console.error(`Error cargando imagen: ${currentImage}`);
+                // Fallback a manso.png si falla
+                e.currentTarget.src = '/manso.png';
+              }}
+              onLoad={() => {
+                console.log(`Imagen cargada exitosamente: ${currentImage}`);
+              }}
+            />
           
           {/* Navegación de imágenes (solo si hay múltiples) */}
           {(producto.imagenes_urls?.length || 0) > 1 && (
@@ -102,21 +104,12 @@ export function ProductCard({ producto }: ProductProps) {
             </>
           )}
           
-          {/* Overlay de acción */}
+          {/* Overlay de acción - ahora muestra "Ver detalles" */}
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">
             <div className="bg-white/95 backdrop-blur-sm px-6 py-3 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-y-4 group-hover:translate-y-0 shadow-xl">
               <div className="flex items-center gap-2">
-                {isAdded ? (
-                  <>
-                    <Check size={18} className="text-green-600" />
-                    <span className="text-sm font-black uppercase tracking-wider text-green-600">Agregado</span>
-                  </>
-                ) : (
-                  <>
-                    <ShoppingBag size={18} className="text-black" />
-                    <span className="text-sm font-black uppercase tracking-wider text-black">Añadir</span>
-                  </>
-                )}
+                <ShoppingBag size={18} className="text-black" />
+                <span className="text-sm font-black uppercase tracking-wider text-black">Ver detalles</span>
               </div>
             </div>
           </div>
@@ -143,7 +136,7 @@ export function ProductCard({ producto }: ProductProps) {
           {/* Indicador de acción */}
           <div className="flex items-center justify-between">
             <span className="text-[10px] text-zinc-500 uppercase tracking-wider font-medium">
-              Click para agregar
+              Click para ver detalles
             </span>
             <div className="flex items-center gap-1">
               <Plus size={14} className="text-zinc-400 group-hover:text-orange-600 transition-colors" />
@@ -152,6 +145,7 @@ export function ProductCard({ producto }: ProductProps) {
           </div>
         </div>
       </div>
+      </Link>
     </div>
   );
 }
