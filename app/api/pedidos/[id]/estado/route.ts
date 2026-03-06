@@ -3,10 +3,10 @@ import { createClient } from '@supabase/supabase-js';
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
-    const pedidoId = params.id;
+    const { id: pedidoId } = await params;
     const { estado } = await request.json();
 
     if (!estado) {
