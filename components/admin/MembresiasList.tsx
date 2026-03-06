@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Crown, Pencil, Trash2, Star, DollarSign } from 'lucide-react';
+import { Crown, Pencil, Trash2, Star, DollarSign, ChevronUp, ChevronDown } from 'lucide-react';
 import { Membresia } from '@/lib/types/membresia';
 
 interface MembresiasListProps {
@@ -60,6 +60,46 @@ export function MembresiasList({ refreshTrigger }: MembresiasListProps) {
     window.dispatchEvent(event);
   };
 
+  const handleMoveUp = async (index: number) => {
+    if (index === 0) return; // No puede subir más
+    
+    const newMembresias = [...membresias];
+    const temp = newMembresias[index];
+    newMembresias[index] = newMembresias[index - 1];
+    newMembresias[index - 1] = temp;
+    
+    // Actualizar el orden en la base de datos
+    const updates = newMembresias.map((membresia, i) => 
+      supabase
+        .from('membresias')
+        .update({ orden: i })
+        .eq('id', membresia.id)
+    );
+    
+    await Promise.all(updates);
+    setMembresias(newMembresias);
+  };
+
+  const handleMoveDown = async (index: number) => {
+    if (index === membresias.length - 1) return; // No puede bajar más
+    
+    const newMembresias = [...membresias];
+    const temp = newMembresias[index];
+    newMembresias[index] = newMembresias[index + 1];
+    newMembresias[index + 1] = temp;
+    
+    // Actualizar el orden en la base de datos
+    const updates = newMembresias.map((membresia, i) => 
+      supabase
+        .from('membresias')
+        .update({ orden: i })
+        .eq('id', membresia.id)
+    );
+    
+    await Promise.all(updates);
+    setMembresias(newMembresias);
+  };
+
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
@@ -79,7 +119,7 @@ export function MembresiasList({ refreshTrigger }: MembresiasListProps) {
 
   return (
     <div className="space-y-3">
-      {membresias.map((membresia) => (
+      {membresias.map((membresia, index) => (
         <div
           key={membresia.id}
           className={`bg-manso-cream/5 border border-manso-cream/10 rounded-2xl p-4 transition-all hover:border-manso-cream/20 ${
@@ -119,6 +159,34 @@ export function MembresiasList({ refreshTrigger }: MembresiasListProps) {
             </div>
 
             <div className="flex items-center gap-1 flex-shrink-0">
+              {/* Botones de reordenamiento */}
+              <div className="flex flex-col gap-0.5 mr-1">
+                <button
+                  onClick={() => handleMoveUp(index)}
+                  disabled={index === 0}
+                  className={`w-6 h-6 flex items-center justify-center rounded transition-colors ${
+                    index === 0 
+                      ? 'text-manso-cream/20 cursor-not-allowed' 
+                      : 'text-manso-cream/40 hover:text-manso-terra hover:bg-manso-cream/10'
+                  }`}
+                  title="Mover hacia arriba"
+                >
+                  <ChevronUp size={12} />
+                </button>
+                <button
+                  onClick={() => handleMoveDown(index)}
+                  disabled={index === membresias.length - 1}
+                  className={`w-6 h-6 flex items-center justify-center rounded transition-colors ${
+                    index === membresias.length - 1 
+                      ? 'text-manso-cream/20 cursor-not-allowed' 
+                      : 'text-manso-cream/40 hover:text-manso-terra hover:bg-manso-cream/10'
+                  }`}
+                  title="Mover hacia abajo"
+                >
+                  <ChevronDown size={12} />
+                </button>
+              </div>
+              
               <button
                 onClick={() => handleToggleActive(membresia.id, membresia.activo)}
                 className={`w-8 h-8 flex items-center justify-center rounded-lg transition-colors ${

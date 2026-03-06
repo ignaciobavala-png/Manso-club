@@ -16,16 +16,16 @@ export default async function AboutPage() {
         {/* Layout original mejorado: texto y foto principal */}
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
           {/* Texto principal */}
-          <div className="flex-1 lg:flex-initial lg:w-1/2 space-y-8">
+          <div className="flex-1 lg:w-1/2 space-y-6 pr-0 lg:pr-8">
             {aboutUs.description.split('\n').filter(p => p.trim()).map((paragraph, index) => (
-              <p key={index} className="text-zinc-800 text-xl md:text-2xl leading-relaxed font-bold">
+              <p key={index} className="text-zinc-800 text-lg md:text-xl leading-relaxed font-normal break-words">
                 {paragraph}
               </p>
             ))}
           </div>
           
           {/* Foto principal */}
-          <div className="flex-1 lg:flex-initial lg:w-1/2 relative">
+          <div className="flex-1 lg:w-1/2 relative">
             <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg">
               {aboutUs.main_photo_url ? (
                 <Image

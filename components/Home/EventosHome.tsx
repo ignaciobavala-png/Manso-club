@@ -232,6 +232,20 @@ export const EventosHome = () => {
                   </div>
                 ))}
               </div>
+              
+              {/* Botón Ver más */}
+              <div className="flex justify-end mt-8">
+                <a 
+                  href="/agenda"
+                  className="inline-flex items-center gap-2 bg-black text-white px-6 py-3 text-[10px] font-black uppercase tracking-widest hover:bg-gray-800 transition-all transform hover:-translate-y-1 active:scale-95 rounded-full"
+                >
+                  Ver más
+                  <ArrowRight 
+                    size={16} 
+                    className="transform transition-transform group-hover:translate-x-2" 
+                  />
+                </a>
+              </div>
             </div>
           )}
         </div>
