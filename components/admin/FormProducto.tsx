@@ -99,7 +99,7 @@ export function FormProducto() {
             Imagen del Producto
           </label>
           <ImageUploader 
-            bucket="flyers" 
+            bucket="products" 
             onUpload={(url) => setFormData({...formData, imagen_url: url})} 
           />
         </div>
