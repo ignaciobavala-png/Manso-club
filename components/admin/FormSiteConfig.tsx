@@ -18,7 +18,16 @@ export function FormSiteConfig() {
     setLoading(true);
     try {
       const config = await getSiteConfig();
-      setFormData(config);
+      // Extraer solo los valores para el formulario
+      const formDataValues: Record<string, string> = {};
+      Object.entries(config).forEach(([key, data]) => {
+        if (data && typeof data === 'object' && 'value' in data) {
+          formDataValues[key] = data.value;
+        } else if (typeof data === 'string') {
+          formDataValues[key] = data;
+        }
+      });
+      setFormData(formDataValues);
     } catch (error: any) {
       setMessage({ type: 'error', text: 'Error al cargar configuración: ' + error.message });
     } finally {

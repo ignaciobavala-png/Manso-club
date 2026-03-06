@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Star } from 'lucide-react';
 import Link from 'next/link';
 import { Membresia, MembresiaBeneficio } from '@/lib/types/membresia';
 
@@ -73,12 +73,25 @@ export const MembresiasHome = () => {
             {membresias.map((membresia) => (
               <div 
                 key={membresia.id}
-                className={`group rounded-[40px] p-8 transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] cursor-pointer ${
+                className={`group rounded-[40px] p-8 transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] cursor-pointer relative ${
                   membresia.destacado 
                     ? 'bg-black text-white border-black' 
                     : 'bg-white border border-gray-200'
                 }`}
               >
+                {/* Etiqueta "Más Popular" */}
+                {membresia.destacado && (
+                  <div className="absolute -top-3 left-1/2 -translate-x-1/2">
+                    <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest ${
+                      membresia.destacado 
+                        ? 'bg-white text-black' 
+                        : 'bg-black text-white'
+                    }`}>
+                      <Star size={8} />
+                      Más Popular
+                    </span>
+                  </div>
+                )}
                 {/* Header de la membresía */}
                 <div className="mb-6">
                   <h3 className={`text-xl md:text-2xl font-bold uppercase tracking-tighter italic mb-2 ${

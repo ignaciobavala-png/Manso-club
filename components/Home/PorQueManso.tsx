@@ -5,39 +5,69 @@ import { getSiteConfig } from '@/lib/siteConfig';
 export const PorQueManso = async () => {
   const config = await getSiteConfig();
   
+  // Función helper para obtener valor visible
+  const getValue = (key: string, defaultValue: string) => {
+    const item = config[key];
+    if (!item) return defaultValue;
+    if (typeof item === 'string') return item;
+    return item.visible ? item.value : defaultValue;
+  };
+
+  // Función helper para verificar si un elemento es visible
+  const isVisible = (key: string) => {
+    const item = config[key];
+    if (!item) return false;
+    if (typeof item === 'string') return true; // Compatibilidad con datos antiguos
+    return item.visible;
+  };
+
   const benefits = [
     {
-      title: config.beneficio1_titulo || 'Título del Beneficio 1',
-      description: config.beneficio1_descripcion || 'Descripción del primer beneficio que ofrece Manso Club...'
+      title: getValue('beneficio1_titulo', 'Título del Beneficio 1'),
+      description: getValue('beneficio1_descripcion', 'Descripción del primer beneficio que ofrece Manso Club...'),
+      visible: isVisible('beneficio1_titulo') || isVisible('beneficio1_descripcion')
     },
     {
-      title: config.beneficio2_titulo || 'Título del Beneficio 2',
-      description: config.beneficio2_descripcion || 'Descripción del segundo beneficio que ofrece Manso Club...'
+      title: getValue('beneficio2_titulo', 'Título del Beneficio 2'),
+      description: getValue('beneficio2_descripcion', 'Descripción del segundo beneficio que ofrece Manso Club...'),
+      visible: isVisible('beneficio2_titulo') || isVisible('beneficio2_descripcion')
     },
     {
-      title: config.beneficio3_titulo || 'Título del Beneficio 3',
-      description: config.beneficio3_descripcion || 'Descripción del tercer beneficio que ofrece Manso Club...'
+      title: getValue('beneficio3_titulo', 'Título del Beneficio 3'),
+      description: getValue('beneficio3_descripcion', 'Descripción del tercer beneficio que ofrece Manso Club...'),
+      visible: isVisible('beneficio3_titulo') || isVisible('beneficio3_descripcion')
     },
     {
-      title: config.beneficio4_titulo || 'Título del Beneficio 4',
-      description: config.beneficio4_descripcion || 'Descripción del cuarto beneficio que ofrece Manso Club...'
+      title: getValue('beneficio4_titulo', 'Título del Beneficio 4'),
+      description: getValue('beneficio4_descripcion', 'Descripción del cuarto beneficio que ofrece Manso Club...'),
+      visible: isVisible('beneficio4_titulo') || isVisible('beneficio4_descripcion')
     }
-  ];
+  ].filter(benefit => benefit.visible);
+
+  // Determinar clases de grid según cantidad de beneficios
+  const getGridClass = () => {
+    const count = benefits.length;
+    if (count === 0) return 'hidden';
+    if (count === 1) return 'grid grid-cols-1 max-w-md mx-auto';
+    if (count === 2) return 'grid grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto';
+    if (count === 3) return 'grid grid-cols-1 md:grid-cols-3 max-w-6xl mx-auto';
+    return 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4';
+  };
 
   return (
     <section className="py-20 px-8 md:px-20 bg-manso-black">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
           <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold uppercase tracking-tighter text-white leading-[0.9] mb-6">
-            {config.porque_titulo || 'Why Manso'}
+            {getValue('porque_titulo', 'Why Manso')}
           </h2>
           <p className="text-lg md:text-xl text-white/70 max-w-3xl mx-auto leading-relaxed">
-            {config.porque_subtitulo || 'More than just a workspace. We provide everything you need to thrive in today\'s dynamic business environment.'}
+            {getValue('porque_subtitulo', 'More than just a workspace. We provide everything you need to thrive in today\'s dynamic business environment.')}
           </p>
         </div>
 
         {/* Grid de cards de beneficios */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+        <div className={`${getGridClass()} gap-6 mb-16`}>
           {benefits.map((benefit, index) => (
             <div key={index} className="bg-manso-cream/5 backdrop-blur-sm rounded-2xl p-8 border border-manso-cream/10 hover:bg-manso-cream/10 transition-all duration-300 group">
               <h3 className="text-xl font-bold text-white mb-4 group-hover:text-manso-terra transition-colors">
@@ -51,13 +81,16 @@ export const PorQueManso = async () => {
         </div>
 
         {/* Texto central adicional */}
-        {config.porque_main_text && (
-          <div className="text-center mb-16">
-            <p className="text-xl md:text-2xl font-light text-white/70 leading-relaxed max-w-4xl mx-auto">
-              {config.porque_main_text}
-            </p>
-          </div>
-        )}
+        {(() => {
+          const mainText = getValue('porque_main_text', '');
+          return mainText && mainText !== 'Texto descriptivo adicional...' ? (
+            <div className="text-center mb-16">
+              <p className="text-xl md:text-2xl font-light text-white/70 leading-relaxed max-w-4xl mx-auto">
+                {mainText}
+              </p>
+            </div>
+          ) : null;
+        })()}
 
         {/* CTA */}
         <div className="text-center">
