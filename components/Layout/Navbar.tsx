@@ -26,7 +26,8 @@ export const Navbar = () => {
   // Detectar si estamos en páginas con fondo claro
   const isLightBgPage = pathname?.includes('/about') || 
                         pathname?.includes('/agenda') || 
-                        pathname?.includes('/tienda');
+                        pathname?.includes('/tienda') ||
+                        pathname?.includes('/checkout');
 
   // Efecto de scroll para cambiar la apariencia del Navbar
   useEffect(() => {

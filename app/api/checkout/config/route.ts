@@ -1,11 +1,35 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createSupabaseAnon } from '@/lib/supabase';
+import { createClient } from '@supabase/supabase-js';
 
 // GET - Obtener configuración del checkout
 export async function GET() {
   try {
-    const supabase = createSupabaseAnon();
+    console.log('🔍 Obteniendo configuración de checkout...');
     
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    
+    console.log('🔑 Variables de entorno:', {
+      supabaseUrl: supabaseUrl ? '✅ Configurada' : '❌ No configurada',
+      supabaseAnonKey: supabaseAnonKey ? '✅ Configurada' : '❌ No configurada'
+    });
+
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.error('❌ Variables de entorno de Supabase no configuradas');
+      return NextResponse.json(
+        { error: 'Configuración de base de datos incompleta' },
+        { status: 500 }
+      );
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+      },
+    });
+    
+    console.log('📊 Consultando tabla checkout_config...');
     const { data, error } = await supabase
       .from('checkout_config')
       .select('key, value')
@@ -23,12 +47,44 @@ export async function GET() {
       ]);
 
     if (error) {
-      console.error('Error fetching checkout config:', error);
+      console.error('❌ Error de Supabase:', error);
+      console.error('Detalles:', {
+        message: error.message,
+        details: error.details,
+        hint: error.hint,
+        code: error.code
+      });
+      
+      // Si la tabla no existe, devolver configuración por defecto
+      if (error.message?.includes('relation') && error.message?.includes('does not exist')) {
+        console.log('⚠️ Tabla checkout_config no existe, usando valores por defecto');
+        const defaultConfig = {
+          banco_nombre: 'Banco Galicia',
+          banco_cbu: '0070053430000001234567',
+          banco_alias: 'MANSO.CLUB.TIENDA',
+          banco_titular: 'MANSO CLUB S.A.',
+          banco_cuit: '30-12345678-9',
+          whatsapp_numero: '5491130232533',
+          whatsapp_mensaje_confirmacion: '',
+          email_notificaciones: 'ana@manso.club',
+          moneda: 'ARS',
+          tiempo_entrega: '3-5 días hábiles'
+        };
+        
+        return NextResponse.json({
+          success: true,
+          config: defaultConfig,
+          warning: 'Usando configuración por defecto. Configura desde el dashboard admin.'
+        });
+      }
+      
       return NextResponse.json(
-        { error: 'Error al obtener configuración' },
+        { error: 'Error al obtener configuración: ' + error.message },
         { status: 500 }
       );
     }
+
+    console.log('✅ Configuración obtenida:', data?.length || 0, 'items');
 
     // Convertir array a objeto
     const config: Record<string, string> = {};
@@ -36,15 +92,38 @@ export async function GET() {
       config[item.key] = item.value;
     });
 
+    // Si no hay datos, usar valores por defecto
+    if (Object.keys(config).length === 0) {
+      console.log('⚠️ No hay configuración guardada, usando valores por defecto');
+      const defaultConfig = {
+        banco_nombre: 'Banco Galicia',
+        banco_cbu: '0070053430000001234567',
+        banco_alias: 'MANSO.CLUB.TIENDA',
+        banco_titular: 'MANSO CLUB S.A.',
+        banco_cuit: '30-12345678-9',
+        whatsapp_numero: '5491130232533',
+        whatsapp_mensaje_confirmacion: '',
+        email_notificaciones: 'ana@manso.club',
+        moneda: 'ARS',
+        tiempo_entrega: '3-5 días hábiles'
+      };
+      
+      return NextResponse.json({
+        success: true,
+        config: defaultConfig,
+        warning: 'Usando configuración por defecto. Configura desde el dashboard admin.'
+      });
+    }
+
     return NextResponse.json({
       success: true,
       config
     });
 
   } catch (error) {
-    console.error('Error in GET checkout config:', error);
+    console.error('❌ Error general en GET checkout config:', error);
     return NextResponse.json(
-      { error: 'Error interno del servidor' },
+      { error: 'Error interno del servidor: ' + (error as Error).message },
       { status: 500 }
     );
   }
@@ -54,6 +133,17 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
+    
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+    
+    if (!supabaseUrl || !supabaseAnonKey) {
+      console.error('❌ Variables de entorno de Supabase no configuradas');
+      return NextResponse.json(
+        { error: 'Configuración de base de datos incompleta' },
+        { status: 500 }
+      );
+    }
     
     // Validar datos requeridos
     const requiredFields = [
@@ -73,7 +163,12 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const supabase = createSupabaseAnon();
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      auth: {
+        persistSession: false,
+        autoRefreshToken: false,
+      },
+    });
     
     // Preparar datos para upsert
     const configData = Object.entries(body).map(([key, value]) => ({

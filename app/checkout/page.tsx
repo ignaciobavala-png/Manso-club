@@ -27,9 +27,10 @@ export default function CheckoutPage() {
   const [loadingConfig, setLoadingConfig] = useState(true);
 
   useEffect(() => {
-    if (items.length === 0 && !isSubmitted) {
-      router.push('/tienda');
-    }
+    // Temporalmente desactivado para pruebas
+    // if (items.length === 0 && !isSubmitted) {
+    //   router.push('/tienda');
+    // }
   }, [items, router, isSubmitted]);
 
   useEffect(() => {
@@ -292,7 +293,7 @@ export default function CheckoutPage() {
                       name="nombre"
                       value={formData.nombre}
                       onChange={handleInputChange}
-                      className="w-full pl-12 pr-4 py-4 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                      className="w-full pl-12 pr-4 py-4 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-black"
                       placeholder="Ingresa tu nombre completo"
                       disabled={isSubmitting}
                     />
@@ -311,7 +312,7 @@ export default function CheckoutPage() {
                       name="mail"
                       value={formData.mail}
                       onChange={handleInputChange}
-                      className="w-full pl-12 pr-4 py-4 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                      className="w-full pl-12 pr-4 py-4 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-black"
                       placeholder="tu@email.com"
                       disabled={isSubmitting}
                     />
@@ -330,7 +331,7 @@ export default function CheckoutPage() {
                       name="telefono"
                       value={formData.telefono}
                       onChange={handleInputChange}
-                      className="w-full pl-12 pr-4 py-4 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all"
+                      className="w-full pl-12 pr-4 py-4 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-black"
                       placeholder="+54 9 11 1234-5678"
                       disabled={isSubmitting}
                     />

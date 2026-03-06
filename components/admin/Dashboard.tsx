@@ -26,10 +26,11 @@ import { FormSiteConfig } from './FormSiteConfig';
 import { SiteConfigList } from './SiteConfigList';
 import { FormAboutUs } from './FormAboutUs';
 import { FormCheckoutConfig } from './FormCheckoutConfig';
-import { LogOut, ShoppingBag, User, Home, Calendar, Music, Crown, Settings, Star, Users, Image, Layout, FileText, CreditCard } from 'lucide-react';
+import { PedidosList } from './PedidosList';
+import { LogOut, ShoppingBag, User, Home, Calendar, Music, Crown, Settings, Star, Users, Image, Layout, FileText, CreditCard, Package } from 'lucide-react';
 
 export function Dashboard() {
-  const [tab, setTab] = useState<'home' | 'tienda' | 'artistas' | 'agenda' | 'eventos' | 'musica' | 'membresias' | 'team' | 'hero' | 'galeria' | 'sitio' | 'about' | 'checkout'>('home');
+  const [tab, setTab] = useState<'home' | 'tienda' | 'artistas' | 'agenda' | 'eventos' | 'musica' | 'membresias' | 'team' | 'hero' | 'galeria' | 'sitio' | 'about' | 'checkout' | 'pedidos'>('home');
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
@@ -223,6 +224,15 @@ export function Dashboard() {
             <CreditCard size={12} className="sm:size-14" />
             <span className="hidden sm:inline">Checkout</span>
           </button>
+          <button 
+            onClick={() => setTab('pedidos')} 
+            className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
+              tab === 'pedidos' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
+            }`}
+          >
+            <Package size={12} className="sm:size-14" />
+            <span className="hidden sm:inline">Pedidos</span>
+          </button>
         </div>
 
         {/* Contenido Principal */}
@@ -230,10 +240,20 @@ export function Dashboard() {
             {/* Columna Izquierda: Formularios de Creación */}
             <div className="xl:col-span-5">
               <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
-                {tab === 'about' ? 'Editar About Us' : tab === 'home' ? 'Evento del Home' : tab === 'tienda' ? 'Producto' : tab === 'artistas' ? 'Artista' : tab === 'agenda' ? 'Evento de Agenda' : tab === 'eventos' ? 'Evento' : tab === 'musica' ? 'Track para el Home' : tab === 'membresias' ? 'Membresía' : tab === 'team' ? 'Miembro del Team' : tab === 'hero' ? 'Slide del Hero' : tab === 'galeria' ? 'Foto de Galería' : tab === 'checkout' ? 'Configuración del Checkout' : 'Configuración del Sitio'}
+                {tab === 'about' ? 'Editar About Us' : tab === 'home' ? 'Evento del Home' : tab === 'tienda' ? 'Producto' : tab === 'artistas' ? 'Artista' : tab === 'agenda' ? 'Evento de Agenda' : tab === 'eventos' ? 'Evento' : tab === 'musica' ? 'Track para el Home' : tab === 'membresias' ? 'Membresía' : tab === 'team' ? 'Miembro del Team' : tab === 'hero' ? 'Slide del Hero' : tab === 'galeria' ? 'Foto de Galería' : tab === 'checkout' ? 'Configuración del Checkout' : tab === 'pedidos' ? 'Gestión de Pedidos' : 'Configuración del Sitio'}
               </h2>
               <div className="sticky top-4 sm:top-8">
-                {tab === 'about' ? <FormAboutUs /> : tab === 'home' ? <FormEventoHome /> : tab === 'tienda' ? <FormProducto /> : tab === 'artistas' ? <FormArtista /> : tab === 'agenda' ? <FormAgenda /> : tab === 'eventos' ? <FormEvento /> : tab === 'musica' ? <FormMainMusic /> : tab === 'membresias' ? <FormMembresia /> : tab === 'team' ? <FormTeam /> : tab === 'hero' ? <FormHero /> : tab === 'galeria' ? <FormGallery /> : tab === 'checkout' ? <FormCheckoutConfig /> : <FormSiteConfig />}
+                {tab === 'about' ? <FormAboutUs /> : tab === 'home' ? <FormEventoHome /> : tab === 'tienda' ? <FormProducto /> : tab === 'artistas' ? <FormArtista /> : tab === 'agenda' ? <FormAgenda /> : tab === 'eventos' ? <FormEvento /> : tab === 'musica' ? <FormMainMusic /> : tab === 'membresias' ? <FormMembresia /> : tab === 'team' ? <FormTeam /> : tab === 'hero' ? <FormHero /> : tab === 'galeria' ? <FormGallery /> : tab === 'checkout' ? <FormCheckoutConfig /> : tab === 'pedidos' ? <div className="bg-manso-cream/5 p-8 rounded-[2.5rem] border border-manso-cream/10">
+                  <div className="text-center">
+                    <Package className="mx-auto text-manso-cream/40 mb-4" size={48} />
+                    <h3 className="text-lg font-black uppercase tracking-tighter text-manso-cream mb-2">
+                      Gestión de Pedidos
+                    </h3>
+                    <p className="text-sm text-manso-cream/60 mb-4">
+                      Visualiza y gestiona todos los pedidos recibidos desde el panel de la derecha.
+                    </p>
+                  </div>
+                </div> : <FormSiteConfig />}
               </div>
             </div>
 
@@ -292,6 +312,8 @@ export function Dashboard() {
                     </p>
                   </div>
                 </div>
+              ) : tab === 'pedidos' ? (
+                <PedidosList refreshTrigger={refreshTrigger} />
               ) : tab === 'sitio' ? (
                 <SiteConfigList refreshTrigger={refreshTrigger} />
               ) : (
