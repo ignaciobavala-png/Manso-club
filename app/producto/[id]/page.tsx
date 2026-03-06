@@ -61,9 +61,14 @@ export default function ProductoDetalle() {
 
   const handleAddToCart = () => {
     if (producto) {
-      addItem(producto);
-      setIsAdded(true);
-      setTimeout(() => setIsAdded(false), 2000);
+      if (producto.stock === 0) {
+        // Si no hay stock, redirigir al checkout
+        window.location.href = '/checkout';
+      } else {
+        addItem(producto);
+        setIsAdded(true);
+        setTimeout(() => setIsAdded(false), 2000);
+      }
     }
   };
 
@@ -228,7 +233,7 @@ export default function ProductoDetalle() {
             <div className="flex items-center gap-2">
               <div className={`w-2 h-2 rounded-full ${producto.stock > 0 ? 'bg-green-500' : 'bg-red-500'}`}></div>
               <span className="text-sm text-zinc-600">
-                {producto.stock > 0 ? `${producto.stock} unidades disponibles` : 'Agotado'}
+                {producto.stock > 0 ? `${producto.stock} unidades disponibles` : 'Consultar disponibilidad'}
               </span>
             </div>
 
@@ -236,10 +241,9 @@ export default function ProductoDetalle() {
             <div className="pt-8">
               <button
                 onClick={handleAddToCart}
-                disabled={producto.stock === 0}
                 className={`w-full py-6 rounded-full font-black uppercase tracking-widest text-sm transition-all transform hover:-translate-y-1 active:scale-95 ${
                   producto.stock === 0
-                    ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    ? 'bg-orange-600 text-white hover:bg-orange-700'
                     : 'bg-black text-white hover:bg-gray-800'
                 }`}
               >
@@ -251,7 +255,7 @@ export default function ProductoDetalle() {
                 ) : (
                   <div className="flex items-center justify-center gap-2">
                     <ShoppingBag size={20} />
-                    <span>{producto.stock === 0 ? 'Agotado' : 'Agregar al carrito'}</span>
+                    <span>{producto.stock === 0 ? 'Ir al checkout' : 'Agregar al carrito'}</span>
                   </div>
                 )}
               </button>
