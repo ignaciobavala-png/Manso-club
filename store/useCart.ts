@@ -6,7 +6,7 @@ interface Product {
   id: string;
   nombre: string;
   precio: number;
-  imagen_url: string;
+  imagenes_urls: string[];
 }
 
 interface CartItem extends Product {

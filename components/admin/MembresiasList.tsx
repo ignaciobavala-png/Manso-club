@@ -104,7 +104,7 @@ export function MembresiasList({ refreshTrigger }: MembresiasListProps) {
                 <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-manso-cream/50">
                   <span className="flex items-center gap-1">
                     <DollarSign size={10} />
-                    {membresia.precio.toFixed(2)}
+                    {membresia.precio.toLocaleString('es-AR')}
                   </span>
                   <span>/{membresia.periodo}</span>
                   <span>•</span>

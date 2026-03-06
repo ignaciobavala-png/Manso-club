@@ -10,7 +10,7 @@ interface Producto {
   id: string;
   nombre: string;
   precio: number;
-  imagen_url: string;
+  imagenes_urls: string[];
   descripcion?: string;
   stock: number;
   active: boolean;
@@ -30,9 +30,10 @@ export const TiendaHome = () => {
       .from('productos')
       .select('*')
       .eq('active', true)
-      .gt('stock', 0)
       .order('created_at', { ascending: false })
       .limit(4);
+
+    console.log('TiendaHome Debug:', { data, error });
 
     if (error) {
       // Fallback a mock data si hay error
@@ -41,7 +42,7 @@ export const TiendaHome = () => {
           id: '1',
           nombre: 'MANSO TEE BLACK',
           precio: 15000,
-          imagen_url: '/assets/manso1.webp',
+          imagenes_urls: ['/assets/manso1.webp'],
           descripcion: 'Edición limitada 2026',
           stock: 10,
           active: true,
@@ -51,7 +52,7 @@ export const TiendaHome = () => {
           id: '2',
           nombre: 'MANSO HOODIE TERRA',
           precio: 28000,
-          imagen_url: '/assets/manso2.webp',
+          imagenes_urls: ['/assets/manso2.webp'],
           descripcion: 'Premium cotton blend',
           stock: 5,
           active: true,
@@ -61,7 +62,7 @@ export const TiendaHome = () => {
           id: '3',
           nombre: 'MANSO CAP BEIGE',
           precio: 12000,
-          imagen_url: '/assets/manso3.webp',
+          imagenes_urls: ['/assets/manso3.webp'],
           descripcion: 'Limited edition',
           stock: 8,
           active: true,
@@ -71,7 +72,7 @@ export const TiendaHome = () => {
           id: '4',
           nombre: 'MANSO TOTE BAG',
           precio: 8000,
-          imagen_url: '/assets/manso5.webp',
+          imagenes_urls: ['/assets/manso5.webp'],
           descripcion: 'Organic canvas',
           stock: 15,
           active: true,
@@ -139,7 +140,7 @@ export const TiendaHome = () => {
                   id: producto.id,
                   nombre: producto.nombre,
                   precio: producto.precio,
-                  imagen_url: producto.imagen_url,
+                  imagenes_urls: producto.imagenes_urls,
                   descripcion: producto.descripcion
                 }} 
               />

@@ -10,7 +10,7 @@ interface ProductProps {
     id: string;
     nombre: string;
     precio: number;
-    imagen_url: string;
+    imagenes_urls: string[];
     descripcion?: string;
   };
 }
@@ -18,6 +18,7 @@ interface ProductProps {
 export function ProductCard({ producto }: ProductProps) {
   const addItem = useCart((state) => state.addItem);
   const [isAdded, setIsAdded] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
   const handleAddToCart = () => {
     addItem(producto);
@@ -27,6 +28,28 @@ export function ProductCard({ producto }: ProductProps) {
     setTimeout(() => setIsAdded(false), 2000);
   };
 
+  const handleImageChange = (direction: 'next' | 'prev') => {
+    const totalImages = producto.imagenes_urls?.length || 0;
+    if (totalImages <= 1) return;
+
+    if (direction === 'next') {
+      setCurrentImageIndex((prev) => (prev + 1) % totalImages);
+    } else {
+      setCurrentImageIndex((prev) => (prev - 1 + totalImages) % totalImages);
+    }
+  };
+
+  // Obtener imagen actual o fallback
+  const currentImage = producto.imagenes_urls?.[currentImageIndex] || '/manso.png';
+  
+  // Debug logging
+  console.log('ProductCard Debug:', {
+    productoNombre: producto.nombre,
+    imagenes_urls: producto.imagenes_urls,
+    currentImageIndex,
+    currentImage
+  });
+
   return (
     <div className="group bg-white rounded-[40px] border border-zinc-100 overflow-hidden transition-all duration-500 hover:shadow-2xl hover:scale-[1.02] cursor-pointer">
       {/* Contenedor principal clickeable */}
@@ -34,10 +57,50 @@ export function ProductCard({ producto }: ProductProps) {
         {/* Contenedor de Imagen */}
         <div className="aspect-square w-full bg-zinc-50 relative overflow-hidden">
           <img 
-            src={producto.imagen_url || '/manso.png'} 
+            src={currentImage} 
             alt={producto.nombre}
             className="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-700 group-hover:scale-110"
+            onError={(e) => {
+              console.error(`Error cargando imagen: ${currentImage}`);
+              // Fallback a manso.png si falla
+              e.currentTarget.src = '/manso.png';
+            }}
+            onLoad={() => {
+              console.log(`Imagen cargada exitosamente: ${currentImage}`);
+            }}
           />
+          
+          {/* Navegación de imágenes (solo si hay múltiples) */}
+          {(producto.imagenes_urls?.length || 0) > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); handleImageChange('prev'); }}
+                className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                ‹
+              </button>
+              <button
+                type="button"
+                onClick={(e) => { e.stopPropagation(); handleImageChange('next'); }}
+                className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white rounded-full w-8 h-8 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+              >
+                ›
+              </button>
+              
+              {/* Indicadores */}
+              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
+                {producto.imagenes_urls.map((_, index) => (
+                  <div
+                    key={index}
+                    className={`w-1.5 h-1.5 rounded-full transition-all ${
+                      index === currentImageIndex ? 'bg-white' : 'bg-white/50'
+                    }`}
+                  />
+                ))}
+              </div>
+            </>
+          )}
           
           {/* Overlay de acción */}
           <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300 flex items-center justify-center">

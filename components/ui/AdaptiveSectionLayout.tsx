@@ -67,7 +67,7 @@ export function AdaptiveSectionLayout({
 
     if (pathname?.includes('/about')) {
       return {
-        bg: customBg || 'bg-manso-cream',
+        bg: customBg || 'bg-gray-100',
         titleColor: 'text-manso-black',
         subtitleColor: 'text-zinc-600'
       };

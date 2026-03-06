@@ -3,11 +3,13 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { ImageUploader } from './ImageUploader';
-import { Tag, DollarSign, Package, Plus, X } from 'lucide-react';
+import { Tag, DollarSign, Package, Plus, X, AlertCircle, CheckCircle } from 'lucide-react';
 import { CATEGORIAS_TIENDA } from '@/lib/constants';
 
 export function FormProducto() {
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
   const [categorias, setCategorias] = useState<string[]>([...CATEGORIAS_TIENDA]);
   const [catsConProductos, setCatsConProductos] = useState<Set<string>>(new Set());
   const [showNewCat, setShowNewCat] = useState(false);
@@ -16,7 +18,7 @@ export function FormProducto() {
     nombre: '',
     categoria: CATEGORIAS_TIENDA[0] as string,
     precio: 0,
-    imagen_url: ''
+    imagenes_urls: [] as string[]
   });
 
   // Cargar categorias unicas desde la DB + las default
@@ -41,18 +43,19 @@ export function FormProducto() {
     const trimmed = newCatName.trim();
     if (!trimmed) return;
     if (categorias.includes(trimmed)) {
-      alert('Esa categoria ya existe.');
+      setError('Esa categoria ya existe.');
       return;
     }
     setCategorias(prev => [...prev, trimmed]);
     setFormData({ ...formData, categoria: trimmed });
     setNewCatName('');
     setShowNewCat(false);
+    setError(null);
   };
 
   const handleDeleteCategory = (cat: string) => {
     if (catsConProductos.has(cat)) {
-      alert(`No se puede eliminar "${cat}" porque tiene productos asociados.`);
+      setError(`No se puede eliminar "${cat}" porque tiene productos asociados.`);
       return;
     }
     const updated = categorias.filter(c => c !== cat);
@@ -60,31 +63,47 @@ export function FormProducto() {
     if (formData.categoria === cat && updated.length > 0) {
       setFormData({ ...formData, categoria: updated[0] });
     }
+    setError(null);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     
-    if (!formData.imagen_url) {
-      alert('Por favor, sube una imagen del producto.');
+    // Validaciones
+    if (!formData.nombre.trim()) {
+      setError('Por favor, ingresa el nombre del producto.');
+      return;
+    }
+    
+    if (!formData.imagenes_urls || formData.imagenes_urls.length === 0) {
+      setError('Por favor, sube al menos una imagen del producto.');
+      return;
+    }
+    
+    if (formData.precio <= 0) {
+      setError('Por favor, ingresa un precio válido mayor a 0.');
       return;
     }
 
     setLoading(true);
 
-    const { error } = await supabase.from('productos').insert([formData]);
+    const { error: dbError } = await supabase.from('productos').insert([formData]);
 
-    if (error) {
-      alert(error.message);
+    if (dbError) {
+      setError(dbError.message);
     } else {
-      alert('¡Producto sincronizado con la tienda!');
+      setSuccess(true);
       setFormData({ 
         nombre: '', 
         categoria: categorias[0], 
         precio: 0, 
-        imagen_url: '' 
+        imagenes_urls: [] 
       });
       window.dispatchEvent(new CustomEvent('dashboardRefresh'));
+      
+      // Ocultar mensaje de éxito después de 3 segundos
+      setTimeout(() => setSuccess(false), 3000);
     }
     setLoading(false);
   };
@@ -93,27 +112,79 @@ export function FormProducto() {
     <div className="w-full max-w-full sm:max-w-lg lg:max-w-2xl mx-auto bg-manso-cream/5 p-4 sm:p-6 lg:p-8 rounded-[2.5rem] border border-manso-cream/10 shadow-xl">
       <form onSubmit={handleSubmit} className="space-y-6">
         
-        {/* Zona de Carga de Imagen */}
+        {/* Banners de Error y Success */}
+        {error && (
+          <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-2xl flex items-center gap-3">
+            <AlertCircle size={16} className="w-4 h-4" />
+            <span className="text-sm font-medium">{error}</span>
+          </div>
+        )}
+        
+        {success && (
+          <div className="bg-green-500/10 border border-green-500/30 text-green-400 px-4 py-3 rounded-2xl flex items-center gap-3">
+            <CheckCircle size={16} className="w-4 h-4" />
+            <span className="text-sm font-medium">¡Producto sincronizado con la tienda!</span>
+          </div>
+        )}
+        
+        {/* Zona de Carga de Imágenes */}
         <div className="space-y-2">
           <label className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2">
-            Imagen del Producto
+            Imágenes del Producto ({formData.imagenes_urls.length}/5)
           </label>
-          <ImageUploader 
-            bucket="products" 
-            onUpload={(url) => setFormData({...formData, imagen_url: url})} 
-          />
+          <div className="space-y-3">
+            <ImageUploader 
+              bucket="products" 
+              onUpload={(url) => {
+                if (formData.imagenes_urls.length < 5) {
+                  setFormData({...formData, imagenes_urls: [...formData.imagenes_urls, url]});
+                  setError(null); // Limpiar error al subir imagen exitosamente
+                } else {
+                  setError('Máximo 5 imágenes por producto');
+                }
+              }} 
+            />
+            
+            {/* Previsualización de imágenes cargadas */}
+            {formData.imagenes_urls.length > 0 && (
+              <div className="grid grid-cols-3 gap-2">
+                {formData.imagenes_urls.map((url, index) => (
+                  <div key={index} className="relative group">
+                    <img 
+                      src={url} 
+                      alt={`Imagen ${index + 1}`}
+                      className="w-full h-20 object-cover rounded-lg border border-manso-cream/20"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const newUrls = formData.imagenes_urls.filter((_, i) => i !== index);
+                        setFormData({...formData, imagenes_urls: newUrls});
+                      }}
+                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
+                    >
+                      <X size={12} className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
 
         <div className="grid grid-cols-1 gap-4">
           {/* Nombre del Producto */}
           <div className="relative">
-            <Package className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-manso-cream/60 sm:size-20" size={16} />
+            <Package className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-manso-cream/60 w-4 h-4" size={16} />
             <input 
               type="text" 
               placeholder="NOMBRE DEL ARTÍCULO"
               className="w-full bg-manso-cream/10 p-3 sm:p-4 pl-10 sm:pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all text-sm sm:text-base"
               value={formData.nombre}
-              onChange={e => setFormData({...formData, nombre: e.target.value})}
+              onChange={e => {
+                setFormData({...formData, nombre: e.target.value});
+                setError(null); // Limpiar error al escribir
+              }}
               required
             />
           </div>
@@ -142,7 +213,7 @@ export function FormProducto() {
                       className="ml-1 opacity-0 group-hover:opacity-100 transition-opacity hover:text-red-400"
                       title="Eliminar categoria"
                     >
-                      <X size={8} className="sm:size-10" />
+                      <X size={12} className="w-3 h-3" />
                     </span>
                   )}
                   {catsConProductos.has(cat) && (
@@ -158,7 +229,7 @@ export function FormProducto() {
                 onClick={() => setShowNewCat(true)}
                 className="flex items-center gap-1 text-[8px] sm:text-[9px] font-bold uppercase tracking-widest text-manso-terra hover:text-manso-cream transition-colors ml-2"
               >
-                <Plus size={10} className="sm:size-12" /> Nueva categoria
+                <Plus size={14} className="w-4 h-4" /> Nueva categoria
               </button>
             ) : (
               <div className="flex gap-2">
@@ -191,13 +262,16 @@ export function FormProducto() {
 
           {/* Precio en Moneda */}
           <div className="relative">
-            <DollarSign className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-manso-cream/60 sm:size-20" size={16} />
+            <DollarSign className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-manso-cream/60 w-4 h-4" size={16} />
             <input 
               type="number" 
               placeholder="PRECIO"
               className="w-full bg-manso-cream/10 p-3 sm:p-4 pl-10 sm:pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono font-bold text-manso-cream placeholder:text-manso-cream/40 text-sm sm:text-base"
               value={formData.precio === 0 ? '' : formData.precio}
-              onChange={e => setFormData({...formData, precio: Number(e.target.value)})}
+              onChange={e => {
+                setFormData({...formData, precio: Number(e.target.value)});
+                setError(null); // Limpiar error al escribir precio
+              }}
               required
             />
           </div>

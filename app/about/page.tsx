@@ -1,58 +1,67 @@
 import Image from 'next/image';
 import { AdaptiveSectionLayout } from '@/components/ui/AdaptiveSectionLayout';
 import { getTeamMembers } from '@/lib/team';
+import { getAboutUs } from '@/lib/aboutUs';
 
 export const revalidate = 60; // revalida cada 60 segundos
 
 export default async function AboutPage() {
   const teamMembers = await getTeamMembers();
+  const aboutUs = await getAboutUs();
 
   return (
-    <AdaptiveSectionLayout title="About Us" subtitle="Quiénes somos_">
-      {/* Text + Casa */}
-      <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-center">
-        <div className="w-full md:w-1/2 space-y-8">
-          <p className="text-zinc-800 text-xl md:text-2xl leading-relaxed font-medium">
-            Manso Club es un club creativo para personas curiosas: emprendedores, artistas, entusiastas y amantes de la cultura que buscan comunidad e inspiración.
-          </p>
-          <p className="text-zinc-800 text-xl md:text-2xl leading-relaxed font-medium">
-            Manso nace de la idea de que los mejores proyectos surgen cuando se mezclan disciplinas, generaciones e ideas en un mismo lugar. Acá se puede trabajar, escuchar música, participar de talleres, descubrir artistas y compartir momentos con personas afines. Manso es un punto de encuentro ante una sociedad aislada y una plataforma que exporta talento local.
-          </p>
+    <AdaptiveSectionLayout title="About Us" subtitle={aboutUs.subtitle}>
+      {/* Sección principal con layout dinámico */}
+      <div className="space-y-12">
+        {/* Layout original mejorado: texto y foto principal */}
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
+          {/* Texto principal */}
+          <div className="flex-1 lg:flex-initial lg:w-1/2 space-y-8">
+            {aboutUs.description.split('\n').filter(p => p.trim()).map((paragraph, index) => (
+              <p key={index} className="text-zinc-800 text-xl md:text-2xl leading-relaxed font-bold">
+                {paragraph}
+              </p>
+            ))}
+          </div>
+          
+          {/* Foto principal */}
+          <div className="flex-1 lg:flex-initial lg:w-1/2 relative">
+            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg">
+              {aboutUs.main_photo_url ? (
+                <Image
+                  src={aboutUs.main_photo_url}
+                  alt="Manso Club — Fachada del edificio"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  quality={95}
+                  priority
+                />
+              ) : (
+                <div className="w-full h-full bg-manso-cream/10 flex items-center justify-center">
+                  <p className="text-manso-cream/40 text-sm font-medium">No hay foto principal</p>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
-        <div className="w-full md:w-1/2 relative aspect-[4/3] rounded-2xl overflow-hidden">
-          <Image
-            src="/assets/about3.jpg"
-            alt="Manso Club — Fachada del edificio"
-            fill
-            className="object-cover"
-            sizes="(max-width: 768px) 100vw, 50vw"
-            quality={95}
-            priority
-          />
-        </div>
-      </div>
 
-      {/* Fotos debajo */}
-      <div className="flex flex-col sm:flex-row gap-3 md:gap-4 mt-8">
-        <div className="relative aspect-[4/3] w-full sm:w-1/2 rounded-2xl overflow-hidden">
-          <Image
-            src="/assets/about1.webp"
-            alt="Manso Club — DJ session"
-            fill
-            className="object-cover"
-            sizes="(max-width: 640px) 100vw, 50vw"
-          />
+      {/* Galería de fotos */}
+      {aboutUs.gallery_photos && aboutUs.gallery_photos.length > 0 && (
+        <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
+          {aboutUs.gallery_photos.map((photo, index) => (
+            <div key={index} className="relative aspect-[4/3] w-full sm:w-1/2 rounded-2xl overflow-hidden">
+              <Image
+                src={photo}
+                alt={`Manso Club — Galería ${index + 1}`}
+                fill
+                className="object-cover"
+                sizes="(max-width: 640px) 100vw, 50vw"
+              />
+            </div>
+          ))}
         </div>
-        <div className="relative aspect-[4/3] w-full sm:w-1/2 rounded-2xl overflow-hidden">
-          <Image
-            src="/assets/about2.webp"
-            alt="Manso Club — Espacio interior"
-            fill
-            className="object-cover"
-            sizes="(max-width: 640px) 100vw, 50vw"
-          />
-        </div>
-      </div>
+      )}
 
       {/* Team Section */}
       <div className="mt-16 md:mt-24">
@@ -91,6 +100,7 @@ export default async function AboutPage() {
             </>
           )}
         </div>
+      </div>
       </div>
     </AdaptiveSectionLayout>
   );
