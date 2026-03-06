@@ -1,6 +1,6 @@
 'use client';
 
-import { X, Plus, Minus, Trash2, ShoppingBag, MessageCircle } from 'lucide-react';
+import { X, Plus, Minus, Trash2, ShoppingBag, MessageCircle, ArrowRight } from 'lucide-react';
 import { useCart } from '@/store/useCart';
 import { useState, useEffect } from 'react';
 
@@ -64,7 +64,7 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
           id: product.id, 
           nombre: product.nombre, 
           precio: product.precio, 
-          imagen_url: product.imagen_url 
+          imagenes_urls: product.imagenes_urls 
         });
       }
     } else {
@@ -162,7 +162,7 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                     {/* Product Image */}
                     <div className="w-20 h-20 bg-zinc-200 rounded-xl overflow-hidden flex-shrink-0">
                       <img
-                        src={item.imagen_url || '/manso.png'}
+                        src={item.imagenes_urls?.[0] || '/manso.png'}
                         alt={item.nombre}
                         className="w-full h-full object-cover hover:scale-110 transition-transform duration-300"
                       />
@@ -244,10 +244,10 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
               {/* Checkout Button */}
               <button
                 onClick={handleCheckout}
-                className="w-full bg-[#25D366] text-white py-4 rounded-2xl font-black uppercase tracking-wider hover:bg-[#128C7E] transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center gap-3 group"
+                className="w-full bg-black text-white py-4 rounded-2xl font-black uppercase tracking-wider hover:bg-gray-800 transition-all duration-300 transform hover:scale-[1.02] flex items-center justify-center gap-3 group"
               >
-                Consultar por WhatsApp
-                <MessageCircle size={18} className="group-hover:scale-110 transition-transform" />
+                Proceder al Checkout
+                <ArrowRight size={18} className="group-hover:scale-110 transition-transform" />
               </button>
             </div>
           )}

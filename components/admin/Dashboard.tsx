@@ -25,12 +25,20 @@ import { GalleryList } from './GalleryList';
 import { FormSiteConfig } from './FormSiteConfig';
 import { SiteConfigList } from './SiteConfigList';
 import { FormAboutUs } from './FormAboutUs';
-import { LogOut, ShoppingBag, User, Home, Calendar, Music, Crown, Settings, Star, Users, Image, Layout, FileText } from 'lucide-react';
+import { FormCheckoutConfig } from './FormCheckoutConfig';
+import { LogOut, ShoppingBag, User, Home, Calendar, Music, Crown, Settings, Star, Users, Image, Layout, FileText, CreditCard } from 'lucide-react';
 
 export function Dashboard() {
-  const [tab, setTab] = useState<'home' | 'tienda' | 'artistas' | 'agenda' | 'eventos' | 'musica' | 'membresias' | 'team' | 'hero' | 'galeria' | 'sitio' | 'about'>('home');
+  const [tab, setTab] = useState<'home' | 'tienda' | 'artistas' | 'agenda' | 'eventos' | 'musica' | 'membresias' | 'team' | 'hero' | 'galeria' | 'sitio' | 'about' | 'checkout'>('home');
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+
+  const handleEditProduct = (product: any) => {
+    // Usar la función global expuesta por FormProducto
+    if ((window as any).editProduct) {
+      (window as any).editProduct(product);
+    }
+  };
 
   useEffect(() => {
     // Obtener información del usuario actual
@@ -206,6 +214,15 @@ export function Dashboard() {
             <FileText size={12} className="sm:size-14" />
             <span className="hidden sm:inline">About</span>
           </button>
+          <button 
+            onClick={() => setTab('checkout')} 
+            className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
+              tab === 'checkout' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
+            }`}
+          >
+            <CreditCard size={12} className="sm:size-14" />
+            <span className="hidden sm:inline">Checkout</span>
+          </button>
         </div>
 
         {/* Contenido Principal */}
@@ -213,10 +230,10 @@ export function Dashboard() {
             {/* Columna Izquierda: Formularios de Creación */}
             <div className="xl:col-span-5">
               <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
-                {tab === 'about' ? 'Editar About Us' : tab === 'home' ? 'Evento del Home' : tab === 'tienda' ? 'Producto' : tab === 'artistas' ? 'Artista' : tab === 'agenda' ? 'Evento de Agenda' : tab === 'eventos' ? 'Evento' : tab === 'musica' ? 'Track para el Home' : tab === 'membresias' ? 'Membresía' : tab === 'team' ? 'Miembro del Team' : tab === 'hero' ? 'Slide del Hero' : tab === 'galeria' ? 'Foto de Galería' : 'Configuración del Sitio'}
+                {tab === 'about' ? 'Editar About Us' : tab === 'home' ? 'Evento del Home' : tab === 'tienda' ? 'Producto' : tab === 'artistas' ? 'Artista' : tab === 'agenda' ? 'Evento de Agenda' : tab === 'eventos' ? 'Evento' : tab === 'musica' ? 'Track para el Home' : tab === 'membresias' ? 'Membresía' : tab === 'team' ? 'Miembro del Team' : tab === 'hero' ? 'Slide del Hero' : tab === 'galeria' ? 'Foto de Galería' : tab === 'checkout' ? 'Configuración del Checkout' : 'Configuración del Sitio'}
               </h2>
               <div className="sticky top-4 sm:top-8">
-                {tab === 'about' ? <FormAboutUs /> : tab === 'home' ? <FormEventoHome /> : tab === 'tienda' ? <FormProducto /> : tab === 'artistas' ? <FormArtista /> : tab === 'agenda' ? <FormAgenda /> : tab === 'eventos' ? <FormEvento /> : tab === 'musica' ? <FormMainMusic /> : tab === 'membresias' ? <FormMembresia /> : tab === 'team' ? <FormTeam /> : tab === 'hero' ? <FormHero /> : tab === 'galeria' ? <FormGallery /> : <FormSiteConfig />}
+                {tab === 'about' ? <FormAboutUs /> : tab === 'home' ? <FormEventoHome /> : tab === 'tienda' ? <FormProducto /> : tab === 'artistas' ? <FormArtista /> : tab === 'agenda' ? <FormAgenda /> : tab === 'eventos' ? <FormEvento /> : tab === 'musica' ? <FormMainMusic /> : tab === 'membresias' ? <FormMembresia /> : tab === 'team' ? <FormTeam /> : tab === 'hero' ? <FormHero /> : tab === 'galeria' ? <FormGallery /> : tab === 'checkout' ? <FormCheckoutConfig /> : <FormSiteConfig />}
               </div>
             </div>
 
@@ -243,7 +260,7 @@ export function Dashboard() {
               ) : tab === 'home' ? (
                 <EventosHomeList refreshTrigger={refreshTrigger} />
               ) : tab === 'tienda' ? (
-                <ItemList table="productos" title="Inventario de Tienda" refreshTrigger={refreshTrigger} />
+                <ItemList table="productos" title="Inventario de Tienda" refreshTrigger={refreshTrigger} onEdit={handleEditProduct} />
               ) : tab === 'artistas' ? (
                 <ArtistasList refreshTrigger={refreshTrigger} />
               ) : tab === 'agenda' ? (
@@ -260,6 +277,21 @@ export function Dashboard() {
                 <HeroList refreshTrigger={refreshTrigger} />
               ) : tab === 'galeria' ? (
                 <GalleryList refreshTrigger={refreshTrigger} />
+              ) : tab === 'checkout' ? (
+                <div className="bg-manso-cream/5 p-8 rounded-[2.5rem] border border-manso-cream/10">
+                  <div className="text-center">
+                    <CreditCard className="mx-auto text-manso-cream/40 mb-4" size={48} />
+                    <h3 className="text-lg font-black uppercase tracking-tighter text-manso-cream mb-2">
+                      Configuración del Checkout
+                    </h3>
+                    <p className="text-sm text-manso-cream/60 mb-4">
+                      Configura los datos bancarios y notificaciones desde el formulario de la izquierda.
+                    </p>
+                    <p className="text-xs text-manso-cream/40">
+                      Los cambios se reflejarán inmediatamente en la página de checkout
+                    </p>
+                  </div>
+                </div>
               ) : tab === 'sitio' ? (
                 <SiteConfigList refreshTrigger={refreshTrigger} />
               ) : (

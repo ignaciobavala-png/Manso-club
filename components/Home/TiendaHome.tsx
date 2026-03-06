@@ -92,7 +92,7 @@ export const TiendaHome = () => {
       <section className="py-20 px-8 md:px-20" style={{ backgroundColor: '#FFFFFF' }}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <span className="text-[10px] uppercase tracking-widest text-black/60 font-bold mb-4 block">06. Tienda</span>
+            <span className="text-[10px] uppercase tracking-widest text-black/60 font-bold mb-4 block">Tienda</span>
             <h2 className="text-2xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-black">
               SELECCIONADOS
             </h2>
@@ -112,7 +112,7 @@ export const TiendaHome = () => {
     <section className="py-20 px-8 md:px-20" style={{ backgroundColor: '#FFFFFF' }}>
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <span className="text-[10px] uppercase tracking-widest text-black/60 font-bold mb-4 block">06. Tienda</span>
+          <span className="text-[10px] uppercase tracking-widest text-black/60 font-bold mb-4 block">Tienda</span>
           <h2 className="text-2xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-black">
             SELECCIONADOS
           </h2>

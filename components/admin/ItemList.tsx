@@ -2,15 +2,16 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Trash2, Loader2, Calendar, Package, User } from 'lucide-react';
+import { Trash2, Loader2, Calendar, Package, User, Edit3 } from 'lucide-react';
 
 interface Props {
   table: 'eventos' | 'productos' | 'artistas';
   title: string;
   refreshTrigger?: number;
+  onEdit?: (item: any) => void;
 }
 
-export function ItemList({ table, title, refreshTrigger }: Props) {
+export function ItemList({ table, title, refreshTrigger, onEdit }: Props) {
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -72,7 +73,7 @@ export function ItemList({ table, title, refreshTrigger }: Props) {
           <div key={item.id} className="p-3 sm:p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 hover:bg-manso-cream/5 transition-colors group">
             <div className="flex items-center gap-3 sm:gap-4 w-full sm:w-auto">
               <img 
-                src={item.imagen_url} 
+                src={item.imagen_url || (item.imagenes_urls && item.imagenes_urls[0])} 
                 className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl object-cover opacity-80 group-hover:opacity-100 transition-all" 
                 alt="" 
               />
@@ -84,17 +85,29 @@ export function ItemList({ table, title, refreshTrigger }: Props) {
               </div>
             </div>
             
-            <button
-              onClick={() => handleDelete(item.id, item.imagen_url)}
-              disabled={deletingId === item.id}
-              className="p-2 sm:p-3 text-manso-cream/60 hover:text-manso-terra hover:bg-manso-cream/10 rounded-full transition-all flex-shrink-0"
-            >
-              {deletingId === item.id ? (
-                <Loader2 size={16} className="sm:size-18 animate-spin" />
-              ) : (
-                <Trash2 size={16} className="sm:size-18" />
+            <div className="flex items-center gap-2">
+              {table === 'productos' && onEdit && (
+                <button
+                  onClick={() => onEdit(item)}
+                  className="p-2 sm:p-3 text-manso-cream/60 hover:text-manso-cream hover:bg-manso-cream/10 rounded-full transition-all flex-shrink-0"
+                  title="Editar producto"
+                >
+                  <Edit3 size={16} className="sm:size-18" />
+                </button>
               )}
-            </button>
+              
+              <button
+                onClick={() => handleDelete(item.id, item.imagen_url || (item.imagenes_urls && item.imagenes_urls[0]))}
+                disabled={deletingId === item.id}
+                className="p-2 sm:p-3 text-manso-cream/60 hover:text-manso-terra hover:bg-manso-cream/10 rounded-full transition-all flex-shrink-0"
+              >
+                {deletingId === item.id ? (
+                  <Loader2 size={16} className="sm:size-18 animate-spin" />
+                ) : (
+                  <Trash2 size={16} className="sm:size-18" />
+                )}
+              </button>
+            </div>
           </div>
         ))}
 

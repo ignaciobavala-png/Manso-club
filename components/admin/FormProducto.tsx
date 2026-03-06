@@ -10,6 +10,8 @@ export function FormProducto() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [categorias, setCategorias] = useState<string[]>([...CATEGORIAS_TIENDA]);
   const [catsConProductos, setCatsConProductos] = useState<Set<string>>(new Set());
   const [showNewCat, setShowNewCat] = useState(false);
@@ -67,6 +69,42 @@ export function FormProducto() {
     setError(null);
   };
 
+  const loadProductForEdit = (product: any) => {
+    setIsEditing(true);
+    setEditingId(product.id);
+    setFormData({
+      nombre: product.nombre || '',
+      categoria: product.categoria || CATEGORIAS_TIENDA[0],
+      precio: product.precio || 0,
+      descripcion: product.descripcion || '',
+      imagenes_urls: product.imagenes_urls || []
+    });
+    setError(null);
+    setSuccess(false);
+  };
+
+  const resetForm = () => {
+    setIsEditing(false);
+    setEditingId(null);
+    setFormData({
+      nombre: '',
+      categoria: categorias[0] || CATEGORIAS_TIENDA[0],
+      precio: 0,
+      descripcion: '',
+      imagenes_urls: []
+    });
+    setError(null);
+    setSuccess(false);
+  };
+
+  // Exponer función de edición globalmente
+  useEffect(() => {
+    (window as any).editProduct = loadProductForEdit;
+    return () => {
+      delete (window as any).editProduct;
+    };
+  }, []);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -89,19 +127,25 @@ export function FormProducto() {
 
     setLoading(true);
 
-    const { error: dbError } = await supabase.from('productos').insert([formData]);
+    let dbError;
+    if (isEditing && editingId) {
+      // Actualizar producto existente
+      ({ error: dbError } = await supabase
+        .from('productos')
+        .update(formData)
+        .eq('id', editingId));
+    } else {
+      // Crear nuevo producto
+      ({ error: dbError } = await supabase
+        .from('productos')
+        .insert([formData]));
+    }
 
     if (dbError) {
       setError(dbError.message);
     } else {
       setSuccess(true);
-      setFormData({ 
-        nombre: '', 
-        categoria: categorias[0], 
-        precio: 0,
-        descripcion: '',
-        imagenes_urls: [] 
-      });
+      resetForm();
       window.dispatchEvent(new CustomEvent('dashboardRefresh'));
       
       // Ocultar mensaje de éxito después de 3 segundos
@@ -112,6 +156,25 @@ export function FormProducto() {
 
   return (
     <div className="w-full max-w-full sm:max-w-lg lg:max-w-2xl mx-auto bg-manso-cream/5 p-4 sm:p-6 lg:p-8 rounded-[2.5rem] border border-manso-cream/10 shadow-xl">
+      {/* Header con indicador de modo edición */}
+      <div className="mb-6">
+        <h2 className="text-2xl font-black uppercase tracking-tighter text-manso-cream mb-2">
+          {isEditing ? 'EDITAR PRODUCTO' : 'NUEVO PRODUCTO'}
+        </h2>
+        <p className="text-sm text-manso-cream/60">
+          {isEditing ? 'Modifica los datos del producto seleccionado' : 'Agrega un nuevo producto a la tienda'}
+        </p>
+        {isEditing && (
+          <button
+            type="button"
+            onClick={resetForm}
+            className="mt-3 text-xs text-manso-terra hover:text-manso-cream transition-colors"
+          >
+            ← Cancelar edición
+          </button>
+        )}
+      </div>
+      
       <form onSubmit={handleSubmit} className="space-y-6">
         
         {/* Banners de Error y Success */}
@@ -125,7 +188,9 @@ export function FormProducto() {
         {success && (
           <div className="bg-green-500/10 border border-green-500/30 text-green-400 px-4 py-3 rounded-2xl flex items-center gap-3">
             <CheckCircle size={16} className="w-4 h-4" />
-            <span className="text-sm font-medium">¡Producto sincronizado con la tienda!</span>
+            <span className="text-sm font-medium">
+              {isEditing ? '¡Producto actualizado correctamente!' : '¡Producto sincronizado con la tienda!'}
+            </span>
           </div>
         )}
         
@@ -301,7 +366,7 @@ export function FormProducto() {
           disabled={loading}
           className="w-full bg-manso-terra text-manso-cream py-4 sm:py-5 rounded-3xl font-black uppercase tracking-[0.2em] hover:bg-manso-cream hover:text-manso-black transition-all active:scale-95 disabled:opacity-50 text-sm sm:text-base"
         >
-          {loading ? 'PROCESANDO...' : 'PUBLICAR PRODUCTO'}
+          {loading ? 'PROCESANDO...' : isEditing ? 'ACTUALIZAR PRODUCTO' : 'PUBLICAR PRODUCTO'}
         </button>
       </form>
     </div>
