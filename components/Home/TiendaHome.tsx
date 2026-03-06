@@ -89,11 +89,11 @@ export const TiendaHome = () => {
   // Si no hay productos, mostrar placeholder
   if (loading) {
     return (
-      <section className="py-20 px-8 md:px-20" style={{ backgroundColor: '#FFFFFF' }}>
+      <section className="py-12 sm:py-16 px-4 sm:px-8 md:px-20" style={{ backgroundColor: '#FFFFFF' }}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <span className="text-[10px] uppercase tracking-widest text-black/60 font-bold mb-4 block">Tienda</span>
-            <h2 className="text-2xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-black">
+            <h2 className="text-xl sm:text-2xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-black">
               SELECCIONADOS
             </h2>
           </div>
@@ -109,24 +109,24 @@ export const TiendaHome = () => {
   const showPlaceholders = productos.length === 0;
 
   return (
-    <section className="py-20 px-8 md:px-20" style={{ backgroundColor: '#FFFFFF' }}>
+    <section className="py-12 sm:py-16 px-4 sm:px-8 md:px-20" style={{ backgroundColor: '#FFFFFF' }}>
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <span className="text-[10px] uppercase tracking-widest text-black/60 font-bold mb-4 block">Tienda</span>
-          <h2 className="text-2xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-black">
+          <h2 className="text-xl sm:text-2xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-black">
             SELECCIONADOS
           </h2>
         </div>
 
         {/* Grid de productos o placeholders */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4 lg:gap-8 mb-8 sm:mb-12">
           {showPlaceholders ? (
             // Mostrar 4 cards placeholder
             Array.from({ length: 4 }).map((_, index) => (
               <div 
                 key={`placeholder-${index}`}
-                className="bg-gray-100 rounded-lg p-8 flex items-center justify-center"
-                style={{ backgroundColor: '#F0F0F0', minHeight: '300px' }}
+                className="bg-gray-100 rounded-lg p-4 sm:p-6 md:p-8 flex items-center justify-center"
+                style={{ backgroundColor: '#F0F0F0', minHeight: '200px sm:250px md:300px' }}
               >
                 <span className="text-gray-500 text-center">Próximamente</span>
               </div>

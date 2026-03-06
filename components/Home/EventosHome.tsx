@@ -77,7 +77,7 @@ export const EventosHome = () => {
 
   if (loading) {
     return (
-      <section className="py-20 px-8 md:px-20" style={{ backgroundColor: '#F5F0E8' }}>
+      <section className="py-12 sm:py-16 px-4 sm:px-8 md:px-20" style={{ backgroundColor: '#F5F0E8' }}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center text-black/60 py-8">
             Cargando eventos...
@@ -91,15 +91,15 @@ export const EventosHome = () => {
     <section className="py-20 px-8 md:px-20" style={{ backgroundColor: '#F5F0E8' }}>
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-2xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-black">
+          <h2 className="text-xl sm:text-2xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-black">
             Eventos
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-12 relative">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 relative">
           {/* COLUMNA IZQUIERDA: AGENDA RECURRENTE */}
           <div>
-            <h3 className="text-sm font-bold uppercase tracking-wider text-gray-600 mb-6">
+            <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-gray-600 mb-4 sm:mb-6">
               AGENDA
             </h3>
             
@@ -111,34 +111,34 @@ export const EventosHome = () => {
               ) : (
                 eventosRecurrentes.map((evento, index) => (
                   <div key={evento.id}>
-                    <div className="flex items-center justify-between py-4 group">
+                    <div className="flex items-center justify-between py-2 sm:py-4 group">
                       {/* Fecha a la izquierda */}
-                      <div className="w-16 shrink-0 mr-4">
+                      <div className="w-12 sm:w-16 shrink-0 mr-3 sm:mr-4">
                         {evento.fecha ? (
-                          <span className="text-[10px] font-black uppercase tracking-widest text-red-600 block leading-tight">
+                          <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-widest text-red-600 block leading-tight">
                             {new Date(evento.fecha).getDate()}{' '}
                             {['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'][new Date(evento.fecha).getMonth()]}
                           </span>
                         ) : (
-                          <span className="text-[10px] font-black uppercase tracking-widest text-gray-400 block leading-tight">
+                          <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-widest text-gray-400 block leading-tight">
                             {evento.categoria}
                           </span>
                         )}
                       </div>
                       <div className="flex-1">
-                        <h4 className="text-lg font-black text-black leading-none mb-1 uppercase tracking-tighter">
+                        <h4 className="text-base sm:text-lg font-black text-black leading-none mb-1 uppercase tracking-tighter">
                           {evento.titulo}
                         </h4>
                       </div>
                       
-                      <div className="ml-4">
+                      <div className="ml-2 sm:ml-4">
                         {!evento.disponible ? (
-                          <span className="text-[10px] uppercase font-bold text-gray-600 bg-gray-200 px-3 py-1">
+                          <span className="text-[8px] sm:text-[10px] uppercase font-bold text-gray-600 bg-gray-200 px-2 sm:px-3 py-1">
                             SOLD OUT
                           </span>
                         ) : (
                           <button 
-                            className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest bg-black text-white px-3 py-1 hover:bg-gray-800 transition-colors"
+                            className="flex items-center gap-2 text-[8px] sm:text-[10px] font-black uppercase tracking-widest bg-black text-white px-2 sm:px-3 py-1 hover:bg-gray-800 transition-colors"
                             onClick={(e) => {
                               e.stopPropagation();
                               if (evento.link_tickets) {
@@ -146,7 +146,7 @@ export const EventosHome = () => {
                               }
                             }}
                           >
-                            TICKETS <ArrowRight size={12} className="shrink-0" />
+                            TICKETS <ArrowRight size={10} className="shrink-0" />
                           </button>
                         )}
                       </div>
@@ -168,15 +168,15 @@ export const EventosHome = () => {
           {/* COLUMNA DERECHA: PRÓXIMOS EVENTOS (FLYERS) */}
           {eventosFecha.length > 0 && (
             <div>
-              <h3 className="text-sm font-bold uppercase tracking-wider text-gray-600 mb-6">
+              <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-gray-600 mb-4 sm:mb-6">
                 PRÓXIMOS EVENTOS
               </h3>
               
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 {eventosFecha.map((evento) => (
                   <div key={evento.id} className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
                     {/* Flyer del evento */}
-                    <div className="relative w-full h-48 bg-gray-900">
+                    <div className="relative w-full h-32 sm:h-40 md:h-48 bg-gray-900">
                       {evento.imagen_url ? (
                         <Image
                           src={evento.imagen_url}
@@ -195,23 +195,23 @@ export const EventosHome = () => {
                     </div>
                     
                     {/* Info del evento */}
-                    <div className="p-4">
+                    <div className="p-3 sm:p-4">
                       <div className="flex items-start justify-between mb-2">
                         <div className="flex-1">
-                          <h4 className="text-lg font-bold text-black leading-none mb-1">
+                          <h4 className="text-base sm:text-lg font-bold text-black leading-none mb-1">
                             {evento.titulo}
                           </h4>
-                          <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <div className="flex items-center gap-2 text-xs sm:text-sm text-gray-600">
                             <span>{formatearFecha(evento.fecha)}</span>
                             <span>•</span>
-                            <span className="text-[9px] uppercase tracking-widest">{evento.categoria}</span>
+                            <span className="text-[8px] sm:text-[9px] uppercase tracking-widest">{evento.categoria}</span>
                           </div>
                         </div>
                       </div>
                       
                       {evento.disponible && evento.link_tickets && (
                         <button 
-                          className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest bg-black text-white px-3 py-1 hover:bg-gray-800 transition-colors mt-2"
+                          className="flex items-center gap-2 text-[8px] sm:text-[10px] font-black uppercase tracking-widest bg-black text-white px-2 sm:px-3 py-1 hover:bg-gray-800 transition-colors mt-2"
                           onClick={(e) => {
                             e.stopPropagation();
                             if (evento.link_tickets) {
@@ -219,12 +219,12 @@ export const EventosHome = () => {
                             }
                           }}
                         >
-                          TICKETS <ArrowRight size={12} className="shrink-0" />
+                          TICKETS <ArrowRight size={10} className="shrink-0" />
                         </button>
                       )}
                       
                       {!evento.disponible && (
-                        <span className="text-[10px] uppercase font-bold text-gray-600 bg-gray-200 px-3 py-1 mt-2 inline-block">
+                        <span className="text-[8px] sm:text-[10px] uppercase font-bold text-gray-600 bg-gray-200 px-2 sm:px-3 py-1 mt-2 inline-block">
                           SOLD OUT
                         </span>
                       )}
@@ -237,7 +237,7 @@ export const EventosHome = () => {
               <div className="flex justify-end mt-8">
                 <a 
                   href="/agenda"
-                  className="inline-flex items-center gap-2 bg-black text-white px-6 py-3 text-[10px] font-black uppercase tracking-widest hover:bg-gray-800 transition-all transform hover:-translate-y-1 active:scale-95 rounded-full"
+                  className="inline-flex items-center gap-2 bg-black text-white px-4 sm:px-6 py-2 sm:py-3 text-[9px] sm:text-[10px] font-black uppercase tracking-widest hover:bg-gray-800 transition-all transform hover:-translate-y-1 active:scale-95 rounded-full"
                 >
                   Ver más
                   <ArrowRight 

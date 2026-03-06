@@ -40,10 +40,10 @@ export const MembresiasHome = () => {
 
   if (loading) {
     return (
-      <section className="py-20 px-8 md:px-20" style={{ backgroundColor: '#FFFFFF' }}>
+      <section className="py-12 sm:py-16 px-4 sm:px-8 md:px-20" style={{ backgroundColor: '#FFFFFF' }}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-2xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-black">
+            <h2 className="text-xl sm:text-2xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-black">
               MEMBRESÍAS 2026
             </h2>
           </div>
@@ -56,10 +56,10 @@ export const MembresiasHome = () => {
   }
 
   return (
-    <section className="py-20 px-8 md:px-20" style={{ backgroundColor: '#FFFFFF' }}>
+    <section className="py-12 sm:py-16 px-4 sm:px-8 md:px-20" style={{ backgroundColor: '#FFFFFF' }}>
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-2xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-black">
+          <h2 className="text-xl sm:text-2xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-black">
             MEMBRESÍAS 2026
           </h2>
         </div>
@@ -69,11 +69,11 @@ export const MembresiasHome = () => {
             No hay membresías disponibles
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
+          <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3 md:gap-8 mb-8 sm:mb-12">
             {membresias.map((membresia) => (
               <div 
                 key={membresia.id}
-                className={`group rounded-[40px] p-8 transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] cursor-pointer relative ${
+                className={`group rounded-[20px] sm:rounded-[30px] md:rounded-[40px] p-4 sm:p-6 md:p-8 transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] cursor-pointer relative ${
                   membresia.destacado 
                     ? 'bg-black text-white border-black' 
                     : 'bg-white border border-gray-200'
@@ -93,19 +93,19 @@ export const MembresiasHome = () => {
                   </div>
                 )}
                 {/* Header de la membresía */}
-                <div className="mb-6">
-                  <h3 className={`text-xl md:text-2xl font-bold uppercase tracking-tighter italic mb-2 ${
+                <div className="mb-3 sm:mb-4 md:mb-6">
+                  <h3 className={`text-base sm:text-lg md:text-xl lg:text-2xl font-bold uppercase tracking-tighter italic mb-2 ${
                     membresia.destacado ? 'text-white' : 'text-black'
                   }`}>
                     {membresia.nombre}
                   </h3>
                   <div className="flex items-baseline gap-2">
-                    <span className={`text-3xl md:text-4xl font-black ${
+                    <span className={`text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black ${
                       membresia.destacado ? 'text-white' : 'text-gray-800'
                     }`}>
                       ${membresia.precio.toLocaleString('es-AR')}
                     </span>
-                    <span className={`text-sm font-bold uppercase ${
+                    <span className={`text-xs sm:text-sm font-bold uppercase ${
                       membresia.destacado ? 'text-gray-300' : 'text-gray-600'
                     }`}>
                       /{membresia.periodo}
@@ -114,14 +114,14 @@ export const MembresiasHome = () => {
                 </div>
 
                 {/* Beneficios destacados */}
-                <div className="space-y-3 mb-6">
+                <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
                   {membresia.membresia_beneficios
                     ?.filter(b => b.incluido)
                     .slice(0, 3)
                     .map((beneficio, index) => (
                       <div key={index} className="flex items-start gap-3">
                         <div className="w-1 h-1 bg-gray-400 rounded-full mt-2 shrink-0" />
-                        <span className={`text-sm leading-relaxed ${
+                        <span className={`text-xs sm:text-sm leading-relaxed ${
                           membresia.destacado ? 'text-gray-300' : 'text-gray-600'
                         }`}>
                           {beneficio.texto}
@@ -132,7 +132,7 @@ export const MembresiasHome = () => {
 
                 {/* Descripción adicional */}
                 {membresia.descripcion && (
-                  <p className={`text-xs leading-relaxed mb-6 ${
+                  <p className={`text-[10px] sm:text-xs leading-relaxed mb-4 sm:mb-6 ${
                     membresia.destacado ? 'text-gray-400' : 'text-gray-500'
                   }`}>
                     {membresia.descripcion}
@@ -140,7 +140,7 @@ export const MembresiasHome = () => {
                 )}
 
                 {/* CTA */}
-                <button className={`w-full px-6 py-4 text-[10px] font-black uppercase tracking-widest transition-all transform hover:-translate-y-1 active:scale-95 ${
+                <button className={`w-full px-4 sm:px-6 py-3 sm:py-4 text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all transform hover:-translate-y-1 active:scale-95 ${
                   membresia.destacado 
                     ? 'bg-white text-black hover:bg-gray-200' 
                     : 'bg-black text-white hover:bg-gray-800'

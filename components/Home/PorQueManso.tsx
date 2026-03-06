@@ -55,25 +55,25 @@ export const PorQueManso = async () => {
   };
 
   return (
-    <section className="py-20 px-8 md:px-20 bg-manso-black">
+    <section className="py-12 sm:py-16 px-4 sm:px-8 md:px-20 bg-manso-black">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold uppercase tracking-tighter text-white leading-[0.9] mb-6">
+          <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold uppercase tracking-tighter text-white leading-[0.9] mb-4 sm:mb-6">
             {getValue('porque_titulo', 'Why Manso')}
           </h2>
-          <p className="text-lg md:text-xl text-white/70 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-sm sm:text-base md:text-lg text-white/70 max-w-3xl mx-auto leading-relaxed">
             {getValue('porque_subtitulo', 'More than just a workspace. We provide everything you need to thrive in today\'s dynamic business environment.')}
           </p>
         </div>
 
         {/* Grid de cards de beneficios */}
-        <div className={`${getGridClass()} gap-6 mb-16`}>
+        <div className={`${getGridClass()} gap-4 sm:gap-6 mb-12 sm:mb-16`}>
           {benefits.map((benefit, index) => (
-            <div key={index} className="bg-manso-cream/5 backdrop-blur-sm rounded-2xl p-8 border border-manso-cream/10 hover:bg-manso-cream/10 transition-all duration-300 group">
-              <h3 className="text-xl font-bold text-white mb-4 group-hover:text-manso-terra transition-colors">
+            <div key={index} className="bg-manso-cream/5 backdrop-blur-sm rounded-2xl p-4 sm:p-6 md:p-8 border border-manso-cream/10 hover:bg-manso-cream/10 transition-all duration-300 group">
+              <h3 className="text-base sm:text-lg font-bold text-white mb-3 sm:mb-4 group-hover:text-manso-terra transition-colors">
                 {benefit.title}
               </h3>
-              <p className="text-white/60 leading-relaxed text-sm">
+              <p className="text-white/60 leading-relaxed text-xs sm:text-sm">
                 {benefit.description}
               </p>
             </div>
@@ -85,7 +85,7 @@ export const PorQueManso = async () => {
           const mainText = getValue('porque_main_text', '');
           return mainText && mainText !== 'Texto descriptivo adicional...' ? (
             <div className="text-center mb-16">
-              <p className="text-xl md:text-2xl font-light text-white/70 leading-relaxed max-w-4xl mx-auto">
+              <p className="text-lg sm:text-xl md:text-2xl font-light text-white/70 leading-relaxed max-w-4xl mx-auto">
                 {mainText}
               </p>
             </div>
@@ -96,7 +96,7 @@ export const PorQueManso = async () => {
         <div className="text-center">
           <Link 
             href="/about"
-            className="inline-flex items-center gap-3 bg-manso-terra text-white px-12 py-6 text-[10px] font-black uppercase tracking-widest hover:bg-manso-cream hover:text-manso-black transition-all transform hover:-translate-y-1 active:scale-95 group rounded-full"
+            className="inline-flex items-center gap-3 bg-manso-terra text-white px-8 sm:px-12 py-4 sm:py-6 text-[9px] sm:text-[10px] font-black uppercase tracking-widest hover:bg-manso-cream hover:text-manso-black transition-all transform hover:-translate-y-1 active:scale-95 group rounded-full"
           >
             CONOCENOS
             <ArrowRight 

@@ -20,17 +20,17 @@ export const Gallery = async () => {
 
   return (
     <section 
-      className="py-12 md:py-24 px-8 md:px-20"
+      className="py-8 sm:py-12 md:py-24 px-4 sm:px-8 md:px-20"
       style={{ backgroundColor: '#FFFFFF' }}
     >
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h3 className="text-2xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-manso-black">
+          <h3 className="text-xl sm:text-2xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-manso-black">
             Nuestro Espacio
           </h3>
         </div>
         
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+        <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-3 md:gap-3">
           {imagesToDisplay.map((image) => (
             <div 
               key={image.id}
@@ -39,7 +39,7 @@ export const Gallery = async () => {
               <img
                 src={image.src}
                 alt={`Manso Club ${image.id}`}
-                className="w-full h-48 md:h-64 object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                className="w-full h-32 sm:h-40 md:h-64 object-cover transition-transform duration-300 group-hover:scale-[1.03]"
               />
               <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300" />
             </div>
