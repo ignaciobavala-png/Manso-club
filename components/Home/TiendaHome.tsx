@@ -152,7 +152,7 @@ export const TiendaHome = () => {
         <div className="text-center">
           <Link 
             href="/tienda"
-            className="inline-flex items-center gap-3 bg-black text-white px-12 py-6 text-[10px] font-black uppercase tracking-widest hover:bg-gray-800 transition-all transform hover:-translate-y-1 active:scale-95 group"
+            className="inline-flex items-center gap-3 bg-black text-white px-12 py-6 text-[10px] font-black uppercase tracking-widest hover:bg-gray-800 transition-all transform hover:-translate-y-1 active:scale-95 group rounded-full"
           >
             IR A LA TIENDA
             <ArrowRight 

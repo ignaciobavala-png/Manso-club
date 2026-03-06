@@ -18,6 +18,7 @@ export function FormProducto() {
     nombre: '',
     categoria: CATEGORIAS_TIENDA[0] as string,
     precio: 0,
+    descripcion: '',
     imagenes_urls: [] as string[]
   });
 
@@ -97,7 +98,8 @@ export function FormProducto() {
       setFormData({ 
         nombre: '', 
         categoria: categorias[0], 
-        precio: 0, 
+        precio: 0,
+        descripcion: '',
         imagenes_urls: [] 
       });
       window.dispatchEvent(new CustomEvent('dashboardRefresh'));
@@ -187,6 +189,23 @@ export function FormProducto() {
               }}
               required
             />
+          </div>
+
+          {/* Descripción del Producto */}
+          <div className="relative">
+            <textarea 
+              placeholder="BREVE DESCRIPCIÓN DEL PRODUCTO (opcional)"
+              className="w-full bg-manso-cream/10 p-3 sm:p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-medium text-manso-cream placeholder:text-manso-cream/40 transition-all text-sm sm:text-base resize-none h-20"
+              value={formData.descripcion}
+              onChange={e => {
+                setFormData({...formData, descripcion: e.target.value});
+                setError(null); // Limpiar error al escribir
+              }}
+              maxLength={200}
+            />
+            <div className="text-[8px] text-manso-cream/40 text-right mt-1">
+              {formData.descripcion.length}/200 caracteres
+            </div>
           </div>
 
           {/* Categoria: chips con X para borrar */}

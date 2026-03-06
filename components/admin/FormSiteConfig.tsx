@@ -88,153 +88,99 @@ export function FormSiteConfig() {
       </div>
 
       <div className="space-y-8">
-        {/* Sección Título */}
+        {/* Sección Títulos Principales */}
         <div className="space-y-6">
           <div className="text-center mb-6">
             <label className="block text-sm font-bold uppercase tracking-widest text-manso-cream/60 mb-4">
-              Título principal de la sección
+              Título Principal de la Sección
             </label>
             {/* Preview del título */}
             <div className="bg-manso-cream/5 rounded-2xl p-6 border border-manso-cream/10 mb-4">
-              <h2 className="text-2xl md:text-4xl font-bold uppercase tracking-tighter italic text-manso-cream leading-[0.8]">
-                {formData.porque_titulo || 'Espacio Híbrido'}
-                <br />
-                <span className="text-manso-cream/70">Cultura Digital</span>
+              <h2 className="text-2xl md:text-4xl font-bold uppercase tracking-tighter text-manso-cream leading-[0.9]">
+                {formData.porque_titulo || 'Why Manso'}
               </h2>
+              <p className="text-lg text-manso-cream/70 mt-2">
+                {formData.porque_subtitulo || 'More than just a workspace...'}
+              </p>
             </div>
             {/* Input del título */}
             <input
               type="text"
-              placeholder="Título principal de la sección"
-              className="w-full bg-manso-cream/10 p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all"
+              placeholder="Título principal"
+              className="w-full bg-manso-cream/10 p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all mb-3"
               value={formData.porque_titulo || ''}
               onChange={(e) => handleInputChange('porque_titulo', e.target.value)}
+            />
+            <textarea
+              placeholder="Subtítulo descriptivo"
+              className="w-full bg-manso-cream/10 p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none h-20 resize-none text-manso-cream placeholder:text-manso-cream/40"
+              value={formData.porque_subtitulo || ''}
+              onChange={(e) => handleInputChange('porque_subtitulo', e.target.value)}
             />
           </div>
         </div>
 
-        {/* Sección ¿Por qué Manso? */}
+        {/* Sección Cards de Beneficios */}
         <div className="space-y-6">
           <div className="flex items-center gap-3 mb-4">
-            <BarChart3 size={20} className="text-manso-terra" />
+            <Settings size={20} className="text-manso-terra" />
             <h3 className="text-lg font-black uppercase tracking-tighter text-manso-cream">
-              ¿Por qué Manso?
+              Cards de Beneficios
             </h3>
           </div>
 
-          {/* Stats con preview visual */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {[1, 2, 3].map((num) => (
+          {/* Cards con preview visual */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {[1, 2, 3, 4].map((num) => (
               <div key={num} className="bg-manso-cream/5 rounded-2xl p-4 border border-manso-cream/10">
                 {/* Mini preview */}
-                <div className="text-center mb-4 py-3 border-b border-manso-cream/10">
-                  <div className="text-3xl font-black text-manso-cream">
-                    {formData[`porque_stat${num}_numero`] || 'XXX'}
-                  </div>
-                  <div className="text-xs font-bold uppercase tracking-widest text-manso-cream/60">
-                    {formData[`porque_stat${num}_label`] || 'LABEL'}
-                  </div>
-                  <div className="text-xs text-manso-cream/40 mt-1">
-                    {formData[`porque_stat${num}_descripcion`] || 'Descripción...'}
-                  </div>
+                <div className="bg-manso-black/50 rounded-2xl p-4 mb-4 border border-manso-cream/10">
+                  <h4 className="text-lg font-bold text-white mb-2">
+                    {formData[`beneficio${num}_titulo`] || `Título del Beneficio ${num}`}
+                  </h4>
+                  <p className="text-sm text-white/60">
+                    {formData[`beneficio${num}_descripcion`] || `Descripción del beneficio ${num}...`}
+                  </p>
                 </div>
                 {/* Campos de edición */}
                 <div className="space-y-2">
                   <input 
-                    placeholder="Número destacado (ej: 500+, 24/7, 2x)"
+                    placeholder="Título del beneficio"
                     className="w-full bg-manso-cream/10 p-3 rounded-xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/30 text-sm"
-                    value={formData[`porque_stat${num}_numero`] || ''}
-                    onChange={e => handleInputChange(`porque_stat${num}_numero`, e.target.value)}
+                    value={formData[`beneficio${num}_titulo`] || ''}
+                    onChange={e => handleInputChange(`beneficio${num}_titulo`, e.target.value)}
                   />
-                  <input 
-                    placeholder="Título en mayúsculas (ej: CREATIVOS)"
-                    className="w-full bg-manso-cream/10 p-3 rounded-xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/30 text-sm uppercase"
-                    value={formData[`porque_stat${num}_label`] || ''}
-                    onChange={e => handleInputChange(`porque_stat${num}_label`, e.target.value)}
-                  />
-                  <input 
-                    placeholder="Descripción breve"
-                    className="w-full bg-manso-cream/10 p-3 rounded-xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/30 text-sm"
-                    value={formData[`porque_stat${num}_descripcion`] || ''}
-                    onChange={e => handleInputChange(`porque_stat${num}_descripcion`, e.target.value)}
+                  <textarea 
+                    placeholder="Descripción del beneficio"
+                    className="w-full bg-manso-cream/10 p-3 rounded-xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/30 text-sm h-20 resize-none"
+                    value={formData[`beneficio${num}_descripcion`] || ''}
+                    onChange={e => handleInputChange(`beneficio${num}_descripcion`, e.target.value)}
                   />
                 </div>
               </div>
             ))}
           </div>
+        </div>
 
-          {/* Párrafo central con preview */}
+        {/* Sección Texto Adicional */}
+        <div className="space-y-6">
           <div>
             <label className="block text-sm font-bold uppercase tracking-widest text-manso-cream/60 mb-4">
-              Párrafo central — aparece debajo de las stats
+              Texto Adicional (Opcional) — aparece debajo de las cards
             </label>
-            {/* Preview del párrafo */}
+            {/* Preview del texto */}
             <div className="bg-manso-cream/5 rounded-2xl p-6 border border-manso-cream/10 mb-4">
-              <p className="text-lg md:text-xl font-light text-manso-cream/70 leading-relaxed italic">
-                {formData.porque_main_text || 'Texto descriptivo de la sección...'}
+              <p className="text-lg md:text-xl font-light text-manso-cream/70 leading-relaxed">
+                {formData.porque_main_text || 'Texto descriptivo adicional...'}
               </p>
             </div>
-            {/* Textarea del párrafo */}
+            {/* Textarea del texto */}
             <textarea
-              placeholder="Párrafo descriptivo de ¿Por qué Manso?"
+              placeholder="Texto adicional que aparecerá debajo de las cards de beneficios"
               className="w-full bg-manso-cream/10 p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none h-32 resize-none text-manso-cream placeholder:text-manso-cream/40"
               value={formData.porque_main_text || ''}
               onChange={(e) => handleInputChange('porque_main_text', e.target.value)}
             />
-          </div>
-
-          {/* Pills con preview visual */}
-          <div>
-            <label className="block text-sm font-bold uppercase tracking-widest text-manso-cream/60 mb-4">
-              Badges informativos — aparecen al pie de la sección
-            </label>
-            {/* Preview de los pills */}
-            <div className="bg-manso-cream/5 rounded-2xl p-6 border border-manso-cream/10 mb-4">
-              <div className="flex flex-col sm:flex-row items-center justify-center gap-8 text-manso-cream/50">
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-manso-cream rounded-full" />
-                  <span className="text-sm font-bold uppercase tracking-wider">
-                    {formData.porque_pill1 || 'Ubicación'}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-manso-cream rounded-full" />
-                  <span className="text-sm font-bold uppercase tracking-wider">
-                    {formData.porque_pill2 || 'Desde'}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-manso-cream rounded-full" />
-                  <span className="text-sm font-bold uppercase tracking-wider">
-                    {formData.porque_pill3 || 'Tipo'}
-                  </span>
-                </div>
-              </div>
-            </div>
-            {/* Inputs de los pills */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <input
-                type="text"
-                placeholder="ej: Belgrano, CABA"
-                className="bg-manso-cream/10 p-3 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all"
-                value={formData.porque_pill1 || ''}
-                onChange={(e) => handleInputChange('porque_pill1', e.target.value)}
-              />
-              <input
-                type="text"
-                placeholder="ej: Desde 2025"
-                className="bg-manso-cream/10 p-3 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all"
-                value={formData.porque_pill2 || ''}
-                onChange={(e) => handleInputChange('porque_pill2', e.target.value)}
-              />
-              <input
-                type="text"
-                placeholder="ej: Comunidad Creativa"
-                className="bg-manso-cream/10 p-3 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all"
-                value={formData.porque_pill3 || ''}
-                onChange={(e) => handleInputChange('porque_pill3', e.target.value)}
-              />
-            </div>
           </div>
         </div>
 

@@ -1,110 +1,69 @@
-import { ArrowRight, Headphones, Users, Zap } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { getSiteConfig } from '@/lib/siteConfig';
 
 export const PorQueManso = async () => {
   const config = await getSiteConfig();
   
-  const features = [
+  const benefits = [
     {
-      icon: Users,
-      number: config.porque_stat1_numero || 'XXX',
-      label: config.porque_stat1_label || 'XXXX',
-      description: config.porque_stat1_desc || 'XXXX'
+      title: config.beneficio1_titulo || 'Título del Beneficio 1',
+      description: config.beneficio1_descripcion || 'Descripción del primer beneficio que ofrece Manso Club...'
     },
     {
-      icon: Headphones,
-      number: config.porque_stat2_numero || 'XXX',
-      label: config.porque_stat2_label || 'XXXX',
-      description: config.porque_stat2_desc || 'XXXX'
+      title: config.beneficio2_titulo || 'Título del Beneficio 2',
+      description: config.beneficio2_descripcion || 'Descripción del segundo beneficio que ofrece Manso Club...'
     },
     {
-      icon: Zap,
-      number: config.porque_stat3_numero || 'XXX',
-      label: config.porque_stat3_label || 'XXXX',
-      description: config.porque_stat3_desc || 'XXXX'
+      title: config.beneficio3_titulo || 'Título del Beneficio 3',
+      description: config.beneficio3_descripcion || 'Descripción del tercer beneficio que ofrece Manso Club...'
+    },
+    {
+      title: config.beneficio4_titulo || 'Título del Beneficio 4',
+      description: config.beneficio4_descripcion || 'Descripción del cuarto beneficio que ofrece Manso Club...'
     }
   ];
 
   return (
-    <section className="py-20 px-8 md:px-20" style={{ backgroundColor: '#FFFFFF' }}>
+    <section className="py-20 px-8 md:px-20 bg-manso-black">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-3xl md:text-6xl lg:text-7xl font-bold uppercase tracking-tighter italic text-black leading-[0.8] mb-8">
-            Espacio Híbrido
-            <br />
-            <span className="text-gray-700">Cultura Digital</span>
+          <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold uppercase tracking-tighter text-white leading-[0.9] mb-6">
+            {config.porque_titulo || 'Why Manso'}
           </h2>
-        </div>
-
-        {/* Grid de características */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-12 mb-16">
-          {features.map((feature, index) => {
-            const IconComponent = feature.icon;
-            return (
-              <div key={index} className="text-center group">
-                {/* Icono animado */}
-                <div className="mb-6 flex justify-center">
-                  <div className="relative">
-                    <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center group-hover:bg-gray-200 transition-colors">
-                      <IconComponent 
-                        size={32} 
-                        className="text-gray-700 group-hover:scale-110 transition-transform" 
-                      />
-                    </div>
-                    {/* Aura animada */}
-                    <div className="absolute inset-0 bg-gray-700 opacity-0 group-hover:opacity-10 rounded-full blur-xl transition-opacity" />
-                  </div>
-                </div>
-
-                {/* Número destacado */}
-                <div className="mb-3">
-                  <span className="text-4xl md:text-5xl font-black text-gray-800 leading-none">
-                    {feature.number}
-                  </span>
-                </div>
-
-                {/* Label */}
-                <h3 className="text-lg md:text-xl font-bold uppercase tracking-tighter text-black mb-3">
-                  {feature.label}
-                </h3>
-
-                {/* Descripción */}
-                <p className="text-sm text-gray-600 leading-relaxed max-w-xs mx-auto">
-                  {feature.description}
-                </p>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Texto central destacado */}
-        <div className="text-center mb-16">
-          <p className="text-xl md:text-2xl font-light text-gray-700 leading-relaxed max-w-4xl mx-auto mb-8">
-            {config.porque_main_text || 'XXXX'}
+          <p className="text-lg md:text-xl text-white/70 max-w-3xl mx-auto leading-relaxed">
+            {config.porque_subtitulo || 'More than just a workspace. We provide everything you need to thrive in today\'s dynamic business environment.'}
           </p>
-          
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-8 text-gray-500">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-gray-700 rounded-full" />
-              <span className="text-sm font-bold uppercase tracking-wider"> CABA</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-gray-700 rounded-full" />
-              <span className="text-sm font-bold uppercase tracking-wider">Desde 2025</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 bg-gray-700 rounded-full" />
-              <span className="text-sm font-bold uppercase tracking-wider">Comunidad Creativa</span>
-            </div>
-          </div>
         </div>
+
+        {/* Grid de cards de beneficios */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+          {benefits.map((benefit, index) => (
+            <div key={index} className="bg-manso-cream/5 backdrop-blur-sm rounded-2xl p-8 border border-manso-cream/10 hover:bg-manso-cream/10 transition-all duration-300 group">
+              <h3 className="text-xl font-bold text-white mb-4 group-hover:text-manso-terra transition-colors">
+                {benefit.title}
+              </h3>
+              <p className="text-white/60 leading-relaxed text-sm">
+                {benefit.description}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Texto central adicional */}
+        {config.porque_main_text && (
+          <div className="text-center mb-16">
+            <p className="text-xl md:text-2xl font-light text-white/70 leading-relaxed max-w-4xl mx-auto">
+              {config.porque_main_text}
+            </p>
+          </div>
+        )}
 
         {/* CTA */}
         <div className="text-center">
           <Link 
             href="/about"
-            className="inline-flex items-center gap-3 bg-black text-white px-12 py-6 text-[10px] font-black uppercase tracking-widest hover:bg-gray-800 transition-all transform hover:-translate-y-1 active:scale-95 group"
+            className="inline-flex items-center gap-3 bg-manso-terra text-white px-12 py-6 text-[10px] font-black uppercase tracking-widest hover:bg-manso-cream hover:text-manso-black transition-all transform hover:-translate-y-1 active:scale-95 group rounded-full"
           >
             CONOCENOS
             <ArrowRight 

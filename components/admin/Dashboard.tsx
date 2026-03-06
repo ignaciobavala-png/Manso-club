@@ -23,6 +23,7 @@ import { HeroList } from './HeroList';
 import { FormGallery } from './FormGallery';
 import { GalleryList } from './GalleryList';
 import { FormSiteConfig } from './FormSiteConfig';
+import { SiteConfigList } from './SiteConfigList';
 import { FormAboutUs } from './FormAboutUs';
 import { LogOut, ShoppingBag, User, Home, Calendar, Music, Crown, Settings, Star, Users, Image, Layout, FileText } from 'lucide-react';
 
@@ -259,6 +260,8 @@ export function Dashboard() {
                 <HeroList refreshTrigger={refreshTrigger} />
               ) : tab === 'galeria' ? (
                 <GalleryList refreshTrigger={refreshTrigger} />
+              ) : tab === 'sitio' ? (
+                <SiteConfigList refreshTrigger={refreshTrigger} />
               ) : (
                 <div></div>
               )}
