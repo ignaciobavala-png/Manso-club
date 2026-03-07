@@ -7,6 +7,7 @@ interface Product {
   nombre: string;
   precio: number;
   imagenes_urls: string[];
+  stock?: number; // Stock opcional para validación
 }
 
 interface CartItem extends Product {
@@ -29,6 +30,15 @@ export const useCart = create<CartStore>()(
       addItem: (product) => {
         const currentItems = get().items;
         const existingItem = currentItems.find((item) => item.id === product.id);
+        
+        // Validar stock si está disponible
+        const maxStock = product.stock || Number.MAX_SAFE_INTEGER;
+        const currentQuantity = existingItem?.quantity || 0;
+        
+        if (currentQuantity >= maxStock) {
+          // No agregar si ya alcanzó el máximo stock
+          return;
+        }
 
         if (existingItem) {
           set({

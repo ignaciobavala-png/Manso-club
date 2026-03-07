@@ -27,10 +27,9 @@ export default function CheckoutPage() {
   const [loadingConfig, setLoadingConfig] = useState(true);
 
   useEffect(() => {
-    // Temporalmente desactivado para pruebas
-    // if (items.length === 0 && !isSubmitted) {
-    //   router.push('/tienda');
-    // }
+    if (items.length === 0 && !isSubmitted) {
+      router.push('/tienda');
+    }
   }, [items, router, isSubmitted]);
 
   useEffect(() => {

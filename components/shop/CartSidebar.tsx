@@ -57,15 +57,20 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
     if (newQuantity <= 0) {
       removeItem(productId);
     } else if (change > 0) {
-      // Para aumentar la cantidad, necesitamos encontrar el producto y agregarlo nuevamente
+      // Para aumentar la cantidad, necesitamos encontrar el producto y validar stock
       const product = items.find(item => item.id === productId);
       if (product) {
-        addItem({ 
-          id: product.id, 
-          nombre: product.nombre, 
-          precio: product.precio, 
-          imagenes_urls: product.imagenes_urls 
-        });
+        // Validar stock si está disponible
+        const maxStock = product.stock || Number.MAX_SAFE_INTEGER;
+        if (currentQuantity < maxStock) {
+          addItem({ 
+            id: product.id, 
+            nombre: product.nombre, 
+            precio: product.precio, 
+            imagenes_urls: product.imagenes_urls,
+            stock: product.stock
+          });
+        }
       }
     } else {
       // Para disminuir la cantidad, eliminamos el item
@@ -191,10 +196,15 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                         </span>
                         <button
                           onClick={() => handleQuantityChange(item.id, item.quantity, 1)}
-                          className="w-8 h-8 rounded-lg bg-white border border-zinc-300 flex items-center justify-center hover:bg-zinc-100 hover:border-zinc-400 transition-all duration-200 group"
+                          disabled={item.stock ? item.quantity >= item.stock : false}
+                          className={`w-8 h-8 rounded-lg border flex items-center justify-center transition-all duration-200 group ${
+                            item.stock && item.quantity >= item.stock
+                              ? 'border-zinc-200 text-zinc-300 cursor-not-allowed'
+                              : 'border-zinc-300 bg-white hover:bg-zinc-100 hover:border-zinc-400'
+                          }`}
                           aria-label="Aumentar cantidad"
                         >
-                          <Plus size={14} className="text-zinc-600 group-hover:text-black" />
+                          <Plus size={14} className={`${item.stock && item.quantity >= item.stock ? 'text-zinc-300' : 'text-zinc-600 group-hover:text-black'} transition-colors`} />
                         </button>
                         
                         <div className="ml-auto flex items-center gap-2">

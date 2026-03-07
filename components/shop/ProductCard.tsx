@@ -43,14 +43,7 @@ export function ProductCard({ producto }: ProductProps) {
   // Obtener imagen actual o fallback
   const currentImage = producto.imagenes_urls?.[currentImageIndex] || '/manso.png';
   
-  // Debug logging
-  console.log('ProductCard Debug:', {
-    productoNombre: producto.nombre,
-    imagenes_urls: producto.imagenes_urls,
-    currentImageIndex,
-    currentImage
-  });
-
+  
   return (
     <div className="group bg-white rounded-[20px] sm:rounded-[30px] md:rounded-[40px] border border-zinc-100 overflow-hidden transition-all duration-500 hover:shadow-2xl hover:scale-[1.02] cursor-pointer">
       {/* Contenedor principal clickeable - ahora redirige al detalle del producto */}
@@ -63,12 +56,8 @@ export function ProductCard({ producto }: ProductProps) {
               alt={producto.nombre}
               className="w-full h-full object-cover transition-all duration-700"
               onError={(e) => {
-                console.error(`Error cargando imagen: ${currentImage}`);
                 // Fallback a manso.png si falla
                 e.currentTarget.src = '/manso.png';
-              }}
-              onLoad={() => {
-                console.log(`Imagen cargada exitosamente: ${currentImage}`);
               }}
             />
           

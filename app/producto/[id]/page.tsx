@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { ArrowLeft, ArrowRight, Plus, ShoppingBag, Check } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Plus, ShoppingBag, Check, Minus, Truck, Shield, RotateCcw } from 'lucide-react';
 import Link from 'next/link';
 import { useCart } from '@/store/useCart';
 
@@ -24,6 +24,7 @@ export default function ProductoDetalle() {
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isAdded, setIsAdded] = useState(false);
+  const [cantidad, setCantidad] = useState(1);
   const addItem = useCart((state) => state.addItem);
 
   useEffect(() => {
@@ -59,13 +60,32 @@ export default function ProductoDetalle() {
     }
   };
 
+  const handleRestar = () => {
+    setCantidad(prev => Math.max(1, prev - 1));
+  };
+
+  const handleSumar = () => {
+    if (producto) {
+      setCantidad(prev => Math.min(producto.stock, prev + 1));
+    }
+  };
+
   const handleAddToCart = () => {
     if (producto) {
       if (producto.stock === 0) {
         // Si no hay stock, redirigir al checkout
         window.location.href = '/checkout';
       } else {
-        addItem(producto);
+        // Agregar el producto la cantidad de veces seleccionada
+        for (let i = 0; i < cantidad; i++) {
+          addItem({
+            id: producto.id,
+            nombre: producto.nombre,
+            precio: producto.precio,
+            imagenes_urls: producto.imagenes_urls,
+            stock: producto.stock
+          });
+        }
         setIsAdded(true);
         setTimeout(() => setIsAdded(false), 2000);
       }
@@ -109,7 +129,7 @@ export default function ProductoDetalle() {
         <div className="max-w-7xl mx-auto px-8 md:px-20 py-4">
           <div className="flex items-center justify-between">
             <Link 
-              href="/#tienda"
+              href="/tienda"
               className="inline-flex items-center gap-2 text-black hover:text-gray-600 transition-colors"
             >
               <ArrowLeft size={20} />
@@ -237,6 +257,48 @@ export default function ProductoDetalle() {
               </span>
             </div>
 
+            {/* Selector de cantidad */}
+            <div className="space-y-4">
+              <h3 className="text-sm font-black uppercase tracking-wider text-zinc-400">
+                Cantidad
+              </h3>
+              <div className="flex items-center gap-4">
+                <button
+                  onClick={handleRestar}
+                  disabled={producto.stock === 0 || cantidad <= 1}
+                  className={`w-12 h-12 rounded-full border-2 flex items-center justify-center transition-all ${
+                    producto.stock === 0 || cantidad <= 1
+                      ? 'border-zinc-200 text-zinc-300 cursor-not-allowed'
+                      : 'border-black text-black hover:bg-black hover:text-white'
+                  }`}
+                >
+                  <Minus size={20} />
+                </button>
+                
+                <span className="text-2xl font-black text-black w-16 text-center">
+                  {cantidad}
+                </span>
+                
+                <button
+                  onClick={handleSumar}
+                  disabled={producto.stock === 0 || cantidad >= producto.stock}
+                  className={`w-12 h-12 rounded-full border-2 flex items-center justify-center transition-all ${
+                    producto.stock === 0 || cantidad >= producto.stock
+                      ? 'border-zinc-200 text-zinc-300 cursor-not-allowed'
+                      : 'border-black text-black hover:bg-black hover:text-white'
+                  }`}
+                >
+                  <Plus size={20} />
+                </button>
+                
+                {producto.stock > 0 && (
+                  <span className="text-sm text-zinc-500">
+                    ({producto.stock} disponibles)
+                  </span>
+                )}
+              </div>
+            </div>
+
             {/* Botón de agregar al carrito */}
             <div className="pt-8">
               <button
@@ -255,7 +317,7 @@ export default function ProductoDetalle() {
                 ) : (
                   <div className="flex items-center justify-center gap-2">
                     <ShoppingBag size={20} />
-                    <span>{producto.stock === 0 ? 'Ir al checkout' : 'Agregar al carrito'}</span>
+                    <span>{producto.stock === 0 ? 'Consultar disponibilidad' : 'Agregar al carrito'}</span>
                   </div>
                 )}
               </button>
@@ -265,19 +327,19 @@ export default function ProductoDetalle() {
             <div className="pt-8 border-t border-zinc-100 space-y-4">
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-zinc-100 rounded-full flex items-center justify-center">
-                  <span className="text-xs font-black">✓</span>
+                  <Truck className="w-4 h-4 text-black" />
                 </div>
                 <span className="text-sm text-zinc-600">Envío a todo el país</span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-zinc-100 rounded-full flex items-center justify-center">
-                  <span className="text-xs font-black">✓</span>
+                  <Shield className="w-4 h-4 text-black" />
                 </div>
                 <span className="text-sm text-zinc-600">Pago seguro</span>
               </div>
               <div className="flex items-center gap-3">
                 <div className="w-8 h-8 bg-zinc-100 rounded-full flex items-center justify-center">
-                  <span className="text-xs font-black">✓</span>
+                  <RotateCcw className="w-4 h-4 text-black" />
                 </div>
                 <span className="text-sm text-zinc-600">Devoluciones dentro de los 30 días</span>
               </div>
