@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { ArrowLeft, ArrowRight, Plus, ShoppingBag, Check, Minus, Truck, Shield, RotateCcw } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Plus, ShoppingBag, Check, Minus, Truck, Shield, RotateCcw, ArrowRight as CheckoutIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useCart } from '@/store/useCart';
 
@@ -23,9 +23,9 @@ export default function ProductoDetalle() {
   const [producto, setProducto] = useState<Producto | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [isAdded, setIsAdded] = useState(false);
   const [cantidad, setCantidad] = useState(1);
   const addItem = useCart((state) => state.addItem);
+  const items = useCart((state) => state.items);
 
   useEffect(() => {
     if (params.id) {
@@ -86,8 +86,52 @@ export default function ProductoDetalle() {
             stock: producto.stock
           });
         }
-        setIsAdded(true);
-        setTimeout(() => setIsAdded(false), 2000);
+        
+        // Toast de confirmación
+        const toast = document.createElement('div');
+        toast.className = 'fixed top-4 right-4 bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center gap-2 animate-in slide-in-from-right duration-300';
+        toast.innerHTML = `
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+          <span class="font-medium">${producto.nombre} (${cantidad}x) agregado al carrito</span>
+        `;
+        document.body.appendChild(toast);
+        
+        // Remover toast después de 3 segundos
+        setTimeout(() => {
+          toast.classList.add('animate-out', 'slide-out-to-right');
+          setTimeout(() => {
+            document.body.removeChild(toast);
+          }, 300);
+        }, 3000);
+        
+        // Redirigir a tienda después de 800ms
+        setTimeout(() => {
+          window.location.href = '/tienda';
+        }, 800);
+      }
+    }
+  };
+
+  const handleBuyNow = () => {
+    if (producto) {
+      if (producto.stock === 0) {
+        // Si no hay stock, redirigir al checkout
+        window.location.href = '/checkout';
+      } else {
+        // Agregar el producto la cantidad de veces seleccionada y redirigir
+        for (let i = 0; i < cantidad; i++) {
+          addItem({
+            id: producto.id,
+            nombre: producto.nombre,
+            precio: producto.precio,
+            imagenes_urls: producto.imagenes_urls,
+            stock: producto.stock
+          });
+        }
+        // Redirigir inmediatamente al checkout
+        window.location.href = '/checkout';
       }
     }
   };
@@ -299,27 +343,36 @@ export default function ProductoDetalle() {
               </div>
             </div>
 
-            {/* Botón de agregar al carrito */}
-            <div className="pt-8">
+            {/* Botones de acción */}
+            <div className="pt-8 space-y-4">
+              {/* Botón Agregar al carrito */}
               <button
                 onClick={handleAddToCart}
                 className={`w-full py-6 rounded-full font-black uppercase tracking-widest text-sm transition-all transform hover:-translate-y-1 active:scale-95 ${
                   producto.stock === 0
-                    ? 'bg-orange-600 text-white hover:bg-orange-700'
-                    : 'bg-black text-white hover:bg-gray-800'
+                    ? 'bg-green-600 text-white hover:bg-green-700'
+                    : 'bg-green-600 text-white hover:bg-green-700'
                 }`}
               >
-                {isAdded ? (
-                  <div className="flex items-center justify-center gap-2">
-                    <Check size={20} />
-                    <span>Agregado al carrito</span>
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-center gap-2">
-                    <ShoppingBag size={20} />
-                    <span>{producto.stock === 0 ? 'Consultar disponibilidad' : 'Agregar al carrito'}</span>
-                  </div>
-                )}
+                <div className="flex items-center justify-center gap-2">
+                  <ShoppingBag size={20} />
+                  <span>{producto.stock === 0 ? 'Consultar disponibilidad' : 'Agregar al carrito'}</span>
+                </div>
+              </button>
+
+              {/* Botón Comprar ahora */}
+              <button
+                onClick={handleBuyNow}
+                className={`w-full py-6 rounded-full font-black uppercase tracking-widest text-sm transition-all transform hover:-translate-y-1 active:scale-95 ${
+                  producto.stock === 0
+                    ? 'bg-orange-600 text-white hover:bg-orange-700'
+                    : 'bg-orange-600 text-white hover:bg-orange-700'
+                }`}
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <CheckoutIcon size={20} />
+                  <span>{producto.stock === 0 ? 'Consultar disponibilidad' : 'Comprar ahora'}</span>
+                </div>
               </button>
             </div>
 
