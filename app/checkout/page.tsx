@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useCart } from '@/store/useCart';
-import { ArrowLeft, CreditCard, User, Mail, Phone, CheckCircle, AlertCircle } from 'lucide-react';
+import { ArrowLeft, CreditCard, User, Mail, Phone, CheckCircle, AlertCircle, ShoppingBag, MessageCircle, Truck, Shield, RotateCcw } from 'lucide-react';
 import Link from 'next/link';
 
 interface CheckoutForm {
@@ -27,9 +27,17 @@ export default function CheckoutPage() {
   const [loadingConfig, setLoadingConfig] = useState(true);
 
   useEffect(() => {
-    if (items.length === 0 && !isSubmitted) {
-      router.push('/tienda');
-    }
+    // Pequeño delay para asegurar que el carrito esté cargado
+    const timer = setTimeout(() => {
+      if (items.length === 0 && !isSubmitted) {
+        console.log('DEBUG: Carrito vacío, redirigiendo a tienda');
+        router.push('/tienda');
+      } else {
+        console.log('DEBUG: Carrito tiene items, permaneciendo en checkout:', items.length);
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
   }, [items, router, isSubmitted]);
 
   useEffect(() => {
@@ -220,124 +228,128 @@ export default function CheckoutPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
           {/* Formulario */}
-          <div className="lg:col-span-2">
+          <div className="space-y-8">
             <form onSubmit={handleSubmit} className="space-y-8">
-              {/* Información Bancaria */}
-              <div className="bg-zinc-50 rounded-2xl p-8 border border-zinc-200">
-                <div className="flex items-center gap-3 mb-6">
-                  <CreditCard className="w-6 h-6 text-black" />
-                  <h2 className="text-xl font-black uppercase tracking-tighter text-black">
-                    Datos para el Pago
-                  </h2>
-                </div>
-                
-                <div className="space-y-4 text-zinc-700">
-                  <div>
-                    <p className="font-semibold mb-2">Banco:</p>
-                    <p className="text-black">{config?.banco_nombre || 'Banco Galicia'}</p>
-                  </div>
-                  <div>
-                    <p className="font-semibold mb-2">CBU:</p>
-                    <p className="text-black font-mono text-sm">{config?.banco_cbu || '0070053430000001234567'}</p>
-                  </div>
-                  <div>
-                    <p className="font-semibold mb-2">Alias:</p>
-                    <p className="text-black">{config?.banco_alias || 'MANSO.CLUB.TIENDA'}</p>
-                  </div>
-                  <div>
-                    <p className="font-semibold mb-2">Titular:</p>
-                    <p className="text-black">{config?.banco_titular || 'MANSO CLUB S.A.'}</p>
-                  </div>
-                  {config?.banco_cuit && (
-                    <div>
-                      <p className="font-semibold mb-2">CUIT:</p>
-                      <p className="text-black">{config.banco_cuit}</p>
-                    </div>
-                  )}
-                  <div className="pt-4 border-t border-zinc-200">
-                    <p className="text-sm text-zinc-600">
-                      Una vez completado el formulario, te enviaremos un WhatsApp con la confirmación y los datos para realizar la transferencia.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* Datos Personales */}
-              <div className="space-y-6">
+              {/* Tus Datos - Principal */}
+              <div className="bg-white rounded-2xl p-8 border border-zinc-200 shadow-sm">
                 <div className="flex items-center gap-3 mb-6">
                   <User className="w-6 h-6 text-black" />
-                  <h2 className="text-xl font-black uppercase tracking-tighter text-black">
+                  <h2 className="text-2xl font-black uppercase tracking-tighter text-black">
                     Tus Datos
                   </h2>
                 </div>
 
                 {error && (
-                  <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3">
+                  <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-start gap-3 mb-6">
                     <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
                     <p className="text-red-700 text-sm">{error}</p>
                   </div>
                 )}
 
-                <div>
-                  <label htmlFor="nombre" className="block text-sm font-bold uppercase tracking-wider text-black mb-3">
-                    Nombre Completo
-                  </label>
-                  <div className="relative">
-                    <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-zinc-400 w-5 h-5" />
-                    <input
-                      type="text"
-                      id="nombre"
-                      name="nombre"
-                      value={formData.nombre}
-                      onChange={handleInputChange}
-                      className="w-full pl-12 pr-4 py-4 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-black"
-                      placeholder="Ingresa tu nombre completo"
-                      disabled={isSubmitting}
-                    />
+                <div className="space-y-6">
+                  <div>
+                    <label htmlFor="nombre" className="block text-sm font-bold uppercase tracking-wider text-black mb-3">
+                      Nombre Completo
+                    </label>
+                    <div className="relative">
+                      <User className="absolute left-4 top-1/2 transform -translate-y-1/2 text-zinc-400 w-5 h-5" />
+                      <input
+                        type="text"
+                        id="nombre"
+                        name="nombre"
+                        value={formData.nombre}
+                        onChange={handleInputChange}
+                        className="w-full pl-12 pr-4 py-4 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-black"
+                        placeholder="Ingresa tu nombre completo"
+                        disabled={isSubmitting}
+                      />
+                    </div>
                   </div>
-                </div>
 
-                <div>
-                  <label htmlFor="mail" className="block text-sm font-bold uppercase tracking-wider text-black mb-3">
-                    Email
-                  </label>
-                  <div className="relative">
-                    <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-zinc-400 w-5 h-5" />
-                    <input
-                      type="email"
-                      id="mail"
-                      name="mail"
-                      value={formData.mail}
-                      onChange={handleInputChange}
-                      className="w-full pl-12 pr-4 py-4 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-black"
-                      placeholder="tu@email.com"
-                      disabled={isSubmitting}
-                    />
+                  <div>
+                    <label htmlFor="mail" className="block text-sm font-bold uppercase tracking-wider text-black mb-3">
+                      Email
+                    </label>
+                    <div className="relative">
+                      <Mail className="absolute left-4 top-1/2 transform -translate-y-1/2 text-zinc-400 w-5 h-5" />
+                      <input
+                        type="email"
+                        id="mail"
+                        name="mail"
+                        value={formData.mail}
+                        onChange={handleInputChange}
+                        className="w-full pl-12 pr-4 py-4 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-black"
+                        placeholder="tu@email.com"
+                        disabled={isSubmitting}
+                      />
+                    </div>
                   </div>
-                </div>
 
-                <div>
-                  <label htmlFor="telefono" className="block text-sm font-bold uppercase tracking-wider text-black mb-3">
-                    Teléfono
-                  </label>
-                  <div className="relative">
-                    <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 text-zinc-400 w-5 h-5" />
-                    <input
-                      type="tel"
-                      id="telefono"
-                      name="telefono"
-                      value={formData.telefono}
-                      onChange={handleInputChange}
-                      className="w-full pl-12 pr-4 py-4 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-black"
-                      placeholder="+54 9 11 1234-5678"
-                      disabled={isSubmitting}
-                    />
+                  <div>
+                    <label htmlFor="telefono" className="block text-sm font-bold uppercase tracking-wider text-black mb-3">
+                      Teléfono
+                    </label>
+                    <div className="relative">
+                      <Phone className="absolute left-4 top-1/2 transform -translate-y-1/2 text-zinc-400 w-5 h-5" />
+                      <input
+                        type="tel"
+                        id="telefono"
+                        name="telefono"
+                        value={formData.telefono}
+                        onChange={handleInputChange}
+                        className="w-full pl-12 pr-4 py-4 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-black"
+                        placeholder="+54 9 11 1234-5678"
+                        disabled={isSubmitting}
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
 
+              {/* Datos para el Pago - Card secundaria */}
+              <div className="bg-zinc-50 rounded-2xl p-6 border border-zinc-200">
+                <div className="flex items-center gap-3 mb-4">
+                  <CreditCard className="w-5 h-5 text-zinc-600" />
+                  <h3 className="text-lg font-bold uppercase tracking-tight text-zinc-700">
+                    Datos para el Pago
+                  </h3>
+                </div>
+                
+                <div className="grid grid-cols-1 gap-4 text-sm">
+                  <div>
+                    <p className="font-semibold text-zinc-600 mb-1">Banco:</p>
+                    <p className="text-black font-medium">{config?.banco_nombre || 'Banco Galicia'}</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-zinc-600 mb-1">CBU:</p>
+                    <p className="text-black font-mono text-sm break-all">{config?.banco_cbu || '0070053430000001234567'}</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-zinc-600 mb-1">Alias:</p>
+                    <p className="text-black font-medium">{config?.banco_alias || 'MANSO.CLUB.TIENDA'}</p>
+                  </div>
+                  <div>
+                    <p className="font-semibold text-zinc-600 mb-1">Titular:</p>
+                    <p className="text-black font-medium">{config?.banco_titular || 'MANSO CLUB S.A.'}</p>
+                  </div>
+                  {config?.banco_cuit && (
+                    <div>
+                      <p className="font-semibold text-zinc-600 mb-1">CUIT:</p>
+                      <p className="text-black font-medium">{config.banco_cuit}</p>
+                    </div>
+                  )}
+                </div>
+                
+                <div className="pt-4 mt-4 border-t border-zinc-200">
+                  <p className="text-xs text-zinc-500">
+                    📱 Enviaremos WhatsApp con confirmación y datos bancarios
+                  </p>
+                </div>
+              </div>
+
+              {/* Botón Confirmar */}
               <button
                 type="submit"
                 disabled={isSubmitting}
@@ -358,43 +370,105 @@ export default function CheckoutPage() {
             </form>
           </div>
 
-          {/* Resumen del Pedido */}
-          <div className="lg:col-span-1">
-            <div className="bg-zinc-50 rounded-2xl p-8 border border-zinc-200 sticky top-8">
-              <h2 className="text-xl font-black uppercase tracking-tighter text-black mb-6">
-                Resumen del Pedido
-              </h2>
+          {/* Resumen del Pedido - Destacado y Sticky */}
+          <div className="lg:sticky lg:top-8 space-y-6">
+            {/* Card Principal - Resumen */}
+            <div className="bg-gradient-to-br from-zinc-50 to-white rounded-2xl p-8 border-2 border-zinc-200 shadow-lg">
+              <div className="flex items-center gap-3 mb-6">
+                <div className="w-10 h-10 bg-black rounded-xl flex items-center justify-center">
+                  <ShoppingBag size={20} className="text-white" />
+                </div>
+                <h2 className="text-2xl font-black uppercase tracking-tighter text-black">
+                  Resumen del Pedido
+                </h2>
+              </div>
               
+              {/* Items del Carrito */}
               <div className="space-y-4 mb-6">
                 {items.map((item) => (
-                  <div key={item.id} className="flex justify-between items-start">
-                    <div className="flex-1">
-                      <p className="font-bold text-black text-sm uppercase tracking-tight">
-                        {item.nombre}
-                      </p>
-                      <p className="text-zinc-500 text-xs">
-                        Cantidad: {item.quantity}
-                      </p>
+                  <div key={item.id} className="bg-white rounded-xl p-4 border border-zinc-100">
+                    <div className="flex justify-between items-start mb-2">
+                      <div className="flex-1">
+                        <h4 className="font-bold text-black text-sm uppercase tracking-tight mb-1">
+                          {item.nombre}
+                        </h4>
+                        <p className="text-zinc-500 text-xs">
+                          Cantidad: {item.quantity}
+                        </p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-black text-black text-lg">
+                          {formatPrice(item.precio * item.quantity)}
+                        </p>
+                        <p className="text-zinc-400 text-xs">
+                          {formatPrice(item.precio)} c/u
+                        </p>
+                      </div>
                     </div>
-                    <p className="font-bold text-black text-sm">
-                      {formatPrice(item.precio * item.quantity)}
-                    </p>
                   </div>
                 ))}
               </div>
 
-              <div className="border-t border-zinc-200 pt-6">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-lg font-bold uppercase tracking-tight text-black">
-                    Total
+              {/* Total Destacado */}
+              <div className="bg-black text-white rounded-xl p-6 -mx-2">
+                <div className="flex justify-between items-center">
+                  <span className="text-lg font-bold uppercase tracking-wider">
+                    TOTAL
                   </span>
-                  <span className="text-2xl font-black text-black">
+                  <span className="text-2xl font-black">
                     {formatPrice(total())}
                   </span>
                 </div>
-                <p className="text-xs text-zinc-500 mt-2">
-                  *El pago debe realizarse mediante transferencia bancaria
-                </p>
+              </div>
+            </div>
+
+            {/* Métodos de Pago */}
+            <div className="bg-white rounded-2xl p-6 border border-zinc-200 shadow-sm">
+              <h3 className="text-sm font-black uppercase tracking-wider text-zinc-400 mb-4">
+                Método de Pago
+              </h3>
+              <div className="space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-zinc-100 rounded-full flex items-center justify-center">
+                    <span className="text-xs">🏦</span>
+                  </div>
+                  <span className="text-sm text-black font-medium">Transferencia bancaria</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                    <span className="text-xs">📱</span>
+                  </div>
+                  <span className="text-sm text-black font-medium">Contactar por WhatsApp</span>
+                </div>
+              </div>
+              
+              {/* Botón WhatsApp Flotante */}
+              <a
+                href={`https://wa.me/${config?.whatsapp_numero || '5491130232533'}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full bg-green-600 text-white py-3 rounded-xl font-bold uppercase tracking-wider hover:bg-green-700 transition-all duration-300 flex items-center justify-center gap-2 mt-4"
+              >
+                <MessageCircle size={18} />
+                Contactar por WhatsApp
+              </a>
+            </div>
+
+            {/* Info Adicional */}
+            <div className="bg-zinc-50 rounded-xl p-4 border border-zinc-200">
+              <div className="space-y-3 text-xs text-zinc-600">
+                <div className="flex items-center gap-2">
+                  <Truck size={14} />
+                  <span>Envío a todo el país</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Shield size={14} />
+                  <span>Pago seguro</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <RotateCcw size={14} />
+                  <span>Devoluciones 30 días</span>
+                </div>
               </div>
             </div>
           </div>

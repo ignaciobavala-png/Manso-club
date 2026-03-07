@@ -55,6 +55,7 @@ export const useCart = create<CartStore>()(
       total: () => get().items.reduce((acc, item) => acc + item.precio * item.quantity, 0),
       checkout: () => {
         // Redirigir a la página de checkout
+        console.log('DEBUG: Checkout function called, redirecting to /checkout');
         window.location.href = '/checkout';
       },
     }),
