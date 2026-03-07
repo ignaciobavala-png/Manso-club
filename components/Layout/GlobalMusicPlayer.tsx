@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { HomeMusicPlayer } from '@/components/Home/HomeMusicPlayer';
-import { Play, Pause } from 'lucide-react';
+import { Play, Pause, Music } from 'lucide-react';
 
 interface Track {
   id: string;
@@ -23,15 +23,14 @@ export function GlobalMusicPlayer() {
   const [mainTracks, setMainTracks] = useState<Track[]>([]);
   const [artistOverride, setArtistOverride] = useState<ArtistOverride | null>(null);
   const [loaded, setLoaded] = useState(false);
-  const [isVisible, setIsVisible] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [sdkReady, setSdkReady] = useState(false);
   const [widgetReady, setWidgetReady] = useState(false);
   const [showMobileBar, setShowMobileBar] = useState(true);
+  const [showDesktopBar, setShowDesktopBar] = useState(true);
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const widgetRef = useRef<any>(null);
-  const hideTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const lastScrollY = useRef(0);
 
   // Fetch main_music tracks on mount
@@ -171,27 +170,31 @@ export function GlobalMusicPlayer() {
     });
   }, [artistOverride, mainTracks]);
 
-  // Manejo de hover para mostrar/ocultar reproductor
-  const handleMouseEnter = () => {
-    if (hideTimeoutRef.current) {
-      clearTimeout(hideTimeoutRef.current);
-      hideTimeoutRef.current = null;
-    }
-    setIsVisible(true);
-  };
+  // Hide/show mobile and desktop bars on scroll
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY < 50) {
+        setShowMobileBar(true);
+        setShowDesktopBar(true);
+      } else if (currentScrollY > lastScrollY.current) {
+        setShowMobileBar(false); // scrolleando hacia abajo
+        setShowDesktopBar(false); // scrolleando hacia abajo
+      } else {
+        setShowMobileBar(true); // scrolleando hacia arriba
+        setShowDesktopBar(true); // scrolleando hacia arriba
+      }
+      lastScrollY.current = currentScrollY;
+    };
 
-  const handleMouseLeave = () => {
-    hideTimeoutRef.current = setTimeout(() => {
-      setIsVisible(false);
-    }, 2000);
-  };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // Cleanup timeout on unmount
   useEffect(() => {
     return () => {
-      if (hideTimeoutRef.current) {
-        clearTimeout(hideTimeoutRef.current);
-      }
+      // No hay timeouts que limpiar
     };
   }, []);
 
@@ -335,19 +338,17 @@ export function GlobalMusicPlayer() {
     );
   }
 
-  // Desktop: comportamiento tipo taskbar
+  // Desktop: comportamiento tipo taskbar con scroll
   return (
     <div 
       className="hidden md:block fixed bottom-0 left-0 right-0 z-40"
       data-player="global"
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
     >
       {/* Contenedor del reproductor con animación */}
       <div 
         className={`
           transition-transform duration-300 ease-in-out
-          ${isVisible ? 'translate-y-0' : 'translate-y-full'}
+          ${showDesktopBar ? 'translate-y-0' : 'translate-y-full'}
         `}
       >
         <HomeMusicPlayer
