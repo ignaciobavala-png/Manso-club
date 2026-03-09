@@ -7,6 +7,8 @@ interface NotifyRequest {
     nombre: string;
     mail: string;
     telefono: string;
+    dni: string;
+    direccion: string;
   };
   productos: Array<{
     id: string;
@@ -41,6 +43,8 @@ export async function POST(request: NextRequest) {
       cliente_nombre: body.cliente.nombre,
       cliente_email: body.cliente.mail,
       cliente_telefono: body.cliente.telefono,
+      cliente_dni: body.cliente.dni,
+      cliente_direccion: body.cliente.direccion,
       productos: body.productos,
       total: body.total,
       estado: 'pendiente_pago',
@@ -63,6 +67,8 @@ export async function POST(request: NextRequest) {
       cliente: body.cliente.nombre,
       email: body.cliente.mail,
       telefono: body.cliente.telefono,
+      dni: body.cliente.dni,
+      direccion: body.cliente.direccion,
       total: body.total,
       cantidadProductos: body.productos.length,
       pedido_id: pedido?.id,

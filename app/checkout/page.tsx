@@ -10,6 +10,8 @@ interface CheckoutForm {
   nombre: string;
   mail: string;
   telefono: string;
+  dni: string;
+  direccion: string;
 }
 
 export default function CheckoutPage() {
@@ -18,7 +20,9 @@ export default function CheckoutPage() {
   const [formData, setFormData] = useState<CheckoutForm>({
     nombre: '',
     mail: '',
-    telefono: ''
+    telefono: '',
+    dni: '',
+    direccion: ''
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -93,6 +97,22 @@ export default function CheckoutPage() {
       setError('Por favor, ingresa tu teléfono');
       return false;
     }
+    if (!formData.dni.trim()) {
+      setError('Por favor, ingresa tu DNI');
+      return false;
+    }
+    if (!formData.direccion.trim()) {
+      setError('Por favor, ingresa tu dirección');
+      return false;
+    }
+    if (!/^[0-9]{8}$|^([0-9]{2})\.([0-9]{3})\.([0-9]{3})$/.test(formData.dni.replace(/\./g, ''))) {
+      setError('Por favor, ingresa un DNI válido (8 dígitos)');
+      return false;
+    }
+    if (formData.direccion.trim().length < 10) {
+      setError('La dirección debe tener al menos 10 caracteres');
+      return false;
+    }
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.mail)) {
       setError('Por favor, ingresa un email válido');
       return false;
@@ -118,7 +138,9 @@ export default function CheckoutPage() {
         `*DATOS DEL CLIENTE:*\n` +
         `👤 Nombre: ${formData.nombre}\n` +
         `📧 Email: ${formData.mail}\n` +
-        `📱 Teléfono: ${formData.telefono}\n\n` +
+        `📱 Teléfono: ${formData.telefono}\n` +
+        `🆔 DNI: ${formData.dni}\n` +
+        `🏠 Dirección: ${formData.direccion}\n\n` +
         `*PRODUCTOS SOLICITADOS:*\n${productosTexto}\n\n` +
         `*TOTAL: ${formatPrice(total())}*\n\n` +
         `*📋 PRÓXIMOS PASOS:*\n` +
@@ -167,7 +189,7 @@ export default function CheckoutPage() {
 
   if (loadingConfig) {
     return (
-      <div className="min-h-screen bg-white py-20 px-8 md:px-20">
+      <div className="min-h-screen bg-white py-12 px-8 md:px-20">
         <div className="max-w-2xl mx-auto text-center">
           <div className="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-8">
             <div className="w-10 h-10 border-2 border-gray-300 border-t-transparent rounded-full animate-spin"></div>
@@ -180,7 +202,7 @@ export default function CheckoutPage() {
 
   if (isSubmitted) {
     return (
-      <div className="min-h-screen bg-white py-20 px-8 md:px-20">
+      <div className="min-h-screen bg-white py-12 px-8 md:px-20">
         <div className="max-w-2xl mx-auto">
           <div className="text-center">
             <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-8">
@@ -208,10 +230,10 @@ export default function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white py-20 px-8 md:px-20">
+    <div className="min-h-screen bg-white py-12 px-8 md:px-20">
       <div className="max-w-4xl mx-auto">
         {/* Header */}
-        <div className="mb-12">
+        <div className="mb-8">
           <Link
             href="/tienda"
             className="inline-flex items-center gap-2 text-black hover:text-zinc-600 transition-colors mb-8"
@@ -228,12 +250,12 @@ export default function CheckoutPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8">
           {/* Formulario */}
-          <div className="space-y-8">
-            <form onSubmit={handleSubmit} className="space-y-8">
+          <div className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-6">
               {/* Tus Datos - Principal */}
-              <div className="bg-white rounded-2xl p-8 border border-zinc-200 shadow-sm">
+              <div className="bg-white rounded-2xl p-6 border border-zinc-200 shadow-sm">
                 <div className="flex items-center gap-3 mb-6">
                   <User className="w-6 h-6 text-black" />
                   <h2 className="text-2xl font-black uppercase tracking-tighter text-black">
@@ -305,11 +327,48 @@ export default function CheckoutPage() {
                       />
                     </div>
                   </div>
+
+                  <div>
+                    <label htmlFor="dni" className="block text-sm font-bold uppercase tracking-wider text-black mb-3">
+                      DNI
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        id="dni"
+                        name="dni"
+                        value={formData.dni}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-4 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-black"
+                        placeholder="12345678 o 12.345.678"
+                        disabled={isSubmitting}
+                        maxLength={10}
+                      />
+                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="direccion" className="block text-sm font-bold uppercase tracking-wider text-black mb-3">
+                      Dirección
+                    </label>
+                    <div className="relative">
+                      <input
+                        type="text"
+                        id="direccion"
+                        name="direccion"
+                        value={formData.direccion}
+                        onChange={handleInputChange}
+                        className="w-full px-4 py-4 border border-zinc-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all text-black"
+                        placeholder="Calle, número, ciudad, provincia"
+                        disabled={isSubmitting}
+                      />
+                    </div>
+                  </div>
                 </div>
               </div>
 
               {/* Datos para el Pago - Card secundaria */}
-              <div className="bg-zinc-50 rounded-2xl p-6 border border-zinc-200">
+              <div className="bg-zinc-50 rounded-2xl p-5 border border-zinc-200">
                 <div className="flex items-center gap-3 mb-4">
                   <CreditCard className="w-5 h-5 text-zinc-600" />
                   <h3 className="text-lg font-bold uppercase tracking-tight text-zinc-700">
@@ -373,7 +432,7 @@ export default function CheckoutPage() {
           {/* Resumen del Pedido - Destacado y Sticky */}
           <div className="lg:sticky lg:top-8 space-y-6">
             {/* Card Principal - Resumen */}
-            <div className="bg-gradient-to-br from-zinc-50 to-white rounded-2xl p-8 border-2 border-zinc-200 shadow-lg">
+            <div className="bg-gradient-to-br from-zinc-50 to-white rounded-2xl p-6 border-2 border-zinc-200 shadow-lg">
               <div className="flex items-center gap-3 mb-6">
                 <div className="w-10 h-10 bg-black rounded-xl flex items-center justify-center">
                   <ShoppingBag size={20} className="text-white" />
