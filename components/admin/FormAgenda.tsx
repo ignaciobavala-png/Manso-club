@@ -89,11 +89,19 @@ export function FormAgenda() {
         if (error) throw error;
         alert('¡Evento de agenda actualizado correctamente!');
       } else {
-        const { error } = await supabase.from('agenda').insert([{
-          ...formData,
+        const { error } = await supabase.from('eventos_home').insert([{
+          titulo: formData.titulo,
+          categoria: formData.categoria,
+          descripcion: formData.descripcion,
+          disponible: true,
+          orden: 0,
+          activo: true,
+          link_tickets: '',
+          frecuencia: formData.frecuencia,
+          duracion: formData.duracion,
           precio: parseInt(String(formData.precio)) || 0,
           cupos_maximos: parseInt(String(formData.cupos_maximos)) || 0,
-          activo: true
+          whatsapp_contacto: formData.whatsapp_contacto
         }]);
 
         if (error) throw error;
@@ -102,6 +110,13 @@ export function FormAgenda() {
 
       resetForm();
       window.dispatchEvent(new CustomEvent('dashboardRefresh'));
+      
+      // Revalidar el home para actualizar los eventos
+      try {
+        await fetch('/api/revalidate', { method: 'POST' });
+      } catch (revalidateError) {
+        console.warn('Error al revalidar:', revalidateError);
+      }
     } catch (error: any) {
       alert(error.message);
     }
