@@ -270,7 +270,7 @@ export default function CheckoutPage() {
                   </div>
                 )}
 
-                <div className="space-y-6">
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6">
                   <div>
                     <label htmlFor="nombre" className="block text-sm font-bold uppercase tracking-wider text-black mb-3">
                       Nombre Completo
@@ -347,7 +347,7 @@ export default function CheckoutPage() {
                     </div>
                   </div>
 
-                  <div>
+                  <div className="lg:col-span-2">
                     <label htmlFor="direccion" className="block text-sm font-bold uppercase tracking-wider text-black mb-3">
                       Dirección
                     </label>

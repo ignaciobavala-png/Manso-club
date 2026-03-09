@@ -8,6 +8,8 @@ interface Pedido {
   cliente_nombre: string;
   cliente_email: string;
   cliente_telefono: string;
+  cliente_dni: string;
+  cliente_direccion: string;
   productos: Array<{
     id: string;
     nombre: string;
@@ -176,20 +178,42 @@ export function PedidosList({ refreshTrigger }: PedidosListProps) {
           </div>
 
           {/* Datos del cliente */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
             <div className="flex items-center gap-2 text-manso-cream/80">
               <Mail className="w-4 h-4" />
-              <span className="text-sm">{pedido.cliente_email}</span>
+              <span className="text-sm truncate">{pedido.cliente_email}</span>
             </div>
             <div className="flex items-center gap-2 text-manso-cream/80">
               <Phone className="w-4 h-4" />
               <span className="text-sm">{pedido.cliente_telefono}</span>
             </div>
             <div className="flex items-center gap-2 text-manso-cream/80">
+              <User className="w-4 h-4" />
+              <span className="text-sm">DNI: {pedido.cliente_dni || 'No especificado'}</span>
+            </div>
+            <div className="flex items-center gap-2 text-manso-cream/80">
               <Package className="w-4 h-4" />
               <span className="text-sm">{pedido.productos.length} producto(s)</span>
             </div>
           </div>
+
+          {/* Dirección */}
+          {pedido.cliente_direccion && (
+            <div className="mb-4">
+              <div className="flex items-start gap-2 text-manso-cream/80">
+                <div className="w-4 h-4 mt-0.5 flex-shrink-0">
+                  <svg className="w-full h-full" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                  </svg>
+                </div>
+                <div>
+                  <div className="text-xs text-manso-cream/60 mb-1">Dirección de envío:</div>
+                  <span className="text-sm">{pedido.cliente_direccion}</span>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Productos */}
           <div className="mb-4">
