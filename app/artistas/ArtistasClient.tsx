@@ -34,14 +34,14 @@ interface ArtistasClientProps {
 }
 
 const placeholderArtists: Artist[] = [
-  { id: 'p1', nombre: 'Ana Hagen', slug: 'ana-hagen', estilo: 'Techno / House / EBM', social_links: { instagram: 'anahagen__' } },
-  { id: 'p2', nombre: 'Porti', slug: 'porti', estilo: 'Progressive / Techno / Live Hybrid', social_links: { instagram: 'johnny.driver_' } },
-  { id: 'p3', nombre: 'Lucas Romero', slug: 'lucas-romero', estilo: 'Melodic Techno', social_links: { instagram: 'lucasromero____' } },
-  { id: 'p4', nombre: 'Lu Russo', slug: 'lu-russo', estilo: 'Minimal / House', social_links: { instagram: 'run_luli_run' } },
-  { id: 'p5', nombre: 'Joaquinn', slug: 'joaquinn', estilo: 'Raw Techno / Industrial', social_links: { instagram: 'joaquinn_______' } },
-  { id: 'p6', nombre: 'Manu Alvarez', slug: 'manu-alvarez', estilo: 'House / Tech-House' },
-  { id: 'p7', nombre: 'Fabi Sarinelli', slug: 'fabi-sarinelli', estilo: 'Techno / House / Vinyl Select', social_links: { instagram: 'fabustin' } },
-  { id: 'p8', nombre: 'Lau Loinaz', slug: 'lau-loinaz', estilo: 'Ecléctico / Electronic' },
+  { id: 'p1', nombre: 'Ana Hagen', slug: 'ana-hagen', estilo: 'Techno / House / EBM', tipo: 'DJ', social_links: { instagram: 'anahagen__' } },
+  { id: 'p2', nombre: 'Porti', slug: 'porti', estilo: 'Progressive / Techno / Live Hybrid', tipo: 'DJ', social_links: { instagram: 'johnny.driver_' } },
+  { id: 'p3', nombre: 'Lucas Romero', slug: 'lucas-romero', estilo: 'Melodic Techno', tipo: 'DJ', social_links: { instagram: 'lucasromero____' } },
+  { id: 'p4', nombre: 'Lu Russo', slug: 'lu-russo', estilo: 'Minimal / House', tipo: 'DJ', social_links: { instagram: 'run_luli_run' } },
+  { id: 'p5', nombre: 'Joaquinn', slug: 'joaquinn', estilo: 'Raw Techno / Industrial', tipo: 'DJ', social_links: { instagram: 'joaquinn_______' } },
+  { id: 'p6', nombre: 'Manu Alvarez', slug: 'manu-alvarez', estilo: 'House / Tech-House', tipo: 'DJ' },
+  { id: 'p7', nombre: 'Fabi Sarinelli', slug: 'fabi-sarinelli', estilo: 'Techno / House / Vinyl Select', tipo: 'DJ', social_links: { instagram: 'fabustin' } },
+  { id: 'p8', nombre: 'Lau Loinaz', slug: 'lau-loinaz', estilo: 'Ecléctico / Electronic', tipo: 'DJ' },
 ];
 
 function ArtistImage({ src, alt }: { src?: string; alt: string }) {
@@ -95,13 +95,23 @@ export function ArtistasClient({ artistas }: ArtistasClientProps) {
 
   return (
     <>
-      <AdaptiveSectionLayout title="Artistas" subtitle="Comunidad Manso_">
+      <div className="min-h-screen bg-manso-black">
+        {/* H1 Principal */}
+        <div className="px-6 pt-24 pb-8">
+          <h1 className="text-4xl md:text-5xl font-black uppercase italic tracking-tighter leading-none text-manso-cream mb-2">
+            ARTISTAS_
+          </h1>
+          <p className="text-lg font-medium text-manso-cream/60 lowercase">
+            comunidad manso_
+          </p>
+        </div>
+
         {djs.length > 0 && (
           <>
-            <h2 className="text-3xl md:text-4xl font-black uppercase italic tracking-tighter leading-none text-manso-black mb-8 mt-16">
-              DJS_
+            <h2 className="text-3xl md:text-4xl font-black uppercase italic tracking-tighter leading-none text-manso-cream mb-6 px-6">
+              DJS/PRODUCTORES_
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 py-10">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 py-6 px-6">
               {djs.map((artista) => (
                 <Link
                   href={`/artistas/${artista.slug}`}
@@ -164,10 +174,10 @@ export function ArtistasClient({ artistas }: ArtistasClientProps) {
 
         {artistasVisuales.length > 0 && (
           <>
-            <h2 className="text-3xl md:text-4xl font-black uppercase italic tracking-tighter leading-none text-manso-black mb-8 mt-16">
-              Artistas Visuales_
+            <h2 className="text-3xl md:text-4xl font-black uppercase italic tracking-tighter leading-none text-manso-cream mb-6 mt-12 px-6">
+              ARTISTAS VISUALES_
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 py-10">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 py-6 px-6">
               {artistasVisuales.map((artista) => (
                 <Link
                   href={`/artistas/${artista.slug}`}
@@ -228,18 +238,18 @@ export function ArtistasClient({ artistas }: ArtistasClientProps) {
           </>
         )}
 
-          {displayArtists.length === 0 && (
-            <div className="col-span-full text-center py-20">
-              <User size={48} className="text-zinc-600 mx-auto mb-4" />
-              <h3 className="text-xl font-black uppercase tracking-tighter text-zinc-400 mb-2">
-                Próximamente
-              </h3>
-              <p className="text-sm text-zinc-500 max-w-md mx-auto">
-                La comunidad de artistas de Manso Club está creciendo. Muy pronto podrás conocer a los talentos que forman parte de nuestro colectivo.
-              </p>
-            </div>
-          )}
-      </AdaptiveSectionLayout>
+        {displayArtists.length === 0 && (
+          <div className="text-center py-20 px-6">
+            <User size={48} className="text-zinc-600 mx-auto mb-4" />
+            <h3 className="text-xl font-black uppercase tracking-tighter text-zinc-400 mb-2">
+              Próximamente
+            </h3>
+            <p className="text-sm text-zinc-500 max-w-md mx-auto">
+              La comunidad de artistas de Manso Club está creciendo. Muy pronto podrás conocer a los talentos que forman parte de nuestro colectivo.
+            </p>
+          </div>
+        )}
+      </div>
 
       {/* Modal del artista */}
       <ArtistModal 

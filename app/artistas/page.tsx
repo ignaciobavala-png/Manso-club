@@ -18,7 +18,7 @@ export default async function ArtistasPage() {
   const supabase = createSupabaseAnon();
   const { data: artistas } = await supabase
     .from('artistas')
-    .select('id, nombre, slug, bio, estilo, imagen_url, soundcloud_url, social_links, active')
+    .select('id, nombre, slug, bio, estilo, imagen_url, soundcloud_url, social_links, active, tipo')
     .eq('active', true)
     .order('nombre', { ascending: true });
 
