@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { CreditCard, Mail, Phone, User, Clock, CheckCircle, XCircle, Package, DollarSign } from 'lucide-react';
+import { CreditCard, Mail, Phone, User, Clock, CheckCircle, XCircle, Package, DollarSign, Trash2 } from 'lucide-react';
 
 interface Pedido {
   id: string;
@@ -72,6 +72,34 @@ export function PedidosList({ refreshTrigger }: PedidosListProps) {
       }
     } catch (error) {
       console.error('Error actualizando estado:', error);
+    }
+  };
+
+  const eliminarPedido = async (pedidoId: string, clienteNombre: string) => {
+    // Confirmación antes de eliminar
+    const confirmacion = confirm(
+      `¿Estás seguro que quieres eliminar el pedido de ${clienteNombre}?\n\nEsta acción no se puede deshacer.`
+    );
+    
+    if (!confirmacion) {
+      return;
+    }
+
+    try {
+      const response = await fetch(`/api/pedidos/${pedidoId}`, {
+        method: 'DELETE',
+      });
+
+      if (response.ok) {
+        // Eliminar el pedido de la lista localmente
+        setPedidos(prev => prev.filter(p => p.id !== pedidoId));
+      } else {
+        const error = await response.json();
+        alert('Error al eliminar pedido: ' + error.error);
+      }
+    } catch (error) {
+      console.error('Error eliminando pedido:', error);
+      alert('Error al conectar con el servidor');
     }
   };
 
@@ -266,6 +294,15 @@ export function PedidosList({ refreshTrigger }: PedidosListProps) {
                   className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-lg text-xs font-bold hover:bg-blue-500/30 transition-all"
                 >
                   Marcar Enviado
+                </button>
+              )}
+              {pedido.estado === 'cancelado' && (
+                <button
+                  onClick={() => eliminarPedido(pedido.id, pedido.cliente_nombre)}
+                  className="px-3 py-1 bg-red-600/20 text-red-400 rounded-lg text-xs font-bold hover:bg-red-600/30 transition-all flex items-center gap-1"
+                >
+                  <Trash2 className="w-3 h-3" />
+                  Eliminar
                 </button>
               )}
             </div>
