@@ -25,6 +25,6 @@ export default {
     },
   },
   plugins: [
-    require('@tailwindcss/line-clamp'),
+    // @tailwindcss/line-clamp no es necesario en Tailwind v4 (está incluido por defecto)
   ],
 }

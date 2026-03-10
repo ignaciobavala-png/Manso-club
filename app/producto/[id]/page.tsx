@@ -351,71 +351,39 @@ export default function ProductoDetalle() {
               </div>
             </div>
 
-            {/* Botones de acción - Compactos y visibles */}
-            <div className="space-y-3">
-              {/* Botones lado a lado en desktop */}
-              <div className="grid grid-cols-2 gap-3">
-                {/* Botón Agregar al carrito */}
-                <button
-                  onClick={handleAddToCart}
-                  className={`py-4 rounded-full font-black uppercase tracking-widest text-xs transition-all transform hover:-translate-y-0.5 active:scale-95 ${
-                    producto.stock === 0
-                      ? 'bg-green-600 text-white hover:bg-green-700'
-                      : 'bg-green-600 text-white hover:bg-green-700'
-                  }`}
-                >
-                  <div className="flex items-center justify-center gap-1.5">
-                    <ShoppingBag size={16} />
-                    <span>{producto.stock === 0 ? 'Consultar' : 'Agregar'}</span>
-                  </div>
-                </button>
+            {/* Botones de acción - Responsive */}
+            <div className="flex flex-col sm:flex-row gap-3">
+              {/* Botón Agregar al carrito */}
+              <button
+                onClick={handleAddToCart}
+                className={`flex-1 py-4 rounded-full font-black uppercase tracking-widest text-xs sm:text-sm transition-all transform hover:-translate-y-0.5 active:scale-95 ${
+                  producto.stock === 0
+                    ? 'bg-green-600 text-white hover:bg-green-700'
+                    : 'bg-green-600 text-white hover:bg-green-700'
+                }`}
+              >
+                <div className="flex items-center justify-center gap-1.5 sm:gap-2">
+                  <ShoppingBag size={16} className="sm:hidden" />
+                  <ShoppingBag size={20} className="hidden sm:block" />
+                  <span>{producto.stock === 0 ? 'Consultar' : 'Agregar al carrito'}</span>
+                </div>
+              </button>
 
-                {/* Botón Comprar ahora */}
-                <button
-                  onClick={handleBuyNow}
-                  className={`py-4 rounded-full font-black uppercase tracking-widest text-xs transition-all transform hover:-translate-y-0.5 active:scale-95 ${
-                    producto.stock === 0
-                      ? 'bg-orange-600 text-white hover:bg-orange-700'
-                      : 'bg-orange-600 text-white hover:bg-orange-700'
-                  }`}
-                >
-                  <div className="flex items-center justify-center gap-1.5">
-                    <CheckoutIcon size={16} />
-                    <span>{producto.stock === 0 ? 'Consultar' : 'Comprar'}</span>
-                  </div>
-                </button>
-              </div>
-
-              {/* Mobile: Full width buttons */}
-              <div className="lg:hidden space-y-3">
-                <button
-                  onClick={handleAddToCart}
-                  className={`w-full py-4 rounded-full font-black uppercase tracking-widest text-sm transition-all transform hover:-translate-y-0.5 active:scale-95 ${
-                    producto.stock === 0
-                      ? 'bg-green-600 text-white hover:bg-green-700'
-                      : 'bg-green-600 text-white hover:bg-green-700'
-                  }`}
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <ShoppingBag size={20} />
-                    <span>{producto.stock === 0 ? 'Consultar disponibilidad' : 'Agregar al carrito'}</span>
-                  </div>
-                </button>
-
-                <button
-                  onClick={handleBuyNow}
-                  className={`w-full py-4 rounded-full font-black uppercase tracking-widest text-sm transition-all transform hover:-translate-y-0.5 active:scale-95 ${
-                    producto.stock === 0
-                      ? 'bg-orange-600 text-white hover:bg-orange-700'
-                      : 'bg-orange-600 text-white hover:bg-orange-700'
-                  }`}
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <CheckoutIcon size={20} />
-                    <span>{producto.stock === 0 ? 'Consultar disponibilidad' : 'Comprar ahora'}</span>
-                  </div>
-                </button>
-              </div>
+              {/* Botón Comprar ahora */}
+              <button
+                onClick={handleBuyNow}
+                className={`flex-1 py-4 rounded-full font-black uppercase tracking-widest text-xs sm:text-sm transition-all transform hover:-translate-y-0.5 active:scale-95 ${
+                  producto.stock === 0
+                    ? 'bg-red-600 text-white hover:bg-red-700'
+                    : 'bg-red-600 text-white hover:bg-red-700'
+                }`}
+              >
+                <div className="flex items-center justify-center gap-1.5 sm:gap-2">
+                  <CheckoutIcon size={16} className="sm:hidden" />
+                  <CheckoutIcon size={20} className="hidden sm:block" />
+                  <span>{producto.stock === 0 ? 'Consultar' : 'Comprar ahora'}</span>
+                </div>
+              </button>
             </div>
 
             {/* Trust Signals - Discretos */}
