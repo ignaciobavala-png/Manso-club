@@ -9,6 +9,34 @@ const galleryImages = [
   { id: 6, src: "/assets/manso8.webp" },
 ];
 
+// Masonry grid pattern for different screen sizes
+const getGridSize = (index: number) => {
+  const pattern = [
+    { cols: 2, rows: 2 }, // 0: Extra grande (2x2)
+    { cols: 1, rows: 1 }, // 1: Normal (1x1)
+    { cols: 1, rows: 1 }, // 2: Normal (1x1)
+    { cols: 1, rows: 2 }, // 3: Alto (1x2)
+    { cols: 1, rows: 1 }, // 4: Normal (1x1)
+    { cols: 2, rows: 1 }, // 5: Ancho (2x1)
+  ];
+  return pattern[index % pattern.length];
+};
+
+// Static Tailwind classes mapping for dynamic spans
+const getSpanClasses = (cols: number, rows: number) => {
+  const spanMap: Record<string, Record<number, string>> = {
+    cols: {
+      1: 'col-span-1 md:col-span-1 lg:col-span-1',
+      2: 'col-span-2 md:col-span-2 lg:col-span-2',
+    },
+    rows: {
+      1: 'row-span-1 md:row-span-1 lg:row-span-1',
+      2: 'row-span-2 md:row-span-2 lg:row-span-2',
+    },
+  };
+  return `${spanMap.cols[cols]} ${spanMap.rows[rows]}`;
+};
+
 export const Gallery = async () => {
   const dbImages = await getGalleryImages();
   const hasDbImages = dbImages.length > 0;
@@ -30,20 +58,29 @@ export const Gallery = async () => {
           </h3>
         </div>
         
-        <div className="grid grid-cols-2 gap-2 sm:gap-3 md:grid-cols-3 md:gap-3">
-          {imagesToDisplay.map((image) => (
-            <div 
-              key={image.id}
-              className="group relative overflow-hidden rounded-lg cursor-pointer transition-all duration-300 hover:shadow-xl"
-            >
-              <img
-                src={image.src}
-                alt={`Manso Club ${image.id}`}
-                className="w-full h-32 sm:h-40 md:h-64 object-cover transition-transform duration-300 group-hover:scale-[1.03]"
-              />
-              <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300" />
-            </div>
-          ))}
+        {/* Masonry Grid */}
+        <div className="grid grid-cols-2 gap-0 
+                      md:grid-cols-4 md:auto-rows-[200px] md:auto-flow-dense md:gap-0
+                      lg:grid-cols-6 lg:auto-rows-[250px] lg:gap-0">
+          {imagesToDisplay.map((image, index) => {
+            // Get grid size pattern for masonry layout
+            const gridSize = getGridSize(index);
+            const spanClasses = getSpanClasses(gridSize.cols, gridSize.rows);
+            
+            return (
+              <div 
+                key={image.id}
+                className={`group relative overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl ${spanClasses}`}
+              >
+                <img
+                  src={image.src}
+                  alt={`Manso Club ${image.id}`}
+                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                />
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300" />
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>
