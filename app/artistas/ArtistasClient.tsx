@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { AdaptiveSectionLayout } from '@/components/ui/AdaptiveSectionLayout';
 import { User, Instagram, ExternalLink, Play } from 'lucide-react';
+import { ParticleBackground } from '@/components/Home/ParticleBackground';
 import { ArtistModal } from '@/components/ui/ArtistModal';
 
 interface Artist {
@@ -95,9 +96,10 @@ export function ArtistasClient({ artistas }: ArtistasClientProps) {
 
   return (
     <>
-      <div className="min-h-screen bg-manso-black">
+      <div className="relative min-h-screen bg-manso-black">
+        <ParticleBackground />
         {/* H1 Principal */}
-        <div className="px-6 pt-24 pb-8">
+        <div className="relative z-10 px-6 pt-24 pb-8">
           <h1 className="text-4xl md:text-5xl font-black uppercase italic tracking-tighter leading-none text-manso-cream mb-2">
             ARTISTAS_
           </h1>
@@ -107,7 +109,7 @@ export function ArtistasClient({ artistas }: ArtistasClientProps) {
         </div>
 
         {djs.length > 0 && (
-          <>
+          <div className="relative z-10">
             <h2 className="text-3xl md:text-4xl font-black uppercase italic tracking-tighter leading-none text-manso-cream mb-6 px-6">
               DJS/PRODUCTORES_
             </h2>
@@ -169,11 +171,11 @@ export function ArtistasClient({ artistas }: ArtistasClientProps) {
                 </Link>
               ))}
             </div>
-          </>
+          </div>
         )}
 
         {artistasVisuales.length > 0 && (
-          <>
+          <div className="relative z-10">
             <h2 className="text-3xl md:text-4xl font-black uppercase italic tracking-tighter leading-none text-manso-cream mb-6 mt-12 px-6">
               ARTISTAS VISUALES_
             </h2>
@@ -235,11 +237,11 @@ export function ArtistasClient({ artistas }: ArtistasClientProps) {
                 </Link>
               ))}
             </div>
-          </>
+          </div>
         )}
 
         {displayArtists.length === 0 && (
-          <div className="text-center py-20 px-6">
+          <div className="relative z-10 text-center py-20 px-6">
             <User size={48} className="text-zinc-600 mx-auto mb-4" />
             <h3 className="text-xl font-black uppercase tracking-tighter text-zinc-400 mb-2">
               Próximamente

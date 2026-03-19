@@ -10,7 +10,11 @@ interface Particle {
   radius: number;
 }
 
-export const ParticleBackground = () => {
+interface Props {
+  mode?: 'dark' | 'light';
+}
+
+export const ParticleBackground = ({ mode = 'dark' }: Props) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -34,8 +38,8 @@ export const ParticleBackground = () => {
     };
 
     const resize = () => {
-      canvas.width = canvas.offsetWidth;
-      canvas.height = canvas.offsetHeight;
+      canvas.width = canvas.offsetWidth || canvas.parentElement?.offsetWidth || window.innerWidth;
+      canvas.height = canvas.offsetHeight || canvas.parentElement?.offsetHeight || window.innerHeight;
       initParticles();
     };
 
@@ -52,7 +56,7 @@ export const ParticleBackground = () => {
         // Draw dot
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(255,255,255,0.3)';
+        ctx.fillStyle = mode === 'light' ? 'rgba(0,0,0,0.35)' : 'rgba(255,255,255,0.3)';
         ctx.fill();
       }
 
@@ -66,7 +70,8 @@ export const ParticleBackground = () => {
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);
-            ctx.strokeStyle = `rgba(255,255,255,${(1 - dist / 110) * 0.1})`;
+            const alpha = (1 - dist / 110) * (mode === 'light' ? 0.13 : 0.1);
+            ctx.strokeStyle = mode === 'light' ? `rgba(0,0,0,${alpha})` : `rgba(255,255,255,${alpha})`;
             ctx.lineWidth = 0.5;
             ctx.stroke();
           }
@@ -90,13 +95,13 @@ export const ParticleBackground = () => {
       cancelAnimationFrame(animationId);
       ro.disconnect();
     };
-  }, []);
+  }, [mode]);
 
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 w-full h-full z-0"
-      style={{ pointerEvents: 'none' }}
+      className="absolute inset-0 w-full z-0"
+      style={{ pointerEvents: 'none', height: '100%', minHeight: '100vh' }}
     />
   );
 };

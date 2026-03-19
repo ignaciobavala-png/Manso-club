@@ -45,7 +45,7 @@ export function ProductCard({ producto }: ProductProps) {
   
   
   return (
-    <div className="group bg-white rounded-[20px] sm:rounded-[30px] md:rounded-[40px] border border-zinc-100 overflow-hidden transition-all duration-500 hover:shadow-2xl hover:scale-[1.02] cursor-pointer">
+    <div className="group bg-white rounded-[20px] sm:rounded-[30px] md:rounded-[40px] border-2 border-zinc-300 overflow-hidden transition-all duration-500 hover:shadow-[0_20px_60px_rgba(0,0,0,0.12)] hover:scale-[1.02] cursor-pointer">
       {/* Contenedor principal clickeable - ahora redirige al detalle del producto */}
       <Link href={`/producto/${producto.id}`}>
         <div className="relative">

@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { AdaptiveSectionLayout } from '@/components/ui/AdaptiveSectionLayout';
 import { getTeamMembers } from '@/lib/team';
 import { getAboutUs } from '@/lib/aboutUs';
+import { ParticleBackground } from '@/components/Home/ParticleBackground';
 
 export const revalidate = 60; // revalida cada 60 segundos
 
@@ -10,7 +11,9 @@ export default async function AboutPage() {
   const aboutUs = await getAboutUs();
 
   return (
-    <AdaptiveSectionLayout title="About Us" subtitle={aboutUs.subtitle}>
+    <div className="relative min-h-screen bg-gray-100">
+      <ParticleBackground mode="light" />
+      <AdaptiveSectionLayout title="About Us" subtitle={aboutUs.subtitle} customBg="bg-transparent">
       {/* Sección principal con layout dinámico */}
       <div className="space-y-12">
         {/* Layout original mejorado: texto y foto principal */}
@@ -103,5 +106,6 @@ export default async function AboutPage() {
       </div>
       </div>
     </AdaptiveSectionLayout>
+    </div>
   );
 }
