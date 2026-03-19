@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { ImageUploader } from './ImageUploader';
 import { SoundCloudPlayer } from '../ui/SoundCloudPlayer';
 import { ArtistasTracksList } from './ArtistasTracksList';
+import { ArtistaFotosList } from './ArtistaFotosList';
 import { FormArtistaTrack } from './FormArtistaTrack';
 import { User, Music, Instagram, Globe, Eye } from 'lucide-react';
 
@@ -37,6 +38,7 @@ export function FormArtista() {
   const [soundcloudError, setSoundcloudError] = useState('');
   const [imageKey, setImageKey] = useState(0);
   const [tracksRefreshTrigger, setTracksRefreshTrigger] = useState(0);
+  const [fotosRefreshTrigger, setFotosRefreshTrigger] = useState(0);
   const [showTrackForm, setShowTrackForm] = useState(false);
   const [editingTrack, setEditingTrack] = useState<any>(null);
   const [formData, setFormData] = useState({
@@ -81,6 +83,7 @@ export function FormArtista() {
     setImageKey(prev => prev + 1);
     setSoundcloudError('');
     setTracksRefreshTrigger(prev => prev + 1);
+    setFotosRefreshTrigger(prev => prev + 1);
   };
 
   const validateSoundCloudUrl = (url: string) => {
@@ -389,6 +392,17 @@ export function FormArtista() {
           onEditTrack={handleEditTrack}
           onNewTrack={handleNewTrack}
           refreshTrigger={tracksRefreshTrigger}
+        />
+      </div>
+    )}
+
+    {/* Galería de fotos — solo visible cuando se está editando */}
+    {editingId && (
+      <div className="mt-8">
+        <ArtistaFotosList
+          artistaId={editingId}
+          artistaNombre={formData.nombre}
+          refreshTrigger={fotosRefreshTrigger}
         />
       </div>
     )}

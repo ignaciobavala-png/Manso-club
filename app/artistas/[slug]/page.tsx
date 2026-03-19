@@ -6,6 +6,7 @@ import { createSupabaseAnon } from '@/lib/supabase';
 import { ArrowLeft, Instagram, ExternalLink, Music } from 'lucide-react';
 import { ArtistProfilePlayer } from './ArtistProfilePlayer';
 import { ArtistTrackManager } from '@/components/artistas/ArtistTrackManager';
+import { ArtistaCarousel } from '@/components/artistas/ArtistaCarousel';
 
 interface Artista {
   id: string;
@@ -29,6 +30,12 @@ interface ArtistTrack {
   orden: number;
 }
 
+interface ArtistaFoto {
+  id: string;
+  url: string;
+  orden: number;
+}
+
 interface Props {
   params: Promise<{ slug: string }>;
 }
@@ -43,6 +50,17 @@ async function getArtista(slug: string): Promise<Artista | null> {
     .single();
 
   return data;
+}
+
+async function getArtistaFotos(artistaId: string): Promise<ArtistaFoto[]> {
+  const supabase = createSupabaseAnon();
+  const { data } = await supabase
+    .from('artista_fotos')
+    .select('id, url, orden')
+    .eq('artista_id', artistaId)
+    .order('orden', { ascending: true });
+
+  return data || [];
 }
 
 async function getArtistTracks(artistaId: string): Promise<ArtistTrack[]> {
@@ -98,6 +116,7 @@ export default async function ArtistaPage({ params }: Props) {
 
   // Obtener tracks del artista
   const tracks = await getArtistTracks(artista.id);
+  const fotos  = await getArtistaFotos(artista.id);
 
   const links = artista.social_links;
   const scUrl = artista.soundcloud_url || links?.soundcloud;
@@ -226,6 +245,11 @@ export default async function ArtistaPage({ params }: Props) {
           </div>
         </div>
       </section>
+
+      {/* Carrusel de galería — solo si hay fotos */}
+      {fotos.length > 0 && (
+        <ArtistaCarousel fotos={fotos} artistaNombre={artista.nombre} />
+      )}
 
     </main>
   );
