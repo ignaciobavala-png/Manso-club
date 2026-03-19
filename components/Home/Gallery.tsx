@@ -40,14 +40,14 @@ const getSpanClasses = (cols: number, rows: number) => {
 export const Gallery = async () => {
   const dbImages = await getGalleryImages();
   const hasDbImages = dbImages.length > 0;
-  
+
   // Use DB images if available, otherwise fallback to hardcoded images
-  const imagesToDisplay = hasDbImages 
+  const imagesToDisplay = hasDbImages
     ? dbImages.map(img => ({ id: img.id, src: img.photo_url }))
     : galleryImages;
 
   return (
-    <section 
+    <section
       className="py-8 sm:py-12 md:py-24 px-4 sm:px-8 md:px-20"
       style={{ backgroundColor: '#FFFFFF' }}
     >
@@ -57,18 +57,18 @@ export const Gallery = async () => {
             Nuestro Espacio
           </h3>
         </div>
-        
+
         {/* Masonry Grid */}
-        <div className="grid grid-cols-2 gap-0 
+        <div className="grid grid-cols-2 gap-0
                       md:grid-cols-4 md:auto-rows-[200px] md:auto-flow-dense md:gap-0
                       lg:grid-cols-6 lg:auto-rows-[250px] lg:gap-0">
           {imagesToDisplay.map((image, index) => {
             // Get grid size pattern for masonry layout
             const gridSize = getGridSize(index);
             const spanClasses = getSpanClasses(gridSize.cols, gridSize.rows);
-            
+
             return (
-              <div 
+              <div
                 key={image.id}
                 className={`group relative overflow-hidden cursor-pointer transition-all duration-700 ease-out hover:shadow-2xl hover:z-20 hover:scale-125 ${spanClasses}`}
               >

@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { ArrowRight } from 'lucide-react';
 import { ProductCard } from '@/components/shop/ProductCard';
 import Link from 'next/link';
+import { ScrambleText } from '@/components/UI/ScrambleText';
 
 interface Producto {
   id: string;
@@ -89,12 +90,12 @@ export const TiendaHome = () => {
   // Si no hay productos, mostrar placeholder
   if (loading) {
     return (
-      <section className="py-12 sm:py-16 px-4 sm:px-8 md:px-20" style={{ backgroundColor: '#FFFFFF' }}>
+      <section className="py-12 sm:py-16 px-4 sm:px-8 md:px-20" style={{ backgroundColor: '#F5F0E8' }}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <span className="text-[10px] uppercase tracking-widest text-black/60 font-bold mb-4 block">Tienda</span>
             <h2 className="text-xl sm:text-2xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-black">
-              SELECCIONADOS
+              <ScrambleText text="SELECCIONADOS" />
             </h2>
           </div>
           <div className="text-center text-black/60 py-8">
@@ -109,7 +110,7 @@ export const TiendaHome = () => {
   const showPlaceholders = productos.length === 0;
 
   return (
-    <section className="py-12 sm:py-16 px-4 sm:px-8 md:px-20" style={{ backgroundColor: '#FFFFFF' }}>
+    <section className="py-12 sm:py-16 px-4 sm:px-8 md:px-20" style={{ backgroundColor: '#F5F0E8' }}>
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <span className="text-[10px] uppercase tracking-widest text-black/60 font-bold mb-4 block">Tienda</span>

@@ -2,6 +2,7 @@
 
 import { ArrowRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
 
 // Tipado senior para los eventos
@@ -61,10 +62,14 @@ export const EventList = () => {
           No hay eventos próximos
         </div>
       ) : (
-        eventos.map((event) => (
-          <div 
-            key={event.id} 
+        eventos.map((event, index) => (
+          <motion.div
+            key={event.id}
             className="group flex flex-col md:flex-row md:items-center justify-between py-6 border-b border-manso-black/10 hover:border-manso-terra transition-colors cursor-pointer"
+            initial={{ opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-40px' }}
+            transition={{ duration: 0.5, delay: index * 0.07, ease: [0.16, 1, 0.3, 1] }}
           >
             <div className="flex flex-col md:flex-row md:items-baseline gap-1 md:gap-8">
               <span className="text-xs font-black text-manso-terra shrink-0 tracking-tighter">
@@ -91,7 +96,7 @@ export const EventList = () => {
                 </button>
               )}
             </div>
-          </div>
+          </motion.div>
         ))
       )}
     </div>

@@ -82,7 +82,9 @@ export function HomeMusicPlayer({ tracks, autoPlay = false, isArtistMode = false
       onPlayStateChange?.(false);
     });
     w.bind(Events.ERROR, (error: any) => {
-      console.error('HomeMusicPlayer: Widget error', error);
+      if (error !== null) {
+        console.error('HomeMusicPlayer: Widget error', error);
+      }
     });
     w.bind(Events.FINISH, () => {
       // Auto-advance to next track

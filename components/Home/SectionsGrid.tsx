@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { CATEGORIAS_TIENDA } from '@/lib/constants';
 import type { Categoria } from '@/lib/constants';
 import { ShoppingBag, Loader2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface Producto {
   id: string;
@@ -101,9 +102,23 @@ export function SectionsGrid() {
           <p className="text-[9px] font-bold uppercase tracking-widest text-manso-black/40">Sincronizando...</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-12">
-          {productos.map((prod) => (
-            <div key={prod.id} className="group cursor-pointer">
+        <AnimatePresence mode="wait">
+        <motion.div
+          key={categoriaActiva}
+          className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-12"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.25 }}
+        >
+          {productos.map((prod, index) => (
+            <motion.div
+              key={prod.id}
+              className="group cursor-pointer"
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.45, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
+            >
               <div className="aspect-[4/5 overflow-hidden rounded-[2rem bg-zinc-50 mb-4 relative">
                 <img
                   src={prod.imagen_url}
@@ -124,9 +139,10 @@ export function SectionsGrid() {
                   ${prod.precio}
                 </span>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
+        </AnimatePresence>
       )}
 
       {!loading && productos.length === 0 && (
