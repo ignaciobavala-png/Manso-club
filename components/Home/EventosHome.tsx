@@ -91,7 +91,7 @@ export const EventosHome = () => {
     <section className="py-20 px-8 md:px-20" style={{ backgroundColor: '#F5F0E8' }}>
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className="text-xl sm:text-2xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-black">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-black">
             Eventos
           </h2>
         </div>

@@ -94,7 +94,7 @@ export const TiendaHome = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
             <span className="text-[10px] uppercase tracking-widest text-black/60 font-bold mb-4 block">Tienda</span>
-            <h2 className="text-xl sm:text-2xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-black">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-black">
               <ScrambleText text="SELECCIONADOS" />
             </h2>
           </div>
@@ -114,7 +114,7 @@ export const TiendaHome = () => {
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
           <span className="text-[10px] uppercase tracking-widest text-black/60 font-bold mb-4 block">Tienda</span>
-          <h2 className="text-xl sm:text-2xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-black">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-black">
             SELECCIONADOS
           </h2>
         </div>
