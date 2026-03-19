@@ -70,14 +70,15 @@ export const Gallery = async () => {
             return (
               <div 
                 key={image.id}
-                className={`group relative overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-xl ${spanClasses}`}
+                className={`group relative overflow-hidden cursor-pointer transition-all duration-700 ease-out hover:shadow-2xl hover:z-20 hover:scale-125 ${spanClasses}`}
               >
                 <img
                   src={image.src}
                   alt={`Manso Club ${image.id}`}
-                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                  className="w-full h-full object-cover transition-all duration-700 ease-out group-hover:brightness-110"
                 />
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-all duration-300" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-700" />
+                <div className="absolute inset-0 border-2 border-transparent group-hover:border-white/30 transition-all duration-700" />
               </div>
             );
           })}

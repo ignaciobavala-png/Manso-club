@@ -1,4 +1,4 @@
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Users, MapPin, Sparkles, Music } from 'lucide-react';
 import Link from 'next/link';
 import { getSiteConfig } from '@/lib/siteConfig';
 
@@ -19,6 +19,12 @@ export const PorQueManso = async () => {
     if (!item) return false;
     if (typeof item === 'string') return true; // Compatibilidad con datos antiguos
     return item.visible;
+  };
+
+  // Iconos para cada beneficio
+  const getIcon = (index: number) => {
+    const icons = [Users, MapPin, Sparkles, Music];
+    return icons[index % icons.length];
   };
 
   const benefits = [
@@ -54,30 +60,62 @@ export const PorQueManso = async () => {
     return 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4';
   };
 
+  // Forzar altura uniforme para todas las cards
+  const getCardHeight = () => {
+    const count = benefits.length;
+    if (count <= 2) return 'h-64 md:h-72';
+    return 'h-72 md:h-80';
+  };
+
   return (
     <section className="py-12 sm:py-16 px-4 sm:px-8 md:px-20 bg-manso-black">
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-16">
-          <h2 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold uppercase tracking-tighter text-white leading-[0.9] mb-4 sm:mb-6">
-            {getValue('porque_titulo', 'Why Manso')}
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-thin uppercase tracking-[0.15em] text-white leading-[0.9] mb-4">
+            <span className="block font-light">NUESTRO ADN</span>
+            <span className="block font-extralight text-manso-cream mt-1">MUCHO MÁS QUE UN CLUB</span>
           </h2>
-          <p className="text-sm sm:text-base md:text-lg text-white/70 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-base sm:text-lg md:text-xl text-white/50 max-w-3xl mx-auto leading-relaxed font-light tracking-wide">
             {getValue('porque_subtitulo', 'More than just a workspace. We provide everything you need to thrive in today\'s dynamic business environment.')}
           </p>
         </div>
 
         {/* Grid de cards de beneficios */}
-        <div className={`${getGridClass()} gap-4 sm:gap-6 mb-12 sm:mb-16`}>
-          {benefits.map((benefit, index) => (
-            <div key={index} className="bg-manso-cream/5 backdrop-blur-sm rounded-2xl p-4 sm:p-6 md:p-8 border border-manso-cream/10 hover:bg-manso-cream/10 transition-all duration-300 group">
-              <h3 className="text-base sm:text-lg font-bold text-white mb-3 sm:mb-4 group-hover:text-manso-terra transition-colors">
-                {benefit.title}
-              </h3>
-              <p className="text-white/60 leading-relaxed text-xs sm:text-sm">
-                {benefit.description}
-              </p>
-            </div>
-          ))}
+        <div className={`${getGridClass()} gap-6 sm:gap-8 mb-16 sm:mb-20`}>
+          {benefits.map((benefit, index) => {
+            const IconComponent = getIcon(index);
+            return (
+              <div key={index} className="group relative">
+                {/* Card principal con altura uniforme */}
+                <div className={`${getCardHeight()} bg-manso-cream/5 backdrop-blur-md rounded-3xl p-5 sm:p-6 border border-manso-cream/10 hover:bg-manso-cream/10 transition-all duration-500 ease-out hover:scale-105 hover:-translate-y-3 hover:shadow-2xl hover:shadow-white/10 relative overflow-hidden flex flex-col`}>
+                  
+                  {/* Icono animado */}
+                  <div className="absolute top-4 right-4 w-10 h-10 bg-white/10 rounded-full flex items-center justify-center transition-all duration-500 group-hover:bg-white/20 group-hover:scale-110">
+                    <IconComponent 
+                      size={18} 
+                      className="text-white transition-transform duration-500 group-hover:rotate-12" 
+                    />
+                  </div>
+                  
+                  {/* Contenido */}
+                  <div className="flex flex-col flex-1 justify-start py-2 pr-12">
+                    <h3 className="text-base sm:text-lg font-bold text-white mb-2 group-hover:text-manso-cream transition-colors duration-500">
+                      {benefit.title}
+                    </h3>
+                    <p className="text-white/70 leading-snug text-xs sm:text-sm transition-all duration-500 group-hover:text-white/90 line-clamp-3">
+                      {benefit.description}
+                    </p>
+                  </div>
+                  
+                  {/* Efecto de luz sutil */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+                  
+                  {/* Borde animado */}
+                  <div className="absolute inset-0 rounded-3xl border-2 border-transparent group-hover:border-white/20 transition-all duration-500 pointer-events-none" />
+                </div>
+              </div>
+            );
+          })}
         </div>
 
         {/* Texto central adicional */}
@@ -96,12 +134,12 @@ export const PorQueManso = async () => {
         <div className="text-center">
           <Link 
             href="/about"
-            className="inline-flex items-center gap-3 bg-manso-terra text-white px-8 sm:px-12 py-4 sm:py-6 text-[9px] sm:text-[10px] font-black uppercase tracking-widest hover:bg-manso-cream hover:text-manso-black transition-all transform hover:-translate-y-1 active:scale-95 group rounded-full"
+            className="inline-flex items-center gap-3 bg-manso-terra text-white px-10 sm:px-16 py-5 sm:py-7 text-[10px] sm:text-[11px] font-black uppercase tracking-widest hover:bg-manso-cream hover:text-manso-black transition-all duration-500 transform hover:-translate-y-2 hover:scale-105 active:scale-95 group rounded-full shadow-lg hover:shadow-2xl hover:shadow-white/20"
           >
             CONOCENOS
             <ArrowRight 
-              size={16} 
-              className="transform transition-transform group-hover:translate-x-2" 
+              size={18} 
+              className="transform transition-all duration-500 group-hover:translate-x-3 group-hover:scale-125" 
             />
           </Link>
         </div>
