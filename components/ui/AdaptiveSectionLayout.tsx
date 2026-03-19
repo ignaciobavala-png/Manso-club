@@ -6,18 +6,18 @@ interface AdaptiveSectionLayoutProps {
   title: string;
   subtitle: string;
   children: React.ReactNode;
-  customBg?: string; // Para casos especiales
-  forceDark?: boolean; // Para forzar tema oscuro
-  forceLight?: boolean; // Para forzar tema claro
+  customBg?: string;
+  forceDark?: boolean;
+  forceLight?: boolean;
 }
 
-export function AdaptiveSectionLayout({ 
-  title, 
-  subtitle, 
-  children, 
+export function AdaptiveSectionLayout({
+  title,
+  subtitle,
+  children,
   customBg,
   forceDark,
-  forceLight 
+  forceLight
 }: AdaptiveSectionLayoutProps) {
   const pathname = usePathname();
 

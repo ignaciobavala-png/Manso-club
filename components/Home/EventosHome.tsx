@@ -174,15 +174,15 @@ export const EventosHome = () => {
               
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
                 {eventosFecha.map((evento) => (
-                  <div key={evento.id} className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+                  <div key={evento.id} className="group bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:shadow-black/10 hover:scale-[1.03] transition-all duration-500 ease-out cursor-pointer">
                     {/* Flyer del evento */}
-                    <div className="relative w-full h-32 sm:h-40 md:h-48 bg-gray-900">
+                    <div className="relative w-full h-32 sm:h-40 md:h-48 bg-gray-900 overflow-hidden">
                       {evento.imagen_url ? (
                         <Image
                           src={evento.imagen_url}
                           alt={evento.titulo}
                           fill
-                          className="object-contain"
+                          className="object-contain transition-transform duration-700 group-hover:scale-105"
                         />
                       ) : (
                         // Placeholder oscuro para eventos sin imagen

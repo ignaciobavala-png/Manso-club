@@ -77,8 +77,11 @@ export const ParticleBackground = () => {
       animationId = requestAnimationFrame(draw);
     };
 
-    resize();
-    draw();
+    // Esperar al primer paint para que el canvas tenga dimensiones reales
+    requestAnimationFrame(() => {
+      resize();
+      draw();
+    });
 
     const ro = new ResizeObserver(resize);
     ro.observe(canvas);
@@ -92,7 +95,7 @@ export const ParticleBackground = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="absolute inset-0 w-full h-full"
+      className="absolute inset-0 w-full h-full z-0"
       style={{ pointerEvents: 'none' }}
     />
   );

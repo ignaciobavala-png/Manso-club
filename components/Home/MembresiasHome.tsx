@@ -71,12 +71,12 @@ export const MembresiasHome = () => {
         ) : (
           <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3 md:gap-8 mb-8 sm:mb-12">
             {membresias.map((membresia) => (
-              <div 
+              <div
                 key={membresia.id}
-                className={`group rounded-[20px] sm:rounded-[30px] md:rounded-[40px] p-4 sm:p-6 md:p-8 transition-all duration-300 hover:shadow-2xl hover:scale-[1.02] cursor-pointer relative ${
-                  membresia.destacado 
-                    ? 'bg-black text-white border-black' 
-                    : 'bg-white border border-gray-200'
+                className={`group rounded-[20px] sm:rounded-[30px] md:rounded-[40px] p-4 sm:p-6 md:p-8 transition-all duration-700 ease-out hover:scale-[1.02] cursor-pointer relative ${
+                  membresia.destacado
+                    ? 'bg-black text-white border-black hover:shadow-[0_20px_60px_rgba(0,0,0,0.25)]'
+                    : 'bg-white border-2 border-gray-300 hover:border-manso-black/40 hover:shadow-[0_20px_60px_rgba(0,0,0,0.08)]'
                 }`}
               >
                 {/* Etiqueta "Más Popular" */}
@@ -140,10 +140,10 @@ export const MembresiasHome = () => {
                 )}
 
                 {/* CTA */}
-                <button className={`w-full px-4 sm:px-6 py-3 sm:py-4 text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all transform hover:-translate-y-1 active:scale-95 ${
-                  membresia.destacado 
-                    ? 'bg-white text-black hover:bg-gray-200' 
-                    : 'bg-black text-white hover:bg-gray-800'
+                <button className={`w-full px-4 sm:px-6 py-3 sm:py-4 text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all duration-500 ease-out active:scale-95 rounded-full ${
+                  membresia.destacado
+                    ? 'bg-white text-black hover:bg-manso-olive hover:text-white'
+                    : 'bg-black text-white hover:bg-manso-black/80'
                 }`}>
                   SELECCIONAR
                 </button>
