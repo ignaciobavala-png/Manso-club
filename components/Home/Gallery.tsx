@@ -1,4 +1,5 @@
 import { getGalleryImages } from '@/lib/gallery';
+import { GalleryCardStack } from './GalleryCardStack';
 
 const galleryImages = [
   { id: 1, src: "/assets/manso1.webp" },
@@ -58,10 +59,15 @@ export const Gallery = async () => {
           </h3>
         </div>
 
-        {/* Masonry Grid */}
-        <div className="grid grid-cols-2 gap-0
+        {/* Mobile: Card Stack Carousel */}
+        <div className="block md:hidden">
+          <GalleryCardStack images={imagesToDisplay} />
+        </div>
+
+        {/* Desktop: Masonry Grid */}
+        <div className="hidden md:grid grid-cols-2 gap-0
                       md:grid-cols-4 md:auto-rows-[200px] md:auto-flow-dense md:gap-0
-                      lg:grid-cols-6 lg:auto-rows-[250px] lg:gap-0">
+                      lg:grid-cols-6 lg:auto-rows-[250px] lg:gap-0 gap-0">
           {imagesToDisplay.map((image, index) => {
             // Get grid size pattern for masonry layout
             const gridSize = getGridSize(index);
