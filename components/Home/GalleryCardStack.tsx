@@ -60,6 +60,7 @@ export const GalleryCardStack = ({ images }: GalleryCardStackProps) => {
               aspectRatio: "3/4",
               zIndex: 10 - slot,
             }}
+            initial={{ rotate: rotation, y: yOffset, scale: cardScale }}
             animate={{ rotate: rotation, y: yOffset, scale: cardScale }}
             transition={{ type: "spring", stiffness: 280, damping: 22 }}
           >
