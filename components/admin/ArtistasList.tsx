@@ -62,6 +62,22 @@ export function ArtistasList({ refreshTrigger }: ArtistasListProps) {
       setArtistas(prev =>
         prev.map(a => a.id === id ? { ...a, active: !a.active } : a)
       );
+      
+      // Revalidar cache
+      try {
+        const response = await fetch('/api/revalidate', {
+          method: 'POST',
+          headers: { 'Authorization': `Bearer ${process.env.CRON_SECRET}` }
+        });
+        
+        if (!response.ok) {
+          console.error('Error en revalidación artistas:', response.status);
+        } else {
+          console.log('✅ Cache artistas revalidado');
+        }
+      } catch (error) {
+        console.error('❌ Error revalidando cache artistas:', error);
+      }
     }
   };
 
@@ -92,6 +108,22 @@ export function ArtistasList({ refreshTrigger }: ArtistasListProps) {
     }
 
     setArtistas(prev => prev.filter(a => a.id !== artista.id));
+    
+    // Revalidar cache
+    try {
+      const response = await fetch('/api/revalidate', {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${process.env.CRON_SECRET}` }
+      });
+      
+      if (!response.ok) {
+        console.error('Error en revalidación artistas:', response.status);
+      } else {
+        console.log('✅ Cache artistas revalidado');
+      }
+    } catch (error) {
+      console.error('❌ Error revalidando cache artistas:', error);
+    }
   };
 
   if (loading) {

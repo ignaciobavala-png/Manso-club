@@ -106,12 +106,19 @@ export function FormHero() {
       
       // Revalidar cache
       try {
-        await fetch('/api/revalidate', {
+        const response = await fetch('/api/revalidate', {
           method: 'POST',
-          headers: { 'Authorization': `Bearer ${process.env.NEXT_PUBLIC_REVALIDATE_SECRET}` }
+          headers: { 'Authorization': `Bearer ${process.env.CRON_SECRET}` }
         });
+        
+        if (!response.ok) {
+          const error = await response.text();
+          console.error('Error en revalidación:', response.status, error);
+        } else {
+          console.log('✅ Cache revalidado exitosamente');
+        }
       } catch (error) {
-        console.warn('Error revalidando cache:', error);
+        console.error('❌ Error revalidando cache:', error);
       }
     } catch (error: any) {
       alert(error.message);
