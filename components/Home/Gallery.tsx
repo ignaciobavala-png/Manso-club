@@ -9,32 +9,18 @@ const galleryImages = [
   { id: 6, src: "/assets/manso8.webp" },
 ];
 
-// Mobile (2-col): vary row-span para ritmo visual, grid-flow-dense rellena huecos
-const mobilePattern = [
-  { cols: 1, rows: 2 },
-  { cols: 1, rows: 1 },
-  { cols: 1, rows: 1 },
-  { cols: 1, rows: 1 },
-  { cols: 1, rows: 2 },
-  { cols: 1, rows: 1 },
-];
-
-const mobileColMap: Record<number, string> = { 1: 'col-span-1', 2: 'col-span-2' };
-const mobileRowMap: Record<number, string> = { 1: 'row-span-1', 2: 'row-span-2' };
-
-const getMobileClasses = (index: number) => {
-  const mob = mobilePattern[index % mobilePattern.length];
-  return `${mobileColMap[mob.cols]} ${mobileRowMap[mob.rows]}`;
-};
-
 export const Gallery = async () => {
   const dbImages = await getGalleryImages();
   const hasDbImages = dbImages.length > 0;
 
-  // Use DB images if available, otherwise fallback to hardcoded images
-  const imagesToDisplay = hasDbImages
+  const all = hasDbImages
     ? dbImages.map(img => ({ id: img.id, src: img.photo_url }))
     : galleryImages;
+
+  // Recortar a múltiplo de 3 → cada fila siempre completa, cero celdas vacías
+  const cols = 3;
+  const count = Math.floor(all.length / cols) * cols || cols;
+  const images = all.slice(0, count);
 
   return (
     <section
@@ -48,38 +34,18 @@ export const Gallery = async () => {
           </h3>
         </div>
 
-        {/* DESKTOP: CSS columns — masonry nativo, cero gaps garantizados */}
-        <div className="hidden md:block overflow-hidden border border-zinc-200 shadow-sm">
-          <div className="columns-3 lg:columns-4 gap-0">
-            {imagesToDisplay.map((image) => (
-              <div
-                key={image.id}
-                tabIndex={0}
-                className="group relative break-inside-avoid overflow-hidden cursor-pointer outline-none transition-all duration-700 ease-out hover:scale-110 hover:z-20 hover:shadow-2xl focus:scale-110 focus:z-20 focus:shadow-2xl"
-              >
-                <img
-                  src={image.src}
-                  alt={`Manso Club ${image.id}`}
-                  className="w-full block object-cover transition-all duration-700 ease-out group-hover:brightness-110 group-focus:brightness-110"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-all duration-700" />
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* MOBILE: CSS grid 2 columnas con row-span variable */}
-        <div className="grid md:hidden grid-cols-2 auto-rows-[150px] grid-flow-dense gap-0 overflow-hidden border border-zinc-200 shadow-sm">
-          {imagesToDisplay.map((image, index) => (
+        {/* Grid uniforme — celdas fijas, object-cover, cero huecos, borde contenedor */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-0 border border-zinc-200 shadow-sm overflow-hidden">
+          {images.map((image) => (
             <div
               key={image.id}
               tabIndex={0}
-              className={`group relative overflow-hidden cursor-pointer outline-none ${getMobileClasses(index)}`}
+              className="group relative aspect-[4/3] overflow-hidden cursor-pointer outline-none"
             >
               <img
                 src={image.src}
                 alt={`Manso Club ${image.id}`}
-                className="w-full h-full object-cover transition-all duration-700 ease-out group-hover:brightness-110 group-focus:brightness-110"
+                className="w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-110 group-hover:brightness-110 group-focus:scale-110 group-focus:brightness-110"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-all duration-700" />
             </div>
