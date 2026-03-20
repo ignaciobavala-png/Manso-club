@@ -14,6 +14,7 @@ interface AgendaEvent {
   activo: boolean;
   cupos_maximos?: number | string;
   whatsapp_contacto?: string;
+  luma_url?: string;
 }
 
 const INITIAL = {
