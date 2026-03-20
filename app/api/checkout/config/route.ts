@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { createSupabaseServer } from '@/lib/supabase';
 
 // GET - Obtener configuración del checkout
 export async function GET() {
@@ -133,23 +134,12 @@ export async function GET() {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    
-    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    
-    if (!supabaseUrl || !supabaseAnonKey) {
-      console.error('❌ Variables de entorno de Supabase no configuradas');
-      return NextResponse.json(
-        { error: 'Configuración de base de datos incompleta' },
-        { status: 500 }
-      );
-    }
-    
+
     // Validar datos requeridos
     const requiredFields = [
       'banco_nombre',
       'banco_cbu',
-      'banco_alias', 
+      'banco_alias',
       'banco_titular',
       'whatsapp_numero'
     ];
@@ -163,13 +153,9 @@ export async function POST(request: NextRequest) {
       }
     }
 
-    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-      auth: {
-        persistSession: false,
-        autoRefreshToken: false,
-      },
-    });
-    
+    // Usar el cliente con cookies para que Supabase reconozca la sesión de la admin
+    const supabase = await createSupabaseServer();
+
     // Preparar datos para upsert
     const configData = Object.entries(body).map(([key, value]) => ({
       key,
@@ -186,7 +172,7 @@ export async function POST(request: NextRequest) {
     if (error) {
       console.error('Error saving checkout config:', error);
       return NextResponse.json(
-        { error: 'Error al guardar configuración' },
+        { error: 'Error al guardar configuración: ' + error.message },
         { status: 500 }
       );
     }

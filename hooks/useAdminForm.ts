@@ -100,6 +100,14 @@ export function useAdminForm<T extends Record<string, any>>(
       }
 
       resetForm();
+
+      // Invalidar el cache de Next.js para que la web pública se actualice
+      fetch('/api/revalidate-admin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ table: tableName }),
+      }).catch(() => { /* no bloquear si falla */ });
+
       window.location.reload();
     } catch (error: any) {
       const errorMessage = error.message || 'Error al procesar la solicitud';

@@ -1,10 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { createSupabaseServer } from '@/lib/supabase';
 
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const auth = await createSupabaseServer();
+  const { data: { user } } = await auth.auth.getUser();
+  if (!user) return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+  const { data: role } = await auth.rpc('get_user_role', { user_id: user.id });
+  if (role !== 'admin') return NextResponse.json({ error: 'No autorizado' }, { status: 403 });
+
   try {
     const { id: pedidoId } = await params;
     const { estado } = await request.json();

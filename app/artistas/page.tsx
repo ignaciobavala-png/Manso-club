@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { ArtistasClient } from './ArtistasClient';
 import { createSupabaseAnon } from '@/lib/supabase';
 
+export const revalidate = 30;
+
 export const metadata: Metadata = {
   title: 'Artistas | Manso Club',
   description:

@@ -8,6 +8,8 @@ import { ArtistProfilePlayer } from './ArtistProfilePlayer';
 import { ArtistTrackManager } from '@/components/artistas/ArtistTrackManager';
 import { ArtistaCarousel } from '@/components/artistas/ArtistaCarousel';
 
+export const revalidate = 30;
+
 interface Artista {
   id: string;
   nombre: string;

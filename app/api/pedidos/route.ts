@@ -1,10 +1,22 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { createSupabaseServer } from '@/lib/supabase';
+
+async function requireAdmin() {
+  const supabase = await createSupabaseServer();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+  const { data: role } = await supabase.rpc('get_user_role', { user_id: user.id });
+  return role === 'admin' ? user : null;
+}
 
 export async function GET() {
+  const admin = await requireAdmin();
+  if (!admin) return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
+
   try {
     console.log('🔍 Iniciando fetch de pedidos...');
-    
+
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
     

@@ -1,4 +1,6 @@
 // app/tienda/page.tsx
+export const revalidate = 30;
+
 import { AdaptiveSectionLayout } from '@/components/ui/AdaptiveSectionLayout';
 import { createSupabaseAnon } from '@/lib/supabase';
 import { ProductCard } from '@/components/shop/ProductCard';
