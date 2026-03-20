@@ -140,13 +140,16 @@ export const MembresiasHome = () => {
                 )}
 
                 {/* CTA */}
-                <button className={`w-full px-4 sm:px-6 py-3 sm:py-4 text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all duration-500 ease-out active:scale-95 rounded-full ${
-                  membresia.destacado
-                    ? 'bg-white text-black hover:bg-manso-olive hover:text-white'
-                    : 'bg-black text-white hover:bg-manso-black/80'
-                }`}>
+                <Link
+                  href={`/membresias/pagar?nombre=${encodeURIComponent(membresia.nombre)}&precio=${membresia.precio}&periodo=${encodeURIComponent(membresia.periodo)}`}
+                  className={`block w-full px-4 sm:px-6 py-3 sm:py-4 text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all duration-500 ease-out active:scale-95 rounded-full text-center ${
+                    membresia.destacado
+                      ? 'bg-white text-black hover:bg-manso-olive hover:text-white'
+                      : 'bg-black text-white hover:bg-manso-black/80'
+                  }`}
+                >
                   SELECCIONAR
-                </button>
+                </Link>
               </div>
             ))}
           </div>

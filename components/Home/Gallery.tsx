@@ -1,4 +1,5 @@
 import { getGalleryImages } from '@/lib/gallery';
+import { GalleryGrid } from './GalleryGrid';
 
 const galleryImages = [
   { id: 1, src: "/assets/manso1.webp" },
@@ -34,23 +35,7 @@ export const Gallery = async () => {
           </h3>
         </div>
 
-        {/* Grid uniforme — celdas fijas, object-cover, cero huecos, borde contenedor */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-0 border border-zinc-200 shadow-sm overflow-hidden">
-          {images.map((image) => (
-            <div
-              key={image.id}
-              tabIndex={0}
-              className="group relative aspect-[4/3] overflow-hidden cursor-pointer outline-none"
-            >
-              <img
-                src={image.src}
-                alt={`Manso Club ${image.id}`}
-                className="w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-110 group-hover:brightness-110 group-focus:scale-110 group-focus:brightness-110"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 group-focus:opacity-100 transition-all duration-700" />
-            </div>
-          ))}
-        </div>
+        <GalleryGrid images={images} />
       </div>
     </section>
   );
