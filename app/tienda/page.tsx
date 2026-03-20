@@ -10,7 +10,7 @@ export default async function TiendaPage() {
   const { data: productos } = await supabase
     .from('productos')
     .select('*')
-    .eq('active', true);
+    .order('created_at', { ascending: false });
 
   return (
     <AdaptiveSectionLayout title="Tienda" subtitle="objetos curados / emprendedores locales">

@@ -17,6 +17,7 @@ export function FormMembresia() {
     destacado: false,
     activo: true,
     orden: 0,
+    categoria: 'Cowork',
     beneficios: [],
   });
 
@@ -33,6 +34,7 @@ export function FormMembresia() {
         destacado: item.destacado || false,
         activo: item.activo || true,
         orden: item.orden || 0,
+        categoria: item.categoria || 'Cowork',
         beneficios: item.membresia_beneficios || [],
       });
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -54,6 +56,7 @@ export function FormMembresia() {
       destacado: false,
       activo: true,
       orden: 0,
+      categoria: 'Cowork',
       beneficios: [],
     });
     setFeedback(null);
@@ -113,6 +116,7 @@ export function FormMembresia() {
             destacado: formData.destacado,
             activo: formData.activo,
             orden: parseInt(String(formData.orden)) || 0,
+            categoria: formData.categoria,
           })
           .eq('id', editingId);
 
@@ -155,6 +159,7 @@ export function FormMembresia() {
             destacado: formData.destacado,
             activo: formData.activo,
             orden: parseInt(String(formData.orden)) || 0,
+            categoria: formData.categoria,
           })
           .select()
           .single();
@@ -263,6 +268,21 @@ export function FormMembresia() {
             <option value="año">Anual</option>
           </select>
         </div>
+      </div>
+
+      {/* Categoría */}
+      <div>
+        <label className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/60 mb-2 block">
+          Categoría
+        </label>
+        <select
+          value={formData.categoria}
+          onChange={(e) => setFormData({ ...formData, categoria: e.target.value })}
+          className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 text-sm text-manso-cream focus:outline-none focus:border-manso-terra/50 transition-colors appearance-none"
+        >
+          <option value="Cowork">Cowork</option>
+          <option value="Socios & Residentes">Socios &amp; Residentes</option>
+        </select>
       </div>
 
       {/* Descripción */}

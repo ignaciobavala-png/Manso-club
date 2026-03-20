@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { ArrowRight } from 'lucide-react';
 import { ProductCard } from '@/components/shop/ProductCard';
 import Link from 'next/link';
-import { ScrambleText } from '@/components/UI/ScrambleText';
+import { ScrambleText } from '@/components/ui/ScrambleText';
 
 interface Producto {
   id: string;

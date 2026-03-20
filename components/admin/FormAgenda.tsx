@@ -16,231 +16,220 @@ interface AgendaEvent {
   whatsapp_contacto?: string;
 }
 
-export function FormAgenda() {
-  const [loading, setLoading] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
-  const [formData, setFormData] = useState({
-    titulo: '',
-    descripcion: '',
-    categoria: 'Taller',
-    duracion: '2 horas',
-    frecuencia: 'Mensual',
-    precio: '0',
-    cupos_maximos: '0',
-    whatsapp_contacto: ''
-  });
+const INITIAL = {
+  titulo: '',
+  descripcion: '',
+  categoria: 'Taller',
+  duracion: '2 horas',
+  frecuencia: 'Mensual',
+  precio: '0',
+  cupos_maximos: '0',
+  whatsapp_contacto: '',
+  luma_url: '',
+};
 
-  const categorias = ['Taller', 'Curso', 'Sesión', 'Clase', 'Evento Recurrente'];
-  const duraciones = ['1 hora', '2 horas', '3 horas', '4 horas', 'Medio día', 'Día completo'];
-  const frecuencias = ['Semanal', 'Quincenal', 'Mensual', 'Bimensual', 'Trimestral'];
+const categorias  = ['Taller', 'Curso', 'Sesión', 'Clase', 'Evento Recurrente'];
+const duraciones  = ['1 hora', '2 horas', '3 horas', '4 horas', 'Medio día', 'Día completo'];
+const frecuencias = ['Semanal', 'Quincenal', 'Mensual', 'Bimensual', 'Trimestral'];
+
+const inputCls = "w-full p-3 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/40 text-sm";
+const labelCls = "block text-[10px] font-black uppercase tracking-widest text-manso-cream/50 mb-1";
+
+export function FormAgenda() {
+  const [loading, setLoading]     = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [formData, setFormData]   = useState(INITIAL);
 
   useEffect(() => {
-    const handleEditEvent = (event: CustomEvent) => {
-      const evento: AgendaEvent = event.detail;
-      setEditingId(evento.id);
+    const handle = (e: CustomEvent) => {
+      const ev: AgendaEvent = e.detail;
+      setEditingId(ev.id);
       setFormData({
-        titulo: evento.titulo,
-        descripcion: evento.descripcion,
-        categoria: evento.categoria,
-        duracion: evento.duracion,
-        frecuencia: evento.frecuencia,
-        precio: evento.precio.toString(),
-        cupos_maximos: (evento.cupos_maximos || 0).toString(),
-        whatsapp_contacto: evento.whatsapp_contacto || ''
+        titulo:            ev.titulo,
+        descripcion:       ev.descripcion,
+        categoria:         ev.categoria,
+        duracion:          ev.duracion,
+        frecuencia:        ev.frecuencia,
+        precio:            ev.precio.toString(),
+        cupos_maximos:     (ev.cupos_maximos || 0).toString(),
+        whatsapp_contacto: ev.whatsapp_contacto || '',
+      luma_url:          ev.luma_url || '',
       });
     };
-
-    window.addEventListener('editAgendaEvent', handleEditEvent as EventListener);
-    
-    return () => {
-      window.removeEventListener('editAgendaEvent', handleEditEvent as EventListener);
-    };
+    window.addEventListener('editAgendaEvent', handle as EventListener);
+    return () => window.removeEventListener('editAgendaEvent', handle as EventListener);
   }, []);
 
-  const resetForm = () => {
-    setEditingId(null);
-    setFormData({
-      titulo: '',
-      descripcion: '',
-      categoria: 'Taller',
-      duracion: '2 horas',
-      frecuencia: 'Mensual',
-      precio: '0',
-      cupos_maximos: '0',
-      whatsapp_contacto: ''
-    });
-  };
+  const reset = () => { setEditingId(null); setFormData(INITIAL); };
+
+  const set = (field: keyof typeof INITIAL, value: string) =>
+    setFormData(prev => ({ ...prev, [field]: value }));
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
+
+    const payload = {
+      titulo:            formData.titulo,
+      descripcion:       formData.descripcion,
+      categoria:         formData.categoria,
+      duracion:          formData.duracion,
+      frecuencia:        formData.frecuencia,
+      precio:            parseInt(formData.precio) || 0,
+      cupos_maximos:     parseInt(formData.cupos_maximos) || 0,
+      whatsapp_contacto: formData.whatsapp_contacto,
+      luma_url:          formData.luma_url || null,
+      activo:            true,
+    };
+
     try {
       if (editingId) {
-        const { error } = await supabase
-          .from('agenda')
-          .update({
-            ...formData,
-            precio: parseInt(String(formData.precio)) || 0,
-            cupos_maximos: parseInt(String(formData.cupos_maximos)) || 0
-          })
-          .eq('id', editingId);
-
+        const { error } = await supabase.from('agenda').update(payload).eq('id', editingId);
         if (error) throw error;
-        alert('¡Evento de agenda actualizado correctamente!');
+        alert('¡Evento actualizado correctamente!');
       } else {
-        const { error } = await supabase.from('eventos_home').insert([{
-          titulo: formData.titulo,
-          categoria: formData.categoria,
-          descripcion: formData.descripcion,
-          disponible: true,
-          orden: 0,
-          activo: true,
-          link_tickets: '',
-          frecuencia: formData.frecuencia,
-          duracion: formData.duracion,
-          precio: parseInt(String(formData.precio)) || 0,
-          cupos_maximos: parseInt(String(formData.cupos_maximos)) || 0,
-          whatsapp_contacto: formData.whatsapp_contacto
-        }]);
-
+        const { error } = await supabase.from('agenda').insert([payload]);
         if (error) throw error;
         alert('¡Evento agregado a la agenda!');
       }
 
-      resetForm();
+      reset();
       window.dispatchEvent(new CustomEvent('dashboardRefresh'));
-      
-      // Revalidar el home para actualizar los eventos
-      try {
-        await fetch('/api/revalidate', { method: 'POST' });
-      } catch (revalidateError) {
-        console.warn('Error al revalidar:', revalidateError);
-      }
-    } catch (error: any) {
-      alert(error.message);
-    }
-    
-    setLoading(false);
-  };
 
-  const handleCancel = () => {
-    resetForm();
+      fetch('/api/revalidate-admin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ table: 'agenda' }),
+      }).catch(() => {});
+
+    } catch (err: any) {
+      alert(err.message);
+    }
+
+    setLoading(false);
   };
 
   return (
     <div className="max-w-2xl mx-auto bg-manso-cream/5 p-8 rounded-[2.5rem] border border-manso-cream/10 shadow-xl">
       <div className="mb-6">
-        <h2 className="text-2xl font-black uppercase tracking-tighter text-manso-cream mb-2">
-          {editingId ? 'Editar Evento de Agenda' : 'Nuevo Evento de Agenda'}
+        <h2 className="text-2xl font-black uppercase tracking-tighter text-manso-cream">
+          {editingId ? 'Editar evento' : 'Nuevo evento de agenda'}
         </h2>
-        {editingId && (
-          <p className="text-sm text-manso-cream/60">
-            Modificando los datos del evento recurrente
-          </p>
-        )}
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="grid grid-cols-1 gap-4">
-          <input 
-            type="text" 
-            placeholder="TÍTULO DEL EVENTO"
-            className="w-full text-2xl font-black bg-manso-cream/10 p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/40"
+      <form onSubmit={handleSubmit} className="space-y-5">
+
+        {/* Título */}
+        <div>
+          <label className={labelCls}>Título del evento</label>
+          <input
+            type="text"
+            placeholder="Ej: Taller de Diseño Gráfico"
+            className={`${inputCls} text-xl font-black`}
             value={formData.titulo}
-            onChange={e => setFormData({...formData, titulo: e.target.value})}
+            onChange={e => set('titulo', e.target.value)}
             required
           />
-          
-          <textarea 
-            placeholder="DESCRIPCIÓN DETALLADA DEL EVENTO"
-            rows={4}
-            className="w-full bg-manso-cream/10 p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/40 resize-none"
+        </div>
+
+        {/* Descripción */}
+        <div>
+          <label className={labelCls}>Descripción</label>
+          <textarea
+            placeholder="Describí el evento, qué se aprende, quién puede participar..."
+            rows={3}
+            className={`${inputCls} resize-none`}
             value={formData.descripcion}
-            onChange={e => setFormData({...formData, descripcion: e.target.value})}
+            onChange={e => set('descripcion', e.target.value)}
             required
           />
+        </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            <select 
-              className="w-full p-4 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream"
-              value={formData.categoria}
-              onChange={e => setFormData({...formData, categoria: e.target.value})}
-            >
-              {categorias.map(cat => (
-                <option key={cat} value={cat}>{cat}</option>
-              ))}
-            </select>
-
-            <select 
-              className="w-full p-4 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream"
-              value={formData.frecuencia}
-              onChange={e => setFormData({...formData, frecuencia: e.target.value})}
-            >
-              {frecuencias.map(freq => (
-                <option key={freq} value={freq}>{freq}</option>
-              ))}
+        {/* Categoría + Frecuencia */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className={labelCls}>Categoría</label>
+            <select className={inputCls} value={formData.categoria} onChange={e => set('categoria', e.target.value)}>
+              {categorias.map(c => <option key={c} value={c}>{c}</option>)}
             </select>
           </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <select 
-              className="w-full p-4 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream"
-              value={formData.duracion}
-              onChange={e => setFormData({...formData, duracion: e.target.value})}
-            >
-              {duraciones.map(dur => (
-                <option key={dur} value={dur}>{dur}</option>
-              ))}
+          <div>
+            <label className={labelCls}>Frecuencia</label>
+            <select className={inputCls} value={formData.frecuencia} onChange={e => set('frecuencia', e.target.value)}>
+              {frecuencias.map(f => <option key={f} value={f}>{f}</option>)}
             </select>
+          </div>
+        </div>
 
-            <input 
-              type="number" 
-              placeholder="PRECIO (0 = gratis)"
-              className="w-full p-4 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream placeholder:text-manso-cream/40"
-              value={formData.precio || ''}
-              onChange={e => setFormData({...formData, precio: e.target.value})}
+        {/* Duración + Precio */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className={labelCls}>Duración</label>
+            <select className={inputCls} value={formData.duracion} onChange={e => set('duracion', e.target.value)}>
+              {duraciones.map(d => <option key={d} value={d}>{d}</option>)}
+            </select>
+          </div>
+          <div>
+            <label className={labelCls}>Precio (0 = gratis)</label>
+            <input
+              type="number"
+              placeholder="0"
+              className={inputCls}
+              value={formData.precio}
+              onChange={e => set('precio', e.target.value)}
               min="0"
               step="100"
             />
           </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <input 
-              type="number" 
-              placeholder="CUPOS MÁXIMOS (0 = ilimitado)"
-              className="w-full p-4 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream placeholder:text-manso-cream/40"
-              value={formData.cupos_maximos || ''}
-              onChange={e => setFormData({...formData, cupos_maximos: e.target.value})}
-              min="0"
-            />
-
-            <input 
-              type="text" 
-              placeholder="WHATSAPP CONTACTO (+54 9 ...)"
-              className="w-full p-4 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream placeholder:text-manso-cream/40"
-              value={formData.whatsapp_contacto}
-              onChange={e => setFormData({...formData, whatsapp_contacto: e.target.value})}
-            />
-          </div>
         </div>
 
-        <div className="flex gap-4">
+        {/* Cupos */}
+        <div>
+          <label className={labelCls}>Cupos máximos (0 = ilimitado)</label>
+          <input
+            type="number"
+            placeholder="0"
+            className={inputCls}
+            value={formData.cupos_maximos}
+            onChange={e => set('cupos_maximos', e.target.value)}
+            min="0"
+          />
+        </div>
+
+        {/* Link de Luma */}
+        <div>
+          <label className={labelCls}>Link de Luma (lu.ma/...)</label>
+          <input
+            type="url"
+            placeholder="https://lu.ma/nombre-del-evento"
+            className={inputCls}
+            value={formData.luma_url}
+            onChange={e => set('luma_url', e.target.value)}
+          />
+          <p className="text-[9px] text-manso-cream/30 mt-1 font-light">
+            Si tiene link de Luma, el botón "Inscribirme" irá directo ahí. Si no, irá por WhatsApp.
+          </p>
+        </div>
+
+        {/* Botones */}
+        <div className="flex gap-4 pt-2">
           {editingId && (
-            <button 
+            <button
               type="button"
-              onClick={handleCancel}
+              onClick={reset}
               className="flex-1 bg-manso-cream/20 text-manso-cream py-5 rounded-3xl font-black uppercase tracking-[0.2em] hover:bg-manso-cream/30 transition-all active:scale-95"
             >
               Cancelar
             </button>
           )}
-          <button 
+          <button
             type="submit"
             disabled={loading}
             className="flex-1 bg-manso-terra text-manso-cream py-5 rounded-3xl font-black uppercase tracking-[0.2em] hover:bg-manso-cream hover:text-manso-black transition-all active:scale-95 disabled:opacity-50"
           >
-            {loading ? (editingId ? 'Actualizando...' : 'Agregando...') : (editingId ? 'Actualizar Evento' : 'Agregar Evento a Agenda')}
+            {loading
+              ? (editingId ? 'Guardando...' : 'Agregando...')
+              : (editingId ? 'Guardar cambios' : 'Agregar evento')}
           </button>
         </div>
       </form>

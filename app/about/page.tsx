@@ -11,7 +11,13 @@ export default async function AboutPage() {
   const aboutUs = await getAboutUs();
 
   return (
-    <div className="relative min-h-screen bg-gray-100">
+    <div
+      className="relative min-h-screen bg-gray-100"
+      style={{
+        backgroundImage: `linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)`,
+        backgroundSize: '48px 48px',
+      }}
+    >
       <ParticleBackground mode="light" />
       <AdaptiveSectionLayout title="About Us" subtitle={aboutUs.subtitle} customBg="bg-transparent">
       {/* Sección principal con layout dinámico */}

@@ -24,8 +24,7 @@ export const Navbar = () => {
   }, []);
   
   // Detectar si estamos en páginas con fondo claro
-  const isLightBgPage = pathname?.includes('/about') || 
-                        pathname?.includes('/agenda') || 
+  const isLightBgPage = pathname?.includes('/about') ||
                         pathname?.includes('/tienda') ||
                         pathname?.includes('/checkout');
 

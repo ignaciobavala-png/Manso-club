@@ -7,6 +7,7 @@ export interface Membresia {
   destacado: boolean;
   activo: boolean;
   orden: number;
+  categoria: string;
   created_at: string;
   updated_at: string;
   membresia_beneficios?: MembresiaBeneficio[];
@@ -28,5 +29,6 @@ export interface MembresiaForm {
   destacado: boolean;
   activo: boolean;
   orden: number | string;
+  categoria: string;
   beneficios: MembresiaBeneficio[];
 }

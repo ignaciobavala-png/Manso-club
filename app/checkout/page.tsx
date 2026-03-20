@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useCart } from '@/store/useCart';
 import { ArrowLeft, CreditCard, User, Mail, Phone, CheckCircle, AlertCircle, ShoppingBag, MessageCircle, Truck, Shield, RotateCcw } from 'lucide-react';
 import Link from 'next/link';
+import { WHATSAPP_NUMBER } from '@/lib/constants';
 
 interface CheckoutForm {
   nombre: string;
@@ -175,7 +176,7 @@ export default function CheckoutPage() {
         const mensajeCliente = encodeURIComponent(
           `Hola! Ya he realizado mi pedido en MANSO CLUB. Mi nombre es ${formData.nombre} y mi email es ${formData.mail}. Estoy esperando los datos bancarios para proceder con el pago.`
         );
-        const whatsappNumber = config?.whatsapp_numero || '5491130232533';
+        const whatsappNumber = WHATSAPP_NUMBER;
         window.open(`https://wa.me/${whatsappNumber}?text=${mensajeCliente}`, '_blank');
       }, 3000);
 
@@ -212,7 +213,7 @@ export default function CheckoutPage() {
               ¡Pedido Recibido!
             </h1>
             <p className="text-lg text-zinc-600 mb-8">
-              Gracias por tu compra. Hemos recibido tu pedido y te contactaremos pronto con los datos bancarios para proceder con el pago.
+              Muchas gracias por tu compra. Recibimos tu pedido y te contactaremos pronto para avanzar con los detalles de la compra.
             </p>
             <p className="text-sm text-zinc-500 mb-8">
               Serás redirigido a WhatsApp en unos segundos...
@@ -503,7 +504,7 @@ export default function CheckoutPage() {
               
               {/* Botón WhatsApp Flotante */}
               <a
-                href={`https://wa.me/${config?.whatsapp_numero || '5491130232533'}`}
+                href={`https://wa.me/${WHATSAPP_NUMBER}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-full bg-green-600 text-white py-3 rounded-xl font-bold uppercase tracking-wider hover:bg-green-700 transition-all duration-300 flex items-center justify-center gap-2 mt-4"

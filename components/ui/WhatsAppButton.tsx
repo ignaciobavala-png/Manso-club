@@ -2,10 +2,12 @@
 
 import React from 'react';
 
+import { WHATSAPP_NUMBER } from '@/lib/constants';
+export { WHATSAPP_NUMBER };
+
 export const WhatsAppButton: React.FC = () => {
-  const WHATSAPP_NUMBER = "5491130232533"; // Recordá cambiar esto por el número real
   const MESSAGE = encodeURIComponent("Hola Manso Club, quería hacer una consulta...");
-  
+
   const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${MESSAGE}`;
 
   return (
