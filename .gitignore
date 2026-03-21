@@ -46,3 +46,5 @@ db.lck.next/
 node_modules/
 
 .vercel
+manso-club@0.0.0
+vite
