@@ -82,11 +82,16 @@ export const Navbar = () => {
 
           {/* LOGO */}
           <div className="ml-8">
-            <Link href="/" className="flex items-center group">
+            <Link href="/" className="flex items-center gap-3 group">
               <img
-                src={isLight ? '/estesi.png' : '/finalfinal.png'}
+                src={isLight ? '/manso-logo-black.png' : '/manso-logo-white.png'}
                 alt="Manso Club Logo"
-                className="h-14 w-auto transition-all duration-500 group-hover:scale-110 group-hover:rotate-3"
+                className="h-10 w-auto transition-all duration-500 group-hover:scale-105"
+              />
+              <img
+                src={isLight ? '/manso-name-black.png' : '/manso-name-white.png'}
+                alt="Manso Club"
+                className="h-10 w-auto transition-all duration-500 group-hover:scale-105"
               />
             </Link>
           </div>
