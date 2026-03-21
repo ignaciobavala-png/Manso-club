@@ -51,10 +51,10 @@ export default function TrabajaPage() {
             Contacto
           </p>
           <a
-            href="mailto:hola@mansoclub.com.ar"
+            href="mailto:anahagen@mansoclub.com.ar"
             className="inline-flex items-center gap-3 text-2xl md:text-3xl font-black uppercase italic tracking-tighter text-manso-cream hover:text-manso-terra transition-colors duration-300 group"
           >
-            hola@mansoclub.com.ar
+            anahagen@mansoclub.com.ar
             <ArrowRight size={24} className="transform transition-transform group-hover:translate-x-2" />
           </a>
           <p className="text-manso-cream/30 text-sm font-light">
