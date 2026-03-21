@@ -5,17 +5,16 @@ import { useEffect } from 'react';
 interface Artist {
   nombre: string;
   soundcloud_url?: string;
-  social_links?: {
-    soundcloud?: string;
-  };
+  social_links?: { label: string; url: string }[] | { soundcloud?: string };
 }
 
 export function useArtistTrack(artist: Artist | null) {
   useEffect(() => {
     if (!artist) return;
 
-    // Priorizar soundcloud_url directo, luego social_links.soundcloud
-    const soundcloudUrl = artist.soundcloud_url || artist.social_links?.soundcloud;
+    // Priorizar soundcloud_url directo, luego social_links legacy
+    const legacySc = !Array.isArray(artist.social_links) ? artist.social_links?.soundcloud : undefined;
+    const soundcloudUrl = artist.soundcloud_url || legacySc;
 
     if (soundcloudUrl) {
       // Emitir evento para cambiar el track del reproductor global

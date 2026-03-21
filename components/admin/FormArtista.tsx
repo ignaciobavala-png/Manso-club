@@ -7,7 +7,7 @@ import { SoundCloudPlayer } from '../ui/SoundCloudPlayer';
 import { ArtistasTracksList } from './ArtistasTracksList';
 import { ArtistaFotosList } from './ArtistaFotosList';
 import { FormArtistaTrack } from './FormArtistaTrack';
-import { User, Music, Instagram, Globe, Eye } from 'lucide-react';
+import { User, Music, Globe, Eye, Plus, Trash2 } from 'lucide-react';
 
 interface ArtistaEdit {
   id: string;
@@ -46,25 +46,32 @@ export function FormArtista() {
     bio: '',
     estilo: '',
     imagen_url: '',
-    instagram: '',
-    spotify: '',
     soundcloud: '',
     tipo: 'DJ'
   });
+  const [links, setLinks] = useState<{ label: string; url: string }[]>([]);
 
   useEffect(() => {
     const handleEditEvent = (event: CustomEvent<ArtistaEdit>) => {
       const artista = event.detail;
       setEditingId(artista.id);
-      const links = artista.social_links || artista.redes_sociales;
+      const raw = artista.social_links || artista.redes_sociales;
+      // Convertir formato viejo {instagram, spotify, soundcloud} → array [{label, url}]
+      let parsedLinks: { label: string; url: string }[] = [];
+      if (Array.isArray(raw)) {
+        parsedLinks = raw;
+      } else if (raw) {
+        if (raw.instagram) parsedLinks.push({ label: 'Instagram', url: `https://instagram.com/${raw.instagram.replace('@', '')}` });
+        if (raw.spotify)   parsedLinks.push({ label: 'Spotify',   url: raw.spotify });
+        if (raw.soundcloud) parsedLinks.push({ label: 'SoundCloud', url: raw.soundcloud });
+      }
+      setLinks(parsedLinks);
       setFormData({
         nombre: artista.nombre || '',
         bio: artista.bio || '',
         estilo: artista.estilo || '',
         imagen_url: artista.imagen_url || '',
-        instagram: links?.instagram || '',
-        spotify: links?.spotify || '',
-        soundcloud: artista.soundcloud_url || links?.soundcloud || '',
+        soundcloud: artista.soundcloud_url || raw?.soundcloud || '',
         tipo: artista.tipo || 'DJ'
       });
       setImageKey(prev => prev + 1);
@@ -79,7 +86,8 @@ export function FormArtista() {
 
   const resetForm = () => {
     setEditingId(null);
-    setFormData({ nombre: '', bio: '', estilo: '', imagen_url: '', instagram: '', spotify: '', soundcloud: '', tipo: 'DJ' });
+    setFormData({ nombre: '', bio: '', estilo: '', imagen_url: '', soundcloud: '', tipo: 'DJ' });
+    setLinks([]);
     setImageKey(prev => prev + 1);
     setSoundcloudError('');
     setTracksRefreshTrigger(prev => prev + 1);
@@ -146,11 +154,7 @@ export function FormArtista() {
       imagen_url: formData.imagen_url || null,
       soundcloud_url: formData.soundcloud || null,
       tipo: formData.tipo,
-      social_links: {
-        instagram: formData.instagram || null,
-        spotify: formData.spotify || null,
-        soundcloud: formData.soundcloud || null
-      },
+      social_links: links.filter(l => l.url.trim()),
       active: true
     };
 
@@ -276,53 +280,73 @@ export function FormArtista() {
             />
           </div>
 
-          {/* Redes Sociales */}
-          <div className="space-y-3">
+          {/* SoundCloud embed (para el reproductor) */}
+          <div className="space-y-2">
             <p className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2">
-              Redes Sociales (Opcional)
+              SoundCloud — Reproductor (Opcional)
             </p>
-            
-            <div className="relative">
-              <Instagram className="absolute left-4 top-1/2 -translate-y-1/2 text-manso-cream/60" size={20} />
-              <input 
-                type="text" 
-                placeholder="@usuario"
-                className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream placeholder:text-manso-cream/40"
-                value={formData.instagram}
-                onChange={e => setFormData({...formData, instagram: e.target.value})}
-              />
-            </div>
-
             <div className="relative">
               <Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-manso-cream/60" size={20} />
-              <input 
-                type="text" 
-                placeholder="URL de Spotify / SoundCloud / Web"
-                className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream placeholder:text-manso-cream/40"
-                value={formData.spotify}
-                onChange={e => setFormData({...formData, spotify: e.target.value})}
-              />
-            </div>
-
-            <div className="relative">
-              <Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-manso-cream/60" size={20} />
-              <input 
-                type="text" 
+              <input
+                type="text"
                 placeholder="https://soundcloud.com/usuario (perfil, playlist o track)"
                 className={`w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border ${
-                  soundcloudError 
-                    ? 'border-red-500/50 focus:ring-red-500' 
+                  soundcloudError
+                    ? 'border-red-500/50 focus:ring-red-500'
                     : 'border-manso-cream/20 focus:ring-manso-terra'
                 } outline-none font-mono text-sm text-manso-cream placeholder:text-manso-cream/40`}
                 value={formData.soundcloud}
                 onChange={e => handleSoundCloudChange(e.target.value)}
               />
             </div>
-            
             {soundcloudError && (
-              <p className="text-red-400 text-xs font-medium mt-2 ml-2">
-                {soundcloudError}
+              <p className="text-red-400 text-xs font-medium ml-2">{soundcloudError}</p>
+            )}
+          </div>
+
+          {/* Links dinámicos */}
+          <div className="space-y-3">
+            <div className="flex items-center justify-between ml-2">
+              <p className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60">
+                Links (Instagram, Web, Spotify, etc.)
               </p>
+              <button
+                type="button"
+                onClick={() => setLinks(prev => [...prev, { label: '', url: '' }])}
+                className="flex items-center gap-1 px-3 py-1.5 bg-manso-terra/20 border border-manso-terra/30 rounded-full text-manso-terra text-[10px] font-black uppercase tracking-widest hover:bg-manso-terra/30 transition-all"
+              >
+                <Plus size={12} /> Agregar link
+              </button>
+            </div>
+
+            {links.map((link, i) => (
+              <div key={i} className="flex gap-2 items-center">
+                <input
+                  type="text"
+                  placeholder="Nombre (ej: Instagram)"
+                  className="w-32 shrink-0 bg-manso-cream/10 px-3 py-3 rounded-xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-sm text-manso-cream placeholder:text-manso-cream/30"
+                  value={link.label}
+                  onChange={e => setLinks(prev => prev.map((l, j) => j === i ? { ...l, label: e.target.value } : l))}
+                />
+                <input
+                  type="url"
+                  placeholder="https://..."
+                  className="flex-1 bg-manso-cream/10 px-3 py-3 rounded-xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream placeholder:text-manso-cream/30"
+                  value={link.url}
+                  onChange={e => setLinks(prev => prev.map((l, j) => j === i ? { ...l, url: e.target.value } : l))}
+                />
+                <button
+                  type="button"
+                  onClick={() => setLinks(prev => prev.filter((_, j) => j !== i))}
+                  className="p-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-all shrink-0"
+                >
+                  <Trash2 size={15} />
+                </button>
+              </div>
+            ))}
+
+            {links.length === 0 && (
+              <p className="text-manso-cream/30 text-xs ml-2">Sin links todavía — usá el botón de arriba para agregar.</p>
             )}
           </div>
         </div>

@@ -5,9 +5,7 @@ import { useArtistTrack } from '@/hooks/useArtistTrack';
 interface Artist {
   nombre: string;
   soundcloud_url?: string;
-  social_links?: {
-    soundcloud?: string;
-  };
+  social_links?: { label: string; url: string }[] | { soundcloud?: string };
 }
 
 interface ArtistTrackManagerProps {

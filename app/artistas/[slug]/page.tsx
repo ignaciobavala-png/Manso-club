@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { createSupabaseAnon } from '@/lib/supabase';
-import { ArrowLeft, Instagram, ExternalLink, Music } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Music } from 'lucide-react';
 import { ArtistProfilePlayer } from './ArtistProfilePlayer';
 import { ArtistTrackManager } from '@/components/artistas/ArtistTrackManager';
 import { ArtistaCarousel } from '@/components/artistas/ArtistaCarousel';
@@ -18,11 +18,9 @@ interface Artista {
   estilo?: string;
   imagen_url?: string;
   soundcloud_url?: string;
-  social_links?: {
-    instagram?: string;
-    spotify?: string;
-    soundcloud?: string;
-  };
+  // Nuevo formato: array [{label, url}]
+  // Formato viejo: {instagram, spotify, soundcloud}
+  social_links?: { label: string; url: string }[] | { instagram?: string; spotify?: string; soundcloud?: string };
 }
 
 interface ArtistTrack {
@@ -120,10 +118,19 @@ export default async function ArtistaPage({ params }: Props) {
   const tracks = await getArtistTracks(artista.id);
   const fotos  = await getArtistaFotos(artista.id);
 
-  const links = artista.social_links;
-  const scUrl = artista.soundcloud_url || links?.soundcloud;
-  const igHandle = links?.instagram;
-  const spotifyUrl = links?.spotify;
+  const scUrl = artista.soundcloud_url;
+
+  // Normalizar social_links al nuevo formato array
+  const rawLinks = artista.social_links;
+  const publicLinks: { label: string; url: string }[] = Array.isArray(rawLinks)
+    ? rawLinks
+    : rawLinks
+      ? [
+          rawLinks.instagram ? { label: 'Instagram', url: `https://instagram.com/${(rawLinks.instagram as string).replace('@', '')}` } : null,
+          rawLinks.spotify   ? { label: 'Spotify',   url: rawLinks.spotify as string } : null,
+          rawLinks.soundcloud ? { label: 'SoundCloud', url: rawLinks.soundcloud as string } : null,
+        ].filter(Boolean) as { label: string; url: string }[]
+      : [];
 
   return (
     <main className="min-h-screen bg-manso-black">
@@ -163,31 +170,21 @@ export default async function ArtistaPage({ params }: Props) {
               </p>
             )}
 
-            {/* Social links */}
-            {(igHandle || spotifyUrl || scUrl) && (
+            {/* Links del artista */}
+            {(publicLinks.length > 0 || scUrl) && (
               <div className="flex flex-wrap gap-3 pt-2">
-                {igHandle && (
+                {publicLinks.map((link, i) => (
                   <a
-                    href={`https://instagram.com/${igHandle.replace('@', '')}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-2 px-4 py-2.5 bg-manso-cream/5 border border-manso-cream/10 rounded-full text-manso-cream hover:bg-manso-cream/10 hover:border-manso-cream/20 transition-all"
-                  >
-                    <Instagram size={16} />
-                    <span className="text-xs font-medium">@{igHandle.replace('@', '')}</span>
-                  </a>
-                )}
-                {spotifyUrl && (
-                  <a
-                    href={spotifyUrl}
+                    key={i}
+                    href={link.url}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="flex items-center gap-2 px-4 py-2.5 bg-manso-cream/5 border border-manso-cream/10 rounded-full text-manso-cream hover:bg-manso-cream/10 hover:border-manso-cream/20 transition-all"
                   >
                     <ExternalLink size={16} />
-                    <span className="text-xs font-medium">Spotify</span>
+                    <span className="text-xs font-medium">{link.label}</span>
                   </a>
-                )}
+                ))}
                 {scUrl && (
                   <a
                     href={scUrl}

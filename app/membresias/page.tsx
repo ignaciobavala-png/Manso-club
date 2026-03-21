@@ -7,7 +7,6 @@ import { supabase } from '@/lib/supabase';
 import { Membresia } from '@/lib/types/membresia';
 import { Crown, Star } from 'lucide-react';
 import Link from 'next/link';
-import { GalleryGrid } from '@/components/Home/GalleryGrid';
 
 export default function MembresiasPage() {
   const [membresias, setMembresias] = useState<Membresia[]>([]);
@@ -70,7 +69,21 @@ export default function MembresiasPage() {
               </span>
               <div className="flex-1 h-px bg-manso-cream/10" />
             </div>
-            <GalleryGrid images={galleryImages} />
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+              {galleryImages.map((image) => (
+                <div
+                  key={image.id}
+                  className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg hover:scale-[1.02] transition-transform duration-300 cursor-pointer"
+                >
+                  <img
+                    src={image.src}
+                    alt="Manso Club Cowork"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                </div>
+              ))}
+            </div>
           </div>
         )}
 
