@@ -27,10 +27,10 @@ export function FormManifiesto() {
 
     try {
       await updateManifiesto(id, contenido.trim());
-      await fetch('/api/revalidate', {
+      await fetch('/api/revalidate-admin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ path: '/manifiesto' }),
+        body: JSON.stringify({ table: 'manifiesto' }),
       });
       setSuccess(true);
       setTimeout(() => setSuccess(false), 3000);

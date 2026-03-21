@@ -13,6 +13,8 @@ const TABLE_PATHS: Record<string, string[]> = {
   gallery: ['/'],
   about_us: ['/about'],
   membresias: ['/membresias', '/'],
+  manifiesto: ['/manifiesto'],
+  membresias_config: ['/membresias'],
 };
 
 export async function POST(request: Request) {
