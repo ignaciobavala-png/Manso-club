@@ -12,24 +12,30 @@ export interface TeamMember {
 }
 
 export async function getTeamMembers(): Promise<TeamMember[]> {
-  const { data, error } = await supabase
-    .from('team_members')
-    .select('*')
-    .eq('active', true)
-    .order('order_index', { ascending: true });
-
-  if (error) throw error;
-  return data || [];
+  try {
+    const { data, error } = await supabase
+      .from('team_members')
+      .select('*')
+      .eq('active', true)
+      .order('order_index', { ascending: true });
+    if (error) return [];
+    return data || [];
+  } catch {
+    return [];
+  }
 }
 
 export async function getAllTeamMembers(): Promise<TeamMember[]> {
-  const { data, error } = await supabase
-    .from('team_members')
-    .select('*')
-    .order('order_index', { ascending: true });
-
-  if (error) throw error;
-  return data || [];
+  try {
+    const { data, error } = await supabase
+      .from('team_members')
+      .select('*')
+      .order('order_index', { ascending: true });
+    if (error) return [];
+    return data || [];
+  } catch {
+    return [];
+  }
 }
 
 export async function upsertTeamMember(member: Partial<TeamMember> & { name: string; role: string; order_index: number }): Promise<TeamMember> {

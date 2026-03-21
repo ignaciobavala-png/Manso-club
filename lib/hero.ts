@@ -13,22 +13,30 @@ export interface HeroSlide {
 }
 
 export async function getHeroSlides(): Promise<HeroSlide[]> {
-  const { data, error } = await supabase
-    .from('hero_config')
-    .select('*')
-    .eq('active', true)
-    .order('order_index', { ascending: true });
-  if (error) throw error;
-  return data ?? [];
+  try {
+    const { data, error } = await supabase
+      .from('hero_config')
+      .select('*')
+      .eq('active', true)
+      .order('order_index', { ascending: true });
+    if (error) return [];
+    return data ?? [];
+  } catch {
+    return [];
+  }
 }
 
-export const revalidate = 30; // revalida cada 30 segundos
+export const revalidate = 30;
 
 export async function getAllHeroSlides(): Promise<HeroSlide[]> {
-  const { data, error } = await supabase
-    .from('hero_config')
-    .select('*')
-    .order('order_index', { ascending: true });
-  if (error) throw error;
-  return data ?? [];
+  try {
+    const { data, error } = await supabase
+      .from('hero_config')
+      .select('*')
+      .order('order_index', { ascending: true });
+    if (error) return [];
+    return data ?? [];
+  } catch {
+    return [];
+  }
 }

@@ -8,22 +8,30 @@ export interface GalleryImage {
 }
 
 export async function getGalleryImages(): Promise<GalleryImage[]> {
-  const { data, error } = await supabase
-    .from('gallery_images')
-    .select('*')
-    .eq('active', true)
-    .order('order_index', { ascending: true });
-  if (error) throw error;
-  return data ?? [];
+  try {
+    const { data, error } = await supabase
+      .from('gallery_images')
+      .select('*')
+      .eq('active', true)
+      .order('order_index', { ascending: true });
+    if (error) return [];
+    return data ?? [];
+  } catch {
+    return [];
+  }
 }
 
-export const revalidate = 60; // revalida cada 60 segundos
+export const revalidate = 60;
 
 export async function getAllGalleryImages(): Promise<GalleryImage[]> {
-  const { data, error } = await supabase
-    .from('gallery_images')
-    .select('*')
-    .order('order_index', { ascending: true });
-  if (error) throw error;
-  return data ?? [];
+  try {
+    const { data, error } = await supabase
+      .from('gallery_images')
+      .select('*')
+      .order('order_index', { ascending: true });
+    if (error) return [];
+    return data ?? [];
+  } catch {
+    return [];
+  }
 }

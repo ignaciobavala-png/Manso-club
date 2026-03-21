@@ -1,15 +1,19 @@
 import { supabase } from './supabase';
 
 export async function getSiteConfig(): Promise<Record<string, any>> {
-  const { data, error } = await supabase
-    .from('site_config')
-    .select('key, value, visible');
-  if (error) throw error;
-  const config: Record<string, any> = {};
-  (data ?? []).forEach(({ key, value, visible }) => {
-    if (value) config[key] = { value, visible: visible ?? true };
-  });
-  return config;
+  try {
+    const { data, error } = await supabase
+      .from('site_config')
+      .select('key, value, visible');
+    if (error) return {};
+    const config: Record<string, any> = {};
+    (data ?? []).forEach(({ key, value, visible }) => {
+      if (value) config[key] = { value, visible: visible ?? true };
+    });
+    return config;
+  } catch {
+    return {};
+  }
 }
 
 export const revalidate = 60; // revalida cada 60 segundos

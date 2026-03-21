@@ -8,17 +8,18 @@ export interface ManifiestoContent {
 }
 
 export async function getManifiesto(): Promise<ManifiestoContent> {
-  const client = createSupabaseAnon();
-  const { data, error } = await client
-    .from('manifiesto')
-    .select('*')
-    .single();
-
-  if (error || !data) {
-    return { id: 'fallback', contenido: '', updated_at: new Date().toISOString() };
+  const fallback: ManifiestoContent = { id: 'fallback', contenido: '', updated_at: new Date().toISOString() };
+  try {
+    const client = createSupabaseAnon();
+    const { data, error } = await client
+      .from('manifiesto')
+      .select('*')
+      .single();
+    if (error || !data) return fallback;
+    return data as ManifiestoContent;
+  } catch {
+    return fallback;
   }
-
-  return data as ManifiestoContent;
 }
 
 export async function updateManifiesto(id: string, contenido: string): Promise<void> {
