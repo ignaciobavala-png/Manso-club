@@ -28,7 +28,7 @@ export function GalleryGrid({ images }: { images: Image[] }) {
 
   return (
     <>
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-2 md:gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-0">
         {images.map((image, i) => (
           <div
             key={image.id}
