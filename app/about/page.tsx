@@ -78,15 +78,17 @@ export default async function AboutPage() {
           Team<span className="text-zinc-200">_</span>
         </h2>
         
-        <div className="flex flex-wrap justify-center gap-8 md:gap-12 lg:gap-16">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 lg:gap-16">
           {teamMembers.map((member) => (
             <div key={member.id} className="flex flex-col items-center">
               {member.photo_url ? (
-                <div className="w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden mb-4">
-                  <img
-                    src={member.photo_url!}
+                <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden mb-4 flex-shrink-0">
+                  <Image
+                    src={member.photo_url}
                     alt={member.name}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 128px, 160px"
                   />
                 </div>
               ) : (
@@ -96,7 +98,6 @@ export default async function AboutPage() {
               <p className="text-zinc-600 text-sm text-center">{member.role}</p>
             </div>
           ))}
-          {/* Si no hay miembros, mostrar placeholders */}
           {teamMembers.length === 0 && (
             <>
               {[1, 2, 3, 4].map((i) => (

@@ -179,7 +179,7 @@ export function FormAgenda() {
               value={formData.precio}
               onChange={e => set('precio', e.target.value)}
               min="0"
-              step="100"
+              step="1"
             />
           </div>
         </div>

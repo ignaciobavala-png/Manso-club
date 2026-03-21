@@ -7,9 +7,11 @@ import { supabase } from '@/lib/supabase';
 import { Membresia } from '@/lib/types/membresia';
 import { Crown, Star } from 'lucide-react';
 import Link from 'next/link';
+import { GalleryGrid } from '@/components/Home/GalleryGrid';
 
 export default function MembresiasPage() {
   const [membresias, setMembresias] = useState<Membresia[]>([]);
+  const [galleryImages, setGalleryImages] = useState<{ id: string; src: string }[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -37,7 +39,17 @@ export default function MembresiasPage() {
     };
 
     fetchMembresias();
+    fetchGallery();
   }, []);
+
+  const fetchGallery = async () => {
+    const { data } = await supabase
+      .from('membresias_gallery')
+      .select('id, photo_url')
+      .eq('active', true)
+      .order('order_index', { ascending: true });
+    setGalleryImages((data || []).map(img => ({ id: img.id, src: img.photo_url })));
+  };
 
   return (
     <div className="relative min-h-screen bg-manso-black">
@@ -49,6 +61,19 @@ export default function MembresiasPage() {
         subtitle="Acceso exclusivo_"
         customBg="bg-transparent"
       >
+        {/* Galería mosaico del cowork */}
+        {galleryImages.length > 0 && (
+          <div className="mb-16">
+            <div className="flex items-center gap-4 mb-6">
+              <span className="text-[9px] font-black uppercase tracking-[0.6em] text-manso-terra">
+                El espacio
+              </span>
+              <div className="flex-1 h-px bg-manso-cream/10" />
+            </div>
+            <GalleryGrid images={galleryImages} />
+          </div>
+        )}
+
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <div className="w-8 h-8 border-2 border-manso-terra/30 border-t-manso-terra rounded-full animate-spin" />

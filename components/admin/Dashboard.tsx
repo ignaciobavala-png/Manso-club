@@ -27,6 +27,8 @@ import { SiteConfigList } from './SiteConfigList';
 import { FormAboutUs } from './FormAboutUs';
 import { FormCheckoutConfig } from './FormCheckoutConfig';
 import { PedidosList } from './PedidosList';
+import { FormMembresiaGallery } from './FormMembresiaGallery';
+import { MembresiaGalleryList } from './MembresiaGalleryList';
 import { LogOut, ShoppingBag, User, Home, Calendar, Music, Crown, Settings, Star, Users, Image, Layout, FileText, CreditCard, Package } from 'lucide-react';
 
 export function Dashboard() {
@@ -321,6 +323,24 @@ export function Dashboard() {
               )}
             </div>
         </div>
+
+        {/* Galería de Membresías — sección adicional debajo del CRUD */}
+        {tab === 'membresias' && (
+          <div className="mt-10 grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-12">
+            <div className="xl:col-span-5">
+              <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
+                Galería Cowork
+              </h2>
+              <FormMembresiaGallery />
+            </div>
+            <div className="xl:col-span-7">
+              <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
+                Fotos Existentes
+              </h2>
+              <MembresiaGalleryList refreshTrigger={refreshTrigger} />
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
