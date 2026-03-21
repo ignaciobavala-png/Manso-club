@@ -60,32 +60,18 @@ export default function MembresiasPage() {
         subtitle="Acceso exclusivo_"
         customBg="bg-transparent"
       >
-        {/* Galería mosaico del cowork */}
-        {galleryImages.length > 0 && (
-          <div className="mb-16">
-            <div className="flex items-center gap-4 mb-6">
-              <span className="text-[9px] font-black uppercase tracking-[0.6em] text-manso-terra">
-                El espacio
-              </span>
-              <div className="flex-1 h-px bg-manso-cream/10" />
-            </div>
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-              {galleryImages.map((image) => (
-                <div
-                  key={image.id}
-                  className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg hover:scale-[1.02] transition-transform duration-300 cursor-pointer"
-                >
-                  <img
-                    src={image.src}
-                    alt="Manso Club Cowork"
-                    className="w-full h-full object-cover"
-                  />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
+        {/* Párrafo de gancho */}
+        <div className="mb-16 max-w-2xl">
+          <p className="text-manso-cream/80 text-base sm:text-lg leading-relaxed mb-4">
+            Manso Club es un espacio de trabajo compartido pensado para artistas, creativos y profesionales independientes que necesitan más que una silla y wifi.
+          </p>
+          <p className="text-manso-cream/60 text-sm sm:text-base leading-relaxed mb-4">
+            Las membresías de cowork te dan acceso a escritorios y salas de reunión, dirección postal, impresión, café y una comunidad activa. Las membresías de socios y residentes van más lejos: incluyen acceso extendido, descuentos en actividades y eventos, y un lugar real dentro de la escena cultural de Manso.
+          </p>
+          <p className="text-manso-cream/40 text-xs sm:text-sm leading-relaxed uppercase tracking-widest">
+            Elegí el plan que se adapta a tu ritmo — cancelás cuando querés.
+          </p>
+        </div>
 
         {loading ? (
           <div className="flex items-center justify-center py-20">
@@ -126,7 +112,7 @@ export default function MembresiasPage() {
                     {grupos[categoria].map((membresia) => (
                       <div
                         key={membresia.id}
-                        className="border border-zinc-700 p-10 rounded-[40px] bg-zinc-800/50 hover:bg-zinc-700 hover:text-manso-cream transition-all group shadow-sm relative"
+                        className="flex flex-col border border-zinc-700 p-10 rounded-[40px] bg-zinc-800/50 hover:bg-zinc-700 hover:text-manso-cream transition-all group shadow-sm relative"
                       >
                         {membresia.destacado && (
                           <div className="absolute -top-3 left-1/2 -translate-x-1/2">
@@ -169,7 +155,7 @@ export default function MembresiasPage() {
 
                         <Link
                           href={`/membresias/pagar?nombre=${encodeURIComponent(membresia.nombre)}&precio=${membresia.precio}&periodo=${encodeURIComponent(membresia.periodo)}`}
-                          className="block w-full py-4 bg-manso-cream rounded-2xl uppercase text-[10px] font-black text-manso-black hover:bg-white transition-all text-center"
+                          className="mt-auto block w-full py-4 bg-manso-cream rounded-2xl uppercase text-[10px] font-black text-manso-black hover:bg-white transition-all text-center"
                         >
                           Suscribirme
                         </Link>
@@ -181,6 +167,33 @@ export default function MembresiasPage() {
             </div>
           );
         })()}
+
+        {/* Galería mosaico del cowork — cierre visual */}
+        {galleryImages.length > 0 && (
+          <div className="mt-20">
+            <div className="flex items-center gap-4 mb-6">
+              <span className="text-[9px] font-black uppercase tracking-[0.6em] text-manso-terra">
+                El espacio
+              </span>
+              <div className="flex-1 h-px bg-manso-cream/10" />
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
+              {galleryImages.map((image) => (
+                <div
+                  key={image.id}
+                  className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg hover:scale-[1.02] transition-transform duration-300 cursor-pointer"
+                >
+                  <img
+                    src={image.src}
+                    alt="Manso Club Cowork"
+                    className="w-full h-full object-cover"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </AdaptiveSectionLayout>
     </div>
   );

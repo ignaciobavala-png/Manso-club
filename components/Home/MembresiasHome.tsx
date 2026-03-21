@@ -97,7 +97,7 @@ export const MembresiasHome = () => {
                     {grupos[categoria].map((membresia) => (
                       <div
                         key={membresia.id}
-                        className={`group rounded-[20px] sm:rounded-[30px] md:rounded-[40px] p-4 sm:p-6 md:p-8 transition-all duration-700 ease-out hover:scale-[1.02] cursor-pointer relative ${
+                        className={`group flex flex-col rounded-[20px] sm:rounded-[30px] md:rounded-[40px] p-4 sm:p-6 md:p-8 transition-all duration-700 ease-out hover:scale-[1.02] cursor-pointer relative ${
                           membresia.destacado
                             ? 'bg-black text-white border-black hover:shadow-[0_20px_60px_rgba(0,0,0,0.25)]'
                             : 'bg-white border-2 border-gray-300 hover:border-manso-black/40 hover:shadow-[0_20px_60px_rgba(0,0,0,0.08)]'
@@ -157,7 +157,7 @@ export const MembresiasHome = () => {
 
                         <Link
                           href={`/membresias/pagar?nombre=${encodeURIComponent(membresia.nombre)}&precio=${membresia.precio}&periodo=${encodeURIComponent(membresia.periodo)}`}
-                          className={`block w-full px-4 sm:px-6 py-3 sm:py-4 text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all duration-500 ease-out active:scale-95 rounded-full text-center ${
+                          className={`mt-auto block w-full px-4 sm:px-6 py-3 sm:py-4 text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all duration-500 ease-out active:scale-95 rounded-full text-center ${
                             membresia.destacado
                               ? 'bg-white text-black hover:bg-manso-olive hover:text-white'
                               : 'bg-black text-white hover:bg-manso-black/80'

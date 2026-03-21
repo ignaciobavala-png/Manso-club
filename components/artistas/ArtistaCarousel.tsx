@@ -46,7 +46,7 @@ export function ArtistaCarousel({ fotos, artistaNombre }: Props) {
         Galería
       </h2>
 
-      <div className="relative overflow-hidden rounded-3xl aspect-[16/9] bg-zinc-900">
+      <div className="relative overflow-hidden rounded-3xl bg-zinc-900 mx-auto max-w-xl aspect-[3/4] md:aspect-[4/3]">
         <AnimatePresence initial={false} custom={direction} mode="wait">
           <motion.img
             key={current}
@@ -58,7 +58,7 @@ export function ArtistaCarousel({ fotos, artistaNombre }: Props) {
             animate="center"
             exit="exit"
             transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
-            className="absolute inset-0 w-full h-full object-cover"
+            className="absolute inset-0 w-full h-full object-contain p-2"
           />
         </AnimatePresence>
 

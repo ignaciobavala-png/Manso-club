@@ -88,7 +88,7 @@ export function AdaptiveSectionLayout({
       <div className="max-w-[1400px] mx-auto">
         <div className="mb-10">
           <h1 className={`text-4xl md:text-6xl font-black uppercase italic tracking-tighter leading-none ${theme.titleColor}`}>
-            {title}<span className="text-zinc-200">_</span>
+            {title}<span className="text-zinc-200 cursor-blink">_</span>
           </h1>
           <p className={`text-[10px] font-black uppercase tracking-[0.5em] ${theme.subtitleColor} mt-4 ml-2 italic`}>
             {subtitle}

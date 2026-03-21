@@ -29,7 +29,7 @@ export const HeroCarousel = ({ slides }: { slides: any[] }) => {
   const title = getTitle(currentSlide);
 
   return (
-    <section id="hero" className="relative min-h-screen flex flex-col justify-end md:justify-center px-8 md:px-20 py-10 md:py-20 overflow-hidden" style={{ backgroundColor: '#1D1D1B' }}>
+    <section id="hero" className="relative h-screen flex flex-col justify-end md:justify-center px-8 md:px-20 pt-24 pb-10 md:pt-28 md:pb-16 overflow-hidden" style={{ backgroundColor: '#1D1D1B' }}>
       {/* Fondo dinámico: imagen o gradiente */}
       {currentSlide.media_url && currentSlide.tipo === 'imagen' ? (
         <div
@@ -72,8 +72,8 @@ export const HeroCarousel = ({ slides }: { slides: any[] }) => {
               </h1>
             </header>
 
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 mt-4">
-              <p className="max-w-[450px] text-manso-cream/80 text-base md:text-xl leading-relaxed font-light min-h-[100px]">
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-10 mt-4">
+              <p className="max-w-[450px] text-manso-cream/80 text-sm md:text-base leading-relaxed font-light">
                 {currentSlide.description}
               </p>
               

@@ -6,7 +6,7 @@ import { createSupabaseAnon } from '@/lib/supabase';
 import { ArrowLeft, ExternalLink, Music } from 'lucide-react';
 import { ArtistProfilePlayer } from './ArtistProfilePlayer';
 import { ArtistTrackManager } from '@/components/artistas/ArtistTrackManager';
-import { ArtistaCarousel } from '@/components/artistas/ArtistaCarousel';
+import { GalleryGrid } from '@/components/Home/GalleryGrid';
 
 export const revalidate = 30;
 
@@ -161,7 +161,7 @@ export default async function ArtistaPage({ params }: Props) {
             )}
 
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-black uppercase italic tracking-tighter leading-none text-manso-cream">
-              {artista.nombre}<span className="text-zinc-600">_</span>
+              {artista.nombre}<span className="text-zinc-600 cursor-blink">_</span>
             </h1>
 
             {artista.bio && (
@@ -245,9 +245,14 @@ export default async function ArtistaPage({ params }: Props) {
         </div>
       </section>
 
-      {/* Carrusel de galería — solo si hay fotos */}
+      {/* Mosaico de obras — solo si hay fotos */}
       {fotos.length > 0 && (
-        <ArtistaCarousel fotos={fotos} artistaNombre={artista.nombre} />
+        <section className="max-w-[1400px] mx-auto px-6 md:px-12 pb-20">
+          <h2 className="text-[10px] font-black uppercase tracking-[0.5em] text-manso-cream/40 mb-6">
+            Obras
+          </h2>
+          <GalleryGrid images={fotos.map(f => ({ id: f.id, src: f.url }))} />
+        </section>
       )}
 
     </main>

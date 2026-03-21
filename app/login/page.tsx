@@ -36,7 +36,7 @@ export default function LoginPage() {
       <div className="w-full max-w-sm bg-manso-cream/5 p-10 rounded-[40px] border border-manso-cream/10 shadow-2xl">
         <div className="text-center mb-10">
           <img src="/manso.png" alt="Manso Club" className="h-16 w-auto mx-auto mb-4 opacity-80" />
-          <h1 className="text-4xl font-black italic tracking-tighter uppercase text-manso-cream">Manso_</h1>
+          <h1 className="text-4xl font-black italic tracking-tighter uppercase text-manso-cream">Manso<span className="cursor-blink">_</span></h1>
           <p className="text-[9px] font-bold text-manso-cream/40 uppercase tracking-[0.4em] mt-2">Acceso Exclusivo</p>
         </div>
 

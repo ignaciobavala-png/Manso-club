@@ -80,36 +80,19 @@ export const Navbar = () => {
       }`}>
         <div className="max-w-[1600px] mx-auto px-8 flex justify-between items-center">
 
-          {/* LADO IZQUIERDO: botón + y logo */}
-          <div className="flex items-center gap-4 ml-8">
-            {/* Botón + que rota a × */}
-            <button
-              onClick={() => setIsSidebarOpen(prev => !prev)}
-              aria-label="Abrir menú de secciones"
-              className={`transition-all duration-300 hover:text-manso-terra focus:outline-none ${
-                getTextColor(isLight)
-              }`}
-            >
-              <span
-                className="block text-2xl font-thin leading-none select-none transition-transform duration-300"
-                style={{ transform: isSidebarOpen ? 'rotate(45deg)' : 'rotate(0deg)' }}
-              >
-                +
-              </span>
-            </button>
-
-            {/* Logo */}
+          {/* LOGO */}
+          <div className="ml-8">
             <Link href="/" className="flex items-center group">
               <img
-                src="/estesi.png"
+                src={isLight ? '/estesi.png' : '/finalfinal.png'}
                 alt="Manso Club Logo"
-                className="h-14 w-auto transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3"
+                className="h-14 w-auto transition-all duration-500 group-hover:scale-110 group-hover:rotate-3"
               />
             </Link>
           </div>
 
           {/* NAVEGACIÓN DESKTOP */}
-          <div className="hidden md:flex gap-10">
+          <div className="hidden md:flex items-center gap-10">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
@@ -121,6 +104,18 @@ export const Navbar = () => {
                 {link.name}
               </Link>
             ))}
+
+            {/* Burger button sidebar */}
+            <button
+              onClick={() => setIsSidebarOpen(prev => !prev)}
+              aria-label="Abrir menú de secciones"
+              className={`flex items-center gap-2 border rounded-full px-3 py-1.5 text-[9px] font-black uppercase tracking-widest focus:outline-none transition-all duration-300 hover:bg-manso-terra hover:border-manso-terra hover:text-white ${
+                getTextColor(isLight)
+              } ${isLight ? 'border-black/30' : 'border-white/30'}`}
+            >
+              {isSidebarOpen ? <X size={13} /> : <Menu size={13} />}
+              más
+            </button>
           </div>
 
           {/* ACCIONES */}
@@ -171,13 +166,24 @@ export const Navbar = () => {
       />
       {/* Panel */}
       <div
-        className={`fixed top-0 left-0 h-full w-72 z-[999] bg-manso-black flex flex-col pt-28 pb-12 px-10 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
+        className={`fixed top-0 left-0 h-full w-72 z-[999] bg-manso-black flex flex-col pt-10 pb-12 px-10 transition-transform duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
+        onMouseLeave={() => setIsSidebarOpen(false)}
       >
-        <p className="text-[9px] font-black uppercase tracking-[0.6em] text-manso-terra mb-10">
-          Manso Club
-        </p>
+        {/* Cabecera con X para mobile */}
+        <div className="flex items-center justify-between mb-10">
+          <p className="text-[9px] font-black uppercase tracking-[0.6em] text-manso-terra">
+            Manso Club
+          </p>
+          <button
+            onClick={() => setIsSidebarOpen(false)}
+            className="md:hidden text-manso-cream/50 hover:text-manso-cream transition-colors"
+            aria-label="Cerrar menú"
+          >
+            <X size={20} />
+          </button>
+        </div>
 
         <nav className="flex flex-col gap-8">
           {sidebarLinks.map((link) => (

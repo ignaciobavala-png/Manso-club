@@ -24,5 +24,23 @@ export default async function ArtistasPage() {
     .eq('active', true)
     .order('nombre', { ascending: true });
 
-  return <ArtistasClient artistas={artistas || []} />;
+  const visuales = (artistas || []).filter(a => a.tipo === 'Artista Visual');
+  const visualIds = visuales.map(a => a.id);
+
+  let obrasVisuales: { id: string; src: string; artistaSlug: string }[] = [];
+  if (visualIds.length > 0) {
+    const { data: fotos } = await supabase
+      .from('artista_fotos')
+      .select('id, url, artista_id, orden')
+      .in('artista_id', visualIds)
+      .order('orden', { ascending: true });
+
+    obrasVisuales = (fotos || []).map(f => ({
+      id: f.id,
+      src: f.url,
+      artistaSlug: visuales.find(a => a.id === f.artista_id)?.slug || '',
+    }));
+  }
+
+  return <ArtistasClient artistas={artistas || []} obrasVisuales={obrasVisuales} />;
 }
