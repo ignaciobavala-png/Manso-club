@@ -11,6 +11,7 @@ import Link from 'next/link';
 export default function MembresiasPage() {
   const [membresias, setMembresias] = useState<Membresia[]>([]);
   const [galleryImages, setGalleryImages] = useState<{ id: string; src: string }[]>([]);
+  const [textoIntro, setTextoIntro] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -37,8 +38,17 @@ export default function MembresiasPage() {
       setLoading(false);
     };
 
+    const fetchTextoIntro = async () => {
+      const { data } = await supabase
+        .from('membresias_config')
+        .select('texto_intro')
+        .single();
+      setTextoIntro(data?.texto_intro || '');
+    };
+
     fetchMembresias();
     fetchGallery();
+    fetchTextoIntro();
   }, []);
 
   const fetchGallery = async () => {
@@ -61,17 +71,29 @@ export default function MembresiasPage() {
         customBg="bg-transparent"
       >
         {/* Párrafo de gancho */}
-        <div className="mb-16 max-w-2xl">
-          <p className="text-manso-cream/80 text-base sm:text-lg leading-relaxed mb-4">
-            Manso Club es un espacio de trabajo compartido pensado para artistas, creativos y profesionales independientes que necesitan más que una silla y wifi.
-          </p>
-          <p className="text-manso-cream/60 text-sm sm:text-base leading-relaxed mb-4">
-            Las membresías de cowork te dan acceso a escritorios y salas de reunión, dirección postal, impresión, café y una comunidad activa. Las membresías de socios y residentes van más lejos: incluyen acceso extendido, descuentos en actividades y eventos, y un lugar real dentro de la escena cultural de Manso.
-          </p>
-          <p className="text-manso-cream/40 text-xs sm:text-sm leading-relaxed uppercase tracking-widest">
-            Elegí el plan que se adapta a tu ritmo — cancelás cuando querés.
-          </p>
-        </div>
+        {textoIntro === null ? null : textoIntro.trim() ? (
+          <div className="mb-16 max-w-2xl space-y-4">
+            {textoIntro.trim().split(/\n\n+/).map((p, i) => (
+              <p key={i} className="text-manso-cream/80 text-base sm:text-lg leading-relaxed">
+                {p}
+              </p>
+            ))}
+          </div>
+        ) : (
+          <div className="mb-16 max-w-2xl space-y-4" aria-hidden="true">
+            {[
+              ['w-full', 'w-11/12', 'w-4/5'],
+              ['w-full', 'w-full', 'w-10/12', 'w-3/4'],
+              ['w-9/12', 'w-full'],
+            ].map((lineas, pi) => (
+              <div key={pi} className="space-y-2">
+                {lineas.map((w, li) => (
+                  <div key={li} className={`${w} h-[1.1em] rounded-sm bg-manso-cream/10`} />
+                ))}
+              </div>
+            ))}
+          </div>
+        )}
 
         {loading ? (
           <div className="flex items-center justify-center py-20">

@@ -29,6 +29,7 @@ import { FormCheckoutConfig } from './FormCheckoutConfig';
 import { PedidosList } from './PedidosList';
 import { FormMembresiaGallery } from './FormMembresiaGallery';
 import { MembresiaGalleryList } from './MembresiaGalleryList';
+import { FormMembresiaTexto } from './FormMembresiaTexto';
 import { FormMultimedia } from './FormMultimedia';
 import { MultimediaList } from './MultimediaList';
 import { PropuestasList } from './PropuestasList';
@@ -368,22 +369,32 @@ export function Dashboard() {
             </div>
         </div>
 
-        {/* Galería de Membresías — sección adicional debajo del CRUD */}
+        {/* Secciones adicionales de Membresías */}
         {tab === 'membresias' && (
-          <div className="mt-10 grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-12">
-            <div className="xl:col-span-5">
-              <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
-                Galería Cowork
-              </h2>
-              <FormMembresiaGallery />
+          <>
+            <div className="mt-10 grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-12">
+              <div className="xl:col-span-5">
+                <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
+                  Texto Intro
+                </h2>
+                <FormMembresiaTexto />
+              </div>
+              <div className="xl:col-span-7">
+                <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
+                  Galería Cowork
+                </h2>
+                <FormMembresiaGallery />
+              </div>
             </div>
-            <div className="xl:col-span-7">
-              <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
-                Fotos Existentes
-              </h2>
-              <MembresiaGalleryList refreshTrigger={refreshTrigger} />
+            <div className="mt-10 grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-12">
+              <div className="xl:col-span-12">
+                <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
+                  Fotos Existentes
+                </h2>
+                <MembresiaGalleryList refreshTrigger={refreshTrigger} />
+              </div>
             </div>
-          </div>
+          </>
         )}
       </div>
     </div>
