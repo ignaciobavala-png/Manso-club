@@ -81,17 +81,17 @@ export const Navbar = () => {
         <div className="max-w-[1600px] mx-auto px-8 flex justify-between items-center">
 
           {/* LOGO */}
-          <div className="ml-8">
+          <div>
             <Link href="/" className="flex items-center gap-3 group">
               <img
                 src={isLight ? '/manso-logo-black.png' : '/manso-logo-white.png'}
                 alt="Manso Club Logo"
-                className="h-10 w-auto transition-all duration-500 group-hover:scale-105"
+                className="h-8 w-auto transition-all duration-500 group-hover:scale-105"
               />
               <img
                 src={isLight ? '/manso-name-black.png' : '/manso-name-white.png'}
                 alt="Manso Club"
-                className="h-10 w-auto transition-all duration-500 group-hover:scale-105"
+                className="h-8 w-auto transition-all duration-500 group-hover:scale-105"
               />
             </Link>
           </div>
