@@ -1,8 +1,15 @@
 import { ParticleBackground } from '@/components/Home/ParticleBackground';
+import { getManifiesto } from '@/lib/manifiesto';
 
+export const revalidate = 60;
 export const metadata = { title: 'Manifiesto — Manso Club' };
 
-export default function ManifiestoPage() {
+export default async function ManifiestoPage() {
+  const { contenido } = await getManifiesto();
+  const parrafos = contenido.trim()
+    ? contenido.trim().split(/\n\n+/)
+    : [];
+
   return (
     <div className="relative min-h-screen bg-manso-black">
       <ParticleBackground />
@@ -15,37 +22,35 @@ export default function ManifiestoPage() {
           Manifiesto
         </h1>
 
-        <div className="space-y-10 text-manso-cream/80 font-light leading-relaxed text-lg md:text-xl">
-          <p>
-            Manso Club nació de una convicción simple: el talento no necesita permiso para existir,
-            pero sí necesita un lugar donde encontrarse.
-          </p>
-          <p>
-            Somos una central de conexiones. Un espacio donde artistas, creadores, pensadores
-            y hacedores confluyen para generar algo que ninguno podría construir solo.
-            La sinergia no es un concepto abstracto acá — es lo que pasa cuando dos personas
-            que no deberían haberse conocido se sientan en la misma mesa.
-          </p>
-          <p>
-            Creemos en el proceso tanto como en el resultado. En la conversación que antecede
-            al proyecto. En el ensayo antes de la obra. En el boceto antes del mural.
-            Manso no es un destino final — es el lugar donde las cosas empiezan a tomar forma.
-          </p>
-          <p>
-            Conectamos talentos con oportunidades porque entendemos que las oportunidades
-            no caen del cielo: se construyen, se cultivan, se comparten.
-            Cada artista que pasa por acá lleva consigo algo de los demás.
-            Cada proyecto que nace acá tiene ADN colectivo.
-          </p>
-          <p>
-            Lo que nos une no es el género, ni el formato, ni la disciplina.
-            Lo que nos une es la urgencia de hacer. La necesidad de crear.
-            El deseo de que lo que existe sea diferente a lo que existía antes.
-          </p>
-          <p className="text-manso-cream font-medium">
-            Eso es Manso. Un lugar donde el hacer es el lenguaje común.
-          </p>
-        </div>
+        {parrafos.length > 0 ? (
+          <div className="space-y-10 text-manso-cream/80 font-light leading-relaxed text-lg md:text-xl">
+            {parrafos.map((p, i) => (
+              <p key={i} className={i === parrafos.length - 1 ? 'text-manso-cream font-medium' : ''}>
+                {p}
+              </p>
+            ))}
+          </div>
+        ) : (
+          /* Placeholder: barras de texto redactado */
+          <div className="space-y-10" aria-hidden="true">
+            {[
+              ['w-full', 'w-11/12', 'w-full', 'w-4/5'],
+              ['w-full', 'w-full', 'w-10/12', 'w-full', 'w-3/4'],
+              ['w-11/12', 'w-full', 'w-full', 'w-9/12'],
+              ['w-full', 'w-10/12', 'w-full', 'w-full', 'w-8/12'],
+              ['w-full', 'w-11/12', 'w-4/5'],
+            ].map((lineas, pi) => (
+              <div key={pi} className="space-y-3">
+                {lineas.map((w, li) => (
+                  <div
+                    key={li}
+                    className={`${w} h-[1.25em] rounded-sm bg-manso-cream/10`}
+                  />
+                ))}
+              </div>
+            ))}
+          </div>
+        )}
 
         <div className="mt-20 w-16 h-px bg-manso-terra" />
         <p className="mt-6 text-[9px] uppercase tracking-[0.5em] text-manso-cream/20">
