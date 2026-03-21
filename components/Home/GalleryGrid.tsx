@@ -33,7 +33,7 @@ export function GalleryGrid({ images }: { images: Image[] }) {
           <div
             key={image.id}
             onClick={() => setSelectedIndex(i)}
-            className="group relative aspect-[4/3] overflow-hidden rounded-2xl cursor-pointer outline-none transition-transform duration-300 ease-out active:scale-125 active:z-20 hover:scale-105 hover:z-10"
+            className="group relative aspect-[4/3] overflow-hidden cursor-pointer outline-none transition-transform duration-300 ease-out active:scale-125 active:z-20 hover:scale-105 hover:z-10"
           >
             <img
               src={image.src}
