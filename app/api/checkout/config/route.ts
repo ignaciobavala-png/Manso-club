@@ -5,18 +5,10 @@ import { createSupabaseServer } from '@/lib/supabase';
 // GET - Obtener configuración del checkout
 export async function GET() {
   try {
-    console.log('🔍 Obteniendo configuración de checkout...');
-    
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    
-    console.log('🔑 Variables de entorno:', {
-      supabaseUrl: supabaseUrl ? '✅ Configurada' : '❌ No configurada',
-      supabaseAnonKey: supabaseAnonKey ? '✅ Configurada' : '❌ No configurada'
-    });
 
     if (!supabaseUrl || !supabaseAnonKey) {
-      console.error('❌ Variables de entorno de Supabase no configuradas');
       return NextResponse.json(
         { error: 'Configuración de base de datos incompleta' },
         { status: 500 }
@@ -30,7 +22,6 @@ export async function GET() {
       },
     });
     
-    console.log('📊 Consultando tabla checkout_config...');
     const { data, error } = await supabase
       .from('checkout_config')
       .select('key, value')
@@ -58,7 +49,6 @@ export async function GET() {
       
       // Si la tabla no existe, devolver configuración por defecto
       if (error.message?.includes('relation') && error.message?.includes('does not exist')) {
-        console.log('⚠️ Tabla checkout_config no existe, usando valores por defecto');
         const defaultConfig = {
           banco_nombre: 'Banco Galicia',
           banco_cbu: '0070053430000001234567',
@@ -85,8 +75,6 @@ export async function GET() {
       );
     }
 
-    console.log('✅ Configuración obtenida:', data?.length || 0, 'items');
-
     // Convertir array a objeto
     const config: Record<string, string> = {};
     data?.forEach((item: { key: string; value: string }) => {
@@ -95,7 +83,6 @@ export async function GET() {
 
     // Si no hay datos, usar valores por defecto
     if (Object.keys(config).length === 0) {
-      console.log('⚠️ No hay configuración guardada, usando valores por defecto');
       const defaultConfig = {
         banco_nombre: 'Banco Galicia',
         banco_cbu: '0070053430000001234567',

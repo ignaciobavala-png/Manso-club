@@ -115,7 +115,6 @@ export function FormHero() {
           const error = await response.text();
           console.error('Error en revalidación:', response.status, error);
         } else {
-          console.log('✅ Cache revalidado exitosamente');
         }
       } catch (error) {
         console.error('❌ Error revalidando cache:', error);

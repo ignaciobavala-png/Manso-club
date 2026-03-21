@@ -35,10 +35,8 @@ export default function CheckoutPage() {
     // Pequeño delay para asegurar que el carrito esté cargado
     const timer = setTimeout(() => {
       if (items.length === 0 && !isSubmitted) {
-        console.log('DEBUG: Carrito vacío, redirigiendo a tienda');
         router.push('/tienda');
       } else {
-        console.log('DEBUG: Carrito tiene items, permaneciendo en checkout:', items.length);
       }
     }, 100);
 

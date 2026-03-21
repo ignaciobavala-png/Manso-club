@@ -34,7 +34,6 @@ export const TiendaHome = () => {
       .order('created_at', { ascending: false })
       .limit(4);
 
-    console.log('TiendaHome Debug:', { data, error });
 
     if (error) {
       // Fallback a mock data si hay error

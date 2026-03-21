@@ -32,15 +32,21 @@ export default function AgendaPage() {
   const anioActual = now.getFullYear();
 
   useEffect(() => {
-    supabase
-      .from('agenda')
-      .select('*')
-      .eq('activo', true)
-      .order('created_at', { ascending: true })
-      .then(({ data }) => {
+    const fetch = async () => {
+      try {
+        const { data } = await supabase
+          .from('agenda')
+          .select('*')
+          .eq('activo', true)
+          .order('created_at', { ascending: true });
         setItems(data || []);
+      } catch {
+        // silently fail
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+    fetch();
   }, []);
 
   // Agrupar por categoría

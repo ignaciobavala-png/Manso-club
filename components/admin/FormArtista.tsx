@@ -187,7 +187,6 @@ export function FormArtista() {
         if (!response.ok) {
           console.error('Error en revalidación artistas:', response.status);
         } else {
-          console.log('✅ Cache artistas revalidado');
         }
       } catch (error) {
         console.error('❌ Error revalidando cache artistas:', error);

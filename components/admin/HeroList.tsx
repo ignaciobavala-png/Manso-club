@@ -30,7 +30,6 @@ export function HeroList({ refreshTrigger }: HeroListProps) {
   const toggleActive = async (id: string, active: boolean) => {
     try {
       const { data: { session } } = await supabase.auth.getSession();
-      console.log('Session:', session?.user?.id, session?.user?.email);
       
       const { error } = await supabase
         .from('hero_config')

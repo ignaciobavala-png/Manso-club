@@ -15,18 +15,10 @@ export async function GET() {
   if (!admin) return NextResponse.json({ error: 'No autorizado' }, { status: 401 });
 
   try {
-    console.log('🔍 Iniciando fetch de pedidos...');
-
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
     const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    
-    console.log('🔑 Variables de entorno:', {
-      supabaseUrl: supabaseUrl ? '✅ Configurada' : '❌ No configurada',
-      supabaseKey: supabaseKey ? '✅ Configurada' : '❌ No configurada'
-    });
 
     if (!supabaseUrl || !supabaseKey) {
-      console.error('❌ Variables de entorno de Supabase no configuradas');
       return NextResponse.json(
         { error: 'Configuración de base de datos incompleta' },
         { status: 500 }
@@ -35,7 +27,6 @@ export async function GET() {
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    console.log('📊 Consultando tabla pedidos...');
     const { data: pedidos, error } = await supabase
       .from('pedidos')
       .select('*')
@@ -64,7 +55,6 @@ export async function GET() {
       );
     }
 
-    console.log('✅ Pedidos obtenidos:', pedidos?.length || 0);
     return NextResponse.json({
       success: true,
       pedidos: pedidos || []

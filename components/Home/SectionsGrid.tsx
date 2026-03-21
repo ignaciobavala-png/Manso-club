@@ -119,7 +119,7 @@ export function SectionsGrid() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.45, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
             >
-              <div className="aspect-[4/5 overflow-hidden rounded-[2rem bg-zinc-50 mb-4 relative">
+              <div className="aspect-[4/5] overflow-hidden rounded-[2rem] bg-zinc-50 mb-4 relative">
                 <img
                   src={prod.imagen_url}
                   alt={prod.nombre}
