@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { getSiteConfig, setSiteConfig } from '@/lib/siteConfig';
-import { Settings, BarChart3, Type } from 'lucide-react';
+import { Settings, BarChart3, Type, Search } from 'lucide-react';
 
 export function FormSiteConfig() {
   const [loading, setLoading] = useState(false);
@@ -97,6 +97,53 @@ export function FormSiteConfig() {
       </div>
 
       <div className="space-y-8">
+        {/* Sección SEO */}
+        <div className="space-y-4">
+          <div className="flex items-center gap-3 mb-2">
+            <Search size={20} className="text-manso-terra" />
+            <h3 className="text-lg font-black uppercase tracking-tighter text-manso-cream">
+              SEO — Google
+            </h3>
+          </div>
+          <p className="text-xs text-manso-cream/50 mb-4">
+            Así aparece el sitio cuando alguien busca "Manso Club" en Google.
+          </p>
+          {/* Preview estilo Google */}
+          <div className="bg-white rounded-2xl p-5 border border-manso-cream/10">
+            <p className="text-[#1a0dab] text-lg font-medium leading-tight">
+              {formData.seo_title || 'Manso Club | Espacio Creativo'}
+            </p>
+            <p className="text-[#006621] text-xs mt-0.5">mansoclub.com.ar</p>
+            <p className="text-[#545454] text-sm mt-1 leading-snug">
+              {formData.seo_description || 'Cultura electrónica y diseño en Buenos Aires'}
+            </p>
+          </div>
+          <input
+            type="text"
+            placeholder="Título (ej: Manso Club | Espacio Creativo)"
+            maxLength={60}
+            className="w-full bg-manso-cream/10 p-3 rounded-xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all text-sm"
+            value={formData.seo_title || ''}
+            onChange={(e) => handleInputChange('seo_title', e.target.value)}
+          />
+          <p className="text-[10px] text-manso-cream/30 text-right -mt-2">
+            {(formData.seo_title || '').length}/60 caracteres recomendados
+          </p>
+          <textarea
+            placeholder="Descripción (ej: Cultura electrónica y diseño en Buenos Aires)"
+            maxLength={160}
+            rows={3}
+            className="w-full bg-manso-cream/10 p-3 rounded-xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/40 transition-all resize-none text-sm"
+            value={formData.seo_description || ''}
+            onChange={(e) => handleInputChange('seo_description', e.target.value)}
+          />
+          <p className="text-[10px] text-manso-cream/30 text-right -mt-2">
+            {(formData.seo_description || '').length}/160 caracteres recomendados
+          </p>
+        </div>
+
+        <div className="w-full h-px bg-manso-cream/10" />
+
         {/* Sección Títulos Principales */}
         <div className="space-y-6">
           <div className="text-center mb-6">

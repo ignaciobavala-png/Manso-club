@@ -6,21 +6,32 @@ import { Navbar } from "@/components/Layout/Navbar";
 import { Footer } from "@/components/Layout/Footer";
 import { GlobalMusicPlayer } from "@/components/Layout/GlobalMusicPlayer";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
+import { createSupabaseAnon } from "@/lib/supabase";
 
-export const metadata: Metadata = {
-  title: "Manso Club | Espacio Creativo",
-  description: "Cultura electrónica y diseño en Buenos Aires",
-  icons: {
-    icon: '/manso.png',
-    apple: '/manso.png',
-  },
-  verification: {
-    google: '_WJR-FPgtK6p2hcrhWfWvegrKEyMxw5Jkyx6Qqj4XZo',
-    other: {
-      "facebook-domain-verification": "nvn6bg2zurylkrkhpkuusxsrida80v",
+export async function generateMetadata(): Promise<Metadata> {
+  const supabase = createSupabaseAnon();
+  const { data } = await supabase
+    .from('site_config')
+    .select('key, value')
+    .in('key', ['seo_title', 'seo_description']);
+
+  const config = Object.fromEntries((data ?? []).map(({ key, value }) => [key, value]));
+
+  return {
+    title: config.seo_title || "Manso Club | Espacio Creativo",
+    description: config.seo_description || "Cultura electrónica y diseño en Buenos Aires",
+    icons: {
+      icon: '/manso.png',
+      apple: '/manso.png',
     },
-  },
-};
+    verification: {
+      google: '_WJR-FPgtK6p2hcrhWfWvegrKEyMxw5Jkyx6Qqj4XZo',
+      other: {
+        "facebook-domain-verification": "nvn6bg2zurylkrkhpkuusxsrida80v",
+      },
+    },
+  };
+}
 
 export default function RootLayout({
   children,
