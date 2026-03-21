@@ -86,17 +86,12 @@ export const Navbar = () => {
         <div className="max-w-[1600px] mx-auto px-8 flex justify-between items-center">
           
           {/* LOGO OFICIAL */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <img 
-              src="/manso.png" 
-              alt="Manso Club Logo" 
-              className="h-10 w-auto transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3"
+          <Link href="/" className="flex items-center group ml-8">
+            <img
+              src="/estesi.png"
+              alt="Manso Club Logo"
+              className="h-14 w-auto transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3"
             />
-            <h1 className={`text-xl font-black uppercase tracking-tighter leading-none italic transition-colors duration-500 ${
-              getTextColor(isCartOpen || isLightBgPage || isScrolled)
-            }`}>
-              Manso Club_
-            </h1>
           </Link>
 
           {/* NAVEGACIÓN DESKTOP */}
