@@ -1,0 +1,118 @@
+import Image from 'next/image';
+import { AdaptiveSectionLayout } from '@/components/ui/AdaptiveSectionLayout';
+import { getTeamMembers } from '@/lib/team';
+import { getAboutUs } from '@/lib/aboutUs';
+import { ParticleBackground } from '@/components/Home/ParticleBackground';
+
+export const revalidate = 60; // revalida cada 60 segundos
+
+export default async function AboutPage() {
+  const teamMembers = await getTeamMembers();
+  const aboutUs = await getAboutUs();
+
+  return (
+    <div
+      className="relative min-h-screen bg-gray-100"
+      style={{
+        backgroundImage: `linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)`,
+        backgroundSize: '48px 48px',
+      }}
+    >
+      <ParticleBackground mode="light" />
+      <AdaptiveSectionLayout title="About Us" subtitle={aboutUs.subtitle} customBg="bg-transparent">
+      {/* Sección principal con layout dinámico */}
+      <div className="space-y-12">
+        {/* Layout original mejorado: texto y foto principal */}
+        <div className="flex flex-col lg:flex-row gap-8 lg:gap-12 items-start">
+          {/* Texto principal */}
+          <div className="w-full lg:w-1/2 space-y-6 pr-0 lg:pr-8 px-4 lg:px-0">
+            {aboutUs.description.split('\n').filter(p => p.trim()).map((paragraph, index) => (
+              <p key={index} className="text-zinc-800 text-lg md:text-xl leading-relaxed font-normal break-words">
+                {paragraph}
+              </p>
+            ))}
+          </div>
+          
+          {/* Foto principal */}
+          <div className="w-full lg:w-1/2 relative">
+            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg">
+              {aboutUs.main_photo_url ? (
+                <Image
+                  src={aboutUs.main_photo_url}
+                  alt="Manso Club — Fachada del edificio"
+                  fill
+                  className="object-cover"
+                  sizes="(max-width: 1024px) 100vw, 50vw"
+                  quality={95}
+                  priority
+                />
+              ) : (
+                <div className="w-full h-full bg-manso-cream/10 flex items-center justify-center">
+                  <p className="text-manso-cream/40 text-sm font-medium">No hay foto principal</p>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+      {/* Galería de fotos */}
+      {aboutUs.gallery_photos && aboutUs.gallery_photos.length > 0 && (
+        <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
+          {aboutUs.gallery_photos.map((photo, index) => (
+            <div key={index} className="relative aspect-[4/3] w-full sm:w-1/2 rounded-2xl overflow-hidden">
+              <Image
+                src={photo}
+                alt={`Manso Club — Galería ${index + 1}`}
+                fill
+                className="object-cover"
+                sizes="(max-width: 640px) 100vw, 50vw"
+              />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Team Section */}
+      <div className="mt-16 md:mt-24">
+        <h2 className="text-3xl md:text-4xl font-black uppercase italic tracking-tighter leading-none text-manso-black mb-12">
+          Team<span className="text-zinc-200 cursor-blink">_</span>
+        </h2>
+        
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 lg:gap-16">
+          {teamMembers.map((member) => (
+            <div key={member.id} className="flex flex-col items-center">
+              {member.photo_url ? (
+                <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden mb-4 flex-shrink-0">
+                  <Image
+                    src={member.photo_url}
+                    alt={member.name}
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 128px, 160px"
+                  />
+                </div>
+              ) : (
+                <div className="w-32 h-32 md:w-40 md:h-40 bg-zinc-800 rounded-full mb-4"></div>
+              )}
+              <p className="text-manso-black font-medium text-center">{member.name}</p>
+              <p className="text-zinc-600 text-sm text-center">{member.role}</p>
+            </div>
+          ))}
+          {teamMembers.length === 0 && (
+            <>
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="flex flex-col items-center">
+                  <div className="w-32 h-32 md:w-40 md:h-40 bg-zinc-800 rounded-full mb-4"></div>
+                  <p className="text-manso-black font-medium text-center">Nombre</p>
+                  <p className="text-zinc-600 text-sm text-center">Rol</p>
+                </div>
+              ))}
+            </>
+          )}
+        </div>
+      </div>
+      </div>
+    </AdaptiveSectionLayout>
+    </div>
+  );
+}

@@ -1,0 +1,104 @@
+'use client';
+
+import { ArrowRight } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
+import { supabase } from '@/lib/supabase';
+
+// Tipado senior para los eventos
+interface Evento {
+  id: string;
+  fecha: string;
+  titulo: string;
+  categoria: string;
+  disponible: boolean;
+  orden: number;
+  activo: boolean;
+}
+
+export const EventList = () => {
+  const [eventos, setEventos] = useState<Evento[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchEventos();
+  }, []);
+
+  const fetchEventos = async () => {
+    const { data, error } = await supabase
+      .from('eventos_home')
+      .select('*')
+      .eq('activo', true)
+      .order('orden', { ascending: true });
+
+    if (error) {
+      // Fallback a mock data si hay error
+      setEventos([
+        { id: '1', fecha: '12 FEB', titulo: 'Degustación & Vinilos', categoria: 'Club', disponible: true, orden: 1, activo: true },
+        { id: '2', fecha: '15 FEB', titulo: 'Techno Workshop: Ableton 12', categoria: 'Talleres', disponible: true, orden: 2, activo: true },
+        { id: '3', fecha: '22 FEB', titulo: 'Manso Live: Open Decks', categoria: 'Club', disponible: false, orden: 3, activo: true },
+        { id: '4', fecha: '01 MAR', titulo: 'Feria de Diseño & Libros', categoria: 'Tienda', disponible: true, orden: 4, activo: true },
+      ]);
+    } else {
+      setEventos(data || []);
+    }
+    setLoading(false);
+  };
+
+  if (loading) {
+    return (
+      <div className="flex flex-col w-full px-8 md:px-20 py-8">
+        <div className="text-center text-manso-black/60 py-8">
+          Cargando eventos...
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col w-full px-8 md:px-20 py-8">
+      {eventos.length === 0 ? (
+        <div className="text-center text-manso-black/40 py-8">
+          No hay eventos próximos
+        </div>
+      ) : (
+        eventos.map((event, index) => (
+          <motion.div
+            key={event.id}
+            className="group flex flex-col md:flex-row md:items-center justify-between py-6 border-b border-manso-black/10 hover:border-manso-terra transition-colors cursor-pointer"
+            initial={{ opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-40px' }}
+            transition={{ duration: 0.5, delay: index * 0.07, ease: [0.16, 1, 0.3, 1] }}
+          >
+            <div className="flex flex-col md:flex-row md:items-baseline gap-1 md:gap-8">
+              <span className="text-xs font-black text-manso-terra shrink-0 tracking-tighter">
+                {event.fecha}
+              </span>
+              <div className="flex flex-col">
+                <h4 className="text-xl md:text-2xl font-bold uppercase tracking-tighter group-hover:italic transition-all leading-none text-manso-black">
+                  {event.titulo}
+                </h4>
+                <span className="text-[9px] uppercase tracking-widest text-manso-black/60 mt-1">
+                  {event.categoria}
+                </span>
+              </div>
+            </div>
+
+            <div className="mt-4 md:mt-0 flex items-center gap-4">
+              {!event.disponible ? (
+                <span className="text-[10px] uppercase font-bold text-manso-black/60 border border-manso-black/20 px-3 py-1">
+                  Sold Out
+                </span>
+              ) : (
+                <button className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest group-hover:text-manso-terra transition-colors text-manso-black">
+                  Tickets <ArrowRight size={14} className="shrink-0" />
+                </button>
+              )}
+            </div>
+          </motion.div>
+        ))
+      )}
+    </div>
+  );
+};

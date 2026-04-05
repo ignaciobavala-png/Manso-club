@@ -1,0 +1,94 @@
+@import "tailwindcss";
+
+/* Configuración de Tema Manso Club */
+@theme {
+  /* Tipografía */
+  --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  
+  /* Paleta de Colores Manso Cobre */
+  --color-manso-black: #1D1D1B; /* Base Manso Black */
+  --color-manso-terra: #BC2915; /* Color Cobre */
+  --color-manso-cream: #FFFCDC; /* Color Texto */
+
+  --animate-pulse-slow: pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
+}
+
+.cursor-blink {
+  animation: blink 1.1s step-start infinite;
+}
+
+@layer base {
+  /* Reseteo limpio sin fondos forzados */
+  :root {
+    /* Sin background forzado */
+  }
+
+  html {
+    color-scheme: dark;
+    scroll-behavior: smooth;
+    /* Sin scroll-snap-type para scroll fluido */
+  }
+
+  body {
+    /* Sin background forzado - deja que las secciones controlen su fondo */
+    margin: 0;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    /* Evitamos el scroll lateral accidental */
+    overflow-x: hidden;
+  }
+
+  /* Scrollbar minimalista para no romper el diseño */
+  ::-webkit-scrollbar {
+    width: 4px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #1D1D1B;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(245, 245, 220, 0.2);
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(245, 245, 220, 0.4);
+  }
+}
+
+@layer utilities {
+  /* Efecto de texto con contorno usado en títulos */
+  .outline-text {
+    -webkit-text-stroke: 1px currentColor;
+    color: transparent;
+  }
+
+  /* Gradiente Atmosférico Manso Cobre */
+  .bg-manso-gradient {
+    background: linear-gradient(
+      180deg, 
+      #1D1D1B 0%, 
+      #BC2915 50%, 
+      #1D1D1B 100%
+    );
+  }
+
+  /* Utilidad para el Snap Scrolling de los slides */
+  .snap-container {
+    @apply min-h-screen overflow-y-auto snap-y snap-mandatory;
+  }
+  
+  .snap-slide {
+    @apply snap-start;
+  }
+}
+
+/* Fix para AnimatePresence y transiciones de Next.js */
+.framer-canvas {
+  pointer-events: none;
+}

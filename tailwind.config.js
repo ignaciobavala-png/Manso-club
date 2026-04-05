@@ -1,8 +1,9 @@
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
+    "./app/**/*.{js,ts,jsx,tsx}",
+    "./components/**/*.{js,ts,jsx,tsx}",
+    "./lib/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
@@ -10,7 +11,7 @@ export default {
         manso: {
           black: "#1D1D1B",    // Neutral Black
           blue: "#030044",     // King Blue
-          terra: "#BC2915",    // Terra Espresso
+          terra: "#BC2915",    // Terra Espresso original
           olive: "#868229",    // Olive
           cream: "#FFFCDC",    // Cream
           brown: "#542C1B",    // Brown
@@ -23,5 +24,7 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [
+    // @tailwindcss/line-clamp no es necesario en Tailwind v4 (está incluido por defecto)
+  ],
 }
