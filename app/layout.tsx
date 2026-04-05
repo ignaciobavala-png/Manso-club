@@ -89,7 +89,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             __html: `window.dataLayer = window.dataLayer || [];
 function gtag(){dataLayer.push(arguments);}
 gtag('js', new Date());
-gtag('config', 'G-ELTTJ2QYM8');`,
+gtag('config', 'G-ELTTJ2QYM8');
+gtag('config', 'AW-18064250778');`,
           }}
         />
 
