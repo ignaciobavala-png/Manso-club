@@ -59,17 +59,17 @@ export const PorQueManso = async () => {
 
   const getCardHeight = () => {
     const count = benefits.length;
-    if (count <= 2) return 'h-64 md:h-72';
-    return 'h-72 md:h-80';
+    if (count <= 2) return 'h-52 md:h-56';
+    return 'h-56 md:h-60';
   };
 
   return (
-    <section className="relative py-12 sm:py-16 px-4 sm:px-8 md:px-20 bg-manso-black overflow-hidden">
+    <section className="relative py-8 sm:py-12 px-4 sm:px-8 md:px-20 bg-manso-black overflow-hidden">
       <ParticleBackground />
       <div className="relative z-10 max-w-7xl mx-auto">
 
         {/* Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tighter leading-[0.9] mb-6">
             <span className="block text-white">NUESTRO ADN</span>
             <span className="block italic text-manso-olive mt-2">MUCHO MÁS QUE UN CLUB</span>
@@ -77,13 +77,13 @@ export const PorQueManso = async () => {
         </div>
 
         {/* Cards */}
-        <div className={`${getGridClass()} gap-4 sm:gap-6 mb-16 sm:mb-20`}>
+        <div className={`${getGridClass()} gap-4 sm:gap-6 mb-12 sm:mb-16`}>
           {benefits.map((benefit, index) => {
             const IconComponent = getIcon(index);
             const num = String(index + 1).padStart(2, '0');
             return (
               <div key={index} className="group relative">
-                <div className={`${getCardHeight()} bg-white/10 rounded-3xl px-8 pt-14 pb-8 border border-white/20 hover:bg-white/15 hover:border-white/35 transition-all duration-500 relative overflow-hidden flex flex-col items-center text-center`}>
+                <div className={`${getCardHeight()} bg-white/10 rounded-3xl px-6 pt-10 pb-6 border border-white/20 hover:bg-white/15 hover:border-white/35 transition-all duration-500 relative overflow-hidden flex flex-col items-center text-center`}>
 
                   {/* Número decorativo de fondo */}
                   <span className="absolute -bottom-4 -right-2 text-[7rem] font-black text-white/5 leading-none select-none pointer-events-none">
@@ -97,10 +97,10 @@ export const PorQueManso = async () => {
 
                   {/* Texto centrado */}
                   <div className="relative z-10 flex flex-col items-center gap-4">
-                    <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tighter text-white leading-tight">
+                    <h3 className="text-lg sm:text-xl font-black uppercase tracking-tighter text-white leading-tight">
                       {benefit.title}
                     </h3>
-                    <p className="text-white/80 leading-relaxed text-sm group-hover:text-white transition-colors duration-500">
+                    <p className="text-white/80 leading-relaxed text-xs sm:text-sm group-hover:text-white transition-colors duration-500">
                       {benefit.description}
                     </p>
                   </div>

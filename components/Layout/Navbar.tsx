@@ -86,12 +86,12 @@ export const Navbar = () => {
               <img
                 src={isLight ? '/manso-logo-black.png' : '/manso-logo-white.png'}
                 alt="Manso Club Logo"
-                className="h-8 w-auto transition-all duration-500 group-hover:scale-105"
+                className="h-5 w-auto transition-all duration-500 group-hover:scale-105"
               />
               <img
                 src={isLight ? '/manso-name-black.png' : '/manso-name-white.png'}
                 alt="Manso Club"
-                className="h-8 w-auto transition-all duration-500 group-hover:scale-105"
+                className="h-5 w-auto transition-all duration-500 group-hover:scale-105"
               />
             </Link>
           </div>
