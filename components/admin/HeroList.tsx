@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import { getAllHeroSlides, HeroSlide } from '@/lib/hero';
 import { supabase } from '@/lib/supabase';
-import { Edit2, Trash2, Eye, EyeOff, Image, Video, Type } from 'lucide-react';
+import { Edit2, Trash2, Eye, EyeOff, Image, Video, Type, Monitor, Smartphone } from 'lucide-react';
 
 interface HeroListProps {
   refreshTrigger?: number;
@@ -111,6 +111,24 @@ export function HeroList({ refreshTrigger }: HeroListProps) {
     return colors[tipo as keyof typeof colors] || colors.texto;
   };
 
+  const getDeviceBadge = (deviceType: string) => {
+    const colors = {
+      'desktop': 'bg-orange-500/20 text-orange-400 border-orange-500/30',
+      'mobile': 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30',
+      'ambos': 'bg-manso-terra/20 text-manso-cream border-manso-terra/30'
+    };
+    return colors[deviceType as keyof typeof colors] || colors.ambos;
+  };
+
+  const getDeviceIcon = (deviceType: string) => {
+    switch (deviceType) {
+      case 'desktop': return <Monitor size={12} />;
+      case 'mobile': return <Smartphone size={12} />;
+      case 'ambos': return <><Monitor size={12} /><Smartphone size={12} /></>;
+      default: return <><Monitor size={12} /><Smartphone size={12} /></>;
+    }
+  };
+
   if (loading) {
     return <div className="text-manso-cream/60 text-center py-8">Cargando slides del hero...</div>;
   }
@@ -138,19 +156,54 @@ export function HeroList({ refreshTrigger }: HeroListProps) {
           >
             <div className="flex items-center gap-4">
               {/* Preview del media */}
-              <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 bg-manso-cream/5">
-                {slide.media_url && slide.tipo !== 'texto' ? (
-                  slide.tipo === 'imagen' ? (
-                    <img
-                      src={slide.media_url}
-                      alt={slide.title_line1}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-purple-500/20">
-                      <Video size={24} className="text-purple-400" />
-                    </div>
-                  )
+              <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 bg-manso-cream/5 relative">
+                {slide.tipo === 'imagen' ? (
+                  <>
+                    {/* Imagen Desktop */}
+                    {slide.media_url_desktop && (
+                      <div className="absolute inset-0 border-r border-manso-cream/20">
+                        <img
+                          src={slide.media_url_desktop}
+                          alt={`${slide.title_line1} - Desktop`}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute bottom-0 left-0 bg-manso-black/60 px-1 py-0.5">
+                          <Monitor size={8} className="text-manso-cream" />
+                        </div>
+                      </div>
+                    )}
+                    {/* Imagen Mobile */}
+                    {slide.media_url_mobile && (
+                      <div className="absolute inset-0 border-l border-manso-cream/20">
+                        <img
+                          src={slide.media_url_mobile}
+                          alt={`${slide.title_line1} - Mobile`}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute bottom-0 right-0 bg-manso-black/60 px-1 py-0.5">
+                          <Smartphone size={8} className="text-manso-cream" />
+                        </div>
+                      </div>
+                    )}
+                    {/* Fallback si no hay imágenes específicas */}
+                    {!slide.media_url_desktop && !slide.media_url_mobile && slide.media_url && (
+                      <img
+                        src={slide.media_url}
+                        alt={slide.title_line1}
+                        className="w-full h-full object-cover"
+                      />
+                    )}
+                    {/* Placeholder si no hay imágenes */}
+                    {!slide.media_url_desktop && !slide.media_url_mobile && !slide.media_url && (
+                      <div className="w-full h-full flex items-center justify-center">
+                        <Image size={24} className="text-manso-cream/30" />
+                      </div>
+                    )}
+                  </>
+                ) : slide.tipo === 'video' ? (
+                  <div className="w-full h-full flex items-center justify-center bg-purple-500/20">
+                    <Video size={24} className="text-purple-400" />
+                  </div>
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
                     <Type size={24} className="text-manso-cream/30" />
@@ -179,6 +232,23 @@ export function HeroList({ refreshTrigger }: HeroListProps) {
                   <span className="text-[9px] uppercase tracking-widest text-manso-terra px-2 py-0.5 border border-manso-terra/30 rounded">
                     Orden: {slide.order_index}
                   </span>
+                  {slide.tipo === 'imagen' && (
+                    <>
+                      <span className={`text-[9px] uppercase tracking-widest px-2 py-0.5 border rounded flex items-center gap-1 ${
+                        slide.media_url_desktop && slide.media_url_mobile 
+                          ? 'bg-green-500/20 text-green-400 border-green-500/30'
+                          : slide.media_url_desktop || slide.media_url_mobile
+                          ? 'bg-yellow-500/20 text-yellow-400 border-yellow-500/30'
+                          : 'bg-red-500/20 text-red-400 border-red-500/30'
+                      }`}>
+                        {slide.media_url_desktop && <Monitor size={12} />}
+                        {slide.media_url_mobile && <Smartphone size={12} />}
+                        {slide.media_url_desktop && slide.media_url_mobile ? 'DUAL' : 
+                         slide.media_url_desktop ? 'DESKTOP' : 
+                         slide.media_url_mobile ? 'MOBILE' : 'SIN IMÁGENES'}
+                      </span>
+                    </>
+                  )}
                   {!slide.active && (
                     <span className="text-[9px] uppercase font-bold text-red-400 px-2 py-0.5 border border-red-400/30 rounded">
                       Inactivo

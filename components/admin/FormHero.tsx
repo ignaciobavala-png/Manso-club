@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { ImageUploader } from './ImageUploader';
 import { HeroSlide } from '@/lib/hero';
-import { Type, Image, Video, Hash, FileText } from 'lucide-react';
+import { Type, Image, Video, Hash, FileText, Monitor, Smartphone } from 'lucide-react';
 
 interface HeroSlideEdit {
   id: string;
@@ -14,8 +14,11 @@ interface HeroSlideEdit {
   description: string | null;
   tipo: 'texto' | 'imagen' | 'video';
   media_url: string | null;
+  media_url_desktop: string | null;
+  media_url_mobile: string | null;
   order_index: number;
   active: boolean;
+  device_type: 'desktop' | 'mobile' | 'ambos';
 }
 
 export function FormHero() {
@@ -29,7 +32,10 @@ export function FormHero() {
     description: '',
     tipo: 'texto' as 'texto' | 'imagen' | 'video',
     media_url: '',
-    order_index: '1'
+    media_url_desktop: '',
+    media_url_mobile: '',
+    order_index: '1',
+    device_type: 'ambos' as 'desktop' | 'mobile' | 'ambos'
   });
 
   useEffect(() => {
@@ -43,7 +49,10 @@ export function FormHero() {
         description: slide.description || '',
         tipo: slide.tipo,
         media_url: slide.media_url || '',
-        order_index: slide.order_index.toString()
+        media_url_desktop: slide.media_url_desktop || '',
+        media_url_mobile: slide.media_url_mobile || '',
+        order_index: slide.order_index.toString(),
+        device_type: slide.device_type || 'ambos'
       });
       setImageKey(prev => prev + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -64,7 +73,10 @@ export function FormHero() {
       description: '', 
       tipo: 'texto', 
       media_url: '', 
-      order_index: '1' 
+      media_url_desktop: '',
+      media_url_mobile: '',
+      order_index: '1',
+      device_type: 'ambos'
     });
     setImageKey(prev => prev + 1);
   };
@@ -81,8 +93,11 @@ export function FormHero() {
         description: formData.description || null,
         tipo: formData.tipo,
         media_url: (formData.tipo === 'imagen' || formData.tipo === 'video') ? formData.media_url : null,
+        media_url_desktop: (formData.tipo === 'imagen') ? formData.media_url_desktop : null,
+        media_url_mobile: (formData.tipo === 'imagen') ? formData.media_url_mobile : null,
         order_index: parseInt(String(formData.order_index)) || 1,
-        active: true
+        active: true,
+        device_type: formData.device_type
       };
 
       if (editingId) {
@@ -182,20 +197,67 @@ export function FormHero() {
 
         {/* Zona de Media segun el tipo */}
         {formData.tipo === 'imagen' && (
-          <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2 flex items-center gap-2">
-              {getTipoIcon('imagen')}
-              Imagen del Slide
-            </label>
-            <div className={`${!formData.media_url ? 'ring-2 ring-manso-terra/50 rounded-3xl' : ''}`}>
-              <ImageUploader
-                key={imageKey}
-                bucket="hero-media"
-                folder="slides"
-                maxWidth={1920}
-                initialPreview={formData.media_url || null}
-                onUpload={(url) => setFormData({...formData, media_url: url})} 
-              />
+          <div className="space-y-6">
+            {/* Imagen Desktop */}
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2 flex items-center gap-2">
+                <Monitor size={16} />
+                Imagen para Desktop
+              </label>
+              <div className={`${!formData.media_url_desktop ? 'ring-2 ring-manso-terra/50 rounded-3xl' : ''}`}>
+                <ImageUploader
+                  key={`desktop-${imageKey}`}
+                  bucket="hero-media"
+                  folder="slides/desktop"
+                  maxWidth={1920}
+                  initialPreview={formData.media_url_desktop || null}
+                  onUpload={(url) => setFormData({...formData, media_url_desktop: url})} 
+                />
+              </div>
+              <p className="text-[10px] text-manso-cream/40 ml-2">
+                Imagen optimizada para pantallas grandes (desktop)
+              </p>
+            </div>
+
+            {/* Imagen Mobile */}
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2 flex items-center gap-2">
+                <Smartphone size={16} />
+                Imagen para Mobile
+              </label>
+              <div className={`${!formData.media_url_mobile ? 'ring-2 ring-manso-terra/50 rounded-3xl' : ''}`}>
+                <ImageUploader
+                  key={`mobile-${imageKey}`}
+                  bucket="hero-media"
+                  folder="slides/mobile"
+                  maxWidth={800}
+                  initialPreview={formData.media_url_mobile || null}
+                  onUpload={(url) => setFormData({...formData, media_url_mobile: url})} 
+                />
+              </div>
+              <p className="text-[10px] text-manso-cream/40 ml-2">
+                Imagen optimizada para pantallas móviles (vertical)
+              </p>
+            </div>
+
+            {/* Opción de usar misma imagen */}
+            <div className="bg-manso-cream/5 rounded-2xl p-4 border border-manso-cream/10">
+              <div className="flex items-center gap-3">
+                <input
+                  type="checkbox"
+                  id="useSameImage"
+                  checked={formData.media_url_desktop === formData.media_url_mobile && formData.media_url_desktop !== ''}
+                  onChange={(e) => {
+                    if (e.target.checked && formData.media_url_desktop) {
+                      setFormData({...formData, media_url_mobile: formData.media_url_desktop});
+                    }
+                  }}
+                  className="w-4 h-4 rounded border-manso-cream/30 bg-manso-cream/10 text-manso-terra focus:ring-manso-terra"
+                />
+                <label htmlFor="useSameImage" className="text-sm text-manso-cream/80">
+                  Usar la misma imagen para desktop y mobile
+                </label>
+              </div>
             </div>
           </div>
         )}
