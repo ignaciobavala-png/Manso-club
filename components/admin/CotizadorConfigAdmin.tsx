@@ -8,7 +8,7 @@ import { Plus, Trash2, Save, GripVertical } from 'lucide-react';
 
 interface TipoEvento { id: string; label: string; icono: string; precio: number; orden: number; activo: boolean; }
 interface Duracion    { id: string; label: string; multiplicador: number; orden: number; activo: boolean; }
-interface Capacidad   { id: string; label: string; multiplicador: number; orden: number; activo: boolean; }
+interface Capacidad   { id: string; label: string; precio: number; orden: number; activo: boolean; }
 interface Servicio    { id: string; label: string; precio: number; orden: number; activo: boolean; }
 
 const ICONOS_DISPONIBLES = ['Music', 'Palette', 'Camera', 'Mic', 'Users', 'Calendar', 'Star', 'Video', 'BookOpen', 'Package'];
@@ -110,6 +110,61 @@ function MultiRow({ item, field, unit, onSave, onDelete }: {
           onChange={e => setLocal(p => ({ ...p, [field]: Number(e.target.value) }))}
           min={0.1}
           step={0.1}
+        />
+      </div>
+      <label className="flex items-center gap-1.5 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={local.activo}
+          onChange={e => setLocal(p => ({ ...p, activo: e.target.checked }))}
+          className="accent-manso-terra"
+        />
+        <span className="text-[10px] text-manso-cream/50">Activo</span>
+      </label>
+      {dirty && (
+        <button
+          onClick={() => onSave(local)}
+          className="p-2 bg-manso-terra/20 hover:bg-manso-terra/40 rounded-lg transition-all"
+        >
+          <Save size={13} className="text-manso-terra" />
+        </button>
+      )}
+      <button
+        onClick={() => onDelete(item.id)}
+        className="p-2 bg-red-500/10 hover:bg-red-500/20 rounded-lg transition-all"
+      >
+        <Trash2 size={13} className="text-red-400" />
+      </button>
+    </div>
+  );
+}
+
+function CapacidadRow({ item, onSave, onDelete }: {
+  item: Capacidad;
+  onSave: (updated: Capacidad) => void;
+  onDelete: (id: string) => void;
+}) {
+  const [local, setLocal] = useState(item);
+  const dirty = JSON.stringify(local) !== JSON.stringify(item);
+
+  return (
+    <div className="flex flex-wrap items-center gap-2 p-3 bg-manso-cream/5 border border-manso-cream/10 rounded-xl">
+      <GripVertical size={14} className="text-manso-cream/20 shrink-0" />
+      <input
+        className={`${inputCls} flex-1 min-w-[180px]`}
+        value={local.label}
+        onChange={e => setLocal(p => ({ ...p, label: e.target.value }))}
+        placeholder="Nombre de la capacidad"
+      />
+      <div className="flex items-center gap-1">
+        <span className="text-manso-cream/40 text-xs">$</span>
+        <input
+          type="number"
+          className={`${inputCls} w-28`}
+          value={local.precio}
+          onChange={e => setLocal(p => ({ ...p, precio: Number(e.target.value) }))}
+          min={0}
+          step={1000}
         />
       </div>
       <label className="flex items-center gap-1.5 cursor-pointer">
@@ -270,7 +325,7 @@ export function CotizadorConfigAdmin() {
   };
   const addCapacidad = async () => {
     const { data } = await supabase.from('cotizador_capacidades')
-      .insert({ label: 'Nueva capacidad', multiplicador: 1, orden: capacidades.length + 1 })
+      .insert({ label: 'Nueva capacidad', precio: 0, orden: capacidades.length + 1 })
       .select().single();
     if (data) setCapacidades(prev => [...prev, data]);
   };
@@ -369,10 +424,10 @@ export function CotizadorConfigAdmin() {
         {activeTab === 'capacidades' && (
           <>
             <p className={`${labelCls} mb-3`}>
-              Multiplicador que se aplica sobre el precio ya ajustado por duración
+              Precio fijo que se suma al total (como los servicios adicionales)
             </p>
             {capacidades.map(c => (
-              <MultiRow key={c.id} item={c} field="multiplicador" unit="×" onSave={saveCapacidad} onDelete={deleteCapacidad} />
+              <CapacidadRow key={c.id} item={c} onSave={saveCapacidad} onDelete={deleteCapacidad} />
             ))}
             <button
               onClick={addCapacidad}
