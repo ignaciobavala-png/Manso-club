@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { ParticleBackground } from '@/components/Home/ParticleBackground';
 import { supabase } from '@/lib/supabase';
 import { CheckCircle } from 'lucide-react';
+import { CotizadorForm } from '@/components/Cotizador/CotizadorForm';
 
 const inputCls = "w-full bg-manso-cream/5 border border-manso-cream/15 rounded-2xl px-5 py-4 text-manso-cream placeholder:text-manso-cream/30 text-sm font-light focus:outline-none focus:border-manso-terra/60 transition-colors";
 const labelCls = "block text-[9px] font-black uppercase tracking-[0.5em] text-manso-terra mb-2";
@@ -12,6 +13,7 @@ export default function PresentaTuProyectoPage() {
   const [loading, setLoading]   = useState(false);
   const [enviado, setEnviado]   = useState(false);
   const [error, setError]       = useState('');
+  const [activeTab, setActiveTab] = useState<'propuesta' | 'cotizador'>('propuesta');
   const [form, setForm]         = useState({
     nombre:      '',
     email:       '',
@@ -57,12 +59,39 @@ export default function PresentaTuProyectoPage() {
         <h1 className="text-[clamp(2.5rem,7vw,5rem)] font-black uppercase italic tracking-tighter leading-none text-manso-cream mb-6">
           Presentá tu<br />proyecto
         </h1>
-        <p className="text-manso-cream/50 font-light text-base mb-16 leading-relaxed">
+        <p className="text-manso-cream/50 font-light text-base mb-8 leading-relaxed">
           ¿Querés mostrar tu trabajo en Manso o dar un taller en nuestras instalaciones?
           Contanos quién sos y qué tenés en mente.
         </p>
 
-        {enviado ? (
+        {/* Navegación de pestañas */}
+        <div className="flex gap-1 mb-12 p-1 bg-manso-cream/5 rounded-2xl">
+          <button
+            onClick={() => setActiveTab('propuesta')}
+            className={`flex-1 py-3 px-6 rounded-xl font-black uppercase tracking-[0.2em] text-xs transition-all ${
+              activeTab === 'propuesta'
+                ? 'bg-manso-terra text-manso-cream'
+                : 'text-manso-cream/40 hover:text-manso-cream/60'
+            }`}
+          >
+            Propuesta
+          </button>
+          <button
+            onClick={() => setActiveTab('cotizador')}
+            className={`flex-1 py-3 px-6 rounded-xl font-black uppercase tracking-[0.2em] text-xs transition-all ${
+              activeTab === 'cotizador'
+                ? 'bg-manso-terra text-manso-cream'
+                : 'text-manso-cream/40 hover:text-manso-cream/60'
+            }`}
+          >
+            Cotizador
+          </button>
+        </div>
+
+        {/* Contenido de la pestaña activa */}
+        {activeTab === 'propuesta' ? (
+          <>
+          {enviado ? (
           <div className="flex flex-col items-start gap-6 py-16">
             <CheckCircle size={48} className="text-manso-terra" />
             <h2 className="text-3xl font-black uppercase italic tracking-tighter text-manso-cream">
@@ -150,6 +179,18 @@ export default function PresentaTuProyectoPage() {
               {loading ? 'Enviando...' : 'Enviar propuesta'}
             </button>
           </form>
+        )}
+          </>
+        ) : (
+          <div className="py-12">
+            <h2 className="text-2xl font-black uppercase italic tracking-tighter text-manso-cream mb-6">
+              Cotizador de Eventos
+            </h2>
+            <p className="text-manso-cream/60 font-light leading-relaxed mb-8">
+              Respondé estas preguntas para obtener una cotización personalizada para tu evento.
+            </p>
+            <CotizadorForm />
+          </div>
         )}
       </div>
     </div>
