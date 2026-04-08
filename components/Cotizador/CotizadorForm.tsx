@@ -1,121 +1,157 @@
 'use client';
 
-import { useState } from 'react';
-import { Calculator, Calendar, Clock, Users, Music, Camera, Palette, Mic } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Calculator, Clock, Users, Music, Camera, Palette, Mic, CheckCircle, Loader2 } from 'lucide-react';
+import { supabase } from '@/lib/supabase';
 
 const inputCls = "w-full bg-manso-cream/5 border border-manso-cream/15 rounded-2xl px-5 py-4 text-manso-cream placeholder:text-manso-cream/30 text-sm font-light focus:outline-none focus:border-manso-terra/60 transition-colors";
 const labelCls = "block text-[9px] font-black uppercase tracking-[0.5em] text-manso-terra mb-2";
-const radioCls = "sr-only peer";
-const radioLabelCls = "flex items-center p-4 bg-manso-cream/5 border border-manso-cream/15 rounded-xl cursor-pointer transition-all peer-checked:bg-manso-terra/20 peer-checked:border-manso-terra/60 hover:bg-manso-cream/10";
+const radioCls = "sr-only";
+const radioLabelCls = (selected: boolean) =>
+  `flex items-center p-4 rounded-xl cursor-pointer transition-all border ${
+    selected
+      ? 'bg-manso-terra/20 border-manso-terra/60'
+      : 'bg-manso-cream/5 border-manso-cream/15 hover:bg-manso-cream/10'
+  }`;
 
-interface CotizacionData {
-  tipoEvento: string;
-  duracion: string;
-  cantidadPersonas: string;
-  servicios: string[];
-  fecha: string;
-  hora: string;
-  nombre: string;
-  email: string;
-  telefono: string;
+// Mapa de nombres de ícono → componente Lucide
+const ICONOS: Record<string, React.ElementType> = {
+  Music, Camera, Palette, Mic, Users, Clock, Calculator,
+};
+
+interface TipoEvento {
+  id: string; label: string; icono: string; precio: number; orden: number;
+}
+interface Duracion {
+  id: string; label: string; multiplicador: number; orden: number;
+}
+interface Capacidad {
+  id: string; label: string; multiplicador: number; orden: number;
+}
+interface Servicio {
+  id: string; label: string; precio: number; orden: number;
+}
+
+interface ContactoData {
+  nombre: string; email: string; telefono: string; fecha: string; hora: string;
 }
 
 export function CotizadorForm() {
   const [currentStep, setCurrentStep] = useState(1);
-  const [cotizacion, setCotizacion] = useState<CotizacionData>({
-    tipoEvento: '',
-    duracion: '',
-    cantidadPersonas: '',
-    servicios: [],
-    fecha: '',
-    hora: '',
-    nombre: '',
-    email: '',
-    telefono: ''
+  const [loading, setLoading] = useState(true);
+  const [enviado, setEnviado] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  // Config desde Supabase
+  const [tipos, setTipos] = useState<TipoEvento[]>([]);
+  const [duraciones, setDuraciones] = useState<Duracion[]>([]);
+  const [capacidades, setCapacidades] = useState<Capacidad[]>([]);
+  const [servicios, setServicios] = useState<Servicio[]>([]);
+
+  // Selecciones del usuario
+  const [tipoId, setTipoId] = useState('');
+  const [duracionId, setDuracionId] = useState('');
+  const [capacidadId, setCapacidadId] = useState('');
+  const [serviciosIds, setServiciosIds] = useState<string[]>([]);
+  const [contacto, setContacto] = useState<ContactoData>({
+    nombre: '', email: '', telefono: '', fecha: '', hora: '',
   });
+
+  // Precio calculado reactivamente
   const [precioEstimado, setPrecioEstimado] = useState(0);
 
-  const tiposEvento = [
-    { value: 'show_musical', label: 'Show Musical', icon: Music, precio: 50000 },
-    { value: 'exposicion', label: 'Exposición Artística', icon: Palette, precio: 30000 },
-    { value: 'taller', label: 'Taller', icon: Camera, precio: 25000 },
-    { value: 'evento_privado', label: 'Evento Privado', icon: Users, precio: 75000 },
-    { value: 'grabacion', label: 'Sesión de Grabación', icon: Mic, precio: 40000 }
-  ];
+  useEffect(() => {
+    const fetchConfig = async () => {
+      const [t, d, c, s] = await Promise.all([
+        supabase.from('cotizador_tipos_evento').select('*').eq('activo', true).order('orden'),
+        supabase.from('cotizador_duraciones').select('*').eq('activo', true).order('orden'),
+        supabase.from('cotizador_capacidades').select('*').eq('activo', true).order('orden'),
+        supabase.from('cotizador_servicios').select('*').eq('activo', true).order('orden'),
+      ]);
+      setTipos(t.data || []);
+      setDuraciones(d.data || []);
+      setCapacidades(c.data || []);
+      setServicios(s.data || []);
+      setLoading(false);
+    };
+    fetchConfig();
+  }, []);
 
-  const duraciones = [
-    { value: '2_horas', label: '2 horas', multiplicador: 1 },
-    { value: '4_horas', label: '4 horas', multiplicador: 1.5 },
-    { value: '6_horas', label: '6 horas', multiplicador: 2 },
-    { value: '8_horas', label: '8 horas', multiplicador: 2.5 },
-    { value: 'dia_completo', label: 'Día completo', multiplicador: 3 }
-  ];
+  // Recalcular precio cuando cambia cualquier selección
+  useEffect(() => {
+    const tipo = tipos.find(t => t.id === tipoId);
+    const dur  = duraciones.find(d => d.id === duracionId);
+    const cap  = capacidades.find(c => c.id === capacidadId);
 
-  const capacidades = [
-    { value: 'hasta_50', label: 'Hasta 50 personas', multiplicador: 1 },
-    { value: 'hasta_100', label: 'Hasta 100 personas', multiplicador: 1.3 },
-    { value: 'hasta_200', label: 'Hasta 200 personas', multiplicador: 1.6 },
-    { value: 'mas_200', label: 'Más de 200 personas', multiplicador: 2 }
-  ];
+    if (!tipo || !dur || !cap) { setPrecioEstimado(0); return; }
 
-  const serviciosAdicionales = [
-    { value: 'bar', label: 'Servicio de bar', precio: 15000 },
-    { value: 'catering', label: 'Catering básico', precio: 25000 },
-    { value: 'sonido', label: 'Equipo de sonido profesional', precio: 20000 },
-    { value: 'luces', label: 'Equipo de luces', precio: 18000 },
-    { value: 'fotografo', label: 'Fotógrafo', precio: 35000 },
-    { value: 'seguridad', label: 'Equipo de seguridad', precio: 12000 }
-  ];
-
-  const calculatePrecio = () => {
-    const tipoSeleccionado = tiposEvento.find(t => t.value === cotizacion.tipoEvento);
-    const duracionSeleccionada = duraciones.find(d => d.value === cotizacion.duracion);
-    const capacidadSeleccionada = capacidades.find(c => c.value === cotizacion.cantidadPersonas);
-    
-    if (!tipoSeleccionado || !duracionSeleccionada || !capacidadSeleccionada) {
-      setPrecioEstimado(0);
-      return;
-    }
-
-    let base = tipoSeleccionado.precio;
-    base *= duracionSeleccionada.multiplicador;
-    base *= capacidadSeleccionada.multiplicador;
-
-    const serviciosTotal = cotizacion.servicios.reduce((total, servicio) => {
-      const serv = serviciosAdicionales.find(s => s.value === servicio);
-      return total + (serv?.precio || 0);
+    let base = tipo.precio * dur.multiplicador * cap.multiplicador;
+    const extras = serviciosIds.reduce((sum, id) => {
+      return sum + (servicios.find(s => s.id === id)?.precio || 0);
     }, 0);
+    setPrecioEstimado(Math.round(base + extras));
+  }, [tipoId, duracionId, capacidadId, serviciosIds, tipos, duraciones, capacidades, servicios]);
 
-    setPrecioEstimado(base + serviciosTotal);
+  const toggleServicio = (id: string) => {
+    setServiciosIds(prev =>
+      prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]
+    );
   };
 
-  const updateField = (field: keyof CotizacionData, value: string | string[]) => {
-    setCotizacion(prev => ({ ...prev, [field]: value }));
-  };
-
-  const toggleServicio = (servicio: string) => {
-    setCotizacion(prev => ({
-      ...prev,
-      servicios: prev.servicios.includes(servicio)
-        ? prev.servicios.filter(s => s !== servicio)
-        : [...prev.servicios, servicio]
-    }));
-  };
-
-  const nextStep = () => {
-    if (currentStep < 6) setCurrentStep(currentStep + 1);
-    if (currentStep === 5) calculatePrecio();
-  };
-
-  const prevStep = () => {
-    if (currentStep > 1) setCurrentStep(currentStep - 1);
-  };
+  const nextStep = () => { if (currentStep < 6) setCurrentStep(s => s + 1); };
+  const prevStep = () => { if (currentStep > 1) setCurrentStep(s => s - 1); };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Aquí iría la lógica para enviar la cotización
-    alert('Cotización enviada. Nos contactaremos pronto.');
+    setSubmitting(true);
+
+    const tipo     = tipos.find(t => t.id === tipoId);
+    const duracion = duraciones.find(d => d.id === duracionId);
+    const capacidad = capacidades.find(c => c.id === capacidadId);
+    const serviciosLabels = serviciosIds.map(id => servicios.find(s => s.id === id)?.label || '');
+
+    const { error } = await supabase.from('cotizaciones').insert({
+      nombre:           contacto.nombre,
+      email:            contacto.email,
+      telefono:         contacto.telefono,
+      tipo_evento_id:   tipoId,
+      tipo_evento_label: tipo?.label || '',
+      duracion_id:      duracionId,
+      duracion_label:   duracion?.label || '',
+      capacidad_id:     capacidadId,
+      capacidad_label:  capacidad?.label || '',
+      servicios_ids:    serviciosIds,
+      servicios_labels: serviciosLabels,
+      fecha:            contacto.fecha || null,
+      hora:             contacto.hora || null,
+      precio_estimado:  precioEstimado,
+    });
+
+    setSubmitting(false);
+    if (!error) setEnviado(true);
   };
+
+  if (loading) return (
+    <div className="flex items-center justify-center py-16 text-manso-cream/40">
+      <Loader2 className="w-6 h-6 animate-spin mr-3" />
+      Cargando cotizador...
+    </div>
+  );
+
+  if (enviado) return (
+    <div className="flex flex-col items-start gap-6 py-16">
+      <CheckCircle size={48} className="text-manso-terra" />
+      <h2 className="text-3xl font-black uppercase italic tracking-tighter text-manso-cream">
+        ¡Cotización enviada!
+      </h2>
+      <p className="text-manso-cream/60 font-light leading-relaxed">
+        Nuestro equipo comercial va a revisar tu solicitud y te contactamos a la brevedad.
+      </p>
+      <p className="text-manso-cream/40 text-sm">
+        Precio estimado: <span className="text-manso-terra font-black">${precioEstimado.toLocaleString('es-AR')}</span>
+      </p>
+    </div>
+  );
 
   const renderStep = () => {
     switch (currentStep) {
@@ -126,23 +162,27 @@ export function CotizadorForm() {
               ¿Qué tipo de evento querés organizar?
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {tiposEvento.map((tipo) => {
-                const Icon = tipo.icon;
+              {tipos.map((tipo) => {
+                const Icon = ICONOS[tipo.icono] || Music;
+                const selected = tipoId === tipo.id;
                 return (
-                  <label key={tipo.value} className={radioLabelCls}>
+                  <label key={tipo.id} className={radioLabelCls(selected)}>
                     <input
                       type="radio"
                       name="tipoEvento"
-                      value={tipo.value}
-                      checked={cotizacion.tipoEvento === tipo.value}
-                      onChange={(e) => updateField('tipoEvento', e.target.value)}
+                      value={tipo.id}
+                      checked={selected}
+                      onChange={() => setTipoId(tipo.id)}
                       className={radioCls}
                     />
-                    <Icon className="w-6 h-6 text-manso-terra mr-3" />
+                    <Icon className={`w-6 h-6 mr-3 shrink-0 ${selected ? 'text-manso-terra' : 'text-manso-cream/50'}`} />
                     <div>
-                      <p className="font-medium text-manso-cream">{tipo.label}</p>
-                      <p className="text-xs text-manso-cream/60">Desde ${tipo.precio.toLocaleString()}</p>
+                      <p className={`font-medium ${selected ? 'text-manso-cream' : 'text-manso-cream/70'}`}>{tipo.label}</p>
+                      <p className="text-xs text-manso-cream/60">
+                        Desde ${tipo.precio.toLocaleString('es-AR')}
+                      </p>
                     </div>
+                    {selected && <div className="ml-auto w-2 h-2 rounded-full bg-manso-terra shrink-0" />}
                   </label>
                 );
               })}
@@ -157,20 +197,24 @@ export function CotizadorForm() {
               ¿Cuánto tiempo durará el evento?
             </h3>
             <div className="space-y-3">
-              {duraciones.map((duracion) => (
-                <label key={duracion.value} className={radioLabelCls}>
-                  <input
-                    type="radio"
-                    name="duracion"
-                    value={duracion.value}
-                    checked={cotizacion.duracion === duracion.value}
-                    onChange={(e) => updateField('duracion', e.target.value)}
-                    className={radioCls}
-                  />
-                  <Clock className="w-5 h-5 text-manso-terra mr-3" />
-                  <span className="text-manso-cream">{duracion.label}</span>
-                </label>
-              ))}
+              {duraciones.map((dur) => {
+                const selected = duracionId === dur.id;
+                return (
+                  <label key={dur.id} className={radioLabelCls(selected)}>
+                    <input
+                      type="radio"
+                      name="duracion"
+                      value={dur.id}
+                      checked={selected}
+                      onChange={() => setDuracionId(dur.id)}
+                      className={radioCls}
+                    />
+                    <Clock className={`w-5 h-5 mr-3 shrink-0 ${selected ? 'text-manso-terra' : 'text-manso-cream/50'}`} />
+                    <span className={selected ? 'text-manso-cream font-medium' : 'text-manso-cream/70'}>{dur.label}</span>
+                    {selected && <div className="ml-auto w-2 h-2 rounded-full bg-manso-terra shrink-0" />}
+                  </label>
+                );
+              })}
             </div>
           </div>
         );
@@ -182,20 +226,24 @@ export function CotizadorForm() {
               ¿Cuántas personas esperás?
             </h3>
             <div className="space-y-3">
-              {capacidades.map((capacidad) => (
-                <label key={capacidad.value} className={radioLabelCls}>
-                  <input
-                    type="radio"
-                    name="cantidadPersonas"
-                    value={capacidad.value}
-                    checked={cotizacion.cantidadPersonas === capacidad.value}
-                    onChange={(e) => updateField('cantidadPersonas', e.target.value)}
-                    className={radioCls}
-                  />
-                  <Users className="w-5 h-5 text-manso-terra mr-3" />
-                  <span className="text-manso-cream">{capacidad.label}</span>
-                </label>
-              ))}
+              {capacidades.map((cap) => {
+                const selected = capacidadId === cap.id;
+                return (
+                  <label key={cap.id} className={radioLabelCls(selected)}>
+                    <input
+                      type="radio"
+                      name="cantidadPersonas"
+                      value={cap.id}
+                      checked={selected}
+                      onChange={() => setCapacidadId(cap.id)}
+                      className={radioCls}
+                    />
+                    <Users className={`w-5 h-5 mr-3 shrink-0 ${selected ? 'text-manso-terra' : 'text-manso-cream/50'}`} />
+                    <span className={selected ? 'text-manso-cream font-medium' : 'text-manso-cream/70'}>{cap.label}</span>
+                    {selected && <div className="ml-auto w-2 h-2 rounded-full bg-manso-terra shrink-0" />}
+                  </label>
+                );
+              })}
             </div>
           </div>
         );
@@ -206,34 +254,32 @@ export function CotizadorForm() {
             <h3 className="text-xl font-black uppercase italic tracking-tighter text-manso-cream mb-6">
               ¿Qué servicios adicionales necesitás?
             </h3>
-            <p className="text-manso-cream/60 text-sm mb-4">Seleccioná todos los que apliquen</p>
+            <p className="text-manso-cream/60 text-sm -mt-4">Seleccioná todos los que apliquen</p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {serviciosAdicionales.map((servicio) => (
-                <label key={servicio.value} className={radioLabelCls}>
-                  <input
-                    type="checkbox"
-                    value={servicio.value}
-                    checked={cotizacion.servicios.includes(servicio.value)}
-                    onChange={() => toggleServicio(servicio.value)}
-                    className="sr-only peer"
-                  />
-                  <div className="flex items-center">
-                    <div className={`w-5 h-5 border-2 rounded mr-3 flex items-center justify-center ${
-                      cotizacion.servicios.includes(servicio.value)
-                        ? 'bg-manso-terra border-manso-terra'
-                        : 'border-manso-cream/30'
+              {servicios.map((serv) => {
+                const checked = serviciosIds.includes(serv.id);
+                return (
+                  <label key={serv.id} className={radioLabelCls(checked)}>
+                    <input
+                      type="checkbox"
+                      checked={checked}
+                      onChange={() => toggleServicio(serv.id)}
+                      className="sr-only"
+                    />
+                    <div className={`w-5 h-5 border-2 rounded mr-3 shrink-0 flex items-center justify-center transition-colors ${
+                      checked ? 'bg-manso-terra border-manso-terra' : 'border-manso-cream/30'
                     }`}>
-                      {cotizacion.servicios.includes(servicio.value) && (
-                        <div className="w-2 h-2 bg-manso-cream rounded-full"></div>
-                      )}
+                      {checked && <div className="w-2 h-2 bg-manso-cream rounded-full" />}
                     </div>
                     <div>
-                      <p className="text-manso-cream">{servicio.label}</p>
-                      <p className="text-xs text-manso-cream/60">+${servicio.precio.toLocaleString()}</p>
+                      <p className="text-manso-cream">{serv.label}</p>
+                      <p className="text-xs text-manso-cream/60">
+                        +${serv.precio.toLocaleString('es-AR')}
+                      </p>
                     </div>
-                  </div>
-                </label>
-              ))}
+                  </label>
+                );
+              })}
             </div>
           </div>
         );
@@ -249,21 +295,19 @@ export function CotizadorForm() {
                 <label className={labelCls}>Fecha</label>
                 <input
                   type="date"
-                  value={cotizacion.fecha}
-                  onChange={(e) => updateField('fecha', e.target.value)}
+                  value={contacto.fecha}
+                  onChange={(e) => setContacto(p => ({ ...p, fecha: e.target.value }))}
                   className={inputCls}
                   min={new Date().toISOString().split('T')[0]}
-                  required
                 />
               </div>
               <div>
                 <label className={labelCls}>Hora de inicio</label>
                 <input
                   type="time"
-                  value={cotizacion.hora}
-                  onChange={(e) => updateField('hora', e.target.value)}
+                  value={contacto.hora}
+                  onChange={(e) => setContacto(p => ({ ...p, hora: e.target.value }))}
                   className={inputCls}
-                  required
                 />
               </div>
             </div>
@@ -281,8 +325,8 @@ export function CotizadorForm() {
                 <label className={labelCls}>Nombre completo</label>
                 <input
                   type="text"
-                  value={cotizacion.nombre}
-                  onChange={(e) => updateField('nombre', e.target.value)}
+                  value={contacto.nombre}
+                  onChange={(e) => setContacto(p => ({ ...p, nombre: e.target.value }))}
                   className={inputCls}
                   placeholder="Tu nombre"
                   required
@@ -292,8 +336,8 @@ export function CotizadorForm() {
                 <label className={labelCls}>Email</label>
                 <input
                   type="email"
-                  value={cotizacion.email}
-                  onChange={(e) => updateField('email', e.target.value)}
+                  value={contacto.email}
+                  onChange={(e) => setContacto(p => ({ ...p, email: e.target.value }))}
                   className={inputCls}
                   placeholder="tu@email.com"
                   required
@@ -303,8 +347,8 @@ export function CotizadorForm() {
                 <label className={labelCls}>Teléfono</label>
                 <input
                   type="tel"
-                  value={cotizacion.telefono}
-                  onChange={(e) => updateField('telefono', e.target.value)}
+                  value={contacto.telefono}
+                  onChange={(e) => setContacto(p => ({ ...p, telefono: e.target.value }))}
                   className={inputCls}
                   placeholder="+54 9 11 1234-5678"
                   required
@@ -312,39 +356,43 @@ export function CotizadorForm() {
               </div>
             </div>
 
-            {/* Resumen de cotización */}
+            {/* Resumen */}
             <div className="bg-manso-terra/10 border border-manso-terra/30 rounded-2xl p-6 mt-8">
               <div className="flex items-center justify-between mb-4">
-                <h4 className="text-lg font-black uppercase text-manso-cream">Resumen de cotización</h4>
+                <h4 className="text-lg font-black uppercase text-manso-cream">Resumen</h4>
                 <Calculator className="w-6 h-6 text-manso-terra" />
               </div>
               <div className="space-y-2 text-sm">
-                <div className="flex justify-between text-manso-cream/80">
-                  <span>Tipo de evento:</span>
-                  <span>{tiposEvento.find(t => t.value === cotizacion.tipoEvento)?.label}</span>
-                </div>
-                <div className="flex justify-between text-manso-cream/80">
-                  <span>Duración:</span>
-                  <span>{duraciones.find(d => d.value === cotizacion.duracion)?.label}</span>
-                </div>
-                <div className="flex justify-between text-manso-cream/80">
-                  <span>Capacidad:</span>
-                  <span>{capacidades.find(c => c.value === cotizacion.cantidadPersonas)?.label}</span>
-                </div>
-                {cotizacion.servicios.length > 0 && (
+                {tipoId && (
+                  <div className="flex justify-between text-manso-cream/80">
+                    <span>Tipo:</span>
+                    <span>{tipos.find(t => t.id === tipoId)?.label}</span>
+                  </div>
+                )}
+                {duracionId && (
+                  <div className="flex justify-between text-manso-cream/80">
+                    <span>Duración:</span>
+                    <span>{duraciones.find(d => d.id === duracionId)?.label}</span>
+                  </div>
+                )}
+                {capacidadId && (
+                  <div className="flex justify-between text-manso-cream/80">
+                    <span>Capacidad:</span>
+                    <span>{capacidades.find(c => c.id === capacidadId)?.label}</span>
+                  </div>
+                )}
+                {serviciosIds.length > 0 && (
                   <div className="flex justify-between text-manso-cream/80">
                     <span>Servicios adicionales:</span>
-                    <span>{cotizacion.servicios.length} seleccionados</span>
+                    <span>{serviciosIds.length} seleccionados</span>
                   </div>
                 )}
               </div>
-              <div className="border-t border-manso-cream/20 mt-4 pt-4">
-                <div className="flex justify-between items-center">
-                  <span className="text-lg font-black text-manso-cream">Precio estimado:</span>
-                  <span className="text-2xl font-black text-manso-terra">
-                    ${precioEstimado.toLocaleString()}
-                  </span>
-                </div>
+              <div className="border-t border-manso-cream/20 mt-4 pt-4 flex justify-between items-center">
+                <span className="text-lg font-black text-manso-cream">Precio estimado:</span>
+                <span className="text-2xl font-black text-manso-terra">
+                  ${precioEstimado.toLocaleString('es-AR')}
+                </span>
               </div>
             </div>
           </div>
@@ -358,10 +406,10 @@ export function CotizadorForm() {
   return (
     <form onSubmit={handleSubmit} className="space-y-8">
       {/* Progress bar */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex items-center mb-8">
         {[1, 2, 3, 4, 5, 6].map((step) => (
-          <div key={step} className="flex items-center">
-            <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-black transition-all ${
+          <div key={step} className="flex items-center flex-1 last:flex-none">
+            <div className={`w-9 h-9 rounded-full flex items-center justify-center text-sm font-black transition-all shrink-0 ${
               currentStep >= step
                 ? 'bg-manso-terra text-manso-cream'
                 : 'bg-manso-cream/10 text-manso-cream/40'
@@ -369,9 +417,9 @@ export function CotizadorForm() {
               {step}
             </div>
             {step < 6 && (
-              <div className={`w-full h-1 mx-2 transition-all ${
+              <div className={`h-0.5 flex-1 mx-1 transition-all ${
                 currentStep > step ? 'bg-manso-terra' : 'bg-manso-cream/10'
-              }`}></div>
+              }`} />
             )}
           </div>
         ))}
@@ -379,7 +427,7 @@ export function CotizadorForm() {
 
       {renderStep()}
 
-      {/* Navigation buttons */}
+      {/* Navegación */}
       <div className="flex gap-4 pt-8">
         {currentStep > 1 && (
           <button
@@ -395,9 +443,9 @@ export function CotizadorForm() {
             type="button"
             onClick={nextStep}
             disabled={
-              (currentStep === 1 && !cotizacion.tipoEvento) ||
-              (currentStep === 2 && !cotizacion.duracion) ||
-              (currentStep === 3 && !cotizacion.cantidadPersonas)
+              (currentStep === 1 && !tipoId) ||
+              (currentStep === 2 && !duracionId) ||
+              (currentStep === 3 && !capacidadId)
             }
             className="flex-1 py-4 bg-manso-terra text-manso-cream font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-manso-cream hover:text-manso-black transition-all disabled:opacity-50 text-sm"
           >
@@ -406,10 +454,11 @@ export function CotizadorForm() {
         ) : (
           <button
             type="submit"
-            disabled={!cotizacion.nombre || !cotizacion.email || !cotizacion.telefono || !cotizacion.fecha || !cotizacion.hora}
-            className="flex-1 py-4 bg-manso-terra text-manso-cream font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-manso-cream hover:text-manso-black transition-all disabled:opacity-50 text-sm"
+            disabled={submitting || !contacto.nombre || !contacto.email || !contacto.telefono}
+            className="flex-1 py-4 bg-manso-terra text-manso-cream font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-manso-cream hover:text-manso-black transition-all disabled:opacity-50 text-sm flex items-center justify-center gap-2"
           >
-            Enviar cotización
+            {submitting && <Loader2 className="w-4 h-4 animate-spin" />}
+            {submitting ? 'Enviando...' : 'Enviar cotización'}
           </button>
         )}
       </div>
