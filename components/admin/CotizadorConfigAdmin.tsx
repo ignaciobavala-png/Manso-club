@@ -7,7 +7,7 @@ import { Plus, Trash2, Save, GripVertical } from 'lucide-react';
 // ── Tipos ────────────────────────────────────────────────────
 
 interface TipoEvento { id: string; label: string; icono: string; precio: number; orden: number; activo: boolean; }
-interface Duracion    { id: string; label: string; multiplicador: number; orden: number; activo: boolean; }
+interface Duracion    { id: string; label: string; precio: number; orden: number; activo: boolean; }
 interface Capacidad   { id: string; label: string; precio: number; orden: number; activo: boolean; }
 interface Servicio    { id: string; label: string; precio: number; orden: number; activo: boolean; }
 
@@ -82,11 +82,9 @@ function TipoRow({ item, onSave, onDelete }: {
   );
 }
 
-function MultiRow({ item, field, unit, onSave, onDelete }: {
-  item: Duracion | Capacidad;
-  field: 'multiplicador';
-  unit: string;
-  onSave: (updated: typeof item) => void;
+function DuracionRow({ item, onSave, onDelete }: {
+  item: Duracion;
+  onSave: (updated: Duracion) => void;
   onDelete: (id: string) => void;
 }) {
   const [local, setLocal] = useState(item);
@@ -99,17 +97,17 @@ function MultiRow({ item, field, unit, onSave, onDelete }: {
         className={`${inputCls} flex-1 min-w-[160px]`}
         value={local.label}
         onChange={e => setLocal(p => ({ ...p, label: e.target.value }))}
-        placeholder="Descripción"
+        placeholder="Ej: 2 horas, Tarde completa..."
       />
       <div className="flex items-center gap-1">
-        <span className="text-manso-cream/40 text-xs">{unit}</span>
+        <span className="text-manso-cream/40 text-xs">$</span>
         <input
           type="number"
-          className={`${inputCls} w-20`}
-          value={(local as any)[field]}
-          onChange={e => setLocal(p => ({ ...p, [field]: Number(e.target.value) }))}
-          min={0.1}
-          step={0.1}
+          className={`${inputCls} w-28`}
+          value={local.precio}
+          onChange={e => setLocal(p => ({ ...p, precio: Number(e.target.value) }))}
+          min={0}
+          step={1000}
         />
       </div>
       <label className="flex items-center gap-1.5 cursor-pointer">
@@ -308,7 +306,7 @@ export function CotizadorConfigAdmin() {
   };
   const addDuracion = async () => {
     const { data } = await supabase.from('cotizador_duraciones')
-      .insert({ label: 'Nueva duración', multiplicador: 1, orden: duraciones.length + 1 })
+      .insert({ label: 'Nueva duración', precio: 0, orden: duraciones.length + 1 })
       .select().single();
     if (data) setDuraciones(prev => [...prev, data]);
   };
@@ -407,10 +405,10 @@ export function CotizadorConfigAdmin() {
         {activeTab === 'duraciones' && (
           <>
             <p className={`${labelCls} mb-3`}>
-              Multiplicador: 1× = precio base, 2× = doble, etc.
+              Precio fijo que se suma al total según la duración elegida
             </p>
             {duraciones.map(d => (
-              <MultiRow key={d.id} item={d} field="multiplicador" unit="×" onSave={saveDuracion} onDelete={deleteDuracion} />
+              <DuracionRow key={d.id} item={d} onSave={saveDuracion} onDelete={deleteDuracion} />
             ))}
             <button
               onClick={addDuracion}
