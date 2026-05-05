@@ -1,7 +1,8 @@
-import { ArrowRight, Users, MapPin, Sparkles, Music } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { getSiteConfig } from '@/lib/siteConfig';
 import { ParticleBackground } from './ParticleBackground';
+import { TYPE, OPACITY } from '@/lib/ui-constants';
 
 export const PorQueManso = async () => {
   const config = await getSiteConfig();
@@ -18,11 +19,6 @@ export const PorQueManso = async () => {
     if (!item) return false;
     if (typeof item === 'string') return true;
     return item.visible;
-  };
-
-  const getIcon = (index: number) => {
-    const icons = [Users, MapPin, Sparkles, Music];
-    return icons[index % icons.length];
   };
 
   const benefits = [
@@ -79,7 +75,6 @@ export const PorQueManso = async () => {
         {/* Cards */}
         <div className={`${getGridClass()} gap-4 sm:gap-6 mb-12 sm:mb-16`}>
           {benefits.map((benefit, index) => {
-            const IconComponent = getIcon(index);
             const num = String(index + 1).padStart(2, '0');
             return (
               <div key={index} className="group relative">
@@ -90,17 +85,12 @@ export const PorQueManso = async () => {
                     {num}
                   </span>
 
-                  {/* Ícono — top right */}
-                  <div className="absolute top-5 right-5 w-10 h-10 bg-manso-olive/70 rounded-xl flex items-center justify-center transition-all duration-500 group-hover:bg-manso-olive">
-                    <IconComponent size={18} className="text-white" />
-                  </div>
-
                   {/* Texto centrado */}
                   <div className="relative z-10 flex flex-col items-center gap-4">
-                    <h3 className="text-lg sm:text-xl font-black uppercase tracking-tighter text-white leading-tight">
+                    <h3 className={`${TYPE.h3} text-white leading-tight`}>
                       {benefit.title}
                     </h3>
-                    <p className="text-white/80 leading-relaxed text-xs sm:text-sm group-hover:text-white transition-colors duration-500">
+                    <p className={`${TYPE.body} ${OPACITY.onDark} group-hover:text-white transition-colors duration-500`}>
                       {benefit.description}
                     </p>
                   </div>
@@ -116,7 +106,7 @@ export const PorQueManso = async () => {
           const mainText = getValue('porque_main_text', '');
           return mainText && mainText !== 'Texto descriptivo adicional...' ? (
             <div className="text-center mb-16">
-              <p className="text-lg sm:text-xl md:text-2xl font-light text-white/70 leading-relaxed max-w-4xl mx-auto">
+              <p className={`${TYPE.body} md:text-xl ${OPACITY.onDark} max-w-4xl mx-auto`}>
                 {mainText}
               </p>
             </div>

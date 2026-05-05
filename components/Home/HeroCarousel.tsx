@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { ArrowDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
+import { TYPE, OPACITY } from '@/lib/ui-constants';
 
 const transitionConfig = { 
   duration: 0.9, 
@@ -62,18 +63,18 @@ export const HeroCarousel = ({ slides }: { slides: any[] }) => {
             exit={{ opacity: 0, x: 20 }}
             transition={transitionConfig}
           >
-            <header className="mb-8">
-              <span className="text-[10px] md:text-xs uppercase tracking-[0.4em] text-manso-cream/60 font-bold block mb-4">
+            <header className="mb-6 md:mb-8">
+              <span className={`${TYPE.label} ${OPACITY.onDark} block mb-3 md:mb-4`}>
                 {currentSlide.tag}
               </span>
-              <h1 className="text-[clamp(2.5rem,12vw,8rem)] md:text-[11vw] leading-[0.85] font-bold uppercase tracking-tighter text-manso-cream break-words">
+              <h1 className={`${TYPE.display} text-manso-cream break-words`}>
                 {title.line1} <br />
-                <span className="italic font-light opacity-80">{title.line2}</span>
+                <span className={`${TYPE.display} italic font-light text-manso-cream/75`}>{title.line2}</span>
               </h1>
             </header>
 
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-10 mt-4">
-              <p className="max-w-[450px] text-manso-cream/80 text-sm md:text-base leading-relaxed font-light">
+              <p className={`max-w-[450px] ${TYPE.body} md:text-xl ${OPACITY.onDark}`}>
                 {currentSlide.description}
               </p>
               
@@ -99,7 +100,7 @@ export const HeroCarousel = ({ slides }: { slides: any[] }) => {
                 </div>
 
                 <div className="flex items-center gap-4 text-manso-cream/40 animate-bounce mt-4 md:mt-0">
-                  <span className="text-[9px] uppercase tracking-widest font-bold">Scroll para explorar</span>
+                  <span className={`${TYPE.micro} font-bold`}>Scroll para explorar</span>
                   <ArrowDown size={14} />
                 </div>
               </div>

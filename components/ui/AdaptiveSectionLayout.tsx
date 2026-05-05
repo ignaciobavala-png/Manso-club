@@ -1,6 +1,7 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
+import { TYPE, OPACITY } from '@/lib/ui-constants';
 
 interface AdaptiveSectionLayoutProps {
   title: string;
@@ -67,17 +68,17 @@ export function AdaptiveSectionLayout({
 
     if (pathname?.includes('/about')) {
       return {
-        bg: customBg || 'bg-gray-100',
+        bg: customBg || 'bg-manso-cream',
         titleColor: 'text-manso-black',
-        subtitleColor: 'text-zinc-600'
+        subtitleColor: 'text-manso-black/60'
       };
     }
 
     // Por defecto: fondo blanco para agenda, tienda, etc.
     return {
-      bg: customBg || 'bg-white',
+      bg: customBg || 'bg-manso-white',
       titleColor: 'text-manso-black',
-      subtitleColor: 'text-zinc-400'
+      subtitleColor: 'text-manso-black/60'
     };
   };
 
@@ -87,10 +88,10 @@ export function AdaptiveSectionLayout({
     <main className={`min-h-screen ${theme.bg} pt-32 pb-20 px-4 md:px-8 transition-colors duration-500`}>
       <div className="max-w-[1400px] mx-auto">
         <div className="mb-10">
-          <h1 className={`text-4xl md:text-6xl font-black uppercase italic tracking-tighter leading-none ${theme.titleColor}`}>
+          <h1 className={`${TYPE.h1} ${theme.titleColor}`}>
             {title}<span className="text-zinc-200 cursor-blink">_</span>
           </h1>
-          <p className={`text-[10px] font-black uppercase tracking-[0.5em] ${theme.subtitleColor} mt-4 ml-2 italic`}>
+          <p className={`${TYPE.label} ${theme.subtitleColor} mt-4 ml-2 italic`}>
             {subtitle}
           </p>
         </div>

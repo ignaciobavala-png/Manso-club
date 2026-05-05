@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { ArrowRight, Star } from 'lucide-react';
 import Link from 'next/link';
 import { Membresia, MembresiaBeneficio } from '@/lib/types/membresia';
+import { TYPE } from '@/lib/ui-constants';
 
 export const MembresiasHome = () => {
   const [membresias, setMembresias] = useState<Membresia[]>([]);
@@ -138,7 +139,7 @@ export const MembresiasHome = () => {
                             .map((beneficio, index) => (
                               <div key={index} className="flex items-start gap-3">
                                 <div className="w-1 h-1 bg-gray-400 rounded-full mt-2 shrink-0" />
-                                <span className={`text-xs sm:text-sm leading-relaxed ${
+                                <span className={`${TYPE.bodySmall} leading-relaxed ${
                                   membresia.destacado ? 'text-gray-300' : 'text-gray-600'
                                 }`}>
                                   {beneficio.texto}
@@ -148,9 +149,9 @@ export const MembresiasHome = () => {
                         </div>
 
                         {membresia.descripcion && (
-                          <p className={`text-[10px] sm:text-xs leading-relaxed mb-4 sm:mb-6 ${
-                            membresia.destacado ? 'text-gray-400' : 'text-gray-500'
-                          }`}>
+                          <p className={`${TYPE.bodySmall} leading-relaxed mb-4 sm:mb-6 ${
+                             membresia.destacado ? 'text-gray-400' : 'text-gray-500'
+                           }`}>
                             {membresia.descripcion}
                           </p>
                         )}

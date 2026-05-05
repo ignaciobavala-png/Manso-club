@@ -6,6 +6,7 @@ import { getHeroSlidesByDevice, getMediaUrlForDevice } from '@/lib/hero';
 import { HeroCarousel } from '@/components/Home/HeroCarousel';
 import { HeroSlide } from '@/lib/hero';
 import Link from 'next/link';
+import { TYPE, OPACITY } from '@/lib/ui-constants';
 
 const HERO_SLIDES = [
   {
@@ -92,23 +93,23 @@ export function HeroClient() {
         <div className="absolute inset-0 z-10 bg-black/40" />
         
         <div className="relative z-20 w-full max-w-6xl mx-auto">
-          <header className="mb-8">
+          <header className="mb-6 md:mb-8">
             {slides[0].tag && (
-              <span className="text-[10px] md:text-xs uppercase tracking-[0.4em] text-manso-cream/60 font-bold block mb-4">
+              <span className={`${TYPE.label} ${OPACITY.onDark} block mb-3 md:mb-4`}>
                 {slides[0].tag}
               </span>
             )}
-            <h1 className="text-[clamp(2.5rem,12vw,8rem)] md:text-[11vw] leading-[0.85] font-bold uppercase tracking-tighter text-manso-cream break-words">
+            <h1 className={`${TYPE.display} text-manso-cream break-words`}>
               {slides[0].title_line1} <br />
               {slides[0].title_line2 && (
-                <span className="italic font-light opacity-80">{slides[0].title_line2}</span>
+                <span className={`${TYPE.display} italic font-light text-manso-cream/75`}>{slides[0].title_line2}</span>
               )}
             </h1>
           </header>
 
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 mt-4">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 md:gap-12 mt-4">
             {slides[0].description && (
-              <p className="max-w-[450px] text-manso-cream/80 text-base md:text-xl leading-relaxed font-light min-h-[100px]">
+              <p className={`max-w-[450px] min-h-[100px] ${TYPE.body} ${OPACITY.onDark}`}>
                 {slides[0].description}
               </p>
             )}
@@ -122,7 +123,7 @@ export function HeroClient() {
               </Link>
               
               <div className="flex items-center gap-4 text-manso-cream/40 animate-bounce mt-4 md:mt-0">
-                <span className="text-[9px] uppercase tracking-widest font-bold">Scroll para explorar</span>
+                <span className={`${TYPE.micro} font-bold`}>Scroll para explorar</span>
                 <ArrowDown size={14} />
               </div>
             </div>
@@ -136,7 +137,6 @@ export function HeroClient() {
   if (slides.length === 1 && slides[0].tipo === 'imagen') {
     const imageUrl = getMediaUrlForDevice(slides[0], currentDevice);
     if (!imageUrl) {
-      // Si no hay imagen para el dispositivo actual, mostrar fallback
       return <HeroCarousel slides={HERO_SLIDES} />;
     }
     
@@ -153,23 +153,23 @@ export function HeroClient() {
         <div className="absolute inset-0 z-10 bg-black/40" />
         
         <div className="relative z-20 w-full max-w-6xl mx-auto">
-          <header className="mb-8">
+          <header className="mb-6 md:mb-8">
             {slides[0].tag && (
-              <span className="text-[10px] md:text-xs uppercase tracking-[0.4em] text-manso-cream/60 font-bold block mb-4">
+              <span className={`${TYPE.label} ${OPACITY.onDark} block mb-3 md:mb-4`}>
                 {slides[0].tag}
               </span>
             )}
-            <h1 className="text-[clamp(2.5rem,12vw,8rem)] md:text-[11vw] leading-[0.85] font-bold uppercase tracking-tighter text-manso-cream break-words">
+            <h1 className={`${TYPE.display} text-manso-cream break-words`}>
               {slides[0].title_line1} <br />
               {slides[0].title_line2 && (
-                <span className="italic font-light opacity-80">{slides[0].title_line2}</span>
+                <span className={`${TYPE.display} italic font-light text-manso-cream/75`}>{slides[0].title_line2}</span>
               )}
             </h1>
           </header>
 
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 mt-4">
+          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 md:gap-12 mt-4">
             {slides[0].description && (
-              <p className="max-w-[450px] text-manso-cream/80 text-base md:text-xl leading-relaxed font-light min-h-[100px]">
+              <p className={`max-w-[450px] min-h-[100px] ${TYPE.body} ${OPACITY.onDark}`}>
                 {slides[0].description}
               </p>
             )}
@@ -183,7 +183,7 @@ export function HeroClient() {
               </Link>
               
               <div className="flex items-center gap-4 text-manso-cream/40 animate-bounce mt-4 md:mt-0">
-                <span className="text-[9px] uppercase tracking-widest font-bold">Scroll para explorar</span>
+                <span className={`${TYPE.micro} font-bold`}>Scroll para explorar</span>
                 <ArrowDown size={14} />
               </div>
             </div>

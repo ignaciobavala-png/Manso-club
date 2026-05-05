@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
+import { TYPE } from '@/lib/ui-constants';
 
 interface EventoHome {
   id: string;
@@ -99,7 +100,7 @@ export const EventosHome = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-12 relative">
           {/* COLUMNA IZQUIERDA: AGENDA RECURRENTE */}
           <div>
-            <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-gray-600 mb-4 sm:mb-6">
+            <h3 className={`${TYPE.label} text-manso-black/60 mb-4 sm:mb-6`}>
               AGENDA
             </h3>
             
@@ -126,9 +127,9 @@ export const EventosHome = () => {
                         )}
                       </div>
                       <div className="flex-1">
-                        <h4 className="text-base sm:text-lg font-black text-black leading-none mb-1 uppercase tracking-tighter">
-                          {evento.titulo}
-                        </h4>
+                  <h4 className={`${TYPE.h4} text-black leading-none mb-1`}>
+                    {evento.titulo}
+                  </h4>
                       </div>
                       
                       <div className="ml-2 sm:ml-4">
@@ -168,7 +169,7 @@ export const EventosHome = () => {
           {/* COLUMNA DERECHA: PRÓXIMOS EVENTOS (FLYERS) */}
           {eventosFecha.length > 0 && (
             <div>
-              <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wider text-gray-600 mb-4 sm:mb-6">
+              <h3 className={`${TYPE.label} text-manso-black/60 mb-4 sm:mb-6`}>
                 PRÓXIMOS EVENTOS
               </h3>
               
