@@ -20,7 +20,7 @@ export const AboutUsPreviewClient = ({
 }) => {
   return (
     <section
-      className="relative py-12 sm:py-16 md:py-20 px-4 sm:px-8 md:px-20"
+      className="relative py-8 sm:py-10 md:py-12 px-4 sm:px-8 md:px-20"
       style={{
         backgroundColor: '#FFFFFF',
         backgroundImage: 'linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.06) 1px, transparent 1px)',
@@ -29,7 +29,7 @@ export const AboutUsPreviewClient = ({
     >
       <div className="relative z-10 max-w-5xl mx-auto">
         {/* Línea umbral — texto asciende desde abajo hasta posicionarse sobre la línea */}
-        <div className="relative mb-12 sm:mb-16 h-36 sm:h-44 md:h-56">
+        <div className="relative mb-6 sm:mb-8 h-20 sm:h-24 md:h-28">
           <div className="absolute left-0 right-0 top-1/2 h-px bg-black/10" />
           <motion.div
             initial={{ y: 80, opacity: 0 }}
@@ -39,7 +39,7 @@ export const AboutUsPreviewClient = ({
             className="absolute left-0 right-0 top-1/2 flex justify-center"
           >
             <h2
-              className="px-6 sm:px-10 text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black uppercase tracking-tighter italic bg-white text-manso-black leading-none"
+              className="px-3 sm:px-8 text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black uppercase tracking-tighter italic bg-white text-manso-black leading-none"
               style={{ transform: 'translateY(-50%)' }}
             >
               SOBRE MANSO

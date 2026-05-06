@@ -54,21 +54,28 @@ export const EventosHome = () => {
   }, []);
 
   useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout> | null = null;
+
     const handleScroll = () => {
       const root = document.getElementById('page-root');
-      const titulo = document.getElementById('eventos-titulo');
       const section = document.getElementById('eventos-section');
-      if (!root || !titulo || !section) return;
+      if (!root || !section) return;
 
-      const rect = titulo.getBoundingClientRect();
-      const inView = rect.top < window.innerHeight && rect.bottom > 0;
+      const rect = section.getBoundingClientRect();
+      const inView = rect.top < window.innerHeight + 200 && rect.bottom > -200;
 
-      if (inView) {
-        root.style.backgroundColor = '#BC2915';
-        root.style.transition = 'background-color 0.6s ease';
-        section.style.backgroundColor = '#BC2915';
-        section.style.transition = 'background-color 0.6s ease';
-      } else {
+      if (inView && !timeout) {
+        timeout = setTimeout(() => {
+          root.style.backgroundColor = '#BC2915';
+          root.style.transition = 'background-color 0.6s ease';
+          section.style.backgroundColor = '#BC2915';
+          section.style.transition = 'background-color 0.6s ease';
+        }, 1000);
+      } else if (!inView) {
+        if (timeout) {
+          clearTimeout(timeout);
+          timeout = null;
+        }
         root.style.backgroundColor = '#1D1D1B';
         section.style.backgroundColor = '#F5F0E8';
       }
@@ -76,7 +83,10 @@ export const EventosHome = () => {
 
     handleScroll();
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (timeout) clearTimeout(timeout);
+    };
   }, []);
 
   const fetchData = async () => {
@@ -253,7 +263,7 @@ export const EventosHome = () => {
       {/* ============================================ */}
       {/* SECCIÓN 2: EVENTOS (CARRUSEL)               */}
       {/* ============================================ */}
-      <div className="pb-12 sm:pb-16 md:pb-20 pt-0 sm:pt-0 px-0 sm:px-8 md:px-20">
+      <div className="pb-12 sm:pb-16 md:pb-20 pt-8 sm:pt-10 px-0 sm:px-8 md:px-20">
         <div className="max-w-7xl mx-auto">
           <div className="text-left mb-6 sm:mb-8 px-4 sm:px-0">
             <h2 id="eventos-titulo" className="text-3xl sm:text-4xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-white">
@@ -272,13 +282,15 @@ export const EventosHome = () => {
                 ref={scrollRef}
                 className="flex gap-[10px] overflow-x-auto snap-x snap-mandatory scrollbar-none"
               >
+                {/* Espaciador izquierdo para dar padding al primer card en mobile */}
+                <div className="snap-none w-4 sm:w-0 shrink-0" />
                 {eventosFecha.map((evento) => (
                   <a
                     key={evento.id}
                     href={evento.link_tickets || undefined}
                     target={evento.link_tickets ? '_blank' : undefined}
                     rel={evento.link_tickets ? 'noopener noreferrer' : undefined}
-                    className="group relative flex-shrink-0 w-[260px] sm:w-[280px] lg:w-[320px] aspect-[3/4] snap-start first:ml-4 sm:first:ml-0 last:mr-4 sm:last:mr-0 overflow-hidden cursor-pointer"
+                    className="group relative flex-shrink-0 w-[260px] sm:w-[280px] lg:w-[320px] aspect-[3/4] snap-start overflow-hidden cursor-pointer"
                   >
                     {/* Imagen */}
                     <div className="absolute inset-0 bg-gray-900">
@@ -318,15 +330,8 @@ export const EventosHome = () => {
                     </div>
                   </a>
                 ))}
-              </div>
-
-              <div className="flex justify-center mt-8 px-4 sm:px-0">
-                <a
-                  href="/agenda"
-                  className="inline-flex items-center gap-2 bg-black text-white px-6 py-3 text-[9px] sm:text-[10px] font-black uppercase tracking-widest hover:bg-gray-800 transition-all rounded-full"
-                >
-                  Ver toda la agenda
-                </a>
+                {/* Espaciador derecho para dar padding al último card en mobile */}
+                <div className="snap-none w-4 sm:w-0 shrink-0" />
               </div>
             </>
           )}

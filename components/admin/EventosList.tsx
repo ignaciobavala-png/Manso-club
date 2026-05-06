@@ -48,11 +48,11 @@ export function EventosList({ refreshTrigger }: EventosListProps) {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('¿Estás seguro de que quieres eliminar este evento?')) return;
+    if (!confirm('¿Estás seguro de que quieres eliminar este evento? Esta acción no se puede deshacer.')) return;
 
     const { error } = await supabase
       .from('eventos')
-      .update({ activo: false })
+      .delete()
       .eq('id', id);
 
     if (error) {

@@ -54,7 +54,7 @@ const bloques = [
   }
 ];
 
-const textoLinea = 'text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter leading-[0.85]';
+const textoLinea = 'text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter leading-[0.85]';
 const textWhite = `${textoLinea} text-white`;
 const textOlive = `${textoLinea} italic text-manso-olive`;
 const textManifiesto = 'text-2xl sm:text-3xl md:text-4xl italic font-light text-white/90 leading-snug';
@@ -67,24 +67,24 @@ export const PorQueManso = ({ children }: { children?: React.ReactNode }) => {
       <ParticleBackground />
       <div className="relative z-10 w-full">
         {/* TÍTULO + MANIFIESTO — centrado, ancho completo */}
-        <div className="mb-12 md:mb-16 space-y-3 text-center px-2 sm:px-4 md:px-8">
+        <div className="mb-12 md:mb-16 space-y-4 sm:space-y-3 text-center px-2 sm:px-4 md:px-8">
           <AnimatedLine>
-            <div className="flex items-baseline gap-3 flex-wrap justify-center">
-              <h2 className={textWhite}>NUESTRO ADN</h2>
+            <div className="flex items-baseline gap-2 sm:gap-3 flex-wrap justify-center gap-y-1">
+              <span className={textWhite}>NUESTRO ADN</span>
               {imgs[0]}
             </div>
           </AnimatedLine>
 
           <AnimatedLine>
-            <div className="flex items-baseline gap-3 flex-wrap justify-center">
-              <h2 className={textWhite}>MUCHO MÁS</h2>
+            <div className="flex items-baseline gap-2 sm:gap-3 flex-wrap justify-center gap-y-1">
+              <span className={textWhite}>MUCHO MÁS</span>
               {imgs[1]}
-              <h2 className={textOlive}>QUE UN CLUB.</h2>
+              <span className={textOlive}>QUE UN CLUB.</span>
             </div>
           </AnimatedLine>
 
           <AnimatedLine>
-            <div className="flex items-baseline gap-3 flex-wrap justify-center">
+            <div className="flex items-baseline gap-2 sm:gap-3 flex-wrap justify-center gap-y-1">
               <span className={textWhite}>EL TALENTO</span>
               {imgs[2]}
               <span className={textWhite}>SIEMPRE ESTUVO,</span>
@@ -92,7 +92,7 @@ export const PorQueManso = ({ children }: { children?: React.ReactNode }) => {
           </AnimatedLine>
 
           <AnimatedLine>
-            <div className="flex items-baseline gap-3 flex-wrap justify-center">
+            <div className="flex items-baseline gap-2 sm:gap-3 flex-wrap justify-center gap-y-1">
               <span className={textWhite}>FALTABA</span>
               {imgs[3]}
               <span className={textWhite}>UN LUGAR.</span>

@@ -28,13 +28,13 @@ export const RandomGalleryPlaceholders = async ({ count = 4 }: { count?: number 
   return (
     <>
       {selected.map((img, i) => (
-        <span key={i} className="inline-flex w-24 h-12 sm:w-32 sm:h-16 rounded-lg overflow-hidden flex-shrink-0 relative">
+        <span key={i} className="inline-flex w-8 h-8 sm:w-32 sm:h-16 rounded overflow-hidden flex-shrink-0 relative">
           <Image
             src={img.src}
             alt=""
             fill
             className="object-cover"
-            sizes="160px"
+            sizes="(max-width: 640px) 64px, 128px"
           />
         </span>
       ))}

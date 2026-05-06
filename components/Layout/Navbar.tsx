@@ -127,7 +127,7 @@ export const Navbar = () => {
           <div className="flex items-center gap-4 md:gap-6">
             <Link
               href="/login"
-              className={`hidden md:block px-6 py-2 text-[10px] font-black uppercase tracking-widest border transition-all duration-300 ${
+              className={`hidden md:block px-5 py-2 text-[10px] font-black uppercase tracking-widest border transition-all duration-300 rounded-full ${
                 getTextColor(isLight)
               } hover:bg-manso-black hover:text-manso-cream hover:border-manso-black`}
             >
@@ -220,7 +220,7 @@ export const Navbar = () => {
             </button>
           </div>
           <div className="flex-1 flex flex-col p-8 gap-6 overflow-y-auto">
-            <Link href="/login" onClick={() => setIsMenuOpen(false)} className="px-6 py-3 text-[10px] font-black uppercase tracking-widest border border-manso-black text-manso-black hover:bg-manso-black hover:text-white transition-all text-center">
+            <Link href="/login" onClick={() => setIsMenuOpen(false)} className="px-6 py-3 text-[10px] font-black uppercase tracking-widest border border-manso-black text-manso-black hover:bg-manso-black hover:text-white transition-all text-center rounded-full">
               Login
             </Link>
             {navLinks.map((link) => (
