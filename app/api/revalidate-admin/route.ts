@@ -8,6 +8,7 @@ const TABLE_PATHS: Record<string, string[]> = {
   artistas_tracks: ['/artistas', '/artistas/[slug]'],
   artista_fotos: ['/artistas', '/artistas/[slug]'],
   eventos: ['/agenda', '/'],
+  eventos_home: ['/'],
   agenda: ['/agenda', '/'],
   productos: ['/tienda', '/'],
   gallery: ['/'],

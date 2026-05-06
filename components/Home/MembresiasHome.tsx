@@ -41,14 +41,14 @@ export const MembresiasHome = () => {
 
   if (loading) {
     return (
-      <section className="py-12 sm:py-16 px-4 sm:px-8 md:px-20" style={{ backgroundColor: '#FFFFFF' }}>
+      <section className="py-12 sm:py-16 px-4 sm:px-8 md:px-20" style={{ backgroundColor: '#1D1D1B' }}>
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-black">
+          <div className="text-left mb-12">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-manso-cream">
               MEMBRESÍAS 2026
             </h2>
           </div>
-          <div className="text-center text-black/60 py-8">
+          <div className="text-center text-manso-cream/60 py-8">
             Cargando membresías...
           </div>
         </div>
@@ -57,16 +57,16 @@ export const MembresiasHome = () => {
   }
 
   return (
-    <section className="py-12 sm:py-16 px-4 sm:px-8 md:px-20" style={{ backgroundColor: '#FFFFFF' }}>
-      <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-black">
+    <section className="relative py-12 sm:py-16 px-4 sm:px-8 md:px-20" style={{ backgroundColor: '#1D1D1B', backgroundImage: 'linear-gradient(rgba(255,255,220,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,220,0.07) 1px, transparent 1px)', backgroundSize: '48px 48px' }}>
+      <div className="relative z-10 max-w-7xl mx-auto">
+        <div className="text-left mb-12">
+          <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-manso-cream">
             MEMBRESÍAS 2026
           </h2>
         </div>
 
         {membresias.length === 0 ? (
-          <div className="text-center text-black/40 py-8">
+          <div className="text-center text-manso-cream/60 py-8">
             No hay membresías disponibles
           </div>
         ) : (() => {
@@ -88,10 +88,10 @@ export const MembresiasHome = () => {
                 <div key={categoria}>
                   {/* Encabezado de categoría */}
                   <div className="flex items-center gap-4 mb-6">
-                    <span className="text-[9px] font-black uppercase tracking-[0.5em] text-black/40">
+                    <span className="text-[9px] font-black uppercase tracking-[0.5em] text-manso-cream/50">
                       {categoria}
                     </span>
-                    <div className="flex-1 h-px bg-black/10" />
+                    <div className="flex-1 h-px bg-manso-cream/10" />
                   </div>
 
                   <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3 md:gap-8">
@@ -101,7 +101,7 @@ export const MembresiasHome = () => {
                         className={`group flex flex-col rounded-[20px] sm:rounded-[30px] md:rounded-[40px] p-4 sm:p-6 md:p-8 transition-all duration-700 ease-out hover:scale-[1.02] cursor-pointer relative ${
                           membresia.destacado
                             ? 'bg-black text-white border-black hover:shadow-[0_20px_60px_rgba(0,0,0,0.25)]'
-                            : 'bg-white border-2 border-gray-300 hover:border-manso-black/40 hover:shadow-[0_20px_60px_rgba(0,0,0,0.08)]'
+                            : 'bg-zinc-100 border-2 border-zinc-200 hover:border-manso-black/40 hover:shadow-[0_20px_60px_rgba(0,0,0,0.08)]'
                         }`}
                       >
                         {membresia.destacado && (
@@ -139,8 +139,8 @@ export const MembresiasHome = () => {
                             .map((beneficio, index) => (
                               <div key={index} className="flex items-start gap-3">
                                 <div className="w-1 h-1 bg-gray-400 rounded-full mt-2 shrink-0" />
-                                <span className={`${TYPE.bodySmall} leading-relaxed ${
-                                  membresia.destacado ? 'text-gray-300' : 'text-gray-600'
+                                <span className={`${TYPE.body} font-medium leading-relaxed ${
+                                  membresia.destacado ? 'text-gray-300' : 'text-gray-700'
                                 }`}>
                                   {beneficio.texto}
                                 </span>
@@ -149,8 +149,8 @@ export const MembresiasHome = () => {
                         </div>
 
                         {membresia.descripcion && (
-                          <p className={`${TYPE.bodySmall} leading-relaxed mb-4 sm:mb-6 ${
-                             membresia.destacado ? 'text-gray-400' : 'text-gray-500'
+                          <p className={`${TYPE.body} font-medium leading-relaxed mb-4 sm:mb-6 ${
+                             membresia.destacado ? 'text-gray-400' : 'text-gray-600'
                            }`}>
                             {membresia.descripcion}
                           </p>
@@ -179,7 +179,7 @@ export const MembresiasHome = () => {
         <div className="text-center">
           <Link 
             href="/membresias"
-            className="inline-flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-black hover:text-gray-600 transition-colors group"
+            className="inline-flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-manso-cream hover:text-white transition-colors group"
           >
             VER TODAS LAS MEMBRESÍAS 
             <ArrowRight 

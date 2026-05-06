@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ArrowDown } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { TYPE, OPACITY } from '@/lib/ui-constants';
@@ -97,11 +96,6 @@ export const HeroCarousel = ({ slides }: { slides: any[] }) => {
                       className="h-[1px] rounded-full" 
                     />
                   ))}
-                </div>
-
-                <div className="flex items-center gap-4 text-manso-cream/40 animate-bounce mt-4 md:mt-0">
-                  <span className={`${TYPE.micro} font-bold`}>Scroll para explorar</span>
-                  <ArrowDown size={14} />
                 </div>
               </div>
             </div>

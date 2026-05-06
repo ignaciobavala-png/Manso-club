@@ -1,130 +1,124 @@
-import { ArrowRight } from 'lucide-react';
-import Link from 'next/link';
-import { getSiteConfig } from '@/lib/siteConfig';
+'use client';
+
+import { motion, useScroll, useTransform, type Easing } from 'framer-motion';
+import { useRef, Children } from 'react';
 import { ParticleBackground } from './ParticleBackground';
 import { TYPE, OPACITY } from '@/lib/ui-constants';
 
-export const PorQueManso = async () => {
-  const config = await getSiteConfig();
+const ease: Easing = [0.16, 1, 0.3, 1];
 
-  const getValue = (key: string, defaultValue: string) => {
-    const item = config[key];
-    if (!item) return defaultValue;
-    if (typeof item === 'string') return item;
-    return item.visible ? item.value : defaultValue;
-  };
-
-  const isVisible = (key: string) => {
-    const item = config[key];
-    if (!item) return false;
-    if (typeof item === 'string') return true;
-    return item.visible;
-  };
-
-  const benefits = [
-    {
-      title: getValue('beneficio1_titulo', 'Título del Beneficio 1'),
-      description: getValue('beneficio1_descripcion', 'Descripción del primer beneficio que ofrece Manso Club...'),
-      visible: isVisible('beneficio1_titulo') || isVisible('beneficio1_descripcion')
-    },
-    {
-      title: getValue('beneficio2_titulo', 'Título del Beneficio 2'),
-      description: getValue('beneficio2_descripcion', 'Descripción del segundo beneficio que ofrece Manso Club...'),
-      visible: isVisible('beneficio2_titulo') || isVisible('beneficio2_descripcion')
-    },
-    {
-      title: getValue('beneficio3_titulo', 'Título del Beneficio 3'),
-      description: getValue('beneficio3_descripcion', 'Descripción del tercer beneficio que ofrece Manso Club...'),
-      visible: isVisible('beneficio3_titulo') || isVisible('beneficio3_descripcion')
-    },
-    {
-      title: getValue('beneficio4_titulo', 'Título del Beneficio 4'),
-      description: getValue('beneficio4_descripcion', 'Descripción del cuarto beneficio que ofrece Manso Club...'),
-      visible: isVisible('beneficio4_titulo') || isVisible('beneficio4_descripcion')
-    }
-  ].filter(benefit => benefit.visible);
-
-  const getGridClass = () => {
-    const count = benefits.length;
-    if (count === 0) return 'hidden';
-    if (count === 1) return 'grid grid-cols-1 max-w-md mx-auto';
-    if (count === 2) return 'grid grid-cols-1 md:grid-cols-2 max-w-4xl mx-auto';
-    if (count === 3) return 'grid grid-cols-1 md:grid-cols-3 max-w-6xl mx-auto';
-    return 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4';
-  };
-
-  const getCardHeight = () => {
-    const count = benefits.length;
-    if (count <= 2) return 'h-52 md:h-56';
-    return 'h-56 md:h-60';
-  };
+const AnimatedLine = ({ children, className }: { children: React.ReactNode; className?: string }) => {
+  const ref = useRef<HTMLDivElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ['start end', 'center center']
+  });
+  const progress = useTransform(scrollYProgress, [0, 1], [0, 1]);
+  const clipRight = useTransform(progress, (v) => `inset(0 ${100 - v * 100}% 0 0)`);
 
   return (
-    <section className="relative py-8 sm:py-12 px-4 sm:px-8 md:px-20 bg-manso-black overflow-hidden">
+    <div ref={ref} className={`relative ${className || ''}`}>
+      <div style={{ opacity: 0.15 }} aria-hidden="true">
+        {children}
+      </div>
+      <motion.div style={{ clipPath: clipRight, position: 'absolute', inset: 0 }}>
+        {children}
+      </motion.div>
+    </div>
+  );
+};
+
+const fadeUp = (delay: number = 0) => ({
+  initial: { opacity: 0, y: 20 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true, margin: '-80px' as const },
+  transition: { duration: 0.6, ease, delay }
+});
+
+const bloques = [
+  {
+    titulo: 'COMUNIDAD & TALENTO LOCAL',
+    texto: 'Artistas, creativos, entusiastas y emprendedores apostando por un futuro en comunidad. ¿Cuándo fue la última vez que te sentiste parte?'
+  },
+  {
+    titulo: '"TU TERCER LUGAR"',
+    texto: 'Un espacio colaborativo para quienes buscan nuevas formas de habitar la ciudad y conocer a otros con intereses similares. "No encontrábamos nuestro club, entonces hicimos uno"'
+  },
+  {
+    titulo: 'ESPACIO HÍBRIDO Y CURADURÍA',
+    texto: 'Multiespacio de 6 ambientes con salas de cowork, terraza y espacio para eventos en Colegiales. Música, workshops, exposiciones, talleres, charlas, debates y más.'
+  },
+  {
+    titulo: 'OPORTUNIDADES Y COLABORACIONES',
+    texto: 'En Manso conviven distintas disciplinas y proyectos, como también personas que están buscando su camino. La fusión de todos esos mundos, da lugar a nuevas oportunidades.'
+  }
+];
+
+const textoLinea = 'text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black uppercase tracking-tighter leading-[0.85]';
+const textWhite = `${textoLinea} text-white`;
+const textOlive = `${textoLinea} italic text-manso-olive`;
+const textManifiesto = 'text-2xl sm:text-3xl md:text-4xl italic font-light text-white/90 leading-snug';
+
+export const PorQueManso = ({ children }: { children?: React.ReactNode }) => {
+  const imgs = Children.toArray(children);
+
+  return (
+    <section className="relative py-8 sm:py-12 md:py-20 px-4 sm:px-8 md:px-20 bg-manso-black overflow-hidden border-b border-manso-cream/10">
       <ParticleBackground />
-      <div className="relative z-10 max-w-7xl mx-auto">
-
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black uppercase tracking-tighter leading-[0.9] mb-6">
-            <span className="block text-white">NUESTRO ADN</span>
-            <span className="block italic text-manso-olive mt-2">MUCHO MÁS QUE UN CLUB</span>
-          </h2>
-        </div>
-
-        {/* Cards */}
-        <div className={`${getGridClass()} gap-4 sm:gap-6 mb-12 sm:mb-16`}>
-          {benefits.map((benefit, index) => {
-            const num = String(index + 1).padStart(2, '0');
-            return (
-              <div key={index} className="group relative">
-                <div className={`${getCardHeight()} bg-white/10 rounded-3xl px-6 pt-10 pb-6 border border-white/20 hover:bg-white/15 hover:border-white/35 transition-all duration-500 relative overflow-hidden flex flex-col items-center text-center`}>
-
-                  {/* Número decorativo de fondo */}
-                  <span className="absolute -bottom-4 -right-2 text-[7rem] font-black text-white/5 leading-none select-none pointer-events-none">
-                    {num}
-                  </span>
-
-                  {/* Texto centrado */}
-                  <div className="relative z-10 flex flex-col items-center gap-4">
-                    <h3 className={`${TYPE.h3} text-white leading-tight`}>
-                      {benefit.title}
-                    </h3>
-                    <p className={`${TYPE.body} ${OPACITY.onDark} group-hover:text-white transition-colors duration-500`}>
-                      {benefit.description}
-                    </p>
-                  </div>
-
-                </div>
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Texto central adicional */}
-        {(() => {
-          const mainText = getValue('porque_main_text', '');
-          return mainText && mainText !== 'Texto descriptivo adicional...' ? (
-            <div className="text-center mb-16">
-              <p className={`${TYPE.body} md:text-xl ${OPACITY.onDark} max-w-4xl mx-auto`}>
-                {mainText}
-              </p>
+      <div className="relative z-10 w-full">
+        {/* TÍTULO + MANIFIESTO — centrado, ancho completo */}
+        <div className="mb-12 md:mb-16 space-y-3 text-center px-2 sm:px-4 md:px-8">
+          <AnimatedLine>
+            <div className="flex items-baseline gap-3 flex-wrap justify-center">
+              <h2 className={textWhite}>NUESTRO ADN</h2>
+              {imgs[0]}
             </div>
-          ) : null;
-        })()}
+          </AnimatedLine>
 
-        {/* CTA */}
-        <div className="text-center">
-          <Link
-            href="/about"
-            className="inline-flex items-center gap-3 bg-manso-cream text-manso-black px-10 sm:px-16 py-5 sm:py-7 text-[10px] sm:text-[11px] font-black uppercase tracking-widest hover:bg-white hover:text-manso-black transition-all duration-500 group rounded-full"
-          >
-            CONOCENOS
-            <ArrowRight
-              size={18}
-              className="transform transition-transform duration-500 group-hover:translate-x-2"
-            />
-          </Link>
+          <AnimatedLine>
+            <div className="flex items-baseline gap-3 flex-wrap justify-center">
+              <h2 className={textWhite}>MUCHO MÁS</h2>
+              {imgs[1]}
+              <h2 className={textOlive}>QUE UN CLUB.</h2>
+            </div>
+          </AnimatedLine>
+
+          <AnimatedLine>
+            <div className="flex items-baseline gap-3 flex-wrap justify-center">
+              <span className={textWhite}>EL TALENTO</span>
+              {imgs[2]}
+              <span className={textWhite}>SIEMPRE ESTUVO,</span>
+            </div>
+          </AnimatedLine>
+
+          <AnimatedLine>
+            <div className="flex items-baseline gap-3 flex-wrap justify-center">
+              <span className={textWhite}>FALTABA</span>
+              {imgs[3]}
+              <span className={textWhite}>UN LUGAR.</span>
+            </div>
+          </AnimatedLine>
+        </div>
+
+        {/* LÍNEA DECORATIVA */}
+        <motion.div {...fadeUp(0.5)} className="w-full h-px bg-manso-cream/10 mb-12 md:mb-16" />
+
+        {/* BLOQUES DE CONTENIDO — cards */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 mb-12 md:mb-16 px-4 sm:px-8 md:px-20">
+          {bloques.map((bloque, i) => (
+            <motion.div
+              key={i}
+              {...fadeUp(0.8 + i * 0.1)}
+              className="bg-white/5 backdrop-blur-sm rounded-2xl border border-white/10 p-5 sm:p-6 md:p-7 hover:bg-white/10 hover:border-white/25 transition-all duration-500 group"
+            >
+              <h3 className={`${TYPE.h4} text-manso-olive mb-3`}>
+                {bloque.titulo}
+              </h3>
+              <p className={`${TYPE.bodySmall} ${OPACITY.onDark} leading-relaxed group-hover:text-white transition-colors duration-500`}>
+                {bloque.texto}
+              </p>
+            </motion.div>
+          ))}
         </div>
 
       </div>

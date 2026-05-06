@@ -1,16 +1,17 @@
 import { Hero } from "@/components/Home/Hero";
 import { Gallery } from "@/components/Home/Gallery";
+import { AboutUsPreview } from "@/components/Home/AboutUsPreview";
 import { EventosHome } from "@/components/Home/EventosHome";
 import { MembresiasHome } from "@/components/Home/MembresiasHome";
 import { PorQueManso } from "@/components/Home/PorQueManso";
-import { TiendaHome } from "@/components/Home/TiendaHome";
+import { SponsorBelt } from "@/components/Home/SponsorBelt";
+import { RandomGalleryPlaceholders } from "@/components/Home/RandomGalleryPlaceholders";
 
-export const revalidate = 30; // revalida cada 30 segundos
+export const revalidate = 30;
 
 export default function Home() {
   return (
-    /* Contenedor principal limpio - sin fondo que bloquee el Hero */
-    <div className="min-h-screen">
+    <div id="page-root" className="min-h-screen" style={{ backgroundColor: '#1D1D1B' }}>
       
       {/* Slide 1: Hero */}
       <section id="quienes-somos" className="min-h-screen relative">
@@ -20,6 +21,11 @@ export default function Home() {
       {/* Slide 2: Gallery */}
       <section id="galeria" className="min-h-[60vh] md:min-h-screen">
         <Gallery />
+      </section>
+
+      {/* Slide 2.5: Quiénes somos */}
+      <section id="quienes-somos-preview">
+        <AboutUsPreview />
       </section>
 
       {/* Slide 3: Agenda/Eventos */}
@@ -34,13 +40,13 @@ export default function Home() {
 
       {/* Slide 5: ¿Por qué Manso? */}
       <section id="por-que-manso">
-        <PorQueManso />
+        <PorQueManso>
+          <RandomGalleryPlaceholders count={4} />
+        </PorQueManso>
       </section>
 
-      {/* Slide 6: Seleccionados de la Tienda */}
-      <section id="tienda">
-        <TiendaHome />
-      </section>
+      {/* Cinturón de confianza — sponsors */}
+      <SponsorBelt />
 
     </div>
   );
