@@ -20,7 +20,7 @@ export const AboutUsPreviewClient = ({
 }) => {
   return (
     <section
-      className="relative py-16 sm:py-24 md:py-32 px-4 sm:px-8 md:px-20"
+      className="relative py-12 sm:py-16 md:py-20 px-4 sm:px-8 md:px-20"
       style={{
         backgroundColor: '#FFFFFF',
         backgroundImage: 'linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.06) 1px, transparent 1px)',

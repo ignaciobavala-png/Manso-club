@@ -41,7 +41,7 @@ export const MembresiasHome = () => {
 
   if (loading) {
     return (
-      <section className="py-12 sm:py-16 px-4 sm:px-8 md:px-20" style={{ backgroundColor: '#1D1D1B' }}>
+      <section className="py-8 sm:py-12 px-4 sm:px-8 md:px-20" style={{ backgroundColor: '#1D1D1B' }}>
         <div className="max-w-7xl mx-auto">
           <div className="text-left mb-12">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-manso-cream">
@@ -160,7 +160,7 @@ export const MembresiasHome = () => {
                           href={`/membresias/pagar?nombre=${encodeURIComponent(membresia.nombre)}&precio=${membresia.precio}&periodo=${encodeURIComponent(membresia.periodo)}`}
                           className={`mt-auto block w-full px-4 sm:px-6 py-3 sm:py-4 text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all duration-500 ease-out active:scale-95 rounded-full text-center ${
                             membresia.destacado
-                              ? 'bg-white text-black hover:bg-manso-olive hover:text-white'
+                              ? 'bg-white text-black hover:bg-white hover:text-black'
                               : 'bg-black text-white hover:bg-manso-black/80'
                           }`}
                         >
