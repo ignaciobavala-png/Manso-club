@@ -29,7 +29,7 @@ const INITIAL = {
   luma_url: '',
 };
 
-const categorias  = ['Taller', 'Curso', 'Sesión', 'Clase', 'Evento Recurrente'];
+const categorias  = ['Taller', 'Curso', 'Sesión', 'Clase', 'Evento'];
 const duraciones  = ['1 hora', '2 horas', '3 horas', '4 horas', 'Medio día', 'Día completo'];
 const frecuencias = ['Semanal', 'Quincenal', 'Mensual', 'Bimensual', 'Trimestral'];
 
