@@ -3,10 +3,10 @@
 import Image from 'next/image';
 
 const LOGOS = [
-  { src: '/marcas/gin.png', alt: 'Gin', small: true },
+  { src: '/marcas/gin.png', alt: 'Gin', small: true, translateY: 'translate-y-2' },
   { src: '/marcas/settle_transparent_clean.png', alt: 'Settle', small: false },
   { src: '/marcas/takenos_transparent_clean(1).png', alt: 'Takenos', small: false },
-  { src: '/marcas/warsteiner_transparent.png', alt: 'Warsteiner', small: false },
+  { src: '/marcas/warsteiner_transparent.png', alt: 'Warsteiner', small: false, scale: 'scale-125' },
 ];
 
 export const SponsorBelt = () => {
@@ -21,7 +21,7 @@ export const SponsorBelt = () => {
                 alt={logo.alt}
                 width={800}
                 height={400}
-                className="w-auto object-contain brightness-0 invert opacity-100 transition-opacity duration-500 h-[200%]"
+                className={`w-auto object-contain brightness-0 invert opacity-100 transition-opacity duration-500 h-[200%] ${logo.translateY || ''} ${logo.scale || ''}`}
               />
             </div>
           ))}
