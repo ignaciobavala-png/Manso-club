@@ -20,17 +20,16 @@ export const AboutUsPreviewClient = ({
 }) => {
   return (
     <section
-      className="relative py-8 sm:py-10 md:py-12 px-4 sm:px-8 md:px-20"
+      className="relative py-8 sm:py-10 md:py-12 px-4 sm:px-8 md:px-20 bg-manso-black"
       style={{
-        backgroundColor: '#FFFFFF',
-        backgroundImage: 'linear-gradient(rgba(0,0,0,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.06) 1px, transparent 1px)',
+        backgroundImage: 'linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px)',
         backgroundSize: '48px 48px'
       }}
     >
       <div className="relative z-10 max-w-5xl mx-auto">
         {/* Línea umbral — texto asciende desde abajo hasta posicionarse sobre la línea */}
         <div className="relative mb-6 sm:mb-8 h-20 sm:h-24 md:h-28">
-          <div className="absolute left-0 right-0 top-1/2 h-px bg-black/10" />
+          <div className="absolute left-0 right-0 top-1/2 h-px bg-white/20" />
           <motion.div
             initial={{ y: 80, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
@@ -39,7 +38,7 @@ export const AboutUsPreviewClient = ({
             className="absolute left-0 right-0 top-1/2 flex justify-center"
           >
             <h2
-              className="px-3 sm:px-8 text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black uppercase tracking-tighter italic bg-white text-manso-black leading-none"
+              className="px-3 sm:px-8 text-5xl sm:text-7xl md:text-8xl lg:text-9xl font-black uppercase tracking-tighter italic bg-manso-black text-white leading-none"
               style={{ transform: 'translateY(-50%)' }}
             >
               SOBRE MANSO
@@ -52,7 +51,7 @@ export const AboutUsPreviewClient = ({
             <motion.p
               key={i}
               {...fadeUp(0.15 + i * 0.1)}
-              className="text-base sm:text-lg md:text-xl text-manso-black/85 leading-relaxed font-light"
+              className="text-base sm:text-lg md:text-xl text-white/85 leading-relaxed font-light"
             >
               {p}
             </motion.p>
