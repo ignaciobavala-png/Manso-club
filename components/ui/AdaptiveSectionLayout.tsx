@@ -29,7 +29,8 @@ export function AdaptiveSectionLayout({
       return {
         bg: customBg || 'bg-manso-black',
         titleColor: 'text-manso-cream',
-        subtitleColor: 'text-manso-cream/60'
+        subtitleColor: 'text-manso-cream/60',
+        isDark: true
       };
     }
     
@@ -42,27 +43,12 @@ export function AdaptiveSectionLayout({
     }
 
     // Lógica automática según ruta
-    if (pathname?.includes('/mansoadm')) {
+    if (pathname?.includes('/mansoadm') || pathname?.includes('/artistas') || pathname?.includes('/membresias') || pathname?.includes('/tienda')) {
       return {
         bg: customBg || 'bg-manso-black',
         titleColor: 'text-manso-cream',
-        subtitleColor: 'text-manso-cream/60'
-      };
-    }
-
-    if (pathname?.includes('/artistas')) {
-      return {
-        bg: customBg || 'bg-manso-black',
-        titleColor: 'text-manso-cream',
-        subtitleColor: 'text-manso-cream/60'
-      };
-    }
-
-    if (pathname?.includes('/membresias')) {
-      return {
-        bg: customBg || 'bg-manso-black',
-        titleColor: 'text-manso-cream',
-        subtitleColor: 'text-manso-cream/60'
+        subtitleColor: 'text-manso-cream/60',
+        isDark: true
       };
     }
 
@@ -85,7 +71,13 @@ export function AdaptiveSectionLayout({
   const theme = getThemeConfig();
 
   return (
-    <main className={`min-h-screen ${theme.bg} pt-32 pb-20 px-4 md:px-8 transition-colors duration-500`}>
+    <main
+      className={`min-h-screen ${theme.bg} pt-32 pb-20 px-4 md:px-8 transition-colors duration-500`}
+      style={theme.bg.includes('black') ? {
+        backgroundImage: 'linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px)',
+        backgroundSize: '48px 48px'
+      } : undefined}
+    >
       <div className="max-w-[1400px] mx-auto">
         <div className="mb-10">
           <h1 className={`${TYPE.h1} ${theme.titleColor}`}>
