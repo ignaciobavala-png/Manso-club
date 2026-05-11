@@ -28,7 +28,6 @@ export const Navbar = () => {
   useEffect(() => { setHasMounted(true); }, []);
 
   const isLightBgPage = pathname?.includes('/about')    ||
-                        pathname?.includes('/tienda')   ||
                         pathname?.includes('/checkout');
 
   // Scroll listener
