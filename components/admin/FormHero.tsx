@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { ImageUploader } from './ImageUploader';
+import { VideoUploader } from './VideoUploader';
 import { HeroSlide } from '@/lib/hero';
-import { Type, Image, Video, Hash, FileText, Monitor, Smartphone } from 'lucide-react';
+import { Type, Image, Video, Hash, FileText, Monitor, Smartphone, Link2, Film } from 'lucide-react';
 
 interface HeroSlideEdit {
   id: string;
@@ -263,21 +264,45 @@ export function FormHero() {
         )}
 
         {formData.tipo === 'video' && (
-          <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2 flex items-center gap-2">
-              {getTipoIcon('video')}
-              URL del Video
-            </label>
-            <div className="relative">
-              <Video className="absolute left-4 top-1/2 -translate-y-1/2 text-manso-cream/60" size={20} />
-              <input 
-                type="url" 
-                placeholder="URL DEL VIDEO (MP4)"
-                className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all"
-                value={formData.media_url}
-                onChange={e => setFormData({...formData, media_url: e.target.value})}
-                required
+          <div className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2 flex items-center gap-2">
+                <Film size={16} />
+                Subir video desde tu computadora
+              </label>
+              <VideoUploader
+                key={`video-${imageKey}`}
+                bucket="hero-media"
+                folder="videos"
+                initialPreview={formData.media_url || null}
+                onUpload={(url) => setFormData({...formData, media_url: url})}
               />
+            </div>
+
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-manso-cream/10" />
+              </div>
+              <div className="relative flex justify-center">
+                <span className="bg-manso-black px-3 text-[9px] text-manso-cream/30 uppercase tracking-widest">o</span>
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2 flex items-center gap-2">
+                <Link2 size={16} />
+                Pegar URL externa
+              </label>
+              <div className="relative">
+                <Video className="absolute left-4 top-1/2 -translate-y-1/2 text-manso-cream/60" size={20} />
+                <input
+                  type="url"
+                  placeholder="https://ejemplo.com/video.mp4"
+                  className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all"
+                  value={formData.media_url}
+                  onChange={e => setFormData({...formData, media_url: e.target.value})}
+                />
+              </div>
             </div>
           </div>
         )}
