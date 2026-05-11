@@ -26,7 +26,7 @@ export const AboutUsPreviewClient = ({
         backgroundSize: '48px 48px'
       }}
     >
-      <div className="relative z-10 max-w-5xl mx-auto">
+      <div className="relative z-10 max-w-7xl mx-auto">
         {/* Línea umbral — texto asciende desde abajo hasta posicionarse sobre la línea */}
         <div className="relative mb-6 sm:mb-8 h-20 sm:h-24 md:h-28">
           <div className="absolute left-0 right-0 top-1/2 h-px bg-white/20" />

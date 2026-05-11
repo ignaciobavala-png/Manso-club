@@ -163,7 +163,7 @@ export const EventosHome = () => {
               <p className="text-sm text-white/60">Próximamente estaremos anunciando nuevas fechas</p>
             </div>
           ) : (
-            <div className="max-w-5xl mx-auto">
+            <div>
               {agendaItems.map((item, index) => {
                 const isOpen = openId === item.id;
 

@@ -45,7 +45,7 @@ export const MembresiasHome = () => {
         <div className="max-w-7xl mx-auto">
           <div className="text-left mb-12">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-manso-cream">
-              MEMBRESÍAS 2026
+              MEMBRESÍAS
             </h2>
           </div>
           <div className="text-center text-manso-cream/60 py-8">
@@ -61,7 +61,7 @@ export const MembresiasHome = () => {
       <div className="relative z-10 max-w-7xl mx-auto">
         <div className="text-left mb-12">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-manso-cream">
-            MEMBRESÍAS 2026
+            MEMBRESÍAS
           </h2>
         </div>
 

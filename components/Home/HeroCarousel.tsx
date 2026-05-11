@@ -82,7 +82,7 @@ export const HeroCarousel = ({ slides }: { slides: any[] }) => {
                   href="/membresias"
                   className="bg-manso-cream text-manso-black px-6 py-3 text-[9px] font-black uppercase tracking-widest rounded-full hover:bg-manso-white transition-all transform hover:-translate-y-1 active:scale-95"
                 >
-                  Membresías 2026
+                  Membresías
                 </Link>
                 
                 <div className="flex gap-2 h-4 items-center">
