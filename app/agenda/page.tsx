@@ -69,9 +69,14 @@ export default function AgendaPage() {
             <p className="text-[9px] font-black uppercase tracking-[0.6em] text-manso-terra mb-3">
               Manso Club
             </p>
-            <h1 className="text-[clamp(3rem,10vw,7rem)] font-black uppercase italic tracking-tighter leading-none text-manso-cream">
+            <motion.h1
+              initial={{ opacity: 0, y: 40, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
+              className="text-[clamp(3rem,10vw,7rem)] font-black uppercase italic tracking-tighter leading-none text-manso-cream"
+            >
               Agenda
-            </h1>
+            </motion.h1>
           </div>
           <div className="text-right">
             <p className="text-[9px] font-black uppercase tracking-[0.4em] text-manso-cream/30 mb-1">
