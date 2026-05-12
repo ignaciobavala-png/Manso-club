@@ -57,17 +57,14 @@ export const EventosHome = () => {
     let timeout: ReturnType<typeof setTimeout> | null = null;
 
     const handleScroll = () => {
-      const root = document.getElementById('page-root');
       const section = document.getElementById('eventos-section');
-      if (!root || !section) return;
+      if (!section) return;
 
       const rect = section.getBoundingClientRect();
       const inView = rect.top < window.innerHeight + 200 && rect.bottom > -200;
 
       if (inView && !timeout) {
         timeout = setTimeout(() => {
-          root.style.backgroundColor = '#BC2915';
-          root.style.transition = 'background-color 0.6s ease';
           section.style.backgroundColor = '#BC2915';
           section.style.transition = 'background-color 0.6s ease';
         }, 1000);
@@ -76,8 +73,8 @@ export const EventosHome = () => {
           clearTimeout(timeout);
           timeout = null;
         }
-        root.style.backgroundColor = '#1D1D1B';
         section.style.backgroundColor = '#F5F0E8';
+        section.style.transition = '';
       }
     };
 
