@@ -360,7 +360,7 @@ export function FormHero() {
           {/* Descripción */}
           <div className="relative">
             <FileText className="absolute left-4 top-4 text-manso-cream/60" size={20} />
-            <textarea 
+            <textarea
               placeholder="DESCRIPCIÓN (opcional)"
               rows={3}
               className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all resize-none"

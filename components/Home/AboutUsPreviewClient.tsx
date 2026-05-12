@@ -4,6 +4,9 @@ import { motion, type Easing } from 'framer-motion';
 
 const ease: Easing = [0.16, 1, 0.3, 1];
 
+// Replaces the last space with a non-breaking space to prevent orphaned last words
+const noOrphan = (text: string) => text.replace(/\s(\S+)$/, ' $1');
+
 const fadeUp = (delay: number = 0) => ({
   initial: { opacity: 0, y: 20 },
   whileInView: { opacity: 1, y: 0 },
@@ -51,9 +54,9 @@ export const AboutUsPreviewClient = ({
             <motion.p
               key={i}
               {...fadeUp(0.15 + i * 0.1)}
-              className="text-base sm:text-lg md:text-xl text-white/85 leading-relaxed font-light"
+              className="text-base sm:text-lg md:text-xl text-white/85 leading-relaxed font-light text-pretty"
             >
-              {p}
+              {noOrphan(p)}
             </motion.p>
           ))}
         </div>

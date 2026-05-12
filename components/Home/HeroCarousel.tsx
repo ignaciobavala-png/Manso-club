@@ -73,8 +73,8 @@ export const HeroCarousel = ({ slides }: { slides: any[] }) => {
             </header>
 
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-10 mt-4">
-              <p className={`max-w-[450px] ${TYPE.body} md:text-xl ${OPACITY.onDark}`}>
-                {currentSlide.description}
+              <p className={`max-w-[450px] ${TYPE.body} md:text-xl ${OPACITY.onDark} text-pretty`}>
+                {currentSlide.description?.replace(/\s(\S+)$/, ' $1')}
               </p>
               
               <div className="flex flex-col items-start gap-6">

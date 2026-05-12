@@ -74,8 +74,8 @@ export default function MembresiasPage() {
         {textoIntro === null ? null : textoIntro.trim() ? (
           <div className="mb-16 max-w-2xl space-y-4">
             {textoIntro.trim().split(/\n\n+/).map((p, i) => (
-              <p key={i} className="text-manso-cream/80 text-base sm:text-lg leading-relaxed">
-                {p}
+              <p key={i} className="text-manso-cream/80 text-base sm:text-lg leading-relaxed text-pretty">
+                {p.replace(/\s(\S+)$/, ' $1')}
               </p>
             ))}
           </div>

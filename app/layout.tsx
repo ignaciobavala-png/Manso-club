@@ -21,8 +21,8 @@ export async function generateMetadata(): Promise<Metadata> {
     title: config.seo_title || "Manso Club | Espacio Creativo",
     description: config.seo_description || "Cultura electrónica y diseño en Buenos Aires",
     icons: {
-      icon: '/manso.png',
-      apple: '/manso.png',
+      icon: '/manso-logo-black.png',
+      apple: '/manso-logo-black.png',
     },
     verification: {
       google: '_WJR-FPgtK6p2hcrhWfWvegrKEyMxw5Jkyx6Qqj4XZo',
