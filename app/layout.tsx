@@ -6,6 +6,7 @@ import { Navbar } from "@/components/Layout/Navbar";
 import { Footer } from "@/components/Layout/Footer";
 import { GlobalMusicPlayer } from "@/components/Layout/GlobalMusicPlayer";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
+import { CursorTrail } from "@/components/ui/CursorTrail";
 import { createSupabaseAnon } from "@/lib/supabase";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -63,6 +64,7 @@ export default function RootLayout({
         <Footer /> 
         <GlobalMusicPlayer />
         <WhatsAppButton />
+        <CursorTrail />
 
         {/* ── Google Tag Manager ── */}
         <Script

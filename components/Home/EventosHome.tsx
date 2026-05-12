@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
 import { Plus } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { WHATSAPP_NUMBER } from '@/lib/constants';
@@ -135,8 +136,73 @@ export const EventosHome = () => {
     <section
       ref={sectionRef}
       id="eventos-section"
+      className="relative overflow-hidden"
       style={{ backgroundColor: '#F5F0E8' }}
     >
+      {/* Ilustraciones decorativas — distribuidas */}
+      <div className="absolute inset-0 pointer-events-none select-none z-0">
+        {([
+          // ═══ AGENDA (zona superior) — reducidas a la mitad ═══
+          { src: 'esfera.png', x: '12%', y: '5%', r: -8, static: true },
+          { src: 'IMG_2704.png', x: '35%', y: '4%', r: 10, d: 0.1 },
+          { src: 'IMG_2693.png', x: '62%', y: '6%', r: -12, d: 0.8 },
+          { src: 'IMG_2706.png', x: '85%', y: '4%', r: -8, d: 0.4 },
+          { src: 'IMG_2714.png', x: '18%', y: '22%', r: 18, d: 1.1 },
+          { src: 'ventana.png', x: '50%', y: '20%', r: 6, static: true },
+          { src: 'IMG_2704.png', x: '75%', y: '24%', r: -10, d: 0.6 },
+          { src: 'vinilo.png', x: '8%', y: '32%', r: 12, d: 0.3 },
+
+          // ═══ EVENTOS (zona inferior) — distribución orgánica ═══
+          { src: 'IMG_2706.png', x: '22%', y: '35%', r: 20, d: 0.9 },
+          { src: 'IMG_2693.png', x: '68%', y: '35%', r: -12, d: 1.4 },
+          { src: 'IMG_2704.png', x: '45%', y: '55%', r: 14, d: 0.2 },
+          { src: 'IMG_2714.png', x: '88%', y: '55%', r: -22, d: 1.0 },
+          { src: 'IMG_2693.png', x: '15%', y: '60%', r: 22, d: 1.3 },
+          { src: 'IMG_2693.png', x: '55%', y: '54%', r: 22, d: 1.3 },
+          { src: 'IMG_2704.png', x: '80%', y: '56%', r: -14, d: 0.7 },
+          { src: 'IMG_2714.png', x: '32%', y: '60%', r: 8, d: 1.6 },
+          { src: 'IMG_2706.png', x: '5%', y: '65%', r: -18, d: 0.1 },
+          { src: 'IMG_2704.png', x: '70%', y: '64%', r: 22, d: 0.8 },
+          { src: 'IMG_2693.png', x: '42%', y: '68%', r: -10, d: 1.5 },
+          { src: 'vinilo.png', x: '92%', y: '70%', r: 20, d: 0.4 },
+          { src: 'IMG_2714.png', x: '18%', y: '74%', r: -12, d: 1.2 },
+          { src: 'IMG_2706.png', x: '60%', y: '76%', r: 18, d: 0.3 },
+          { src: 'IMG_2704.png', x: '35%', y: '80%', r: -20, d: 0.9 },
+          { src: 'IMG_2693.png', x: '78%', y: '82%', r: 15, d: 1.7 },
+          { src: 'ventana.png', x: '10%', y: '86%', r: -6, static: true },
+          { src: 'IMG_2714.png', x: '50%', y: '88%', r: 10, d: 0.6 },
+          { src: 'IMG_2706.png', x: '85%', y: '90%', r: -16, d: 1.1 },
+          { src: 'esfera.png', x: '28%', y: '92%', r: 6, static: true },
+          { src: 'IMG_2704.png', x: '65%', y: '94%', r: -8, d: 0.2 },
+        ] as Array<{ src: string; x: string; y: string; r: number; static?: boolean; d?: number }>).map((item, i) => {
+          const img = (
+            <Image
+              src={`/ilustraciones/prod-ilustr/${item.src}`}
+              alt="" width={48} height={48}
+              style={{
+                opacity: item.static ? 0.35 : 0.3,
+                transform: `rotate(${item.r}deg)`,
+                filter: 'brightness(0) saturate(0) invert(1) brightness(4)',
+              }}
+            />
+          );
+          if (item.static) {
+            return <div key={i} className="absolute" style={{ left: item.x, top: item.y }}>{img}</div>;
+          }
+          const delay = item.d ?? 0;
+          return (
+            <motion.div
+              key={i}
+              className="absolute"
+              style={{ left: item.x, top: item.y }}
+              animate={{ y: [0, -5, 0] }}
+              transition={{ duration: 2.4 + (i % 3) * 0.4, ease: 'easeInOut', repeat: Infinity, delay }}
+            >
+              {img}
+            </motion.div>
+          );
+        })}
+      </div>
       {/* ============================================ */}
       {/* SECCIÓN 1: AGENDA (ACORDEÓN)                */}
       {/* ============================================ */}

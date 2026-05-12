@@ -63,7 +63,7 @@ export const PorQueManso = ({ children }: { children?: React.ReactNode }) => {
   const imgs = Children.toArray(children);
 
   return (
-    <section className="relative py-6 sm:py-8 md:py-14 px-0 sm:px-8 md:px-20 bg-manso-black overflow-hidden border-b border-manso-cream/10">
+    <section data-cursor-hidden="true" className="relative py-6 sm:py-8 md:py-14 px-0 sm:px-8 md:px-20 bg-manso-black overflow-hidden border-b border-manso-cream/10">
       <ParticleBackground />
       <div className="relative z-10 w-full">
         {/* TÍTULO + MANIFIESTO — centrado, ancho completo */}
