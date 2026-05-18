@@ -140,7 +140,7 @@ export const EventosHome = () => {
       style={{ backgroundColor: '#F5F0E8' }}
     >
       {/* Ilustraciones decorativas — distribuidas */}
-      <div className="absolute inset-0 pointer-events-none select-none z-0">
+      <div className="hidden sm:block absolute inset-0 pointer-events-none select-none z-0">
         {([
           // ═══ AGENDA (zona superior) — reducidas a la mitad ═══
           { src: 'esfera.png', x: '12%', y: '5%', r: -8, static: true },

@@ -54,7 +54,7 @@ const bloques = [
   }
 ];
 
-const textoLinea = 'text-3xl sm:text-6xl md:text-7xl lg:text-8xl font-black uppercase tracking-wide sm:tracking-tighter leading-[0.85]';
+const textoLinea = 'text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black uppercase tracking-wide sm:tracking-tighter leading-[0.85]';
 const textWhite = `${textoLinea} text-white`;
 const textOlive = `${textoLinea} italic text-manso-olive`;
 const textManifiesto = 'text-2xl sm:text-3xl md:text-4xl italic font-light text-white/90 leading-snug';
