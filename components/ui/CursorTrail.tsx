@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { usePathname } from 'next/navigation';
 
 interface Point {
   x: number;
@@ -12,12 +13,16 @@ const MAX_POINTS = 100;
 const TRAIL_DURATION = 700;
 
 export const CursorTrail = () => {
+  const pathname = usePathname();
+  const isAdmin = pathname.startsWith('/mansoadm');
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const pointsRef = useRef<Point[]>([]);
   const mouseRef = useRef({ x: -200, y: -200 });
   const hiddenRef = useRef(false);
 
   useEffect(() => {
+    if (isAdmin) return;
+
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -67,7 +72,6 @@ export const CursorTrail = () => {
         return;
       }
 
-      // Sketchy pencil style: multiple slightly offset passes
       for (let pass = 0; pass < 3; pass++) {
         const jitter = pass * 0.6;
 
@@ -97,7 +101,6 @@ export const CursorTrail = () => {
         }
       }
 
-      // Graphite dust dots along the trail
       for (let i = 0; i < points.length; i += 2) {
         const p = points[i];
         const age = now - p.time;
@@ -129,7 +132,9 @@ export const CursorTrail = () => {
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('resize', resize);
     };
-  }, []);
+  }, [isAdmin]);
+
+  if (isAdmin) return null;
 
   return (
     <canvas

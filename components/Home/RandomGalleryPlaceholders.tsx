@@ -28,7 +28,7 @@ export const RandomGalleryPlaceholders = async ({ count = 4 }: { count?: number 
   return (
     <>
       {selected.map((img, i) => (
-        <span key={i} className="inline-flex w-8 h-8 sm:w-32 sm:h-16 rounded overflow-hidden flex-shrink-0 relative">
+        <span key={i} className="inline-flex w-10 h-6 sm:w-32 sm:h-16 rounded overflow-hidden flex-shrink-0 relative">
           <Image
             src={img.src}
             alt=""
