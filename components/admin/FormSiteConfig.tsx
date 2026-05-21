@@ -111,16 +111,16 @@ export function FormSiteConfig() {
           {/* Preview estilo Google */}
           <div className="bg-white rounded-2xl p-5 border border-manso-cream/10">
             <p className="text-[#1a0dab] text-lg font-medium leading-tight">
-              {formData.seo_title || 'Manso Club | Espacio Creativo'}
+              {formData.seo_title || 'Manso Club | Cowork Creativo & Talleres en Buenos Aires'}
             </p>
             <p className="text-[#006621] text-xs mt-0.5">mansoclub.com.ar</p>
             <p className="text-[#545454] text-sm mt-1 leading-snug">
-              {formData.seo_description || 'Cultura electrónica y diseño en Buenos Aires'}
+              {formData.seo_description || 'Ideal para freelancers, emprendedores, startups, trabajadores remotos, estudiantes y artistas que busquen un lugar creativo de pertenencia.'}
             </p>
           </div>
           <input
             type="text"
-            placeholder="Título (ej: Manso Club | Espacio Creativo)"
+            placeholder="Título (ej: Manso Club | Cowork Creativo & Talleres en Buenos Aires)"
             maxLength={60}
             className="w-full bg-manso-cream/10 p-3 rounded-xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all text-sm"
             value={formData.seo_title || ''}

@@ -1,10 +1,27 @@
+import type { Metadata } from 'next';
 import Image from 'next/image';
 import { AdaptiveSectionLayout } from '@/components/ui/AdaptiveSectionLayout';
 import { getTeamMembers } from '@/lib/team';
 import { getAboutUs } from '@/lib/aboutUs';
 import { ParticleBackground } from '@/components/Home/ParticleBackground';
 
-export const revalidate = 60; // revalida cada 60 segundos
+export const revalidate = 60;
+
+export const metadata: Metadata = {
+  title: 'Nosotros | Manso Club',
+  description: 'Conocé el espacio creativo Manso Club en Buenos Aires. Nuestro equipo, nuestra historia y nuestra comunidad.',
+  openGraph: {
+    title: 'Nosotros | Manso Club',
+    description: 'Conocé el espacio creativo Manso Club en Buenos Aires.',
+    images: [{ url: '/manso-logo-black.png', width: 800, height: 800 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Nosotros | Manso Club',
+    description: 'Conocé el espacio creativo Manso Club en Buenos Aires.',
+    images: ['/manso-logo-black.png'],
+  },
+};
 
 export default async function AboutPage() {
   const teamMembers = await getTeamMembers();

@@ -1,7 +1,22 @@
+import type { Metadata } from 'next';
 import { ParticleBackground } from '@/components/Home/ParticleBackground';
 import { ArrowRight } from 'lucide-react';
 
-export const metadata = { title: 'Trabajá con nosotros — Manso Club' };
+export const metadata: Metadata = {
+  title: 'Trabajá con nosotros | Manso Club',
+  description: 'Sumate al equipo de Manso Club. Buscamos talento en producción, comunicación, curaduría y técnica.',
+  openGraph: {
+    title: 'Trabajá con nosotros | Manso Club',
+    description: 'Sumate al equipo de Manso Club.',
+    images: [{ url: '/manso-logo-black.png', width: 800, height: 800 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Trabajá con nosotros | Manso Club',
+    description: 'Sumate al equipo de Manso Club.',
+    images: ['/manso-logo-black.png'],
+  },
+};
 
 const areas = [
   { area: 'Producción', descripcion: 'Coordinación de eventos, talleres y actividades en el espacio.' },

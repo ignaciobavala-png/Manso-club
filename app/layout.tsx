@@ -7,6 +7,8 @@ import { Footer } from "@/components/Layout/Footer";
 import { GlobalMusicPlayer } from "@/components/Layout/GlobalMusicPlayer";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { CursorTrail } from "@/components/ui/CursorTrail";
+import { OrganizationSchema } from "@/components/SEO/OrganizationSchema";
+import { WebSiteSchema } from "@/components/SEO/WebSiteSchema";
 import { createSupabaseAnon } from "@/lib/supabase";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -19,17 +21,38 @@ export async function generateMetadata(): Promise<Metadata> {
   const config = Object.fromEntries((data ?? []).map(({ key, value }) => [key, value]));
 
   return {
-    title: config.seo_title || "Manso Club | Espacio Creativo",
-    description: config.seo_description || "Cultura electrónica y diseño en Buenos Aires",
+    title: config.seo_title || "Manso Club | Cowork Creativo & Talleres en Buenos Aires",
+    description: config.seo_description || "Ideal para freelancers, emprendedores, startups, trabajadores remotos, estudiantes y artistas que busquen un lugar creativo de pertenencia.",
     icons: {
-      icon: '/manso-logo-black.png',
-      apple: '/manso-logo-black.png',
+      icon: [
+        { url: '/favicon.ico', sizes: 'any' },
+        { url: '/favicon.png', type: 'image/png', sizes: '32x32' },
+      ],
+      apple: '/apple-touch-icon.png',
     },
     verification: {
       google: '_WJR-FPgtK6p2hcrhWfWvegrKEyMxw5Jkyx6Qqj4XZo',
       other: {
         "facebook-domain-verification": "nvn6bg2zurylkrkhpkuusxsrida80v",
       },
+    },
+    alternates: {
+      canonical: 'https://manso.club',
+    },
+    openGraph: {
+      title: config.seo_title || "Manso Club | Cowork Creativo & Talleres en Buenos Aires",
+      description: config.seo_description || "Ideal para freelancers, emprendedores, startups, trabajadores remotos, estudiantes y artistas que busquen un lugar creativo de pertenencia.",
+      url: 'https://manso.club',
+      siteName: 'Manso Club',
+      locale: 'es_AR',
+      type: 'website',
+      images: [{ url: '/manso-logo-black.png', width: 800, height: 800 }],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: config.seo_title || "Manso Club | Cowork Creativo & Talleres en Buenos Aires",
+      description: config.seo_description || "Ideal para freelancers, emprendedores, startups, trabajadores remotos, estudiantes y artistas que busquen un lugar creativo de pertenencia.",
+      images: ['/manso-logo-black.png'],
     },
   };
 }
@@ -123,7 +146,16 @@ fbq('track', 'PageView');`,
             alt=""
           />
         </noscript>
+
+        <OrganizationSchema />
+        <WebSiteSchema />
       </body>
     </html>
   );
 }
+
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1,
+  themeColor: '#1D1D1B',
+};

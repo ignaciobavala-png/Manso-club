@@ -1,9 +1,16 @@
+import type { Metadata } from 'next';
 import { MessageCircle, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { WHATSAPP_NUMBER } from '@/lib/constants';
 import { CopyButton } from '@/app/membresias/pagar/CopyButton';
 import { ParticleBackground } from '@/components/Home/ParticleBackground';
 import { getBankConfig } from '@/lib/getBankConfig';
+
+export const metadata: Metadata = {
+  title: 'Pago de evento | Manso Club',
+  description: 'Instrucciones de pago para eventos en Manso Club.',
+  robots: { index: false },
+};
 
 interface Props {
   searchParams: Promise<{ titulo?: string; precio?: string; frecuencia?: string; categoria?: string }>;

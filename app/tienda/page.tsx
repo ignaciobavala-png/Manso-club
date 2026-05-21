@@ -1,9 +1,26 @@
 // app/tienda/page.tsx
+import type { Metadata } from 'next';
 export const revalidate = 30;
 
 import { AdaptiveSectionLayout } from '@/components/ui/AdaptiveSectionLayout';
 import { createSupabaseAnon } from '@/lib/supabase';
 import { ProductCard } from '@/components/shop/ProductCard';
+
+export const metadata: Metadata = {
+  title: 'Tienda | Manso Club',
+  description: 'Merchandising y productos de Manso Club. Indumentaria, accesorios y más.',
+  openGraph: {
+    title: 'Tienda | Manso Club',
+    description: 'Merchandising y productos de Manso Club.',
+    images: [{ url: '/manso-logo-black.png', width: 800, height: 800 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Tienda | Manso Club',
+    description: 'Merchandising y productos de Manso Club.',
+    images: ['/manso-logo-black.png'],
+  },
+};
 
 export default async function TiendaPage() {
   const supabase = createSupabaseAnon();

@@ -1,8 +1,23 @@
+import type { Metadata } from 'next';
 import { ParticleBackground } from '@/components/Home/ParticleBackground';
 import { getManifiesto } from '@/lib/manifiesto';
 
 export const revalidate = 60;
-export const metadata = { title: 'Manifiesto — Manso Club' };
+export const metadata: Metadata = {
+  title: 'Manifiesto | Manso Club',
+  description: 'El manifiesto de Manso Club: nuestra visión sobre la cultura electrónica, el arte y el diseño en Buenos Aires.',
+  openGraph: {
+    title: 'Manifiesto | Manso Club',
+    description: 'Nuestra visión sobre la cultura electrónica, el arte y el diseño en Buenos Aires.',
+    images: [{ url: '/manso-logo-black.png', width: 800, height: 800 }],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Manifiesto | Manso Club',
+    description: 'Nuestra visión sobre la cultura electrónica, el arte y el diseño en Buenos Aires.',
+    images: ['/manso-logo-black.png'],
+  },
+};
 
 export default async function ManifiestoPage() {
   const { contenido } = await getManifiesto();
