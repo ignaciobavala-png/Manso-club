@@ -3,12 +3,15 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { ParticleBackground } from '@/components/Home/ParticleBackground';
+import { Play, Expand } from 'lucide-react';
 
-interface Video {
+interface MediaItem {
   id: string;
   titulo: string;
-  youtube_url: string;
+  youtube_url?: string;
+  archivo_url?: string;
   descripcion?: string;
+  tipo: string;
   orden: number;
 }
 
@@ -41,15 +44,12 @@ function YouTubeEmbed({ videoId, titulo }: { videoId: string; titulo: string }) 
           />
         ) : (
           <>
-            {/* Thumbnail */}
             <img
               src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
               alt={titulo}
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
             />
-            {/* Overlay oscuro */}
             <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-300" />
-            {/* Botón play */}
             <button
               onClick={() => setPlaying(true)}
               className="absolute inset-0 flex items-center justify-center"
@@ -71,18 +71,112 @@ function YouTubeEmbed({ videoId, titulo }: { videoId: string; titulo: string }) 
   );
 }
 
+function VideoEmbed({ src, titulo }: { src: string; titulo: string }) {
+  const [playing, setPlaying] = useState(false);
+
+  return (
+    <div className="group">
+      <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-zinc-900">
+        {playing ? (
+          <video
+            src={src}
+            controls
+            className="w-full h-full"
+            autoPlay
+          />
+        ) : (
+          <>
+            <video
+              src={src}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+              muted
+              preload="metadata"
+            />
+            <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-300" />
+            <button
+              onClick={() => setPlaying(true)}
+              className="absolute inset-0 flex items-center justify-center"
+              aria-label={`Reproducir ${titulo}`}
+            >
+              <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:bg-white/20">
+                <Play className="w-6 h-6 text-white ml-0.5" fill="white" />
+              </div>
+            </button>
+          </>
+        )}
+      </div>
+      <div className="mt-4 px-1">
+        <h3 className="text-manso-cream font-black uppercase italic tracking-tighter text-xl leading-tight">
+          {titulo}
+        </h3>
+      </div>
+    </div>
+  );
+}
+
+function ImageCard({ src, titulo }: { src: string; titulo: string }) {
+  const [expanded, setExpanded] = useState(false);
+
+  return (
+    <>
+      <div className="group cursor-pointer" onClick={() => setExpanded(true)}>
+        <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-zinc-900">
+          <img
+            src={src}
+            alt={titulo}
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+            loading="lazy"
+          />
+          <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-300 flex items-center justify-center">
+            <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 w-12 h-12 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center">
+              <Expand className="w-5 h-5 text-white" />
+            </div>
+          </div>
+        </div>
+        <div className="mt-4 px-1">
+          <h3 className="text-manso-cream font-black uppercase italic tracking-tighter text-xl leading-tight">
+            {titulo}
+          </h3>
+        </div>
+      </div>
+
+      {/* Lightbox */}
+      {expanded && (
+        <div
+          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 md:p-10"
+          onClick={() => setExpanded(false)}
+        >
+          <button
+            onClick={() => setExpanded(false)}
+            className="absolute top-6 right-6 text-white/60 hover:text-white text-2xl z-10"
+            aria-label="Cerrar"
+          >
+            ✕
+          </button>
+          <img
+            src={src}
+            alt={titulo}
+            className="max-w-full max-h-full object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
+    </>
+  );
+}
+
 export default function MultimediaPage() {
-  const [videos, setVideos] = useState<Video[]>([]);
+  const [items, setItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     supabase
       .from('multimedia_videos')
-      .select('id, titulo, youtube_url, descripcion, orden')
+      .select('id, titulo, youtube_url, archivo_url, descripcion, tipo, orden')
       .eq('active', true)
       .order('orden', { ascending: true })
       .then(({ data }) => {
-        setVideos(data || []);
+        setItems(data || []);
         setLoading(false);
       });
   }, []);
@@ -92,34 +186,37 @@ export default function MultimediaPage() {
       <ParticleBackground />
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-12 pt-40 pb-32">
-        <p className="text-[9px] font-black uppercase tracking-[0.6em] text-manso-terra mb-6">
-          Manso Club
-        </p>
-        <h1 className="text-[clamp(3rem,9vw,7rem)] font-black uppercase italic tracking-tighter leading-none text-manso-cream mb-20">
+        <p className="text-[9px] font-black uppercase tracking-[0.6em] text-manso-terra mb-20">
           Multimedia
-        </h1>
+        </p>
 
         {loading ? (
           <div className="flex items-center gap-3 text-manso-cream/30">
             <div className="w-4 h-4 border border-manso-cream/20 border-t-manso-cream/60 rounded-full animate-spin" />
             <span className="text-[10px] uppercase tracking-widest font-black">Cargando...</span>
           </div>
-        ) : videos.length === 0 ? (
+        ) : items.length === 0 ? (
           <div className="py-20 text-manso-cream/30 text-center">
             <p className="text-[10px] uppercase tracking-widest">Próximamente</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14">
-            {videos.map(video => {
-              const videoId = getYouTubeId(video.youtube_url);
-              if (!videoId) return null;
-              return (
-                <YouTubeEmbed
-                  key={video.id}
-                  videoId={videoId}
-                  titulo={video.titulo}
-                />
-              );
+            {items.map(item => {
+              if (item.tipo === 'youtube') {
+                const videoId = item.youtube_url ? getYouTubeId(item.youtube_url) : null;
+                if (!videoId) return null;
+                return <YouTubeEmbed key={item.id} videoId={videoId} titulo={item.titulo} />;
+              }
+
+              if (item.tipo === 'video' && item.archivo_url) {
+                return <VideoEmbed key={item.id} src={item.archivo_url} titulo={item.titulo} />;
+              }
+
+              if (item.tipo === 'imagen' && item.archivo_url) {
+                return <ImageCard key={item.id} src={item.archivo_url} titulo={item.titulo} />;
+              }
+
+              return null;
             })}
           </div>
         )}

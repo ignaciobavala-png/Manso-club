@@ -2,22 +2,39 @@
 
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Youtube } from 'lucide-react';
+import { Youtube, Film, Image as ImageIcon } from 'lucide-react';
+import { VideoUploader } from './VideoUploader';
+import { ImageUploader } from './ImageUploader';
 
 const inputCls = "w-full p-3 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/40 text-sm";
 const labelCls = "block text-[10px] font-black uppercase tracking-widest text-manso-cream/50 mb-1";
 
-const INITIAL = { titulo: '', youtube_url: '', descripcion: '' };
+const TIPOS = [
+  { value: 'youtube', label: 'YouTube', icon: Youtube },
+  { value: 'video', label: 'Video', icon: Film },
+  { value: 'imagen', label: 'Foto', icon: ImageIcon },
+] as const;
+
+type Tipo = (typeof TIPOS)[number]['value'];
 
 export function FormMultimedia() {
   const [loading, setLoading] = useState(false);
-  const [form, setForm] = useState(INITIAL);
+  const [tipo, setTipo] = useState<Tipo>('youtube');
+  const [titulo, setTitulo] = useState('');
+  const [youtubeUrl, setYoutubeUrl] = useState('');
+  const [archivoUrl, setArchivoUrl] = useState('');
+  const [descripcion, setDescripcion] = useState('');
 
-  const set = (field: keyof typeof INITIAL, value: string) =>
-    setForm(prev => ({ ...prev, [field]: value }));
+  const resetForm = () => {
+    setTitulo('');
+    setYoutubeUrl('');
+    setArchivoUrl('');
+    setDescripcion('');
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!titulo) return;
     setLoading(true);
 
     const { data: max } = await supabase
@@ -28,54 +45,121 @@ export function FormMultimedia() {
 
     const orden = (max?.[0]?.orden || 0) + 1;
 
-    const { error } = await supabase
-      .from('multimedia_videos')
-      .insert({ ...form, orden, active: true });
+    const payload: Record<string, unknown> = {
+      titulo,
+      descripcion: descripcion || null,
+      tipo,
+      orden,
+      active: true,
+    };
+
+    if (tipo === 'youtube') {
+      payload.youtube_url = youtubeUrl;
+      payload.archivo_url = null;
+    } else {
+      payload.youtube_url = null;
+      payload.archivo_url = archivoUrl;
+    }
+
+    const { error } = await supabase.from('multimedia_videos').insert(payload);
 
     if (error) {
       alert(error.message);
     } else {
-      alert('¡Video agregado!');
-      setForm(INITIAL);
+      alert('¡Contenido agregado!');
+      resetForm();
       window.dispatchEvent(new CustomEvent('dashboardRefresh'));
     }
     setLoading(false);
   };
 
+  const canSubmit = titulo && (tipo === 'youtube' ? youtubeUrl : archivoUrl);
+
   return (
     <div className="bg-manso-cream/5 p-6 rounded-[2rem] border border-manso-cream/10 shadow-xl">
       <div className="mb-5">
         <h2 className="text-lg font-black uppercase tracking-tighter text-manso-cream mb-1">
-          Nuevo Video
+          Nuevo Contenido
         </h2>
-        <p className="text-xs text-manso-cream/50">Agregá un video de YouTube a la sección Multimedia</p>
+        <p className="text-xs text-manso-cream/50">Agregá un video o imagen a la sección Multimedia</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Selector de tipo */}
         <div>
-          <label className={labelCls}>Título</label>
-          <input type="text" placeholder="Nombre del video o evento" className={inputCls}
-            value={form.titulo} onChange={e => set('titulo', e.target.value)} required />
-        </div>
-
-        <div>
-          <label className={labelCls}>URL de YouTube</label>
-          <div className="relative">
-            <Youtube className="absolute left-3 top-1/2 -translate-y-1/2 text-manso-cream/40" size={16} />
-            <input type="url" placeholder="https://youtube.com/watch?v=..." className={`${inputCls} pl-9`}
-              value={form.youtube_url} onChange={e => set('youtube_url', e.target.value)} required />
+          <label className={labelCls}>Tipo</label>
+          <div className="grid grid-cols-3 gap-2">
+            {TIPOS.map(({ value, label, icon: Icon }) => (
+              <button
+                key={value}
+                type="button"
+                onClick={() => { setTipo(value); setArchivoUrl(''); }}
+                className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all text-xs font-bold uppercase tracking-wider ${
+                  tipo === value
+                    ? 'bg-manso-terra/20 border-manso-terra text-manso-cream'
+                    : 'bg-manso-cream/5 border-manso-cream/10 text-manso-cream/50 hover:border-manso-cream/30'
+                }`}
+              >
+                <Icon size={18} />
+                {label}
+              </button>
+            ))}
           </div>
         </div>
 
+        {/* Título */}
         <div>
-          <label className={labelCls}>Descripción (opcional)</label>
-          <textarea rows={2} placeholder="Contexto del video..." className={`${inputCls} resize-none`}
-            value={form.descripcion} onChange={e => set('descripcion', e.target.value)} />
+          <label className={labelCls}>Título</label>
+          <input type="text" placeholder="Nombre del contenido" className={inputCls}
+            value={titulo} onChange={e => setTitulo(e.target.value)} required />
         </div>
 
-        <button type="submit" disabled={loading}
+        {/* URL de YouTube */}
+        {tipo === 'youtube' && (
+          <div>
+            <label className={labelCls}>URL de YouTube</label>
+            <div className="relative">
+              <Youtube className="absolute left-3 top-1/2 -translate-y-1/2 text-manso-cream/40" size={16} />
+              <input type="url" placeholder="https://youtube.com/watch?v=..." className={`${inputCls} pl-9`}
+                value={youtubeUrl} onChange={e => setYoutubeUrl(e.target.value)} required />
+            </div>
+          </div>
+        )}
+
+        {/* Upload de video */}
+        {tipo === 'video' && (
+          <div>
+            <label className={labelCls}>Archivo de video</label>
+            <VideoUploader
+              bucket="multimedia"
+              folder="videos"
+              onUpload={(url) => setArchivoUrl(url)}
+            />
+          </div>
+        )}
+
+        {/* Upload de imagen */}
+        {tipo === 'imagen' && (
+          <div>
+            <label className={labelCls}>Archivo de imagen</label>
+            <ImageUploader
+              bucket="multimedia"
+              folder="imagenes"
+              onUpload={(url) => setArchivoUrl(url)}
+            />
+          </div>
+        )}
+
+        {/* Descripción */}
+        <div>
+          <label className={labelCls}>Descripción (opcional)</label>
+          <textarea rows={2} placeholder="Contexto del contenido..." className={`${inputCls} resize-none`}
+            value={descripcion} onChange={e => setDescripcion(e.target.value)} />
+        </div>
+
+        <button type="submit" disabled={loading || !canSubmit}
           className="w-full bg-manso-terra text-manso-cream py-4 rounded-2xl font-black uppercase tracking-[0.2em] hover:bg-manso-cream hover:text-manso-black transition-all active:scale-95 disabled:opacity-50 text-sm">
-          {loading ? 'Agregando...' : 'Agregar Video'}
+          {loading ? 'Agregando...' : 'Agregar'}
         </button>
       </form>
     </div>
