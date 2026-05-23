@@ -150,6 +150,7 @@ export default function MembresiasPage() {
                         </h3>
 
                         <p className="text-4xl font-black italic mb-8 text-center uppercase tracking-tighter text-manso-cream">
+                          <span className="text-sm font-normal not-italic tracking-normal text-manso-cream/60 block">USD</span>
                           ${membresia.precio.toLocaleString('es-AR')}
                           <span className="text-sm block font-normal not-italic tracking-normal text-manso-cream/60">
                             /{membresia.periodo}

@@ -119,6 +119,11 @@ export const MembresiasHome = () => {
                             {membresia.nombre}
                           </h3>
                           <div className="flex items-baseline gap-2">
+                            <span className={`text-xs sm:text-sm font-bold uppercase ${
+                              membresia.destacado ? 'text-gray-300' : 'text-gray-600'
+                            }`}>
+                              USD
+                            </span>
                             <span className={`text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black ${
                               membresia.destacado ? 'text-white' : 'text-gray-800'
                             }`}>
@@ -127,7 +132,7 @@ export const MembresiasHome = () => {
                             <span className={`text-xs sm:text-sm font-bold uppercase ${
                               membresia.destacado ? 'text-gray-300' : 'text-gray-600'
                             }`}>
-                              USD /{membresia.periodo}
+                              /{membresia.periodo}
                             </span>
                           </div>
                         </div>
