@@ -94,11 +94,11 @@ export const MembresiasHome = () => {
                     <div className="flex-1 h-px bg-manso-cream/10" />
                   </div>
 
-                  <div className="grid grid-cols-1 gap-4 sm:gap-6 md:grid-cols-3 md:gap-8">
+                  <div className="flex flex-wrap justify-center gap-4 sm:gap-6 md:gap-8">
                     {grupos[categoria].map((membresia) => (
                       <div
                         key={membresia.id}
-                        className={`group flex flex-col rounded-[20px] sm:rounded-[30px] md:rounded-[40px] p-4 sm:p-6 md:p-8 transition-all duration-700 ease-out hover:scale-[1.02] cursor-pointer relative ${
+                        className={`group flex flex-col w-full sm:w-[340px] rounded-[20px] sm:rounded-[30px] md:rounded-[40px] p-4 sm:p-6 md:p-8 transition-all duration-700 ease-out hover:scale-[1.02] cursor-pointer relative ${
                           membresia.destacado
                             ? 'bg-black text-white border-black hover:shadow-[0_20px_60px_rgba(0,0,0,0.25)]'
                             : 'bg-zinc-100 border-2 border-zinc-200 hover:border-manso-black/40 hover:shadow-[0_20px_60px_rgba(0,0,0,0.08)]'
@@ -127,7 +127,7 @@ export const MembresiasHome = () => {
                             <span className={`text-xs sm:text-sm font-bold uppercase ${
                               membresia.destacado ? 'text-gray-300' : 'text-gray-600'
                             }`}>
-                              /{membresia.periodo}
+                              USD /{membresia.periodo}
                             </span>
                           </div>
                         </div>
