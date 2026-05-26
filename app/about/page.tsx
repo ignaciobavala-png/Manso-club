@@ -91,37 +91,47 @@ export default async function AboutPage() {
 
       {/* Team Section */}
       <div className="mt-16 md:mt-24">
-        <h2 className="text-3xl md:text-4xl font-black uppercase italic tracking-tighter leading-none text-manso-black mb-12">
+        <h2 className="text-3xl md:text-4xl font-black uppercase italic tracking-tighter leading-none text-manso-black">
           Team<span className="text-zinc-200 cursor-blink">_</span>
         </h2>
-        
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 lg:gap-16">
-          {teamMembers.map((member) => (
-            <div key={member.id} className="flex flex-col items-center">
-              {member.photo_url ? (
-                <div className="relative w-32 h-32 md:w-40 md:h-40 rounded-full overflow-hidden mb-4 flex-shrink-0">
-                  <Image
-                    src={member.photo_url}
-                    alt={member.name}
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 768px) 128px, 160px"
-                  />
-                </div>
-              ) : (
-                <div className="w-32 h-32 md:w-40 md:h-40 bg-zinc-800 rounded-full mb-4"></div>
-              )}
-              <p className="text-manso-black font-medium text-center">{member.name}</p>
-              <p className="text-zinc-600 text-sm text-center">{member.role}</p>
-            </div>
-          ))}
+        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-manso-olive mt-1 mb-10">
+          Las personas detrás de Manso
+        </p>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
+          {teamMembers.map((member) => {
+            const initials = member.name.split(' ').map((w: string) => w[0]).slice(0, 2).join('').toUpperCase();
+            return (
+              <div key={member.id} className="flex flex-col w-[88%] mx-auto">
+                {member.photo_url ? (
+                  <div className="relative w-full aspect-[3/4] rounded-lg overflow-hidden mb-3 flex-shrink-0">
+                    <Image
+                      src={member.photo_url}
+                      alt={member.name}
+                      fill
+                      className="object-cover"
+                      sizes="(max-width: 768px) 45vw, 22vw"
+                    />
+                  </div>
+                ) : (
+                  <div className="w-full aspect-[3/4] bg-zinc-800 rounded-lg mb-3 flex items-center justify-center">
+                    <span className="text-zinc-500 text-2xl md:text-3xl font-black tracking-widest">{initials}</span>
+                  </div>
+                )}
+                <p className="text-manso-black font-black uppercase text-sm tracking-tight">{member.name}</p>
+                <p className="text-zinc-500 text-xs mt-0.5">{member.role}</p>
+              </div>
+            );
+          })}
           {teamMembers.length === 0 && (
             <>
-              {[1, 2, 3, 4].map((i) => (
-                <div key={i} className="flex flex-col items-center">
-                  <div className="w-32 h-32 md:w-40 md:h-40 bg-zinc-800 rounded-full mb-4"></div>
-                  <p className="text-manso-black font-medium text-center">Nombre</p>
-                  <p className="text-zinc-600 text-sm text-center">Rol</p>
+              {(['AH', 'AM', 'FB', 'JP'] as const).map((ini) => (
+                <div key={ini} className="flex flex-col w-[88%] mx-auto">
+                  <div className="w-full aspect-[3/4] bg-zinc-800 rounded-lg mb-3 flex items-center justify-center">
+                    <span className="text-zinc-500 text-2xl font-black tracking-widest">{ini}</span>
+                  </div>
+                  <p className="text-manso-black font-black uppercase text-sm tracking-tight">Nombre</p>
+                  <p className="text-zinc-500 text-xs mt-0.5">Rol</p>
                 </div>
               ))}
             </>

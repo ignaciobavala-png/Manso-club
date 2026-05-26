@@ -150,16 +150,24 @@ export const TiendaHome = () => {
 
         {/* Botón ir a la tienda */}
         <div className="text-center">
-          <Link 
+          <Link
             href="/tienda"
             className="inline-flex items-center gap-3 bg-black text-white px-12 py-6 text-[10px] font-black uppercase tracking-widest hover:bg-gray-800 transition-all transform hover:-translate-y-1 active:scale-95 group rounded-full"
           >
             IR A LA TIENDA
-            <ArrowRight 
-              size={16} 
-              className="transform transition-transform group-hover:translate-x-2" 
+            <ArrowRight
+              size={16}
+              className="transform transition-transform group-hover:translate-x-2"
             />
           </Link>
+        </div>
+
+        {/* Envíos & Retiro */}
+        <div className="mt-10 border border-black/10 rounded-xl p-6 md:p-8">
+          <p className="text-[10px] font-black uppercase tracking-[0.4em] text-black mb-2">Envíos & Retiro</p>
+          <p className="text-sm text-black/60 leading-relaxed max-w-xl">
+            Podés retirar en Manso Club (Cdad. de la Paz 601, Colegiales) de lunes a viernes 10–18h, o coordinar envío por mensajería dentro de CABA. Consultar precios de envío al interior.
+          </p>
         </div>
       </div>
     </section>

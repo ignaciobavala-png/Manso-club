@@ -18,10 +18,7 @@ export const Gallery = async () => {
     ? dbImages.map(img => ({ id: img.id, src: img.photo_url }))
     : galleryImages;
 
-  // Recortar a múltiplo de 3 → cada fila siempre completa, cero celdas vacías
-  const cols = 3;
-  const count = Math.floor(all.length / cols) * cols || cols;
-  const images = all.slice(0, count);
+  const images = all;
 
   return (
     <section

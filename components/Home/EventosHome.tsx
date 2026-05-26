@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Plus } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { WHATSAPP_NUMBER } from '@/lib/constants';
 import { TYPE } from '@/lib/ui-constants';
@@ -46,7 +45,6 @@ export const EventosHome = () => {
   const [eventosFecha, setEventosFecha] = useState<EventoFecha[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [openId, setOpenId] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -116,10 +114,6 @@ export const EventosHome = () => {
       setEventosFecha([]);
     }
     setLoading(false);
-  };
-
-  const toggleAccordion = (id: string) => {
-    setOpenId(prev => prev === id ? null : id);
   };
 
   if (loading) {
@@ -227,97 +221,87 @@ export const EventosHome = () => {
             </div>
           ) : (
             <div>
-              {agendaItems.map((item, index) => {
-                const isOpen = openId === item.id;
+              {agendaItems.map((item, index) => (
+                <div key={item.id}>
+                  <div className="border-t border-white/20 py-6 sm:py-8 flex items-start gap-6 md:gap-10">
 
-                return (
-                  <div key={item.id}>
-                    {/* Fila del acordeón */}
-                    <div
-                      className="flex items-center justify-between py-5 sm:py-7 cursor-pointer select-none"
-                      onClick={() => toggleAccordion(item.id)}
-                    >
-                      {/* Categoría badge + título */}
-                      <div className="flex-1 min-w-0 mr-4">
-                        <div className="flex items-baseline gap-3 flex-wrap">
-                          {item.categoria && (
-                            <span className="text-[11px] sm:text-[12px] font-black uppercase tracking-widest text-white shrink-0">
-                              {item.categoria.toUpperCase()}
-                            </span>
-                          )}
-                          <h4 className="text-lg sm:text-xl md:text-2xl font-bold uppercase tracking-tight text-white leading-none">
-                            {item.titulo}
-                          </h4>
-                        </div>
-                      </div>
+                    {/* Número grande */}
+                    <span className="text-6xl sm:text-7xl md:text-8xl font-black text-white/15 leading-none shrink-0 select-none tabular-nums">
+                      {String(index + 1).padStart(2, '0')}
+                    </span>
 
-                      {/* Acciones derecha */}
-                      <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-                        {item.luma_url ? (
-                          <a
-                            href={item.luma_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-[10px] sm:text-xs font-black uppercase tracking-widest bg-white text-black px-4 py-2 hover:bg-gray-100 transition-colors whitespace-nowrap"
-                            onClick={e => e.stopPropagation()}
-                          >
-                            INSCRIBIRME
-                          </a>
-                        ) : null}
-                        <button
-                          className={`flex items-center justify-center w-9 h-9 border-2 border-white/50 rounded-full transition-transform duration-300 hover:border-white ${isOpen ? 'rotate-45' : ''}`}
-                          onClick={e => { e.stopPropagation(); toggleAccordion(item.id); }}
-                        >
-                          <Plus size={18} className="text-white" />
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* Contenido expandible */}
-                    <div
-                      className="overflow-hidden transition-all duration-300 ease-in-out"
-                      style={{ maxHeight: isOpen ? '400px' : '0px', opacity: isOpen ? 1 : 0 }}
-                    >
-                      <div className="pb-5 pt-1 pl-0 space-y-3">
-                        {item.descripcion && (
-                          <p className="text-base sm:text-lg text-white/85 leading-relaxed">
-                            {item.descripcion}
-                          </p>
+                    {/* Contenido */}
+                    <div className="flex-1 min-w-0">
+                      {item.categoria && (
+                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-manso-terra block mb-2">
+                          {item.categoria}
+                        </span>
+                      )}
+                      <h4 className="text-xl sm:text-2xl md:text-3xl font-black uppercase tracking-tight text-white leading-tight mb-2">
+                        {item.titulo}
+                      </h4>
+                      {item.descripcion && (
+                        <p className="text-sm text-white/60 mb-4 leading-relaxed">{item.descripcion}</p>
+                      )}
+                      <div className="flex flex-wrap gap-x-8 gap-y-2">
+                        {item.frecuencia && (
+                          <div>
+                            <span className="text-[9px] uppercase tracking-widest text-white/40 font-bold block">Frecuencia</span>
+                            <span className="text-xs font-bold uppercase text-white/80">{item.frecuencia}</span>
+                          </div>
                         )}
-                        <div className="flex flex-wrap gap-x-10 gap-y-3 text-sm sm:text-base text-white/70">
-                          {item.frecuencia && (
-                            <div>
-                              <span className="text-[10px] uppercase tracking-widest text-white/50 font-bold block mb-0.5">Frecuencia</span>
-                              <span className="font-medium text-white">{item.frecuencia}</span>
-                            </div>
-                          )}
-                          {item.duracion && (
-                            <div>
-                              <span className="text-[10px] uppercase tracking-widest text-white/50 font-bold block mb-0.5">Duración</span>
-                              <span className="font-medium text-white">{item.duracion}</span>
-                            </div>
-                          )}
-                          {item.precio !== undefined && (
-                            <div>
-                              <span className="text-[10px] uppercase tracking-widest text-white/50 font-bold block mb-0.5">Precio</span>
-                              <span className="font-medium text-white">{item.precio > 0 ? `$${item.precio.toLocaleString('es-AR')}` : 'Gratis'}</span>
-                            </div>
-                          )}
-                          {item.cupos_maximos && item.cupos_maximos > 0 && (
-                            <div>
-                              <span className="text-[10px] uppercase tracking-widest text-white/50 font-bold block mb-0.5">Cupos</span>
-                              <span className="font-medium text-white">{item.cupos_maximos}</span>
-                            </div>
-                          )}
-                        </div>
+                        {item.duracion && (
+                          <div>
+                            <span className="text-[9px] uppercase tracking-widest text-white/40 font-bold block">Duración</span>
+                            <span className="text-xs font-bold uppercase text-white/80">{item.duracion}</span>
+                          </div>
+                        )}
+                        {item.cupos_maximos && item.cupos_maximos > 0 && (
+                          <div>
+                            <span className="text-[9px] uppercase tracking-widest text-white/40 font-bold block">Cupos</span>
+                            <span className="text-xs font-bold uppercase text-white/80">{item.cupos_maximos}</span>
+                          </div>
+                        )}
+                        {item.precio !== undefined && (
+                          <div>
+                            <span className="text-[9px] uppercase tracking-widest text-white/40 font-bold block">Precio</span>
+                            <span className="text-xs font-bold uppercase text-white/80">
+                              {item.precio > 0 ? `USD $${item.precio.toLocaleString('es-AR')}` : 'Gratis'}
+                            </span>
+                          </div>
+                        )}
                       </div>
                     </div>
 
-                    {/* Separador siempre presente */}
-                    <div className="border-b border-white/20" />
+                    {/* Botón derecha */}
+                    {item.luma_url && (
+                      <a
+                        href={item.luma_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="shrink-0 self-center text-[10px] font-black uppercase tracking-widest border border-white/40 text-white px-5 py-3 hover:bg-white hover:text-black transition-colors whitespace-nowrap hidden sm:block"
+                      >
+                        Inscribirme
+                      </a>
+                    )}
                   </div>
-                );
-              })}
+
+                  {/* Botón móvil */}
+                  {item.luma_url && (
+                    <div className="pb-6 sm:hidden">
+                      <a
+                        href={item.luma_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[10px] font-black uppercase tracking-widest border border-white/40 text-white px-5 py-3 hover:bg-white hover:text-black transition-colors"
+                      >
+                        Inscribirme
+                      </a>
+                    </div>
+                  )}
+                </div>
+              ))}
+              <div className="border-t border-white/20" />
             </div>
           )}
         </div>

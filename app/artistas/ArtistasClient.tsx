@@ -115,8 +115,8 @@ export function ArtistasClient({ artistas, obrasVisuales }: ArtistasClientProps)
               {djs.map((artista) => (
                 <Link
                   href={`/artistas/${artista.slug}`}
-                  key={artista.id} 
-                  className="aspect-[3/4] bg-zinc-800/50 rounded-[40px] overflow-hidden border border-zinc-700 group relative cursor-pointer block"
+                  key={artista.id}
+                  className="aspect-[3/4] bg-zinc-800/50 rounded-[40px] overflow-hidden border border-zinc-700 group relative cursor-pointer block w-[88%] mx-auto"
                 >
                   <ArtistImage
                     src={artista.imagen_url}
@@ -182,7 +182,7 @@ export function ArtistasClient({ artistas, obrasVisuales }: ArtistasClientProps)
                 <Link
                   href={`/artistas/${artista.slug}`}
                   key={artista.id}
-                  className="aspect-[3/4] bg-zinc-800/50 rounded-[40px] overflow-hidden border border-zinc-700 group relative cursor-pointer block"
+                  className="aspect-[3/4] bg-zinc-800/50 rounded-[40px] overflow-hidden border border-zinc-700 group relative cursor-pointer block w-[88%] mx-auto"
                 >
                   <ArtistImage src={artista.imagen_url} alt={artista.nombre} />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4">

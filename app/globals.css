@@ -128,3 +128,10 @@
 .framer-canvas {
   pointer-events: none;
 }
+
+@utility scrollbar-hide {
+  scrollbar-width: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

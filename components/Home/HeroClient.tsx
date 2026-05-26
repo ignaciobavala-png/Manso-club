@@ -106,19 +106,24 @@ export function HeroClient() {
             </h1>
           </header>
 
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 md:gap-12 mt-4">
+          <div className="mt-4 flex flex-col gap-6 max-w-[450px]">
             {slides[0].description && (
-              <p className={`max-w-[450px] min-h-[100px] ${TYPE.body} md:text-xl ${OPACITY.onDark}`}>
+              <p className={`${TYPE.body} md:text-xl ${OPACITY.onDark}`}>
                 {slides[0].description}
               </p>
             )}
-            
-            <div className="flex flex-col items-start gap-6">
-              <Link 
+            <div className="flex flex-row gap-3">
+              <Link
                 href="/membresias"
-                className="bg-manso-cream text-manso-black px-6 py-3 text-[9px] font-black uppercase tracking-widest rounded-full hover:bg-manso-white transition-all transform hover:-translate-y-1 active:scale-95"
+                className="bg-manso-cream text-manso-black px-6 py-3 text-[9px] font-black uppercase tracking-widest hover:bg-white transition-all active:scale-95"
               >
                 Membresías
+              </Link>
+              <Link
+                href="/agenda"
+                className="border border-manso-cream/50 text-manso-cream px-6 py-3 text-[9px] font-black uppercase tracking-widest hover:border-manso-cream transition-all active:scale-95"
+              >
+                Ver Agenda
               </Link>
             </div>
           </div>
@@ -126,26 +131,26 @@ export function HeroClient() {
       </section>
     );
   }
-  
+
   // If single image slide
   if (slides.length === 1 && slides[0].tipo === 'imagen') {
     const imageUrl = getMediaUrlForDevice(slides[0], currentDevice);
     if (!imageUrl) {
       return <HeroCarousel slides={HERO_SLIDES} />;
     }
-    
+
     return (
       <section id="hero" className="relative min-h-screen flex flex-col justify-end md:justify-center px-8 md:px-20 py-10 md:py-20 overflow-hidden">
         <div
           className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-          style={{ 
+          style={{
             backgroundImage: `url(${imageUrl})`,
             backgroundColor: '#1D1D1B'
           }}
         />
-        
+
         <div className="absolute inset-0 z-10 bg-black/40" />
-        
+
         <div className="relative z-20 w-full max-w-6xl mx-auto">
           <header className="mb-6 md:mb-8">
             {slides[0].tag && (
@@ -161,74 +166,24 @@ export function HeroClient() {
             </h1>
           </header>
 
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 md:gap-12 mt-4">
+          <div className="mt-4 flex flex-col gap-6 max-w-[450px]">
             {slides[0].description && (
-              <p className={`max-w-[450px] min-h-[100px] ${TYPE.body} md:text-xl ${OPACITY.onDark}`}>
+              <p className={`${TYPE.body} md:text-xl ${OPACITY.onDark}`}>
                 {slides[0].description}
               </p>
             )}
-            
-            <div className="flex flex-col items-start gap-6">
-              <Link 
+            <div className="flex flex-row gap-3">
+              <Link
                 href="/membresias"
-                className="bg-manso-cream text-manso-black px-6 py-3 text-[9px] font-black uppercase tracking-widest rounded-full hover:bg-manso-white transition-all transform hover:-translate-y-1 active:scale-95"
+                className="bg-manso-cream text-manso-black px-6 py-3 text-[9px] font-black uppercase tracking-widest hover:bg-white transition-all active:scale-95"
               >
                 Membresías
               </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  }
-  
-  // If single image slide
-  if (slides.length === 1 && slides[0].tipo === 'imagen') {
-    const imageUrl = getMediaUrlForDevice(slides[0], currentDevice);
-    if (!imageUrl) {
-      return <HeroCarousel slides={HERO_SLIDES} />;
-    }
-    
-    return (
-      <section id="hero" className="relative min-h-screen flex flex-col justify-end md:justify-center px-8 md:px-20 py-10 md:py-20 overflow-hidden">
-        <div
-          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-          style={{ 
-            backgroundImage: `url(${imageUrl})`,
-            backgroundColor: '#1D1D1B'
-          }}
-        />
-        
-        <div className="absolute inset-0 z-10 bg-black/40" />
-        
-        <div className="relative z-20 w-full max-w-6xl mx-auto">
-          <header className="mb-6 md:mb-8">
-            {slides[0].tag && (
-              <span className={`${TYPE.label} ${OPACITY.onDark} block mb-3 md:mb-4`}>
-                {slides[0].tag}
-              </span>
-            )}
-            <h1 className={`${TYPE.display} text-manso-cream break-words`}>
-              {slides[0].title_line1} <br />
-              {slides[0].title_line2 && (
-                <span className={`${TYPE.display} italic font-light text-manso-cream/75`}>{slides[0].title_line2}</span>
-              )}
-            </h1>
-          </header>
-
-          <div className="flex flex-col md:flex-row md:items-end justify-between gap-8 md:gap-12 mt-4">
-            {slides[0].description && (
-              <p className={`max-w-[450px] min-h-[100px] ${TYPE.body} md:text-xl ${OPACITY.onDark}`}>
-                {slides[0].description}
-              </p>
-            )}
-            
-            <div className="flex flex-col items-start gap-6">
-              <Link 
-                href="/membresias"
-                className="bg-manso-cream text-manso-black px-6 py-3 text-[9px] font-black uppercase tracking-widest rounded-full hover:bg-manso-white transition-all transform hover:-translate-y-1 active:scale-95"
+              <Link
+                href="/agenda"
+                className="border border-manso-cream/50 text-manso-cream px-6 py-3 text-[9px] font-black uppercase tracking-widest hover:border-manso-cream transition-all active:scale-95"
               >
-                Membresías
+                Ver Agenda
               </Link>
             </div>
           </div>

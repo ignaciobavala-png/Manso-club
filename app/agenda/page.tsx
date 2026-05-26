@@ -150,11 +150,11 @@ export default function AgendaPage() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: gi * 0.1 + i * 0.06 }}
-                      className="group border-b border-manso-cream/8 py-8 md:py-10 flex flex-col md:flex-row md:items-center gap-6 md:gap-0 hover:bg-manso-cream/[0.03] transition-colors -mx-4 px-4 cursor-default"
+                      className="group border-b border-manso-cream/8 py-8 md:py-10 flex flex-col md:flex-row md:items-center gap-6 md:gap-10 hover:bg-manso-cream/[0.03] transition-colors -mx-4 px-4 cursor-default"
                     >
                       {/* Número de orden */}
-                      <div className="hidden md:block w-20 flex-shrink-0">
-                        <span className="text-sm font-black text-manso-cream/15 tabular-nums">
+                      <div className="w-16 md:w-24 flex-shrink-0">
+                        <span className="text-7xl md:text-8xl font-black text-manso-cream/25 tabular-nums leading-none">
                           {String(i + 1).padStart(2, '0')}
                         </span>
                       </div>
