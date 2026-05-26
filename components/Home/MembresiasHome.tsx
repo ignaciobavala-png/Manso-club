@@ -113,27 +113,29 @@ export const MembresiasHome = () => {
                           </div>
                         )}
                         <div className="mb-3 sm:mb-4 md:mb-6">
-                          <h3 className={`text-base sm:text-lg md:text-xl lg:text-2xl font-bold uppercase tracking-tighter italic mb-2 ${
-                            membresia.destacado ? 'text-white' : 'text-black'
+                          <h3 className={`text-[10px] font-black uppercase tracking-widest mb-3 ${
+                            membresia.destacado ? 'text-gray-400' : 'text-gray-500'
                           }`}>
                             {membresia.nombre}
                           </h3>
                           <div className="flex items-baseline gap-2">
-                            <span className={`text-xs sm:text-sm font-bold uppercase ${
-                              membresia.destacado ? 'text-gray-300' : 'text-gray-600'
-                            }`}>
-                              USD
-                            </span>
-                            <span className={`text-xl sm:text-2xl md:text-3xl lg:text-4xl font-black ${
-                              membresia.destacado ? 'text-white' : 'text-gray-800'
-                            }`}>
-                              ${membresia.precio.toLocaleString('es-AR')}
-                            </span>
-                            <span className={`text-xs sm:text-sm font-bold uppercase ${
-                              membresia.destacado ? 'text-gray-300' : 'text-gray-600'
-                            }`}>
-                              /{membresia.periodo}
-                            </span>
+                            <div>
+                              <span className={`text-[10px] font-bold uppercase block mb-0.5 ${
+                                membresia.destacado ? 'text-gray-400' : 'text-gray-500'
+                              }`}>
+                                USD
+                              </span>
+                              <span className={`text-5xl sm:text-6xl font-black leading-none ${
+                                membresia.destacado ? 'text-white' : 'text-gray-900'
+                              }`}>
+                                ${membresia.precio.toLocaleString('es-AR')}
+                              </span>
+                              <span className={`text-[10px] font-bold uppercase block mt-1 ${
+                                membresia.destacado ? 'text-gray-400' : 'text-gray-500'
+                              }`}>
+                                /{membresia.periodo}
+                              </span>
+                            </div>
                           </div>
                         </div>
 
@@ -142,9 +144,11 @@ export const MembresiasHome = () => {
                             ?.filter(b => b.incluido)
                             .slice(0, 3)
                             .map((beneficio, index) => (
-                              <div key={index} className="flex items-start gap-3">
-                                <div className="w-1 h-1 bg-gray-400 rounded-full mt-2 shrink-0" />
-                                <span className={`${TYPE.body} font-medium leading-relaxed ${
+                              <div key={index} className="flex items-start gap-2">
+                                <span className={`text-sm shrink-0 mt-0.5 ${
+                                  membresia.destacado ? 'text-green-400' : 'text-green-600'
+                                }`}>✓</span>
+                                <span className={`text-sm leading-snug ${
                                   membresia.destacado ? 'text-gray-300' : 'text-gray-700'
                                 }`}>
                                   {beneficio.texto}

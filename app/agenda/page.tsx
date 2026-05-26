@@ -73,7 +73,7 @@ export default function AgendaPage() {
               initial={{ opacity: 0, y: 40, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-              className="text-[clamp(3rem,10vw,7rem)] font-black uppercase italic tracking-tighter leading-none text-manso-cream"
+              className="text-5xl md:text-6xl font-black uppercase italic tracking-tighter leading-none text-manso-cream"
             >
               Agenda
             </motion.h1>
@@ -161,7 +161,7 @@ export default function AgendaPage() {
 
                       {/* Título + descripción */}
                       <div className="flex-1 min-w-0">
-                        <h2 className="text-3xl md:text-4xl font-black uppercase italic tracking-tighter text-manso-cream leading-tight">
+                        <h2 className="text-xl md:text-2xl font-black uppercase italic tracking-tighter text-manso-cream leading-tight">
                           {item.titulo}
                         </h2>
                         {item.descripcion && (

@@ -149,27 +149,29 @@ export default function MembresiasPage() {
                           {membresia.nombre}
                         </h3>
 
-                        <p className="text-4xl font-black italic mb-8 text-center uppercase tracking-tighter text-manso-cream">
-                          <span className="text-sm font-normal not-italic tracking-normal text-manso-cream/60 block">USD</span>
-                          ${membresia.precio.toLocaleString('es-AR')}
-                          <span className="text-sm block font-normal not-italic tracking-normal text-manso-cream/60">
+                        <div className="mb-8 text-center">
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/50 block mb-1">USD</span>
+                          <p className="text-6xl md:text-7xl font-black leading-none text-manso-cream">
+                            ${membresia.precio.toLocaleString('es-AR')}
+                          </p>
+                          <span className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/50 block mt-2">
                             /{membresia.periodo}
                           </span>
-                        </p>
+                        </div>
 
                         {membresia.descripcion && (
-                          <p className="text-[10px] text-manso-cream/60 text-center mb-6">
+                          <p className="text-sm text-manso-cream/60 text-center mb-6 leading-relaxed">
                             {membresia.descripcion}
                           </p>
                         )}
 
-                        <div className="space-y-4 mb-10 text-[10px] font-bold uppercase tracking-widest text-zinc-400 text-center">
+                        <div className="space-y-3 mb-10">
                           {membresia.membresia_beneficios?.map((beneficio) => (
-                            <p key={beneficio.id} className="flex items-center justify-center gap-2">
+                            <p key={beneficio.id} className="flex items-start gap-2 text-sm text-manso-cream/75">
                               {beneficio.incluido ? (
-                                <span className="text-green-400">✓</span>
+                                <span className="text-green-400 shrink-0 mt-0.5">✓</span>
                               ) : (
-                                <span className="text-red-400">✗</span>
+                                <span className="text-red-400 shrink-0 mt-0.5">✗</span>
                               )}
                               {beneficio.texto}
                             </p>
