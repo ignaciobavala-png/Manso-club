@@ -3,8 +3,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { supabase } from '@/lib/supabase';
-import { WHATSAPP_NUMBER } from '@/lib/constants';
-import { TYPE } from '@/lib/ui-constants';
 import Image from 'next/image';
 
 interface AgendaItem {

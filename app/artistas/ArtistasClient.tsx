@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import { AdaptiveSectionLayout } from '@/components/ui/AdaptiveSectionLayout';
 import { User, Instagram, ExternalLink, Play } from 'lucide-react';
 import { ParticleBackground } from '@/components/Home/ParticleBackground';
 import { ArtistModal } from '@/components/ui/ArtistModal';
