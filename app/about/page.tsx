@@ -118,8 +118,8 @@ export default async function AboutPage() {
                     <span className="text-zinc-500 text-2xl md:text-3xl font-black tracking-widest">{initials}</span>
                   </div>
                 )}
-                <p className="text-manso-black font-black uppercase text-sm tracking-tight">{member.name}</p>
-                <p className="text-zinc-500 text-xs mt-0.5">{member.role}</p>
+                <p className="text-manso-black font-black uppercase text-base md:text-lg tracking-tight leading-tight">{member.name}</p>
+                <p className="text-zinc-500 text-sm md:text-base mt-1">{member.role}</p>
               </div>
             );
           })}
@@ -130,8 +130,8 @@ export default async function AboutPage() {
                   <div className="w-full aspect-[3/4] bg-zinc-800 rounded-lg mb-3 flex items-center justify-center">
                     <span className="text-zinc-500 text-2xl font-black tracking-widest">{ini}</span>
                   </div>
-                  <p className="text-manso-black font-black uppercase text-sm tracking-tight">Nombre</p>
-                  <p className="text-zinc-500 text-xs mt-0.5">Rol</p>
+                  <p className="text-manso-black font-black uppercase text-base md:text-lg tracking-tight leading-tight">Nombre</p>
+                  <p className="text-zinc-500 text-sm md:text-base mt-1">Rol</p>
                 </div>
               ))}
             </>

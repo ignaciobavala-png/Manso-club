@@ -2,12 +2,17 @@
 
 import { useState } from 'react';
 import { loginAction } from './actions';
+import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
+import { Suspense } from 'react';
 
-export default function LoginPage() {
+function LoginForm() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
+  const searchParams = useSearchParams();
+  const from = searchParams.get('from') ?? '';
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,15 +22,13 @@ export default function LoginPage() {
     const formData = new FormData();
     formData.append('email', email);
     formData.append('password', password);
+    if (from) formData.append('from', from);
 
     try {
       const result = await loginAction(null, formData);
-
-      if (result?.error) {
-        setMessage(result.error);
-      }
+      if (result?.error) setMessage(result.error);
     } catch {
-      // redirect() lanza una excepcion, es comportamiento esperado
+      // redirect() lanza una excepción, es comportamiento esperado
     } finally {
       setLoading(false);
     }
@@ -47,23 +50,23 @@ export default function LoginPage() {
         )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input 
-            type="email" 
-            placeholder="EMAIL" 
+          <input
+            type="email"
+            placeholder="EMAIL"
             className="w-full p-5 bg-manso-cream/10 border border-manso-cream/20 rounded-2xl outline-none font-bold text-xs text-manso-cream placeholder:text-manso-cream/40 focus:ring-2 focus:ring-manso-terra transition-all"
-            value={email} 
+            value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-          <input 
-            type="password" 
-            placeholder="PASSWORD" 
+          <input
+            type="password"
+            placeholder="PASSWORD"
             className="w-full p-5 bg-manso-cream/10 border border-manso-cream/20 rounded-2xl outline-none font-bold text-xs text-manso-cream placeholder:text-manso-cream/40 focus:ring-2 focus:ring-manso-terra transition-all"
-            value={password} 
+            value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <button 
+          <button
             type="submit"
             disabled={loading}
             className="w-full p-5 rounded-2xl font-black uppercase tracking-widest text-xs bg-manso-terra text-manso-cream hover:bg-manso-cream hover:text-manso-black transition-all active:scale-95 disabled:opacity-50"
@@ -73,9 +76,20 @@ export default function LoginPage() {
         </form>
 
         <p className="text-center text-[9px] text-manso-cream/30 mt-6 uppercase tracking-widest">
-          Miembros y Administradores
+          ¿No tenés cuenta?{' '}
+          <Link href="/registro" className="text-manso-terra hover:text-manso-cream transition-colors">
+            Crear cuenta
+          </Link>
         </p>
       </div>
     </div>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
   );
 }
