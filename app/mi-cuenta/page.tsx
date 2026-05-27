@@ -1,8 +1,9 @@
 import { createSupabaseServer } from '@/lib/supabase';
 import { redirect } from 'next/navigation';
-import { AdaptiveSectionLayout } from '@/components/ui/AdaptiveSectionLayout';
 import { ParticleBackground } from '@/components/Home/ParticleBackground';
-import LogoutButton from './LogoutButton';
+import MiCuentaTabs from './MiCuentaTabs';
+
+export const metadata = { title: 'Mi Cuenta | Manso Club' };
 
 export default async function MiCuentaPage() {
   const supabase = await createSupabaseServer();
@@ -10,66 +11,82 @@ export default async function MiCuentaPage() {
 
   if (!user) redirect('/login');
 
-  const { data: profile } = await supabase
-    .from('user_profiles')
-    .select('display_name, email')
-    .eq('id', user.id)
-    .single();
+  // Fetch en paralelo
+  const [
+    { data: profile },
+    { data: membresiaRaw },
+    { data: streamingRaw },
+    { data: ticketsRaw },
+  ] = await Promise.all([
+    supabase
+      .from('user_profiles')
+      .select('display_name, email, telefono, avatar_url')
+      .eq('id', user.id)
+      .single(),
 
-  const { data: membresia } = await supabase
-    .from('user_membresias_activas')
-    .select('vencimiento, estado, membresia_id, membresias(nombre)')
-    .eq('user_id', user.id)
-    .eq('estado', 'activa')
-    .gt('vencimiento', new Date().toISOString())
-    .maybeSingle();
+    supabase
+      .from('user_membresias_activas')
+      .select('vencimiento, membresias(nombre, precio, periodo, incluye_streaming, membresia_beneficios(texto, incluido, orden))')
+      .eq('user_id', user.id)
+      .eq('estado', 'activa')
+      .gt('vencimiento', new Date().toISOString())
+      .order('vencimiento', { ascending: false })
+      .limit(1)
+      .maybeSingle(),
 
-  const displayName = profile?.display_name || profile?.email || 'Usuario';
+    supabase
+      .from('streaming_contenido')
+      .select('id, titulo, slug, tipo, thumbnail_url, precio_individual')
+      .eq('activo', true)
+      .order('orden', { ascending: true })
+      .limit(3),
+
+    supabase
+      .from('tickets')
+      .select('id, codigo, evento_nombre, tipo, usado, created_at')
+      .eq('email', user.email!)
+      .order('created_at', { ascending: false })
+      .limit(10),
+  ]);
+
+  const membresiaData = membresiaRaw?.membresias as {
+    nombre: string;
+    precio: number;
+    periodo: string;
+    incluye_streaming: boolean;
+    membresia_beneficios: { texto: string; incluido: boolean; orden: number }[];
+  } | null | undefined;
+
+  const membresia = membresiaData
+    ? {
+        nombre: membresiaData.nombre,
+        precio: membresiaData.precio,
+        periodo: membresiaData.periodo,
+        incluye_streaming: membresiaData.incluye_streaming,
+        vencimiento: membresiaRaw!.vencimiento,
+        beneficios: [...(membresiaData.membresia_beneficios ?? [])]
+          .sort((a, b) => a.orden - b.orden)
+          .map(b => ({ texto: b.texto, incluido: b.incluido })),
+      }
+    : null;
+
+  const tieneMembresia = !!membresia?.incluye_streaming;
+  const displayName = profile?.display_name || profile?.email?.split('@')[0] || 'Usuario';
 
   return (
     <div className="relative min-h-screen bg-manso-black">
       <ParticleBackground />
-      <AdaptiveSectionLayout
-        title="Mi Cuenta"
-        subtitle={`Bienvenido, ${displayName}_`}
-        customBg="bg-transparent"
-      >
-        <div className="space-y-6 max-w-lg">
-          {/* Membresía activa */}
-          <div className="rounded-[30px] border border-manso-cream/10 p-8 bg-manso-cream/5">
-            <p className="text-[9px] font-black uppercase tracking-[0.5em] text-manso-terra mb-3">
-              Membresía
-            </p>
-            {membresia ? (
-              <>
-                <p className="text-manso-cream font-black text-xl uppercase tracking-tight">
-                  {(membresia.membresias as { nombre: string } | null)?.nombre ?? 'Activa'}
-                </p>
-                <p className="text-manso-cream/40 text-xs mt-1 uppercase tracking-widest">
-                  Vence: {new Date(membresia.vencimiento).toLocaleDateString('es-AR', { day: '2-digit', month: 'long', year: 'numeric' })}
-                </p>
-              </>
-            ) : (
-              <p className="text-manso-cream/40 text-sm">
-                No tenés una membresía activa.{' '}
-                <a href="/membresias" className="text-manso-terra hover:text-manso-cream transition-colors underline">
-                  Ver planes
-                </a>
-              </p>
-            )}
-          </div>
-
-          {/* Datos de cuenta */}
-          <div className="rounded-[30px] border border-manso-cream/10 p-8 bg-manso-cream/5">
-            <p className="text-[9px] font-black uppercase tracking-[0.5em] text-manso-terra mb-3">
-              Cuenta
-            </p>
-            <p className="text-manso-cream font-bold text-sm">{profile?.email}</p>
-          </div>
-
-          <LogoutButton />
-        </div>
-      </AdaptiveSectionLayout>
+      <div className="relative z-10">
+        <MiCuentaTabs
+          displayName={displayName}
+          email={profile?.email ?? user.email ?? ''}
+          telefono={profile?.telefono ?? null}
+          membresia={membresia}
+          streaming={streamingRaw ?? []}
+          tickets={ticketsRaw ?? []}
+          tieneMembresia={tieneMembresia}
+        />
+      </div>
     </div>
   );
 }
