@@ -28,12 +28,12 @@ export function GalleryGrid({ images }: { images: Image[] }) {
 
   return (
     <>
-      <div className="flex overflow-x-auto gap-1 scrollbar-hide">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-0">
         {images.map((image, i) => (
           <div
             key={image.id}
             onClick={() => setSelectedIndex(i)}
-            className="group relative flex-shrink-0 w-48 md:w-64 aspect-[3/4] overflow-hidden cursor-pointer outline-none transition-transform duration-300 ease-out hover:scale-[1.02] hover:z-10"
+            className="group relative aspect-[4/3] overflow-hidden cursor-pointer outline-none transition-transform duration-300 ease-out active:scale-125 active:z-20 hover:scale-105 hover:z-10"
           >
             <img
               src={image.src}

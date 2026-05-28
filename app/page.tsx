@@ -4,7 +4,6 @@ import { Gallery } from "@/components/Home/Gallery";
 import { AboutUsPreview } from "@/components/Home/AboutUsPreview";
 import { EventosHome } from "@/components/Home/EventosHome";
 import { MembresiasHome } from "@/components/Home/MembresiasHome";
-import { TiendaHome } from "@/components/Home/TiendaHome";
 import { PorQueManso } from "@/components/Home/PorQueManso";
 import { SponsorBelt } from "@/components/Home/SponsorBelt";
 import { RandomGalleryPlaceholders } from "@/components/Home/RandomGalleryPlaceholders";
@@ -66,11 +65,6 @@ export default function Home() {
         <PorQueManso>
           <RandomGalleryPlaceholders count={4} />
         </PorQueManso>
-      </section>
-
-      {/* Slide 6: Tienda */}
-      <section id="tienda">
-        <TiendaHome />
       </section>
 
       {/* Newsletter */}

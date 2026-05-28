@@ -12,7 +12,7 @@ const LOGOS = [
 export const SponsorBelt = () => {
   return (
     <section className="py-2 sm:py-3" style={{ backgroundColor: '#000000' }}>
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6">
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-8">
         <div className="grid grid-cols-4 gap-4 sm:gap-6 items-center">
           {LOGOS.map((logo, i) => (
             <div key={i} className="flex items-center justify-center h-20 sm:h-24 md:h-28 overflow-visible">

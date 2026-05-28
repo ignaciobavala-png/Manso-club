@@ -63,7 +63,7 @@ export const PorQueManso = ({ children }: { children?: React.ReactNode }) => {
   const imgs = Children.toArray(children);
 
   return (
-    <section data-cursor-hidden="true" className="relative py-6 sm:py-8 md:py-14 px-0 sm:px-8 md:px-20 bg-manso-black overflow-hidden border-b border-manso-cream/10">
+    <section data-cursor-hidden="true" className="relative py-6 sm:py-8 md:py-14 px-0 sm:px-8 md:px-[86px] bg-manso-black overflow-hidden border-b border-manso-cream/10">
       <ParticleBackground />
       <div className="relative z-10 w-full">
         {/* TÍTULO + MANIFIESTO — centrado, ancho completo */}
@@ -104,7 +104,7 @@ export const PorQueManso = ({ children }: { children?: React.ReactNode }) => {
         <motion.div {...fadeUp(0.5)} className="w-full h-px bg-manso-cream/10 mb-12 md:mb-16" />
 
         {/* BLOQUES DE CONTENIDO — cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 mb-12 md:mb-16 px-0 sm:px-8 md:px-20">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5 mb-12 md:mb-16 px-0 sm:px-8 md:px-[86px]">
           {bloques.map((bloque, i) => (
             <motion.div
               key={i}

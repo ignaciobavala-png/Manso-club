@@ -2,7 +2,10 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { Plus } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
+import { WHATSAPP_NUMBER } from '@/lib/constants';
+import { TYPE } from '@/lib/ui-constants';
 import Image from 'next/image';
 
 interface AgendaItem {
@@ -43,6 +46,7 @@ export const EventosHome = () => {
   const [eventosFecha, setEventosFecha] = useState<EventoFecha[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [openId, setOpenId] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const sectionRef = useRef<HTMLElement>(null);
 
@@ -114,10 +118,14 @@ export const EventosHome = () => {
     setLoading(false);
   };
 
+  const toggleAccordion = (id: string) => {
+    setOpenId(prev => prev === id ? null : id);
+  };
+
   if (loading) {
     return (
-      <section className="py-8 sm:py-12 md:py-24 px-4 sm:px-8 md:px-20" style={{ backgroundColor: '#F5F0E8' }}>
-        <div className="max-w-7xl mx-auto">
+      <section className="py-8 sm:py-12 md:py-24 px-4 sm:px-8 md:px-[86px]" style={{ backgroundColor: '#F5F0E8' }}>
+        <div className="mx-auto">
           <div className="text-center text-black/60 py-8">Cargando eventos...</div>
         </div>
       </section>
@@ -198,8 +206,8 @@ export const EventosHome = () => {
       {/* ============================================ */}
       {/* SECCIÓN 1: AGENDA (ACORDEÓN)                */}
       {/* ============================================ */}
-      <div className="py-12 sm:py-16 md:py-20 px-4 sm:px-8 md:px-20">
-        <div className="max-w-7xl mx-auto">
+      <div className="py-12 sm:py-16 md:py-20 px-4 sm:px-8 md:px-[86px]">
+        <div className="mx-auto">
           <div className="text-left mb-8 sm:mb-12">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-white">
               Agenda
@@ -219,87 +227,97 @@ export const EventosHome = () => {
             </div>
           ) : (
             <div>
-              {agendaItems.map((item, index) => (
-                <div key={item.id}>
-                  <div className="border-t border-white/20 py-6 sm:py-8 flex items-start gap-6 md:gap-10">
+              {agendaItems.map((item, index) => {
+                const isOpen = openId === item.id;
 
-                    {/* Número grande */}
-                    <span className="text-6xl sm:text-7xl md:text-8xl font-black text-white/15 leading-none shrink-0 select-none tabular-nums">
-                      {String(index + 1).padStart(2, '0')}
-                    </span>
-
-                    {/* Contenido */}
-                    <div className="flex-1 min-w-0">
-                      {item.categoria && (
-                        <span className="text-[10px] font-black uppercase tracking-[0.4em] text-manso-terra block mb-2">
-                          {item.categoria}
-                        </span>
-                      )}
-                      <h4 className="text-xl sm:text-2xl md:text-3xl font-black uppercase tracking-tight text-white leading-tight mb-2">
-                        {item.titulo}
-                      </h4>
-                      {item.descripcion && (
-                        <p className="text-sm text-white/60 mb-4 leading-relaxed">{item.descripcion}</p>
-                      )}
-                      <div className="flex flex-wrap gap-x-8 gap-y-2">
-                        {item.frecuencia && (
-                          <div>
-                            <span className="text-[9px] uppercase tracking-widest text-white/40 font-bold block">Frecuencia</span>
-                            <span className="text-xs font-bold uppercase text-white/80">{item.frecuencia}</span>
-                          </div>
-                        )}
-                        {item.duracion && (
-                          <div>
-                            <span className="text-[9px] uppercase tracking-widest text-white/40 font-bold block">Duración</span>
-                            <span className="text-xs font-bold uppercase text-white/80">{item.duracion}</span>
-                          </div>
-                        )}
-                        {item.cupos_maximos && item.cupos_maximos > 0 && (
-                          <div>
-                            <span className="text-[9px] uppercase tracking-widest text-white/40 font-bold block">Cupos</span>
-                            <span className="text-xs font-bold uppercase text-white/80">{item.cupos_maximos}</span>
-                          </div>
-                        )}
-                        {item.precio !== undefined && (
-                          <div>
-                            <span className="text-[9px] uppercase tracking-widest text-white/40 font-bold block">Precio</span>
-                            <span className="text-xs font-bold uppercase text-white/80">
-                              {item.precio > 0 ? `USD $${item.precio.toLocaleString('es-AR')}` : 'Gratis'}
+                return (
+                  <div key={item.id}>
+                    {/* Fila del acordeón */}
+                    <div
+                      className="flex items-center justify-between py-5 sm:py-7 cursor-pointer select-none"
+                      onClick={() => toggleAccordion(item.id)}
+                    >
+                      {/* Categoría badge + título */}
+                      <div className="flex-1 min-w-0 mr-4">
+                        <div className="flex items-baseline gap-3 flex-wrap">
+                          {item.categoria && (
+                            <span className="text-[11px] sm:text-[12px] font-black uppercase tracking-widest text-white shrink-0">
+                              {item.categoria.toUpperCase()}
                             </span>
-                          </div>
-                        )}
+                          )}
+                          <h4 className="text-lg sm:text-xl md:text-2xl font-bold uppercase tracking-tight text-white leading-none">
+                            {item.titulo}
+                          </h4>
+                        </div>
+                      </div>
+
+                      {/* Acciones derecha */}
+                      <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+                        {item.luma_url ? (
+                          <a
+                            href={item.luma_url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-[10px] sm:text-xs font-black uppercase tracking-widest bg-white text-black px-4 py-2 hover:bg-gray-100 transition-colors whitespace-nowrap"
+                            onClick={e => e.stopPropagation()}
+                          >
+                            INSCRIBIRME
+                          </a>
+                        ) : null}
+                        <button
+                          className={`flex items-center justify-center w-9 h-9 border-2 border-white/50 rounded-full transition-transform duration-300 hover:border-white ${isOpen ? 'rotate-45' : ''}`}
+                          onClick={e => { e.stopPropagation(); toggleAccordion(item.id); }}
+                        >
+                          <Plus size={18} className="text-white" />
+                        </button>
                       </div>
                     </div>
 
-                    {/* Botón derecha */}
-                    {item.luma_url && (
-                      <a
-                        href={item.luma_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="shrink-0 self-center text-[10px] font-black uppercase tracking-widest border border-white/40 text-white px-5 py-3 hover:bg-white hover:text-black transition-colors whitespace-nowrap hidden sm:block"
-                      >
-                        Inscribirme
-                      </a>
-                    )}
-                  </div>
-
-                  {/* Botón móvil */}
-                  {item.luma_url && (
-                    <div className="pb-6 sm:hidden">
-                      <a
-                        href={item.luma_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-[10px] font-black uppercase tracking-widest border border-white/40 text-white px-5 py-3 hover:bg-white hover:text-black transition-colors"
-                      >
-                        Inscribirme
-                      </a>
+                    {/* Contenido expandible */}
+                    <div
+                      className="overflow-hidden transition-all duration-300 ease-in-out"
+                      style={{ maxHeight: isOpen ? '400px' : '0px', opacity: isOpen ? 1 : 0 }}
+                    >
+                      <div className="pb-5 pt-1 pl-0 space-y-3">
+                        {item.descripcion && (
+                          <p className="text-base sm:text-lg text-white/85 leading-relaxed">
+                            {item.descripcion}
+                          </p>
+                        )}
+                        <div className="flex flex-wrap gap-x-10 gap-y-3 text-sm sm:text-base text-white/70">
+                          {item.frecuencia && (
+                            <div>
+                              <span className="text-[10px] uppercase tracking-widest text-white/50 font-bold block mb-0.5">Frecuencia</span>
+                              <span className="font-medium text-white">{item.frecuencia}</span>
+                            </div>
+                          )}
+                          {item.duracion && (
+                            <div>
+                              <span className="text-[10px] uppercase tracking-widest text-white/50 font-bold block mb-0.5">Duración</span>
+                              <span className="font-medium text-white">{item.duracion}</span>
+                            </div>
+                          )}
+                          {item.precio !== undefined && (
+                            <div>
+                              <span className="text-[10px] uppercase tracking-widest text-white/50 font-bold block mb-0.5">Precio</span>
+                              <span className="font-medium text-white">{item.precio > 0 ? `$${item.precio.toLocaleString('es-AR')}` : 'Gratis'}</span>
+                            </div>
+                          )}
+                          {item.cupos_maximos && item.cupos_maximos > 0 && (
+                            <div>
+                              <span className="text-[10px] uppercase tracking-widest text-white/50 font-bold block mb-0.5">Cupos</span>
+                              <span className="font-medium text-white">{item.cupos_maximos}</span>
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     </div>
-                  )}
-                </div>
-              ))}
-              <div className="border-t border-white/20" />
+
+                    {/* Separador siempre presente */}
+                    <div className="border-b border-white/20" />
+                  </div>
+                );
+              })}
             </div>
           )}
         </div>
@@ -308,8 +326,8 @@ export const EventosHome = () => {
       {/* ============================================ */}
       {/* SECCIÓN 2: EVENTOS (CARRUSEL)               */}
       {/* ============================================ */}
-      <div className="pb-12 sm:pb-16 md:pb-20 pt-8 sm:pt-10 px-0 sm:px-8 md:px-20">
-        <div className="max-w-7xl mx-auto">
+      <div className="pb-12 sm:pb-16 md:pb-20 pt-8 sm:pt-10 px-0 sm:px-8 md:px-[86px]">
+        <div className="mx-auto">
           <div className="text-left mb-6 sm:mb-8 px-4 sm:px-0">
             <h2 id="eventos-titulo" className="text-3xl sm:text-4xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-white">
               Eventos

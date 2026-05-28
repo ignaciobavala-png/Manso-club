@@ -77,7 +77,7 @@ export function HeroClient() {
   if (slides.length === 1 && slides[0].tipo === 'video' && slides[0].media_url) {
     const videoUrl = getMediaUrlForDevice(slides[0], currentDevice) || slides[0].media_url;
     return (
-      <section id="hero" className="relative min-h-screen flex flex-col justify-end md:justify-center px-8 md:px-20 py-10 md:py-20 overflow-hidden">
+      <section id="hero" className="relative min-h-screen flex flex-col justify-end md:justify-center px-8 md:px-[86px] py-10 md:py-20 overflow-hidden">
         <video
           autoPlay
           muted
@@ -115,13 +115,13 @@ export function HeroClient() {
             <div className="flex flex-row gap-3">
               <Link
                 href="/membresias"
-                className="bg-manso-cream text-manso-black px-6 py-3 text-[9px] font-black uppercase tracking-widest hover:bg-white transition-all active:scale-95"
+                className="bg-manso-cream text-manso-black px-8 py-4 text-xs font-black uppercase tracking-widest hover:bg-white transition-all active:scale-95"
               >
                 Membresías
               </Link>
               <Link
                 href="/agenda"
-                className="border border-manso-cream/50 text-manso-cream px-6 py-3 text-[9px] font-black uppercase tracking-widest hover:border-manso-cream transition-all active:scale-95"
+                className="border border-manso-cream/50 text-manso-cream px-8 py-4 text-xs font-black uppercase tracking-widest hover:border-manso-cream transition-all active:scale-95"
               >
                 Ver Agenda
               </Link>
@@ -140,7 +140,7 @@ export function HeroClient() {
     }
 
     return (
-      <section id="hero" className="relative min-h-screen flex flex-col justify-end md:justify-center px-8 md:px-20 py-10 md:py-20 overflow-hidden">
+      <section id="hero" className="relative min-h-screen flex flex-col justify-end md:justify-center px-8 md:px-[86px] py-10 md:py-20 overflow-hidden">
         <div
           className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
           style={{
@@ -175,13 +175,13 @@ export function HeroClient() {
             <div className="flex flex-row gap-3">
               <Link
                 href="/membresias"
-                className="bg-manso-cream text-manso-black px-6 py-3 text-[9px] font-black uppercase tracking-widest hover:bg-white transition-all active:scale-95"
+                className="bg-manso-cream text-manso-black px-8 py-4 text-xs font-black uppercase tracking-widest hover:bg-white transition-all active:scale-95"
               >
                 Membresías
               </Link>
               <Link
                 href="/agenda"
-                className="border border-manso-cream/50 text-manso-cream px-6 py-3 text-[9px] font-black uppercase tracking-widest hover:border-manso-cream transition-all active:scale-95"
+                className="border border-manso-cream/50 text-manso-cream px-8 py-4 text-xs font-black uppercase tracking-widest hover:border-manso-cream transition-all active:scale-95"
               >
                 Ver Agenda
               </Link>

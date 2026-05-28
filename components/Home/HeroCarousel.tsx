@@ -29,7 +29,7 @@ export const HeroCarousel = ({ slides }: { slides: any[] }) => {
   const title = getTitle(currentSlide);
 
   return (
-    <section id="hero" className="relative h-screen flex flex-col justify-end md:justify-center px-8 md:px-20 pt-24 pb-10 md:pt-28 md:pb-16 overflow-hidden" style={{ backgroundColor: '#1D1D1B' }}>
+    <section id="hero" className="relative h-screen flex flex-col justify-end md:justify-center px-8 md:px-[86px] pt-24 pb-10 md:pt-28 md:pb-16 overflow-hidden" style={{ backgroundColor: '#1D1D1B' }}>
       {/* Fondo dinámico: imagen o gradiente */}
       {currentSlide.media_url && currentSlide.tipo === 'imagen' ? (
         <div
@@ -78,13 +78,13 @@ export const HeroCarousel = ({ slides }: { slides: any[] }) => {
               <div className="flex flex-row gap-3">
                 <Link
                   href="/membresias"
-                  className="bg-manso-cream text-manso-black px-6 py-3 text-[9px] font-black uppercase tracking-widest hover:bg-white transition-all active:scale-95"
+                  className="bg-manso-cream text-manso-black px-8 py-4 text-xs font-black uppercase tracking-widest hover:bg-white transition-all active:scale-95"
                 >
                   Membresías
                 </Link>
                 <Link
                   href="/agenda"
-                  className="border border-manso-cream/50 text-manso-cream px-6 py-3 text-[9px] font-black uppercase tracking-widest hover:border-manso-cream transition-all active:scale-95"
+                  className="border border-manso-cream/50 text-manso-cream px-8 py-4 text-xs font-black uppercase tracking-widest hover:border-manso-cream transition-all active:scale-95"
                 >
                   Ver Agenda
                 </Link>
