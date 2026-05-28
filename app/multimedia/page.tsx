@@ -165,9 +165,25 @@ function ImageCard({ src, titulo }: { src: string; titulo: string }) {
   );
 }
 
+type FilterKey = 'todo' | 'videos' | 'fotos';
+
+const FILTERS: { key: FilterKey; label: string }[] = [
+  { key: 'todo',   label: 'Todo'   },
+  { key: 'videos', label: 'Videos' },
+  { key: 'fotos',  label: 'Fotos'  },
+];
+
+function matchesFilter(item: MediaItem, filter: FilterKey) {
+  if (filter === 'todo') return true;
+  if (filter === 'videos') return item.tipo === 'youtube' || item.tipo === 'video';
+  if (filter === 'fotos') return item.tipo === 'imagen';
+  return true;
+}
+
 export default function MultimediaPage() {
   const [items, setItems] = useState<MediaItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState<FilterKey>('todo');
 
   useEffect(() => {
     supabase
@@ -181,27 +197,52 @@ export default function MultimediaPage() {
       });
   }, []);
 
+  const visible = items.filter(i => matchesFilter(i, filter));
+
   return (
     <div className="relative min-h-screen bg-manso-black">
       <ParticleBackground />
 
       <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-12 pt-40 pb-32">
-        <p className="text-[9px] font-black uppercase tracking-[0.6em] text-manso-terra mb-20">
-          Multimedia
-        </p>
+
+        {/* Header */}
+        <div className="mb-10">
+          <h1 className="text-5xl md:text-6xl font-black uppercase italic tracking-tighter leading-none text-manso-cream mb-6">
+            Multimedia
+          </h1>
+
+          {/* Tabs de filtro */}
+          <div className="flex items-center gap-1">
+            {FILTERS.map(({ key, label }) => (
+              <button
+                key={key}
+                onClick={() => setFilter(key)}
+                className={`px-5 py-2 text-xs font-black uppercase tracking-widest transition-all duration-200 rounded-full ${
+                  filter === key
+                    ? 'bg-manso-cream text-manso-black'
+                    : 'text-manso-cream/40 hover:text-manso-cream/70'
+                }`}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="w-full h-px bg-manso-cream/10 mb-14" />
 
         {loading ? (
           <div className="flex items-center gap-3 text-manso-cream/30">
             <div className="w-4 h-4 border border-manso-cream/20 border-t-manso-cream/60 rounded-full animate-spin" />
             <span className="text-[10px] uppercase tracking-widest font-black">Cargando...</span>
           </div>
-        ) : items.length === 0 ? (
+        ) : visible.length === 0 ? (
           <div className="py-20 text-manso-cream/30 text-center">
-            <p className="text-[10px] uppercase tracking-widest">Próximamente</p>
+            <p className="text-[10px] uppercase tracking-widest">Sin contenido en esta categoría</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14">
-            {items.map(item => {
+            {visible.map(item => {
               if (item.tipo === 'youtube') {
                 const videoId = item.youtube_url ? getYouTubeId(item.youtube_url) : null;
                 if (!videoId) return null;

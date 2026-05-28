@@ -69,22 +69,27 @@ export const PorQueManso = ({ children }: { children?: React.ReactNode }) => {
         {/* TÍTULO + MANIFIESTO — centrado, ancho completo */}
         <div className="mb-12 md:mb-16 space-y-4 sm:space-y-3 text-center px-0 sm:px-4 md:px-8">
           <AnimatedLine>
-            <div className="flex items-baseline gap-4 sm:gap-3 flex-wrap justify-center gap-y-1">
+            <div className="flex items-baseline gap-2 sm:gap-2 flex-wrap justify-center gap-y-1">
               <span className={textWhite}>NUESTRO ADN</span>
               {imgs[0]}
             </div>
           </AnimatedLine>
 
           <AnimatedLine>
-            <div className="flex items-baseline gap-4 sm:gap-3 flex-wrap justify-center gap-y-1">
+            <div className="flex items-baseline gap-2 sm:gap-2 justify-center gap-y-1">
               <span className={textWhite}>MUCHO MÁS</span>
               {imgs[1]}
+            </div>
+          </AnimatedLine>
+
+          <AnimatedLine>
+            <div className="flex items-baseline justify-center">
               <span className={textOlive}>QUE UN CLUB.</span>
             </div>
           </AnimatedLine>
 
           <AnimatedLine>
-            <div className="flex items-baseline gap-4 sm:gap-3 flex-wrap justify-center gap-y-1">
+            <div className="flex items-baseline gap-2 sm:gap-2 flex-wrap justify-center gap-y-1">
               <span className={textWhite}>EL TALENTO</span>
               {imgs[2]}
               <span className={textWhite}>SIEMPRE ESTUVO,</span>
@@ -92,7 +97,7 @@ export const PorQueManso = ({ children }: { children?: React.ReactNode }) => {
           </AnimatedLine>
 
           <AnimatedLine>
-            <div className="flex items-baseline gap-4 sm:gap-3 flex-wrap justify-center gap-y-1">
+            <div className="flex items-baseline gap-1 sm:gap-3 flex-wrap justify-center gap-y-1">
               <span className={textWhite}>FALTABA</span>
               {imgs[3]}
               <span className={textWhite}>UN LUGAR.</span>

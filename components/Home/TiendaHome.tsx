@@ -89,8 +89,8 @@ export const TiendaHome = () => {
   // Si no hay productos, mostrar placeholder
   if (loading) {
     return (
-      <section className="py-12 sm:py-16 px-4 sm:px-8 md:px-20" style={{ backgroundColor: '#F5F0E8' }}>
-        <div className="max-w-7xl mx-auto">
+      <section className="py-12 sm:py-16 px-4 sm:px-8 md:px-[96px]" style={{ backgroundColor: '#F5F0E8' }}>
+        <div className="mx-auto">
           <div className="text-center mb-12">
             <span className="text-[10px] uppercase tracking-widest text-black/60 font-bold mb-4 block">Tienda</span>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-black">
@@ -109,8 +109,8 @@ export const TiendaHome = () => {
   const showPlaceholders = productos.length === 0;
 
   return (
-    <section className="py-12 sm:py-16 px-4 sm:px-8 md:px-20" style={{ backgroundColor: '#F5F0E8' }}>
-      <div className="max-w-7xl mx-auto">
+    <section className="py-12 sm:py-16 px-4 sm:px-8 md:px-[96px]" style={{ backgroundColor: '#F5F0E8' }}>
+      <div className="mx-auto">
         <div className="text-center mb-12">
           <span className="text-[10px] uppercase tracking-widest text-black/60 font-bold mb-4 block">Tienda</span>
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-black">
@@ -150,16 +150,24 @@ export const TiendaHome = () => {
 
         {/* Botón ir a la tienda */}
         <div className="text-center">
-          <Link 
+          <Link
             href="/tienda"
             className="inline-flex items-center gap-3 bg-black text-white px-12 py-6 text-[10px] font-black uppercase tracking-widest hover:bg-gray-800 transition-all transform hover:-translate-y-1 active:scale-95 group rounded-full"
           >
             IR A LA TIENDA
-            <ArrowRight 
-              size={16} 
-              className="transform transition-transform group-hover:translate-x-2" 
+            <ArrowRight
+              size={16}
+              className="transform transition-transform group-hover:translate-x-2"
             />
           </Link>
+        </div>
+
+        {/* Envíos & Retiro */}
+        <div className="mt-10 border border-black/10 rounded-xl p-6 md:p-8">
+          <p className="text-[10px] font-black uppercase tracking-[0.4em] text-black mb-2">Envíos & Retiro</p>
+          <p className="text-sm text-black/60 leading-relaxed max-w-xl">
+            Podés retirar en Manso Club (Cdad. de la Paz 601, Colegiales) de lunes a viernes 10–18h, o coordinar envío por mensajería dentro de CABA. Consultar precios de envío al interior.
+          </p>
         </div>
       </div>
     </section>

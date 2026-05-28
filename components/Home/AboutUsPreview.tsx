@@ -8,6 +8,10 @@ export const AboutUsPreview = async () => {
     .filter(p => p.trim());
 
   return (
-    <AboutUsPreviewClient subtitle={about.subtitle} paragraphs={paragraphs} />
+    <AboutUsPreviewClient
+      subtitle={about.subtitle}
+      paragraphs={paragraphs}
+      mainPhotoUrl={about.main_photo_url ?? null}
+    />
   );
 };

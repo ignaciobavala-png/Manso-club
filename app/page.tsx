@@ -7,6 +7,7 @@ import { MembresiasHome } from "@/components/Home/MembresiasHome";
 import { PorQueManso } from "@/components/Home/PorQueManso";
 import { SponsorBelt } from "@/components/Home/SponsorBelt";
 import { RandomGalleryPlaceholders } from "@/components/Home/RandomGalleryPlaceholders";
+import { Newsletter } from "@/components/Home/Newsletter";
 
 export const revalidate = 30;
 
@@ -40,7 +41,7 @@ export default function Home() {
       </section>
       
       {/* Slide 2: Gallery */}
-      <section id="galeria" className="min-h-[60vh] md:min-h-screen">
+      <section id="galeria">
         <Gallery />
       </section>
 
@@ -65,6 +66,9 @@ export default function Home() {
           <RandomGalleryPlaceholders count={4} />
         </PorQueManso>
       </section>
+
+      {/* Newsletter */}
+      <Newsletter />
 
       {/* Cinturón de confianza — sponsors */}
       <SponsorBelt />

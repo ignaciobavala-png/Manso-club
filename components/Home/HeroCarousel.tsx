@@ -5,9 +5,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import Link from 'next/link';
 import { TYPE, OPACITY } from '@/lib/ui-constants';
 
-const transitionConfig = { 
-  duration: 0.9, 
-  ease: [0.16, 1, 0.3, 1] as const 
+const transitionConfig = {
+  duration: 0.9,
+  ease: [0.16, 1, 0.3, 1] as const
 };
 
 const getTitle = (slide: any) => ({
@@ -21,7 +21,7 @@ export const HeroCarousel = ({ slides }: { slides: any[] }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setCurrent((prev) => (prev + 1) % slides.length);
-    }, 5000); 
+    }, 5000);
     return () => clearTimeout(timer);
   }, [current, slides.length]);
 
@@ -29,7 +29,7 @@ export const HeroCarousel = ({ slides }: { slides: any[] }) => {
   const title = getTitle(currentSlide);
 
   return (
-    <section id="hero" className="relative h-screen flex flex-col justify-end md:justify-center px-8 md:px-20 pt-24 pb-10 md:pt-28 md:pb-16 overflow-hidden" style={{ backgroundColor: '#1D1D1B' }}>
+    <section id="hero" className="relative h-screen flex flex-col justify-end md:justify-center px-8 md:px-[96px] pt-24 pb-10 md:pt-28 md:pb-16 overflow-hidden" style={{ backgroundColor: '#1D1D1B' }}>
       {/* Fondo dinámico: imagen o gradiente */}
       {currentSlide.media_url && currentSlide.tipo === 'imagen' ? (
         <div
@@ -40,19 +40,17 @@ export const HeroCarousel = ({ slides }: { slides: any[] }) => {
         <div
           className="absolute inset-0 z-0"
           style={{
-            background: `linear-gradient(to right, hsl(10, 60%, 30%), hsl(330, 20%, 20%), hsl(260, 40%, 15%))`, // Gradiente de la imagen original
+            background: `linear-gradient(to right, hsl(10, 60%, 30%), hsl(330, 20%, 20%), hsl(260, 40%, 15%))`,
           }}
         />
       )}
-      
-      {/* Overlay oscuro cuando hay imagen */}
+
       {currentSlide.media_url && currentSlide.tipo === 'imagen' && (
         <div className="absolute inset-0 z-[1] bg-black/40" />
       )}
-      
-      {/* Aura de refuerzo del cobre en centro-derecha */}
+
       <div className="absolute top-1/2 right-1/4 transform translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-manso-terra opacity-10 rounded-full blur-[120px] pointer-events-none" />
-      
+
       <div className="relative z-10 w-full max-w-6xl mx-auto">
         <AnimatePresence mode="wait">
           <motion.div
@@ -72,32 +70,40 @@ export const HeroCarousel = ({ slides }: { slides: any[] }) => {
               </h1>
             </header>
 
-            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 md:gap-10 mt-4">
-              <p className={`max-w-[450px] ${TYPE.body} md:text-xl ${OPACITY.onDark} text-pretty`}>
-                {currentSlide.description?.replace(/\s(\S+)$/, ' $1')}
+            <div className="mt-4 flex flex-col gap-6 max-w-[450px]">
+              <p className={`${TYPE.body} md:text-xl ${OPACITY.onDark} text-pretty`}>
+                {currentSlide.description?.replace(/\s(\S+)$/, ' $1')}
               </p>
-              
-              <div className="flex flex-col items-start gap-6">
-                <Link 
+
+              <div className="flex flex-row gap-3">
+                <Link
                   href="/membresias"
-                  className="bg-manso-cream text-manso-black px-6 py-3 text-[9px] font-black uppercase tracking-widest rounded-full hover:bg-manso-white transition-all transform hover:-translate-y-1 active:scale-95"
+                  className="bg-manso-cream text-manso-black px-8 py-4 text-xs font-black uppercase tracking-widest hover:bg-white transition-all active:scale-95"
                 >
                   Membresías
                 </Link>
-                
+                <Link
+                  href="/agenda"
+                  className="border border-manso-cream/50 text-manso-cream px-8 py-4 text-xs font-black uppercase tracking-widest hover:border-manso-cream transition-all active:scale-95"
+                >
+                  Ver Agenda
+                </Link>
+              </div>
+
+              {slides.length > 1 && (
                 <div className="flex gap-2 h-4 items-center">
                   {slides.map((_, i) => (
-                    <motion.div 
-                      key={i} 
-                      animate={{ 
+                    <motion.div
+                      key={i}
+                      animate={{
                         width: i === current ? 32 : 12,
-                        backgroundColor: i === current ? "#FFFCDC" : "rgba(255, 252, 220, 0.2)" 
+                        backgroundColor: i === current ? "#FFFCDC" : "rgba(255, 252, 220, 0.2)"
                       }}
-                      className="h-[1px] rounded-full" 
+                      className="h-[1px] rounded-full"
                     />
                   ))}
                 </div>
-              </div>
+              )}
             </div>
           </motion.div>
         </AnimatePresence>

@@ -124,63 +124,92 @@ export default function MembresiasPage() {
                 <div key={categoria}>
                   {/* Encabezado de categoría */}
                   <div className="flex items-center gap-4 mb-10">
-                    <span className="text-[9px] font-black uppercase tracking-[0.6em] text-manso-terra">
+                    <span className="text-[9px] font-black uppercase tracking-[0.6em] text-manso-cream/50">
                       {categoria}
                     </span>
                     <div className="flex-1 h-px bg-manso-cream/10" />
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
                     {grupos[categoria].map((membresia) => (
                       <div
                         key={membresia.id}
-                        className="flex flex-col border border-zinc-700 p-10 rounded-[40px] bg-zinc-800/50 hover:bg-zinc-700 hover:text-manso-cream transition-all group shadow-sm relative"
+                        className={`group flex flex-col w-full rounded-[20px] sm:rounded-[30px] md:rounded-[40px] p-4 sm:p-6 md:p-8 transition-all duration-700 ease-out hover:scale-[1.02] cursor-pointer relative ${
+                          membresia.destacado
+                            ? 'bg-black text-white border-black hover:shadow-[0_20px_60px_rgba(0,0,0,0.25)]'
+                            : 'bg-zinc-100 border-2 border-zinc-200 hover:border-manso-black/40 hover:shadow-[0_20px_60px_rgba(0,0,0,0.08)]'
+                        }`}
                       >
                         {membresia.destacado && (
                           <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                            <span className="inline-flex items-center gap-1 px-3 py-1 bg-manso-terra text-manso-cream rounded-full text-[8px] font-black uppercase tracking-widest">
+                            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest bg-white text-black">
                               <Star size={8} />
                               Más Popular
                             </span>
                           </div>
                         )}
 
-                        <h3 className="text-[10px] font-black uppercase tracking-widest mb-2 text-zinc-400 group-hover:text-manso-cream/80 text-center">
-                          {membresia.nombre}
-                        </h3>
+                        <div className="mb-3 sm:mb-4 md:mb-6">
+                          <h3 className={`text-[10px] font-black uppercase tracking-widest mb-3 ${
+                            membresia.destacado ? 'text-gray-400' : 'text-gray-500'
+                          }`}>
+                            {membresia.nombre}
+                          </h3>
+                          <div>
+                            <span className={`text-[10px] font-bold uppercase block mb-0.5 ${
+                              membresia.destacado ? 'text-gray-400' : 'text-gray-500'
+                            }`}>
+                              USD
+                            </span>
+                            <span className={`text-5xl sm:text-6xl font-black leading-none ${
+                              membresia.destacado ? 'text-white' : 'text-gray-900'
+                            }`}>
+                              ${membresia.precio.toLocaleString('es-AR')}
+                            </span>
+                            <span className={`text-[10px] font-bold uppercase block mt-1 ${
+                              membresia.destacado ? 'text-gray-400' : 'text-gray-500'
+                            }`}>
+                              /{membresia.periodo}
+                            </span>
+                          </div>
+                        </div>
 
-                        <p className="text-4xl font-black italic mb-8 text-center uppercase tracking-tighter text-manso-cream">
-                          <span className="text-sm font-normal not-italic tracking-normal text-manso-cream/60 block">USD</span>
-                          ${membresia.precio.toLocaleString('es-AR')}
-                          <span className="text-sm block font-normal not-italic tracking-normal text-manso-cream/60">
-                            /{membresia.periodo}
-                          </span>
-                        </p>
+                        <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
+                          {membresia.membresia_beneficios?.map((beneficio) => (
+                            <div key={beneficio.id} className="flex items-start gap-2">
+                              {beneficio.incluido ? (
+                                <span className={`text-sm shrink-0 mt-0.5 ${membresia.destacado ? 'text-green-400' : 'text-green-600'}`}>✓</span>
+                              ) : (
+                                <span className={`text-sm shrink-0 mt-0.5 ${membresia.destacado ? 'text-red-400' : 'text-red-500'}`}>✗</span>
+                              )}
+                              <span className={`text-sm leading-snug ${
+                                !beneficio.incluido
+                                  ? membresia.destacado ? 'text-gray-500 line-through' : 'text-gray-400 line-through'
+                                  : membresia.destacado ? 'text-gray-300' : 'text-gray-700'
+                              }`}>
+                                {beneficio.texto}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
 
                         {membresia.descripcion && (
-                          <p className="text-[10px] text-manso-cream/60 text-center mb-6">
+                          <p className={`text-sm font-medium leading-relaxed mb-4 sm:mb-6 ${
+                            membresia.destacado ? 'text-gray-400' : 'text-gray-600'
+                          }`}>
                             {membresia.descripcion}
                           </p>
                         )}
 
-                        <div className="space-y-4 mb-10 text-[10px] font-bold uppercase tracking-widest text-zinc-400 text-center">
-                          {membresia.membresia_beneficios?.map((beneficio) => (
-                            <p key={beneficio.id} className="flex items-center justify-center gap-2">
-                              {beneficio.incluido ? (
-                                <span className="text-green-400">✓</span>
-                              ) : (
-                                <span className="text-red-400">✗</span>
-                              )}
-                              {beneficio.texto}
-                            </p>
-                          ))}
-                        </div>
-
                         <Link
                           href={`/membresias/pagar?nombre=${encodeURIComponent(membresia.nombre)}&precio=${membresia.precio}&periodo=${encodeURIComponent(membresia.periodo)}`}
-                          className="mt-auto block w-full py-4 bg-manso-cream rounded-2xl uppercase text-[10px] font-black text-manso-black hover:bg-white transition-all text-center"
+                          className={`mt-auto block w-full px-4 sm:px-6 py-3 sm:py-4 text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all duration-500 ease-out active:scale-95 rounded-full text-center ${
+                            membresia.destacado
+                              ? 'bg-white text-black hover:bg-gray-100'
+                              : 'bg-black text-white hover:bg-manso-black/80'
+                          }`}
                         >
-                          Suscribirme
+                          SELECCIONAR
                         </Link>
                       </div>
                     ))}

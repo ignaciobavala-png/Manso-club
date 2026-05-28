@@ -73,7 +73,7 @@ export default function AgendaPage() {
               initial={{ opacity: 0, y: 40, scale: 0.95 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1], delay: 0.1 }}
-              className="text-[clamp(3rem,10vw,7rem)] font-black uppercase italic tracking-tighter leading-none text-manso-cream"
+              className="text-5xl md:text-6xl font-black uppercase italic tracking-tighter leading-none text-manso-cream"
             >
               Agenda
             </motion.h1>
@@ -150,18 +150,18 @@ export default function AgendaPage() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: gi * 0.1 + i * 0.06 }}
-                      className="group border-b border-manso-cream/8 py-8 md:py-10 flex flex-col md:flex-row md:items-center gap-6 md:gap-0 hover:bg-manso-cream/[0.03] transition-colors -mx-4 px-4 cursor-default"
+                      className="group border-b border-manso-cream/8 py-8 md:py-10 flex flex-col md:flex-row md:items-center gap-6 md:gap-10 hover:bg-manso-cream/[0.03] transition-colors -mx-4 px-4 cursor-default"
                     >
                       {/* Número de orden */}
-                      <div className="hidden md:block w-20 flex-shrink-0">
-                        <span className="text-sm font-black text-manso-cream/15 tabular-nums">
+                      <div className="w-16 md:w-24 flex-shrink-0">
+                        <span className="text-7xl md:text-8xl font-black text-manso-cream/25 tabular-nums leading-none">
                           {String(i + 1).padStart(2, '0')}
                         </span>
                       </div>
 
                       {/* Título + descripción */}
                       <div className="flex-1 min-w-0">
-                        <h2 className="text-3xl md:text-4xl font-black uppercase italic tracking-tighter text-manso-cream leading-tight">
+                        <h2 className="text-xl md:text-2xl font-black uppercase italic tracking-tighter text-manso-cream leading-tight">
                           {item.titulo}
                         </h2>
                         {item.descripcion && (
