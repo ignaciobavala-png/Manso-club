@@ -14,16 +14,21 @@ export interface UserProfile {
 export function useUser() {
   const [user, setUser]       = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
+  const [role, setRole]       = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const pathname = usePathname();
 
   const fetchProfile = async (userId: string) => {
-    const { data } = await supabase
-      .from('user_profiles')
-      .select('display_name, email, avatar_url')
-      .eq('id', userId)
-      .single();
-    setProfile(data);
+    const [{ data: profileData }, { data: roleData }] = await Promise.all([
+      supabase
+        .from('user_profiles')
+        .select('display_name, email, avatar_url')
+        .eq('id', userId)
+        .single(),
+      supabase.rpc('get_user_role', { user_id: userId }),
+    ]);
+    setProfile(profileData);
+    setRole(roleData as string | null);
     setLoading(false);
   };
 
@@ -34,7 +39,7 @@ export function useUser() {
       if (!active) return;
       setUser(user ?? null);
       if (user) fetchProfile(user.id);
-      else { setProfile(null); setLoading(false); }
+      else { setProfile(null); setRole(null); setLoading(false); }
     });
     return () => { active = false; };
   }, [pathname]);
@@ -45,10 +50,10 @@ export function useUser() {
       const u = session?.user ?? null;
       setUser(u);
       if (u) fetchProfile(u.id);
-      else { setProfile(null); setLoading(false); }
+      else { setProfile(null); setRole(null); setLoading(false); }
     });
     return () => subscription.unsubscribe();
   }, []);
 
-  return { user, profile, loading };
+  return { user, profile, role, loading };
 }
