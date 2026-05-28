@@ -15,7 +15,7 @@ export const Newsletter = () => {
   };
 
   return (
-    <section className="py-10 md:py-14 px-4 sm:px-8 md:px-[86px] border-t border-black/10" style={{ backgroundColor: '#F5F0E8' }}>
+    <section className="py-10 md:py-14 px-4 sm:px-8 md:px-[96px] border-t border-black/10" style={{ backgroundColor: '#F5F0E8' }}>
       <div className="mx-auto flex flex-col md:flex-row md:items-center md:justify-between gap-6">
         <div>
           <h2 className="text-3xl sm:text-4xl font-black uppercase italic tracking-tighter text-manso-black">

@@ -47,7 +47,7 @@ export const EventList = () => {
 
   if (loading) {
     return (
-      <div className="flex flex-col w-full px-8 md:px-[86px] py-8">
+      <div className="flex flex-col w-full px-8 md:px-[96px] py-8">
         <div className="text-center text-manso-black/60 py-8">
           Cargando eventos...
         </div>
@@ -56,7 +56,7 @@ export const EventList = () => {
   }
 
   return (
-    <div className="flex flex-col w-full px-8 md:px-[86px] py-8">
+    <div className="flex flex-col w-full px-8 md:px-[96px] py-8">
       {eventos.length === 0 ? (
         <div className="text-center text-manso-black/40 py-8">
           No hay eventos próximos

@@ -77,7 +77,7 @@ export function HeroClient() {
   if (slides.length === 1 && slides[0].tipo === 'video' && slides[0].media_url) {
     const videoUrl = getMediaUrlForDevice(slides[0], currentDevice) || slides[0].media_url;
     return (
-      <section id="hero" className="relative min-h-screen flex flex-col justify-end md:justify-center px-8 md:px-[86px] py-10 md:py-20 overflow-hidden">
+      <section id="hero" className="relative min-h-screen flex flex-col justify-end md:justify-center px-8 md:px-[96px] py-10 md:py-20 overflow-hidden">
         <video
           autoPlay
           muted
@@ -140,7 +140,7 @@ export function HeroClient() {
     }
 
     return (
-      <section id="hero" className="relative min-h-screen flex flex-col justify-end md:justify-center px-8 md:px-[86px] py-10 md:py-20 overflow-hidden">
+      <section id="hero" className="relative min-h-screen flex flex-col justify-end md:justify-center px-8 md:px-[96px] py-10 md:py-20 overflow-hidden">
         <div
           className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
           style={{

@@ -89,7 +89,7 @@ export const TiendaHome = () => {
   // Si no hay productos, mostrar placeholder
   if (loading) {
     return (
-      <section className="py-12 sm:py-16 px-4 sm:px-8 md:px-[86px]" style={{ backgroundColor: '#F5F0E8' }}>
+      <section className="py-12 sm:py-16 px-4 sm:px-8 md:px-[96px]" style={{ backgroundColor: '#F5F0E8' }}>
         <div className="mx-auto">
           <div className="text-center mb-12">
             <span className="text-[10px] uppercase tracking-widest text-black/60 font-bold mb-4 block">Tienda</span>
@@ -109,7 +109,7 @@ export const TiendaHome = () => {
   const showPlaceholders = productos.length === 0;
 
   return (
-    <section className="py-12 sm:py-16 px-4 sm:px-8 md:px-[86px]" style={{ backgroundColor: '#F5F0E8' }}>
+    <section className="py-12 sm:py-16 px-4 sm:px-8 md:px-[96px]" style={{ backgroundColor: '#F5F0E8' }}>
       <div className="mx-auto">
         <div className="text-center mb-12">
           <span className="text-[10px] uppercase tracking-widest text-black/60 font-bold mb-4 block">Tienda</span>

@@ -124,7 +124,7 @@ export const EventosHome = () => {
 
   if (loading) {
     return (
-      <section className="py-8 sm:py-12 md:py-24 px-4 sm:px-8 md:px-[86px]" style={{ backgroundColor: '#F5F0E8' }}>
+      <section className="py-8 sm:py-12 md:py-24 px-4 sm:px-8 md:px-[96px]" style={{ backgroundColor: '#F5F0E8' }}>
         <div className="mx-auto">
           <div className="text-center text-black/60 py-8">Cargando eventos...</div>
         </div>
@@ -206,7 +206,7 @@ export const EventosHome = () => {
       {/* ============================================ */}
       {/* SECCIÓN 1: AGENDA (ACORDEÓN)                */}
       {/* ============================================ */}
-      <div className="py-12 sm:py-16 md:py-20 px-4 sm:px-8 md:px-[86px]">
+      <div className="py-12 sm:py-16 md:py-20 px-4 sm:px-8 md:px-[96px]">
         <div className="mx-auto">
           <div className="text-left mb-8 sm:mb-12">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-white">
@@ -326,7 +326,7 @@ export const EventosHome = () => {
       {/* ============================================ */}
       {/* SECCIÓN 2: EVENTOS (CARRUSEL)               */}
       {/* ============================================ */}
-      <div className="pb-12 sm:pb-16 md:pb-20 pt-8 sm:pt-10 px-0 sm:px-8 md:px-[86px]">
+      <div className="pb-12 sm:pb-16 md:pb-20 pt-8 sm:pt-10 px-0 sm:px-8 md:px-[96px]">
         <div className="mx-auto">
           <div className="text-left mb-6 sm:mb-8 px-4 sm:px-0">
             <h2 id="eventos-titulo" className="text-3xl sm:text-4xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-white">

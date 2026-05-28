@@ -72,7 +72,7 @@ export function SectionsGrid() {
   }, [categoriaActiva]);
 
   return (
-    <div className="w-full px-8 md:px-[86px] py-8">
+    <div className="w-full px-8 md:px-[96px] py-8">
       {/* Filtros locales */}
       <nav className="flex gap-2 overflow-x-auto no-scrollbar mb-10 pb-2">
         {categorias.map((cat) => (

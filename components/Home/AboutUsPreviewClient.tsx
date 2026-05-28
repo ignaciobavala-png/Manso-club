@@ -24,7 +24,7 @@ export const AboutUsPreviewClient = ({
 }) => {
   return (
     <section
-      className="relative py-8 sm:py-10 md:py-16 px-4 sm:px-8 md:px-[86px] bg-manso-black"
+      className="relative py-8 sm:py-10 md:py-16 px-4 sm:px-8 md:px-[96px] bg-manso-black"
       style={{
         backgroundImage: 'linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px)',
         backgroundSize: '48px 48px'
