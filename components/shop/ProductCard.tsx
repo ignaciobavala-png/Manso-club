@@ -50,7 +50,7 @@ export function ProductCard({ producto }: ProductProps) {
       <Link href={`/producto/${producto.id}`}>
         <div className="relative">
           {/* Contenedor de Imagen */}
-          <div className="aspect-square w-full bg-zinc-50 relative overflow-hidden">
+          <div className="aspect-[3/4] w-full bg-zinc-50 relative overflow-hidden">
             <img 
               src={currentImage} 
               alt={producto.nombre}
@@ -106,7 +106,7 @@ export function ProductCard({ producto }: ProductProps) {
           {/* Badge de precio flotante */}
           <div className="absolute top-2 sm:top-3 md:top-4 right-2 sm:right-3 md:right-4 bg-black text-white px-2 sm:px-3 py-1 sm:py-2 rounded-xl sm:rounded-2xl shadow-lg">
             <span className="text-[9px] sm:text-xs font-black uppercase tracking-wider">
-              ${producto.precio}
+              USD ${producto.precio}
             </span>
           </div>
         </div>
