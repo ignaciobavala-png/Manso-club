@@ -26,7 +26,8 @@ export const Navbar = () => {
   const cartItems = useCart((state) => state.items);
   const itemCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
 
-  const { user, profile, loading: userLoading } = useUser();
+  const { user, profile, role, loading: userLoading } = useUser();
+  const accountHref = role === 'admin' ? '/mansoadm' : '/mi-cuenta';
 
   useEffect(() => { setHasMounted(true); }, []);
 
@@ -147,7 +148,7 @@ export const Navbar = () => {
               <>
                 {user ? (
                   <Link
-                    href="/mi-cuenta"
+                    href={accountHref}
                     className={`hidden md:flex items-center gap-2 px-4 py-2 text-[10px] font-black uppercase tracking-widest border transition-all duration-300 rounded-full ${
                       getTextColor(isLight)
                     } ${isLight ? 'border-black/30 hover:bg-manso-black hover:text-white hover:border-manso-black' : 'border-white/30 hover:bg-white hover:text-manso-black'}`}
@@ -268,8 +269,8 @@ export const Navbar = () => {
                       <p className="text-[9px] text-zinc-400 uppercase tracking-widest">Miembro</p>
                     </div>
                   </div>
-                  <Link href="/mi-cuenta" onClick={() => setIsMenuOpen(false)} className="px-6 py-3 text-[10px] font-black uppercase tracking-widest border border-manso-black text-manso-black hover:bg-manso-black hover:text-white transition-all text-center rounded-full">
-                    Mi Cuenta
+                  <Link href={accountHref} onClick={() => setIsMenuOpen(false)} className="px-6 py-3 text-[10px] font-black uppercase tracking-widest border border-manso-black text-manso-black hover:bg-manso-black hover:text-white transition-all text-center rounded-full">
+                    {role === 'admin' ? 'Panel Admin' : 'Mi Cuenta'}
                   </Link>
                 </div>
               ) : (
