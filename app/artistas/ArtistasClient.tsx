@@ -110,12 +110,12 @@ export function ArtistasClient({ artistas, obrasVisuales }: ArtistasClientProps)
             <h2 className="text-3xl md:text-4xl font-black uppercase italic tracking-tighter leading-none text-manso-cream mb-6 px-6">
               DJS/PRODUCTORES<span className="cursor-blink">_</span>
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 py-6 px-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 py-6 px-2">
               {djs.map((artista) => (
                 <Link
                   href={`/artistas/${artista.slug}`}
                   key={artista.id}
-                  className="aspect-[3/4] bg-zinc-800/50 rounded-[40px] overflow-hidden border border-zinc-700 group relative cursor-pointer block w-[88%] mx-auto"
+                  className="aspect-[3/4] bg-zinc-800/50 rounded-lg overflow-hidden group relative cursor-pointer block"
                 >
                   <ArtistImage
                     src={artista.imagen_url}
@@ -176,12 +176,12 @@ export function ArtistasClient({ artistas, obrasVisuales }: ArtistasClientProps)
             <h2 className="text-3xl md:text-4xl font-black uppercase italic tracking-tighter leading-none text-manso-cream mb-6 mt-12 px-6">
               ARTISTAS VISUALES<span className="cursor-blink">_</span>
             </h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 py-6 px-6">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 py-6 px-2">
               {artistasVisuales.map((artista) => (
                 <Link
                   href={`/artistas/${artista.slug}`}
                   key={artista.id}
-                  className="aspect-[3/4] bg-zinc-800/50 rounded-[40px] overflow-hidden border border-zinc-700 group relative cursor-pointer block w-[88%] mx-auto"
+                  className="aspect-[3/4] bg-zinc-800/50 rounded-lg overflow-hidden group relative cursor-pointer block"
                 >
                   <ArtistImage src={artista.imagen_url} alt={artista.nombre} />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-end p-4">

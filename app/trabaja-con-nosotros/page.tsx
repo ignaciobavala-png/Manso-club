@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
 import { ParticleBackground } from '@/components/Home/ParticleBackground';
 import { ArrowRight } from 'lucide-react';
+import { createClient } from '@supabase/supabase-js';
+
+export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: 'Trabajá con nosotros | Manso Club',
@@ -18,14 +21,31 @@ export const metadata: Metadata = {
   },
 };
 
-const areas = [
+const fallbackAreas = [
   { area: 'Producción', descripcion: 'Coordinación de eventos, talleres y actividades en el espacio.' },
   { area: 'Comunicación', descripcion: 'Gestión de redes, contenido visual y estrategia de marca.' },
   { area: 'Curaduría', descripcion: 'Selección y programación de artistas, ciclos y residencias.' },
   { area: 'Técnica', descripcion: 'Sonido, iluminación y soporte técnico para eventos en vivo.' },
 ];
 
-export default function TrabajaPage() {
+async function getOfertas() {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  );
+  const { data, error } = await supabase
+    .from('ofertas_empleo')
+    .select('area, descripcion')
+    .eq('activo', true)
+    .order('orden', { ascending: true });
+
+  if (error || !data || data.length === 0) return fallbackAreas;
+  return data;
+}
+
+export default async function TrabajaPage() {
+  const areas = await getOfertas();
+
   return (
     <div className="relative min-h-screen bg-manso-black">
       <ParticleBackground />
@@ -50,10 +70,10 @@ export default function TrabajaPage() {
               key={i}
               className="flex flex-col md:flex-row md:items-center gap-4 py-8 border-b border-manso-cream/10"
             >
-              <span className="text-[9px] font-black uppercase tracking-[0.5em] text-manso-terra w-40 shrink-0">
+              <span className="text-sm font-black uppercase tracking-[0.3em] text-manso-terra w-48 shrink-0">
                 {item.area}
               </span>
-              <p className="text-manso-cream/70 font-light leading-relaxed">
+              <p className="text-manso-cream/70 font-light text-lg md:text-xl leading-relaxed">
                 {item.descripcion}
               </p>
             </div>
