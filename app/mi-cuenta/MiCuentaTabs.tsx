@@ -283,7 +283,6 @@ export default function MiCuentaTabs({ displayName, email, telefono, membresia, 
               <div className="text-center py-16 rounded-[28px] border border-manso-cream/10 bg-manso-cream/5">
                 <Play size={32} className="text-manso-cream/10 mx-auto mb-4" />
                 <p className="text-manso-cream/40 text-sm uppercase tracking-widest font-black">Próximamente</p>
-                <p className="text-manso-cream/20 text-xs mt-1">Estamos preparando el contenido</p>
               </div>
             )}
           </div>

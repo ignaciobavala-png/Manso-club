@@ -130,11 +130,11 @@ export default function MembresiasPage() {
                     <div className="flex-1 h-px bg-manso-cream/10" />
                   </div>
 
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+                  <div className="flex flex-wrap justify-center gap-6 sm:gap-8">
                     {grupos[categoria].map((membresia) => (
                       <div
                         key={membresia.id}
-                        className={`group flex flex-col w-full rounded-[20px] sm:rounded-[30px] md:rounded-[40px] p-4 sm:p-6 md:p-8 transition-all duration-700 ease-out hover:scale-[1.02] cursor-pointer relative ${
+                        className={`group flex flex-col w-full max-w-[360px] rounded-[20px] sm:rounded-[24px] p-5 sm:p-6 transition-all duration-700 ease-out hover:scale-[1.02] cursor-pointer relative ${
                           membresia.destacado
                             ? 'bg-black text-white border-black hover:shadow-[0_20px_60px_rgba(0,0,0,0.25)]'
                             : 'bg-zinc-100 border-2 border-zinc-200 hover:border-manso-black/40 hover:shadow-[0_20px_60px_rgba(0,0,0,0.08)]'
@@ -149,33 +149,31 @@ export default function MembresiasPage() {
                           </div>
                         )}
 
-                        <div className="mb-3 sm:mb-4 md:mb-6">
-                          <h3 className={`text-[10px] font-black uppercase tracking-widest mb-3 ${
+                        <div className="mb-3">
+                          <h3 className={`text-[10px] font-black uppercase tracking-widest mb-2 ${
                             membresia.destacado ? 'text-gray-400' : 'text-gray-500'
                           }`}>
                             {membresia.nombre}
                           </h3>
-                          <div>
-                            <span className={`text-[10px] font-bold uppercase block mb-0.5 ${
-                              membresia.destacado ? 'text-gray-400' : 'text-gray-500'
-                            }`}>
-                              USD
-                            </span>
-                            <span className={`text-5xl sm:text-6xl font-black leading-none ${
+                          <div className="text-center">
+                            <div className={`flex items-baseline justify-center gap-2 ${
                               membresia.destacado ? 'text-white' : 'text-gray-900'
                             }`}>
-                              ${membresia.precio.toLocaleString('es-AR')}
-                            </span>
-                            <span className={`text-[10px] font-bold uppercase block mt-1 ${
-                              membresia.destacado ? 'text-gray-400' : 'text-gray-500'
-                            }`}>
-                              /{membresia.periodo}
-                            </span>
+                              <span className={`text-[10px] font-bold uppercase ${
+                                membresia.destacado ? 'text-gray-400' : 'text-gray-500'
+                              }`}>USD</span>
+                              <span className="text-4xl sm:text-5xl font-black leading-none">
+                                {membresia.precio.toLocaleString('es-AR')}
+                              </span>
+                              <span className={`text-[10px] font-bold uppercase ${
+                                membresia.destacado ? 'text-gray-400' : 'text-gray-500'
+                              }`}>/{membresia.periodo}</span>
+                            </div>
                           </div>
                         </div>
 
-                        <div className="space-y-2 sm:space-y-3 mb-4 sm:mb-6">
-                          {membresia.membresia_beneficios?.map((beneficio) => (
+                        <div className="space-y-2 mb-4">
+                          {membresia.membresia_beneficios?.filter(b => b.texto?.trim()).map((beneficio) => (
                             <div key={beneficio.id} className="flex items-start gap-2">
                               {beneficio.incluido ? (
                                 <span className={`text-sm shrink-0 mt-0.5 ${membresia.destacado ? 'text-green-400' : 'text-green-600'}`}>✓</span>
@@ -194,7 +192,7 @@ export default function MembresiasPage() {
                         </div>
 
                         {membresia.descripcion && (
-                          <p className={`text-sm font-medium leading-relaxed mb-4 sm:mb-6 ${
+                          <p className={`text-sm font-medium leading-relaxed mb-4 ${
                             membresia.destacado ? 'text-gray-400' : 'text-gray-600'
                           }`}>
                             {membresia.descripcion}
@@ -203,7 +201,7 @@ export default function MembresiasPage() {
 
                         <Link
                           href={`/membresias/pagar?nombre=${encodeURIComponent(membresia.nombre)}&precio=${membresia.precio}&periodo=${encodeURIComponent(membresia.periodo)}`}
-                          className={`mt-auto block w-full px-4 sm:px-6 py-3 sm:py-4 text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all duration-500 ease-out active:scale-95 rounded-full text-center ${
+                          className={`mt-auto block w-full px-4 py-3 text-[10px] font-black uppercase tracking-widest transition-all duration-500 ease-out active:scale-95 rounded-full text-center ${
                             membresia.destacado
                               ? 'bg-white text-black hover:bg-gray-100'
                               : 'bg-black text-white hover:bg-manso-black/80'
