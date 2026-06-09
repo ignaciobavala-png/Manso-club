@@ -6,10 +6,13 @@ import { ArrowRight, Star } from 'lucide-react';
 import Link from 'next/link';
 import { Membresia, MembresiaBeneficio } from '@/lib/types/membresia';
 import { TYPE } from '@/lib/ui-constants';
+import { CurrencyToggle } from '@/components/ui/CurrencyToggle';
+import { useCurrency } from '@/store/useCurrency';
 
 export const MembresiasHome = () => {
   const [membresias, setMembresias] = useState<Membresia[]>([]);
   const [loading, setLoading] = useState(true);
+  const { currency, rate } = useCurrency();
 
   useEffect(() => {
     fetchMembresias();
@@ -88,9 +91,10 @@ export const MembresiasHome = () => {
                 <div key={categoria}>
                   {/* Encabezado de categoría */}
                   <div className="flex items-center gap-4 mb-6">
-                    <span className="text-[9px] font-black uppercase tracking-[0.5em] text-manso-cream/50">
-                      {categoria}
-                    </span>
+                    {categoria === 'Cowork'
+                      ? <CurrencyToggle />
+                      : <span className="text-[9px] font-black uppercase tracking-[0.5em] text-manso-cream/50">{categoria}</span>
+                    }
                     <div className="flex-1 h-px bg-manso-cream/10" />
                   </div>
 
@@ -124,9 +128,11 @@ export const MembresiasHome = () => {
                             }`}>
                               <span className={`text-[10px] font-bold uppercase ${
                                 membresia.destacado ? 'text-gray-400' : 'text-gray-500'
-                              }`}>USD</span>
+                              }`}>{currency}</span>
                               <span className="text-4xl sm:text-5xl font-black leading-none">
-                                {membresia.precio.toLocaleString('es-AR')}
+                                {currency === 'ARS' && rate
+                                  ? Math.round(membresia.precio * rate).toLocaleString('es-AR')
+                                  : membresia.precio.toLocaleString('es-AR')}
                               </span>
                               <span className={`text-[10px] font-bold uppercase ${
                                 membresia.destacado ? 'text-gray-400' : 'text-gray-500'

@@ -2,6 +2,7 @@
 'use client';
 
 import { useCart } from '@/store/useCart';
+import { useCurrency } from '@/store/useCurrency';
 import { Plus, ShoppingBag, Check } from 'lucide-react';
 import { useState } from 'react';
 import Link from 'next/link';
@@ -18,8 +19,14 @@ interface ProductProps {
 
 export function ProductCard({ producto }: ProductProps) {
   const addItem = useCart((state) => state.addItem);
+  const { currency, rate } = useCurrency();
   const [isAdded, setIsAdded] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  const displayPrice = currency === 'ARS' && rate
+    ? Math.round(producto.precio * rate).toLocaleString('es-AR')
+    : producto.precio.toLocaleString('es-AR');
+  const displaySymbol = currency === 'ARS' ? '$' : 'USD $';
 
   const handleAddToCart = () => {
     addItem(producto);
@@ -106,7 +113,7 @@ export function ProductCard({ producto }: ProductProps) {
           {/* Badge de precio flotante */}
           <div className="absolute top-2 sm:top-3 md:top-4 right-2 sm:right-3 md:right-4 bg-black text-white px-2 sm:px-3 py-1 sm:py-2 rounded-xl sm:rounded-2xl shadow-lg">
             <span className="text-[9px] sm:text-xs font-black uppercase tracking-wider">
-              USD ${producto.precio}
+              {displaySymbol}{displayPrice}
             </span>
           </div>
         </div>
