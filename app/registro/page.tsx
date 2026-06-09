@@ -3,6 +3,7 @@
 import { useActionState, useState } from 'react';
 import { registroAction } from './actions';
 import Link from 'next/link';
+import { GoogleSignInButton } from '@/components/GoogleSignInButton';
 
 export default function RegistroPage() {
   const [state, action, pending] = useActionState(registroAction, null);
@@ -91,7 +92,15 @@ export default function RegistroPage() {
           </button>
         </form>
 
-        <p className="text-center text-[9px] text-manso-cream/30 mt-6 uppercase tracking-widest">
+        <div className="flex items-center gap-3 my-5">
+          <div className="flex-1 h-px bg-manso-cream/10" />
+          <span className="text-[9px] font-bold text-manso-cream/30 uppercase tracking-widest">o</span>
+          <div className="flex-1 h-px bg-manso-cream/10" />
+        </div>
+
+        <GoogleSignInButton />
+
+        <p className="text-center text-[9px] text-manso-cream/30 mt-5 uppercase tracking-widest">
           ¿Ya tenés cuenta?{' '}
           <Link href="/login" className="text-manso-terra hover:text-manso-cream transition-colors">
             Iniciar sesión
