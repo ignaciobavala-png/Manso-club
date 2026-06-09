@@ -7,12 +7,15 @@ import { supabase } from '@/lib/supabase';
 import { Membresia } from '@/lib/types/membresia';
 import { Crown, Star } from 'lucide-react';
 import Link from 'next/link';
+import { CurrencyToggle } from '@/components/ui/CurrencyToggle';
+import { useCurrency } from '@/store/useCurrency';
 
 export default function MembresiasPage() {
   const [membresias, setMembresias] = useState<Membresia[]>([]);
   const [galleryImages, setGalleryImages] = useState<{ id: string; src: string }[]>([]);
   const [textoIntro, setTextoIntro] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const { currency, rate } = useCurrency();
 
   useEffect(() => {
     const fetchMembresias = async () => {
@@ -95,6 +98,10 @@ export default function MembresiasPage() {
           </div>
         )}
 
+        <div className="flex justify-start mb-8">
+          <CurrencyToggle />
+        </div>
+
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <div className="w-8 h-8 border-2 border-manso-terra/30 border-t-manso-terra rounded-full animate-spin" />
@@ -161,9 +168,11 @@ export default function MembresiasPage() {
                             }`}>
                               <span className={`text-[10px] font-bold uppercase ${
                                 membresia.destacado ? 'text-gray-400' : 'text-gray-500'
-                              }`}>USD</span>
+                              }`}>{currency}</span>
                               <span className="text-4xl sm:text-5xl font-black leading-none">
-                                {membresia.precio.toLocaleString('es-AR')}
+                                {currency === 'ARS' && rate
+                                  ? Math.round(membresia.precio * rate).toLocaleString('es-AR')
+                                  : membresia.precio.toLocaleString('es-AR')}
                               </span>
                               <span className={`text-[10px] font-bold uppercase ${
                                 membresia.destacado ? 'text-gray-400' : 'text-gray-500'
