@@ -75,7 +75,13 @@ function LoginForm() {
           </button>
         </form>
 
-        <p className="text-center text-[9px] text-manso-cream/30 mt-6 uppercase tracking-widest">
+        <p className="text-center text-[9px] text-manso-cream/40 mt-4 uppercase tracking-widest">
+          <Link href="/recuperar-contrasena" className="hover:text-manso-cream transition-colors">
+            ¿Olvidaste tu contraseña?
+          </Link>
+        </p>
+
+        <p className="text-center text-[9px] text-manso-cream/30 mt-3 uppercase tracking-widest">
           ¿No tenés cuenta?{' '}
           <Link href="/registro" className="text-manso-terra hover:text-manso-cream transition-colors">
             Crear cuenta

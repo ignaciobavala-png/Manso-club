@@ -30,7 +30,7 @@ export async function loginAction(prevState: { error: string } | null, formData:
     redirect('/mansoadm');
   }
 
-  // Redirigir a la página de origen si existe, sino a mi-cuenta
-  const destination = from && from.startsWith('/') ? from : '/mi-cuenta';
+  const isSafeRedirect = (path: string) => path.startsWith('/') && !path.startsWith('//');
+  const destination = from && isSafeRedirect(from) ? from : '/mi-cuenta';
   redirect(destination);
 }

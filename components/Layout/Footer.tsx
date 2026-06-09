@@ -41,6 +41,7 @@ return (
               <Link href="/about" className="hover:text-manso-cream transition-colors">Nosotros</Link>
               <Link href="/artistas" className="hover:text-manso-cream transition-colors">Artistas</Link>
               <Link href="/agenda" className="hover:text-manso-cream transition-colors">Agenda</Link>
+              <Link href="/#eventos-section" className="hover:text-manso-cream transition-colors">Eventos</Link>
             </div>
           </div>
           

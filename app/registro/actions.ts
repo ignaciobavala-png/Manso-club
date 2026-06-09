@@ -35,10 +35,7 @@ export async function registroAction(
   });
 
   if (error) {
-    if (error.message.includes('already registered')) {
-      return { error: 'Ya existe una cuenta con ese email' };
-    }
-    return { error: error.message };
+    return { error: 'No se pudo crear la cuenta. Intentá con otro email o contactá a soporte.' };
   }
 
   // Sin sesión → confirmación de email pendiente
