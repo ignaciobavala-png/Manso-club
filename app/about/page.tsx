@@ -13,13 +13,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Nosotros | Manso Club',
     description: 'Conocé el espacio creativo Manso Club en Buenos Aires.',
-    images: [{ url: '/manso-logo-black.png', width: 800, height: 800 }],
+    images: [{ url: '/og-image.png', width: 800, height: 800 }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Nosotros | Manso Club',
     description: 'Conocé el espacio creativo Manso Club en Buenos Aires.',
-    images: ['/manso-logo-black.png'],
+    images: ['/og-image.png'],
   },
 };
 
@@ -29,14 +29,14 @@ export default async function AboutPage() {
 
   return (
     <div
-      className="relative min-h-screen bg-gray-100"
+      className="relative min-h-screen bg-manso-black"
       style={{
-        backgroundImage: `linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)`,
+        backgroundImage: `linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)`,
         backgroundSize: '48px 48px',
       }}
     >
-      <ParticleBackground mode="light" />
-      <AdaptiveSectionLayout title="About Us" subtitle={aboutUs.subtitle} customBg="bg-transparent">
+      <ParticleBackground />
+      <AdaptiveSectionLayout title="About Us" subtitle={aboutUs.subtitle} customBg="bg-transparent" forceDark>
       {/* Sección principal con layout dinámico */}
       <div className="space-y-12">
         {/* Layout original mejorado: texto y foto principal */}
@@ -44,7 +44,7 @@ export default async function AboutPage() {
           {/* Texto principal */}
           <div className="w-full lg:w-1/2 space-y-6 pr-0 lg:pr-8 px-4 lg:px-0">
             {aboutUs.description.split('\n').filter(p => p.trim()).map((paragraph, index) => (
-              <p key={index} className="text-zinc-800 text-lg md:text-xl leading-relaxed font-normal break-words">
+              <p key={index} className="text-manso-cream text-lg md:text-xl leading-relaxed font-normal break-words">
                 {paragraph}
               </p>
             ))}
@@ -91,8 +91,8 @@ export default async function AboutPage() {
 
       {/* Team Section */}
       <div className="mt-16 md:mt-24">
-        <h2 className="text-3xl md:text-4xl font-black uppercase italic tracking-tighter leading-none text-manso-black">
-          Team<span className="text-zinc-200 cursor-blink">_</span>
+        <h2 className="text-3xl md:text-4xl font-black uppercase italic tracking-tighter leading-none text-manso-cream">
+          Team<span className="text-manso-cream/20 cursor-blink">_</span>
         </h2>
         <p className="text-[10px] font-black uppercase tracking-[0.4em] text-manso-olive mt-1 mb-10">
           Las personas detrás de Manso
@@ -118,7 +118,7 @@ export default async function AboutPage() {
                     <span className="text-zinc-500 text-2xl md:text-3xl font-black tracking-widest">{initials}</span>
                   </div>
                 )}
-                <p className="text-manso-black font-black uppercase text-base md:text-lg tracking-tight leading-tight">{member.name}</p>
+                <p className="text-manso-cream font-black uppercase text-base md:text-lg tracking-tight leading-tight">{member.name}</p>
                 <p className="text-zinc-500 text-sm md:text-base mt-1">{member.role}</p>
               </div>
             );

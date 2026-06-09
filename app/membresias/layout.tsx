@@ -6,13 +6,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Membresías | Manso Club',
     description: 'Membresías de Manso Club. Espacio de coworking, eventos y comunidad.',
-    images: [{ url: '/manso-logo-black.png', width: 800, height: 800 }],
+    images: [{ url: '/og-image.png', width: 800, height: 800 }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Membresías | Manso Club',
     description: 'Membresías de Manso Club. Espacio de coworking, eventos y comunidad.',
-    images: ['/manso-logo-black.png'],
+    images: ['/og-image.png'],
   },
 };
 

@@ -6,13 +6,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Agenda | Manso Club',
     description: 'Eventos, fiestas y actividades culturales en Manso Club.',
-    images: [{ url: '/manso-logo-black.png', width: 800, height: 800 }],
+    images: [{ url: '/og-image.png', width: 800, height: 800 }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Agenda | Manso Club',
     description: 'Eventos, fiestas y actividades culturales en Manso Club.',
-    images: ['/manso-logo-black.png'],
+    images: ['/og-image.png'],
   },
 };
 

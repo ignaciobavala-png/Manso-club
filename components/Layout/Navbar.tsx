@@ -31,7 +31,7 @@ export const Navbar = () => {
 
   useEffect(() => { setHasMounted(true); }, []);
 
-  const isLightBgPage = pathname?.includes('/about') || pathname?.includes('/checkout');
+  const isLightBgPage = pathname?.includes('/checkout');
 
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 20);

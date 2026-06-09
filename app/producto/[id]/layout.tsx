@@ -28,7 +28,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: producto.descripcion || `${producto.nombre} — Merchandising de Manso Club.`,
       images: producto.imagenes_urls?.length
         ? [{ url: producto.imagenes_urls[0], width: 800, height: 800 }]
-        : [{ url: '/manso-logo-black.png', width: 800, height: 800 }],
+        : [{ url: '/og-image.png', width: 800, height: 800 }],
     },
     twitter: {
       card: 'summary_large_image',
@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       description: producto.descripcion || `${producto.nombre} — Merchandising de Manso Club.`,
       images: producto.imagenes_urls?.length
         ? [producto.imagenes_urls[0]]
-        : ['/manso-logo-black.png'],
+        : ['/og-image.png'],
     },
   };
 }

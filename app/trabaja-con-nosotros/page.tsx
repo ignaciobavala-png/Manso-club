@@ -11,13 +11,13 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Trabajá con nosotros | Manso Club',
     description: 'Sumate al equipo de Manso Club.',
-    images: [{ url: '/manso-logo-black.png', width: 800, height: 800 }],
+    images: [{ url: '/og-image.png', width: 800, height: 800 }],
   },
   twitter: {
     card: 'summary_large_image',
     title: 'Trabajá con nosotros | Manso Club',
     description: 'Sumate al equipo de Manso Club.',
-    images: ['/manso-logo-black.png'],
+    images: ['/og-image.png'],
   },
 };
 

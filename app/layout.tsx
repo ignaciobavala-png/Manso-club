@@ -46,13 +46,13 @@ export async function generateMetadata(): Promise<Metadata> {
       siteName: 'Manso Club',
       locale: 'es_AR',
       type: 'website',
-      images: [{ url: '/manso-logo-black.png', width: 800, height: 800 }],
+      images: [{ url: '/og-image.png', width: 800, height: 800 }],
     },
     twitter: {
       card: 'summary_large_image',
       title: config.seo_title || "Manso Club | Cowork Creativo & Talleres en Buenos Aires",
       description: config.seo_description || "Ideal para freelancers, emprendedores, startups, trabajadores remotos, estudiantes y artistas que busquen un lugar creativo de pertenencia.",
-      images: ['/manso-logo-black.png'],
+      images: ['/og-image.png'],
     },
   };
 }
