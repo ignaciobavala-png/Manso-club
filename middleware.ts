@@ -47,6 +47,16 @@ export async function middleware(request: NextRequest) {
     return data as string | null
   }
 
+  const isActualizarContrasenaRoute = pathname === '/actualizar-contrasena'
+
+  // Si el usuario tiene password_reset_pending y no está en /actualizar-contrasena, forzar el cambio
+  if (user && !isActualizarContrasenaRoute) {
+    const { data: pending } = await supabase.rpc('get_password_reset_pending', { user_id: user.id })
+    if (pending === true) {
+      return NextResponse.redirect(new URL('/actualizar-contrasena?recovery=1', request.url))
+    }
+  }
+
   // /login: si ya está logueado, redirigir según rol
   if (isLoginRoute && user && !forceLogin) {
     const role = await getUserRole(user.id)
@@ -95,5 +105,6 @@ export const config = {
     '/mi-cuenta',
     '/streaming/:path*',
     '/streaming',
+    '/actualizar-contrasena',
   ],
 }

@@ -20,14 +20,18 @@ export async function loginAction(prevState: { error: string } | null, formData:
 
 
   if (error) {
-    return { error: error.message };
+    return { error: 'Email o contraseña incorrectos' };
   }
 
   if (!data.session) {
     return { error: 'No se pudo crear la sesión' };
   }
 
-  // Verificar que las cookies se setearon
+  const { data: role } = await supabase.rpc('get_user_role', { user_id: data.user.id });
+  if (role !== 'admin') {
+    await supabase.auth.signOut();
+    return { error: 'No tenés permisos de administrador' };
+  }
 
   redirect('/mansoadm');
 }

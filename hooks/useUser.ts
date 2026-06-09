@@ -41,8 +41,9 @@ export function useUser() {
       return;
     }
     let active = true;
-    supabase.auth.getUser().then(({ data: { user } }) => {
+    supabase.auth.getUser().then(({ data: { user }, error }) => {
       if (!active) return;
+      if (error) { setUser(null); setProfile(null); setRole(null); setLoading(false); return; }
       setUser(user ?? null);
       if (user) fetchProfile(user.id);
       else { setProfile(null); setRole(null); setLoading(false); }

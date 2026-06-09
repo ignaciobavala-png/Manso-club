@@ -5,11 +5,17 @@ export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get('code');
 
+  const type = searchParams.get('type');
+
   if (code) {
     const supabase = await createSupabaseServer();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      return NextResponse.redirect(`${origin}/actualizar-contrasena?recovery=1`);
+      if (type === 'recovery') {
+        await supabase.rpc('set_password_reset_pending', { pending: true });
+        return NextResponse.redirect(`${origin}/actualizar-contrasena?recovery=1`);
+      }
+      return NextResponse.redirect(`${origin}/mi-cuenta`);
     }
   }
 

@@ -53,6 +53,7 @@ function ActualizarContrasenaForm() {
     if (error) {
       setMessage('No se pudo actualizar la contraseña. Intentá solicitar un nuevo link.');
     } else {
+      await supabase.rpc('set_password_reset_pending', { pending: false });
       await supabase.auth.signOut();
       setSuccess(true);
       setTimeout(() => router.push('/login'), 3000);
