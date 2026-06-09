@@ -34,6 +34,7 @@ import { FormMultimedia } from './FormMultimedia';
 import { MultimediaList } from './MultimediaList';
 import { FormStreamingContenido } from './FormStreamingContenido';
 import { StreamingContenidoList } from './StreamingContenidoList';
+import { StreamingCategoriasAdmin } from './StreamingCategoriasAdmin';
 import { PropuestasList } from './PropuestasList';
 import { FormManifiesto } from './FormManifiesto';
 import { FormOfertaEmpleo } from './FormOfertaEmpleo';
@@ -419,6 +420,18 @@ export function Dashboard() {
               )}
             </div>
         </div>
+
+        {/* Sección adicional de Streaming: Categorías */}
+        {tab === 'streaming' && (
+          <div className="mt-10 grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-12">
+            <div className="xl:col-span-6">
+              <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
+                Categorías
+              </h2>
+              <StreamingCategoriasAdmin />
+            </div>
+          </div>
+        )}
 
         {/* Secciones adicionales de Membresías */}
         {tab === 'membresias' && (

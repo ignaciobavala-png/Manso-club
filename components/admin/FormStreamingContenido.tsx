@@ -7,13 +7,12 @@ import { ImageUploader } from './ImageUploader';
 const inputCls = "w-full p-3 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/40 text-sm";
 const labelCls = "block text-[10px] font-black uppercase tracking-widest text-manso-cream/50 mb-1";
 
-const TIPOS = ['concierto', 'curso', 'taller'] as const;
-type Tipo = (typeof TIPOS)[number];
+interface Categoria { slug: string; nombre: string; }
 
 interface FormData {
   titulo: string;
   slug: string;
-  tipo: Tipo;
+  tipo: string;
   descripcion: string;
   thumbnail_url: string;
   youtube_video_id: string;
@@ -27,7 +26,7 @@ interface FormData {
 const EMPTY: FormData = {
   titulo: '',
   slug: '',
-  tipo: 'concierto',
+  tipo: '',
   descripcion: '',
   thumbnail_url: '',
   youtube_video_id: '',
@@ -50,9 +49,22 @@ function toSlug(text: string) {
 }
 
 export function FormStreamingContenido() {
-  const [loading, setLoading]   = useState(false);
+  const [loading, setLoading]     = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [form, setForm]         = useState<FormData>(EMPTY);
+  const [form, setForm]           = useState<FormData>(EMPTY);
+  const [categorias, setCategorias] = useState<Categoria[]>([]);
+
+  useEffect(() => {
+    supabase
+      .from('streaming_categorias')
+      .select('slug, nombre')
+      .order('orden', { ascending: true })
+      .then(({ data }) => {
+        const cats = data ?? [];
+        setCategorias(cats);
+        if (cats.length > 0) setForm(f => f.tipo ? f : { ...f, tipo: cats[0].slug });
+      });
+  }, []);
 
   useEffect(() => {
     const handler = (e: CustomEvent) => {
@@ -153,19 +165,19 @@ export function FormStreamingContenido() {
         {/* Tipo */}
         <div>
           <label className={labelCls}>Tipo</label>
-          <div className="flex gap-2">
-            {TIPOS.map(t => (
+          <div className="flex gap-2 flex-wrap">
+            {categorias.map(cat => (
               <button
-                key={t}
+                key={cat.slug}
                 type="button"
-                onClick={() => set('tipo', t)}
+                onClick={() => set('tipo', cat.slug)}
                 className={`flex-1 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
-                  form.tipo === t
+                  form.tipo === cat.slug
                     ? 'bg-manso-terra text-manso-cream'
                     : 'bg-manso-cream/10 text-manso-cream/60 hover:bg-manso-cream/20'
                 }`}
               >
-                {t}
+                {cat.nombre}
               </button>
             ))}
           </div>

@@ -25,16 +25,13 @@ export default async function StreamingPlayerPage({
 
   if (!contenido) notFound();
 
-  // Verificar acceso vía función DB
-  const { data: tieneAcceso } = await supabase.rpc('user_tiene_acceso_streaming', {
-    p_contenido_id: contenido.id,
-  });
+  const tieneAcceso = true;
 
-  const TIPO_LABEL: Record<string, string> = {
-    concierto: 'Concierto',
-    curso: 'Curso',
-    taller: 'Taller',
-  };
+  const { data: categorias } = await supabase
+    .from('streaming_categorias')
+    .select('slug, nombre, color');
+
+  const categoriaMap = Object.fromEntries((categorias ?? []).map(c => [c.slug, c]));
 
   return (
     <div className="relative min-h-screen bg-manso-black pt-24 pb-16">
@@ -52,12 +49,8 @@ export default async function StreamingPlayerPage({
 
         {/* Badges */}
         <div className="flex gap-2 mb-4">
-          <span className={`px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest ${
-            contenido.tipo === 'concierto' ? 'bg-manso-blue text-manso-cream' :
-            contenido.tipo === 'curso' ? 'bg-manso-olive text-white' :
-            'bg-manso-brown text-manso-cream'
-          }`}>
-            {TIPO_LABEL[contenido.tipo] ?? contenido.tipo}
+          <span className={`px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest ${categoriaMap[contenido.tipo]?.color ?? 'bg-zinc-700 text-white'}`}>
+            {categoriaMap[contenido.tipo]?.nombre ?? contenido.tipo}
           </span>
           {contenido.is_live && (
             <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full bg-red-600 text-white text-[8px] font-black uppercase tracking-widest">

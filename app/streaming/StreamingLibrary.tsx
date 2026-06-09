@@ -19,26 +19,24 @@ type Contenido = {
   orden: number;
 };
 
+type Categoria = {
+  slug: string;
+  nombre: string;
+  color: string;
+};
+
 type Props = {
   contenido: Contenido[];
   tieneMembresia: boolean;
   compraIds: string[];
+  categorias: Categoria[];
 };
 
-const FILTROS = ['todo', 'concierto', 'curso', 'taller'] as const;
-type Filtro = typeof FILTROS[number];
-
-const LABEL_FILTRO: Record<Filtro, string> = {
-  todo: 'Todo',
-  concierto: 'Conciertos',
-  curso: 'Cursos',
-  taller: 'Talleres',
-};
-
-export default function StreamingLibrary({ contenido, tieneMembresia, compraIds }: Props) {
-  const [filtro, setFiltro] = useState<Filtro>('todo');
+export default function StreamingLibrary({ contenido, tieneMembresia, compraIds, categorias }: Props) {
+  const [filtro, setFiltro] = useState<string>('todo');
 
   const compraSet = new Set(compraIds);
+  const colorMap = Object.fromEntries(categorias.map(c => [c.slug, c.color]));
 
   const tieneAcceso = (item: Contenido) =>
     tieneMembresia || compraSet.has(item.id);
@@ -61,17 +59,27 @@ export default function StreamingLibrary({ contenido, tieneMembresia, compraIds 
 
       {/* Filtros */}
       <div className="flex gap-2 mb-10 flex-wrap">
-        {FILTROS.map(f => (
+        <button
+          onClick={() => setFiltro('todo')}
+          className={`px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest transition-all ${
+            filtro === 'todo'
+              ? 'bg-manso-cream text-manso-black'
+              : 'border border-manso-cream/20 text-manso-cream/50 hover:border-manso-cream/50 hover:text-manso-cream'
+          }`}
+        >
+          Todo
+        </button>
+        {categorias.map(cat => (
           <button
-            key={f}
-            onClick={() => setFiltro(f)}
+            key={cat.slug}
+            onClick={() => setFiltro(cat.slug)}
             className={`px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest transition-all ${
-              filtro === f
+              filtro === cat.slug
                 ? 'bg-manso-cream text-manso-black'
                 : 'border border-manso-cream/20 text-manso-cream/50 hover:border-manso-cream/50 hover:text-manso-cream'
             }`}
           >
-            {LABEL_FILTRO[f]}
+            {cat.nombre}
           </button>
         ))}
       </div>
@@ -132,12 +140,8 @@ export default function StreamingLibrary({ contenido, tieneMembresia, compraIds 
                         Live
                       </span>
                     )}
-                    <span className={`px-2 py-1 rounded-full text-[8px] font-black uppercase tracking-widest ${
-                      item.tipo === 'concierto' ? 'bg-manso-blue text-manso-cream' :
-                      item.tipo === 'curso' ? 'bg-manso-olive text-white' :
-                      'bg-manso-brown text-manso-cream'
-                    }`}>
-                      {item.tipo}
+                    <span className={`px-2 py-1 rounded-full text-[8px] font-black uppercase tracking-widest ${colorMap[item.tipo] ?? 'bg-zinc-700 text-white'}`}>
+                      {categorias.find(c => c.slug === item.tipo)?.nombre ?? item.tipo}
                     </span>
                   </div>
 

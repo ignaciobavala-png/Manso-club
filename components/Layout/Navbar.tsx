@@ -115,10 +115,10 @@ export const Navbar = () => {
               </Link>
             ))}
 
-            {/* Streaming — solo si está logueado */}
-            {hasMounted && user && (
+            {/* Streaming — visible siempre, redirige a login si no está logueado */}
+            {hasMounted && (
               <Link
-                href="/streaming"
+                href={user ? '/streaming' : '/login?from=/streaming'}
                 className={`flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.4em] hover:text-manso-terra transition-colors duration-500 ${
                   getTextColor(isLight)
                 } ${pathname?.startsWith('/streaming') ? 'text-manso-terra' : ''}`}
@@ -286,9 +286,9 @@ export const Navbar = () => {
               </Link>
             ))}
 
-            {/* Streaming mobile — solo si está logueado */}
-            {hasMounted && user && (
-              <Link href="/streaming" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-center gap-2 text-sm font-black uppercase tracking-[0.4em] text-manso-terra hover:text-orange-600 transition-colors py-2 min-h-[44px]">
+            {/* Streaming mobile — visible siempre, redirige a login si no está logueado */}
+            {hasMounted && (
+              <Link href={user ? '/streaming' : '/login?from=/streaming'} onClick={() => setIsMenuOpen(false)} className="flex items-center justify-center gap-2 text-sm font-black uppercase tracking-[0.4em] text-manso-terra hover:text-orange-600 transition-colors py-2 min-h-[44px]">
                 <Play size={12} className="fill-current" />
                 Streaming
               </Link>
