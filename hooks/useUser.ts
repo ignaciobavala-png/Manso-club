@@ -11,6 +11,8 @@ export interface UserProfile {
   avatar_url: string | null;
 }
 
+const AUTH_PAGES = ['/login', '/registro', '/recuperar-contrasena', '/actualizar-contrasena'];
+
 export function useUser() {
   const [user, setUser]       = useState<User | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -34,6 +36,10 @@ export function useUser() {
 
   // Re-verifica en cada navegación — captura logins/logouts hechos server-side
   useEffect(() => {
+    if (AUTH_PAGES.includes(pathname)) {
+      setUser(null); setProfile(null); setRole(null); setLoading(false);
+      return;
+    }
     let active = true;
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!active) return;
@@ -47,13 +53,14 @@ export function useUser() {
   // Listener para cambios client-side (logout desde el propio browser)
   useEffect(() => {
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (AUTH_PAGES.includes(pathname)) return;
       const u = session?.user ?? null;
       setUser(u);
       if (u) fetchProfile(u.id);
       else { setProfile(null); setRole(null); setLoading(false); }
     });
     return () => subscription.unsubscribe();
-  }, []);
+  }, [pathname]);
 
   return { user, profile, role, loading };
 }

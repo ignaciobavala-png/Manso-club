@@ -18,10 +18,18 @@ function ActualizarContrasenaForm() {
   const [hasSession, setHasSession] = useState(false);
 
   useEffect(() => {
-    if (searchParams.get('error') === 'link-invalido') {
-      setChecking(false);
+    const isRecovery = searchParams.get('recovery') === '1';
+    const isError = searchParams.get('error') === 'link-invalido';
+
+    if (!isRecovery || isError) {
+      // Acceso directo sin venir del link — cerrar sesión por seguridad
+      supabase.auth.signOut().then(() => {
+        setHasSession(false);
+        setChecking(false);
+      });
       return;
     }
+
     supabase.auth.getSession().then(({ data }) => {
       setHasSession(!!data.session);
       setChecking(false);

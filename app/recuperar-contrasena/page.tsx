@@ -16,7 +16,7 @@ export default function RecuperarContrasenaPage() {
     setMessage('');
 
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/auth/callback?next=/actualizar-contrasena`,
+      redirectTo: `${window.location.origin}/auth/callback`,
     });
 
     if (error) {
