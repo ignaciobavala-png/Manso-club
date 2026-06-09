@@ -37,11 +37,9 @@ function LoginForm() {
 
   return (
     <div className="fixed inset-0 z-30 flex items-center justify-center p-6 pt-24" style={{ backgroundColor: '#1D1D1B' }}>
-      <div className="w-full max-w-sm bg-manso-cream/5 p-10 rounded-[40px] border border-manso-cream/10 shadow-2xl">
-        <div className="text-center mb-10">
-          <img src="/manso.png" alt="Manso Club" className="h-16 w-auto mx-auto mb-4 opacity-80" />
+      <div className="w-full max-w-sm bg-manso-cream/5 p-8 rounded-[40px] border border-manso-cream/10 shadow-2xl">
+        <div className="text-center mb-6">
           <h1 className="text-4xl font-black italic tracking-tighter uppercase text-manso-cream">Manso<span className="cursor-blink">_</span></h1>
-          <p className="text-[9px] font-bold text-manso-cream/40 uppercase tracking-[0.4em] mt-2">Acceso Exclusivo</p>
         </div>
 
         {message && (
@@ -54,7 +52,7 @@ function LoginForm() {
           <input
             type="email"
             placeholder="EMAIL"
-            className="w-full p-5 bg-manso-cream/10 border border-manso-cream/20 rounded-2xl outline-none font-bold text-xs text-manso-cream placeholder:text-manso-cream/40 focus:ring-2 focus:ring-manso-terra transition-all"
+            className="w-full p-4 bg-manso-cream/10 border border-manso-cream/20 rounded-2xl outline-none font-bold text-xs text-manso-cream placeholder:text-manso-cream/40 focus:ring-2 focus:ring-manso-terra transition-all"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -62,7 +60,7 @@ function LoginForm() {
           <input
             type="password"
             placeholder="PASSWORD"
-            className="w-full p-5 bg-manso-cream/10 border border-manso-cream/20 rounded-2xl outline-none font-bold text-xs text-manso-cream placeholder:text-manso-cream/40 focus:ring-2 focus:ring-manso-terra transition-all"
+            className="w-full p-4 bg-manso-cream/10 border border-manso-cream/20 rounded-2xl outline-none font-bold text-xs text-manso-cream placeholder:text-manso-cream/40 focus:ring-2 focus:ring-manso-terra transition-all"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
@@ -70,19 +68,19 @@ function LoginForm() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full p-5 rounded-2xl font-black uppercase tracking-widest text-xs bg-manso-terra text-manso-cream hover:bg-manso-cream hover:text-manso-black transition-all active:scale-95 disabled:opacity-50"
+            className="w-full p-4 rounded-2xl font-black uppercase tracking-widest text-xs bg-manso-terra text-manso-cream hover:bg-manso-cream hover:text-manso-black transition-all active:scale-95 disabled:opacity-50"
           >
-            {loading ? 'Entrando...' : 'Entrar'}
+            {loading ? 'Ingresando...' : 'Ingresar'}
           </button>
         </form>
 
-        <p className="text-center text-[9px] text-manso-cream/40 mt-4 uppercase tracking-widest">
+        <p className="text-center text-[9px] text-manso-cream/40 mt-3 uppercase tracking-widest">
           <Link href="/recuperar-contrasena" className="hover:text-manso-cream transition-colors">
             ¿Olvidaste tu contraseña?
           </Link>
         </p>
 
-        <div className="flex items-center gap-3 my-5">
+        <div className="flex items-center gap-3 my-3">
           <div className="flex-1 h-px bg-manso-cream/10" />
           <span className="text-[9px] font-bold text-manso-cream/30 uppercase tracking-widest">o</span>
           <div className="flex-1 h-px bg-manso-cream/10" />
@@ -90,7 +88,7 @@ function LoginForm() {
 
         <GoogleSignInButton />
 
-        <p className="text-center text-[9px] text-manso-cream/30 mt-5 uppercase tracking-widest">
+        <p className="text-center text-[9px] text-manso-cream/30 mt-3 uppercase tracking-widest">
           ¿No tenés cuenta?{' '}
           <Link href="/registro" className="text-manso-terra hover:text-manso-cream transition-colors">
             Crear cuenta
