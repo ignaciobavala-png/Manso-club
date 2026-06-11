@@ -2,12 +2,13 @@
 
 import { useState, useActionState } from 'react';
 import Link from 'next/link';
-import { Play, Ticket, User, CreditCard, ArrowRight, Check, Lock, Tv, Calendar, Music, ShoppingBag } from 'lucide-react';
+import { Play, Ticket, User, CreditCard, ArrowRight, Check, Lock, Tv, Calendar, Music, ShoppingBag, Palette } from 'lucide-react';
+import { MiArtePerfilForm } from '@/components/mi-cuenta/MiArtePerfilForm';
 import { updateProfileAction } from './actions';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 
-type Tab = 'membresia' | 'streaming' | 'tickets' | 'perfil';
+type Tab = 'membresia' | 'streaming' | 'tickets' | 'perfil' | 'miarte';
 
 type Beneficio = { texto: string; incluido: boolean };
 type Membresia = {
@@ -17,6 +18,17 @@ type Membresia = {
   vencimiento: string;
   incluye_streaming: boolean;
   beneficios: Beneficio[];
+} | null;
+
+type Artista = {
+  id: string;
+  nombre: string;
+  bio?: string | null;
+  estilo?: string | null;
+  tipo?: string | null;
+  imagen_url?: string | null;
+  soundcloud_url?: string | null;
+  social_links?: { label: string; url: string }[] | null;
 } | null;
 
 type ContenidoItem = {
@@ -46,16 +58,22 @@ type Props = {
   streaming: ContenidoItem[];
   tickets: TicketItem[];
   tieneMembresia: boolean;
+  esMiembro: boolean;
+  artista: Artista;
 };
 
-const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
+const BASE_TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
   { id: 'membresia', label: 'Membresía',  icon: <CreditCard size={14} /> },
   { id: 'streaming', label: 'Streaming',  icon: <Play size={14} /> },
   { id: 'tickets',   label: 'Tickets',    icon: <Ticket size={14} /> },
   { id: 'perfil',    label: 'Perfil',     icon: <User size={14} /> },
 ];
 
-export default function MiCuentaTabs({ userId, displayName, email, telefono, avatarUrl, membresia, streaming, tickets, tieneMembresia }: Props) {
+export default function MiCuentaTabs({ userId, displayName, email, telefono, avatarUrl, membresia, streaming, tickets, tieneMembresia, esMiembro, artista }: Props) {
+  const TABS = esMiembro
+    ? [...BASE_TABS.slice(0, 3), { id: 'miarte' as Tab, label: 'Mi Arte', icon: <Palette size={14} /> }, BASE_TABS[3]]
+    : BASE_TABS;
+
   const [tab, setTab] = useState<Tab>('membresia');
   const [currentAvatarUrl, setCurrentAvatarUrl] = useState<string | null>(avatarUrl);
   const router = useRouter();
@@ -407,6 +425,11 @@ export default function MiCuentaTabs({ userId, displayName, email, telefono, ava
               </div>
             )}
           </div>
+        )}
+
+        {/* ────── MI ARTE ────── */}
+        {tab === 'miarte' && (
+          <MiArtePerfilForm artista={artista} />
         )}
 
         {/* ────── PERFIL ────── */}
