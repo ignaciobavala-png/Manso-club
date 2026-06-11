@@ -66,7 +66,9 @@ function getYouTubeEmbedUrl(url: string): string | null {
 function CanalPlayer({ canal, nivel }: { canal: Canal; nivel: Nivel }) {
   const [playing, setPlaying] = useState(false);
 
-  const puedeVer = nivel !== 'publico';
+  // El canal siempre es visible si hay transmisión activa
+  // Los no logueados ven el stream pero con un CTA no bloqueante
+  const puedeVer = canal.modo !== 'apagado';
 
   if (canal.modo === 'apagado') {
     return (
@@ -102,75 +104,58 @@ function CanalPlayer({ canal, nivel }: { canal: Canal; nivel: Nivel }) {
 
   return (
     <div className="mb-14">
-      {/* Badge canal */}
-      <div className="flex items-center gap-2 mb-4">
-        {isLive ? (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-600/20 border border-red-500/40 text-red-400 text-[9px] font-black uppercase tracking-[0.3em]">
-            <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-            <Wifi size={9} />
-            En vivo
-          </span>
-        ) : (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-manso-olive/15 border border-manso-olive/30 text-manso-olive text-[9px] font-black uppercase tracking-[0.3em]">
-            <Play size={9} />
-            Grabado
-          </span>
-        )}
-        {titulo && (
-          <span className="text-manso-cream/40 text-xs font-medium truncate">{titulo}</span>
-        )}
-      </div>
+      {/* Título del contenido activo */}
+      {titulo && (
+        <p className="text-manso-cream/40 text-xs font-medium mb-3 truncate">{titulo}</p>
+      )}
 
       {/* Player */}
       <div className="relative aspect-video rounded-[20px] overflow-hidden bg-zinc-900 border border-manso-cream/10">
-        {puedeVer ? (
-          embedSrc ? (
-            playing ? (
-              <iframe
-                src={embedSrc}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full h-full"
-              />
-            ) : (
-              <>
-                {thumbnailUrl && (
-                  <img src={thumbnailUrl} alt={titulo} className="absolute inset-0 w-full h-full object-cover" />
-                )}
-                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                  <button
-                    onClick={() => setPlaying(true)}
-                    className="w-16 h-16 rounded-full bg-manso-terra/90 hover:bg-manso-terra flex items-center justify-center transition-all hover:scale-105 active:scale-95"
-                  >
-                    <Play size={22} className="text-white fill-white ml-1" />
-                  </button>
-                </div>
-              </>
-            )
+        {embedSrc ? (
+          playing ? (
+            <iframe
+              src={embedSrc}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="w-full h-full"
+            />
           ) : (
-            <div className="w-full h-full flex items-center justify-center">
-              <p className="text-manso-cream/30 text-xs uppercase tracking-widest font-black">
-                Sin URL de stream configurada
-              </p>
-            </div>
+            <>
+              {thumbnailUrl && (
+                <img src={thumbnailUrl} alt={titulo} className="absolute inset-0 w-full h-full object-cover" />
+              )}
+              <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                <button
+                  onClick={() => setPlaying(true)}
+                  className="w-16 h-16 rounded-full bg-manso-terra/90 hover:bg-manso-terra flex items-center justify-center transition-all hover:scale-105 active:scale-95"
+                >
+                  <Play size={22} className="text-white fill-white ml-1" />
+                </button>
+              </div>
+            </>
           )
         ) : (
-          // Gate para usuarios no logueados
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-zinc-900/80 backdrop-blur-sm px-8 text-center">
-            <div className="w-14 h-14 rounded-full bg-manso-blue/30 border border-manso-blue/50 flex items-center justify-center mb-4">
-              <Users size={22} className="text-blue-400" />
+          <div className="w-full h-full flex items-center justify-center">
+            <p className="text-manso-cream/30 text-xs uppercase tracking-widest font-black">
+              Sin URL de stream configurada
+            </p>
+          </div>
+        )}
+
+        {/* Banner no bloqueante para usuarios no logueados */}
+        {nivel === 'publico' && (
+          <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between gap-3 px-5 py-3 bg-black/70 backdrop-blur-sm border-t border-manso-cream/10">
+            <div className="flex items-center gap-2">
+              <Users size={13} className="text-blue-400 shrink-0" />
+              <p className="text-[9px] font-black uppercase tracking-widest text-manso-cream/70">
+                Registrate gratis para acceder a más contenido
+              </p>
             </div>
-            <p className="text-sm font-black uppercase tracking-tight text-manso-cream mb-2">
-              Registrate para ver el canal
-            </p>
-            <p className="text-manso-cream/40 text-xs mb-5">
-              El acceso al canal es gratuito para usuarios registrados
-            </p>
             <Link
               href="/login?from=/streaming"
-              className="px-6 py-3 bg-manso-blue text-manso-cream rounded-full text-[9px] font-black uppercase tracking-widest hover:bg-manso-blue/80 transition-all"
+              className="shrink-0 px-4 py-1.5 bg-manso-blue text-manso-cream rounded-full text-[8px] font-black uppercase tracking-widest hover:bg-manso-blue/80 transition-all"
             >
-              Ingresar / Registrarse
+              Ingresar
             </Link>
           </div>
         )}
@@ -183,6 +168,12 @@ export default function StreamingLibrary({ contenido, categorias, nivel, canal }
   const [filtro, setFiltro] = useState<string>('todo');
 
   const colorMap = Object.fromEntries(categorias.map(c => [c.slug, c.color]));
+
+  const canalBadge = canal.modo === 'en_vivo'
+    ? <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-red-600/20 border border-red-500/40 text-red-400 text-[9px] font-black uppercase tracking-[0.3em]"><span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" /><Wifi size={9} />En vivo</span>
+    : canal.modo === 'grabado'
+    ? <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-manso-olive/15 border border-manso-olive/30 text-manso-olive text-[9px] font-black uppercase tracking-[0.3em]"><Play size={9} />Grabado</span>
+    : null;
 
   const tieneAcceso = (item: Contenido) => {
     if (nivel === 'miembro') return true;
@@ -198,6 +189,16 @@ export default function StreamingLibrary({ contenido, categorias, nivel, canal }
 
   return (
     <div>
+      {/* Header integrado con estado del canal */}
+      <div className="flex items-end gap-4 mb-8">
+        <div>
+          <h1 className="text-4xl md:text-5xl font-black uppercase italic tracking-tighter leading-none text-manso-cream">
+            Streaming<span className="text-manso-cream/20 cursor-blink">_</span>
+          </h1>
+        </div>
+        {canalBadge && <div className="mb-1">{canalBadge}</div>}
+      </div>
+
       {/* Canal en vivo / grabado */}
       <CanalPlayer canal={canal} nivel={nivel} />
 

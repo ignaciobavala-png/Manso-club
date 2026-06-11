@@ -1,5 +1,4 @@
 import { createSupabaseServer } from '@/lib/supabase';
-import { AdaptiveSectionLayout } from '@/components/ui/AdaptiveSectionLayout';
 import { ParticleBackground } from '@/components/Home/ParticleBackground';
 import StreamingLibrary from './StreamingLibrary';
 
@@ -70,13 +69,14 @@ export default async function StreamingPage() {
   }
 
   return (
-    <div className="relative min-h-screen bg-manso-black">
+    <div className="relative min-h-screen bg-manso-black"
+      style={{
+        backgroundImage: 'linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px)',
+        backgroundSize: '48px 48px',
+      }}
+    >
       <ParticleBackground />
-      <AdaptiveSectionLayout
-        title="Streaming"
-        subtitle="Contenido exclusivo_"
-        customBg="bg-transparent"
-      >
+      <div className="relative z-10 max-w-[1400px] mx-auto px-4 md:px-8 pt-32 pb-20">
         <StreamingLibrary
           contenido={contenido ?? []}
           categorias={categorias ?? []}
@@ -87,7 +87,7 @@ export default async function StreamingPage() {
             contenido: canalContenido,
           }}
         />
-      </AdaptiveSectionLayout>
+      </div>
     </div>
   );
 }
