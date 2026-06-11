@@ -123,7 +123,15 @@ function CanalPlayer({ canal, nivel }: { canal: Canal; nivel: Nivel }) {
       {/* Player */}
       <div className="relative aspect-video rounded-[20px] overflow-hidden bg-zinc-900 border border-manso-cream/10">
         {embedSrc ? (
-          playing ? (
+          // Live: carga el iframe directamente sin overlay
+          isLive ? (
+            <iframe
+              src={embedSrc}
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              className="w-full h-full"
+            />
+          ) : playing ? (
             <iframe
               src={embedSrc}
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
