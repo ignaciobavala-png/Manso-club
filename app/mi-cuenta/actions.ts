@@ -28,3 +28,63 @@ export async function updateProfileAction(
   revalidatePath('/mi-cuenta');
   return { success: true };
 }
+
+export type SaveArtistaState = { error?: string; success?: boolean; artistaId?: string } | null;
+
+export async function saveArtistaAction(
+  _prev: SaveArtistaState,
+  formData: FormData
+): Promise<SaveArtistaState> {
+  const supabase = await createSupabaseServer();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: 'No autenticado' };
+
+  const { data: profile } = await supabase
+    .from('user_profiles')
+    .select('membresia_activa')
+    .eq('id', user.id)
+    .single();
+
+  if (!profile?.membresia_activa) return { error: 'Se requiere membresía activa' };
+
+  const nombre = (formData.get('nombre') as string)?.trim();
+  if (!nombre) return { error: 'El nombre es obligatorio' };
+
+  const slug = nombre
+    .toLowerCase()
+    .normalize('NFD').replace(/[̀-ͯ]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+
+  const linksRaw = formData.get('social_links') as string;
+  const social_links = linksRaw ? JSON.parse(linksRaw) : [];
+
+  const payload = {
+    nombre,
+    slug,
+    bio: (formData.get('bio') as string) || null,
+    estilo: (formData.get('estilo') as string) || null,
+    tipo: (formData.get('tipo') as string) || 'DJ',
+    imagen_url: (formData.get('imagen_url') as string) || null,
+    soundcloud_url: (formData.get('soundcloud_url') as string) || null,
+    social_links,
+    active: true,
+    user_id: user.id,
+  };
+
+  const editingId = formData.get('editing_id') as string | null;
+
+  if (editingId) {
+    const { error } = await supabase.from('artistas').update(payload).eq('id', editingId).eq('user_id', user.id);
+    if (error) return { error: error.message };
+    revalidatePath('/artistas');
+    revalidatePath('/mi-cuenta');
+    return { success: true, artistaId: editingId };
+  } else {
+    const { data, error } = await supabase.from('artistas').insert([payload]).select('id').single();
+    if (error) return { error: error.message };
+    revalidatePath('/artistas');
+    revalidatePath('/mi-cuenta');
+    return { success: true, artistaId: data.id };
+  }
+}
