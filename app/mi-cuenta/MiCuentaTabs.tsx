@@ -2,7 +2,7 @@
 
 import { useState, useActionState } from 'react';
 import Link from 'next/link';
-import { Play, Ticket, User, CreditCard, ArrowRight, Check, Lock } from 'lucide-react';
+import { Play, Ticket, User, CreditCard, ArrowRight, Check, Lock, Tv, Calendar, Music, ShoppingBag } from 'lucide-react';
 import { updateProfileAction } from './actions';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
@@ -119,6 +119,57 @@ export default function MiCuentaTabs({ userId, displayName, email, telefono, ava
         </div>
       </div>
 
+      {/* ── DESCUBRÍ MANSO ── */}
+      <div className="max-w-3xl mx-auto px-6 pb-8">
+        <p className="text-[9px] font-black uppercase tracking-[0.5em] text-manso-terra mb-5">Descubrí Manso</p>
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <Link
+            href="/streaming"
+            className="group rounded-[20px] border border-manso-cream/10 bg-manso-cream/5 p-5 hover:border-manso-terra/40 hover:bg-manso-terra/5 transition-all"
+          >
+            <Tv size={20} className="text-manso-terra mb-3 group-hover:scale-110 transition-transform" />
+            <p className="text-manso-cream text-xs font-black uppercase tracking-tight">Manso Live</p>
+            <p className="text-manso-cream/30 text-[9px] mt-1 leading-tight">El stream que no para</p>
+          </Link>
+          <Link
+            href="/agenda"
+            className="group rounded-[20px] border border-manso-cream/10 bg-manso-cream/5 p-5 hover:border-manso-terra/40 hover:bg-manso-terra/5 transition-all"
+          >
+            <Calendar size={20} className="text-manso-terra mb-3 group-hover:scale-110 transition-transform" />
+            <p className="text-manso-cream text-xs font-black uppercase tracking-tight">Agenda</p>
+            <p className="text-manso-cream/30 text-[9px] mt-1 leading-tight">Próximos eventos</p>
+          </Link>
+          <Link
+            href="/artistas"
+            className="group rounded-[20px] border border-manso-cream/10 bg-manso-cream/5 p-5 hover:border-manso-terra/40 hover:bg-manso-terra/5 transition-all"
+          >
+            <Music size={20} className="text-manso-terra mb-3 group-hover:scale-110 transition-transform" />
+            <p className="text-manso-cream text-xs font-black uppercase tracking-tight">Artistas</p>
+            <p className="text-manso-cream/30 text-[9px] mt-1 leading-tight">La comunidad Manso</p>
+          </Link>
+          <Link
+            href="/tienda"
+            className="group rounded-[20px] border border-manso-cream/10 bg-manso-cream/5 p-5 hover:border-manso-terra/40 hover:bg-manso-terra/5 transition-all"
+          >
+            <ShoppingBag size={20} className="text-manso-terra mb-3 group-hover:scale-110 transition-transform" />
+            <p className="text-manso-cream text-xs font-black uppercase tracking-tight">Tienda</p>
+            <p className="text-manso-cream/30 text-[9px] mt-1 leading-tight">Merch oficial</p>
+          </Link>
+        </div>
+        {!membresia && (
+          <Link
+            href="/membresias"
+            className="mt-3 flex items-center justify-between p-5 rounded-[20px] bg-manso-terra/10 border border-manso-terra/30 hover:bg-manso-terra/20 transition-all"
+          >
+            <div>
+              <p className="text-manso-terra text-xs font-black uppercase tracking-tight">Sumá la membresía</p>
+              <p className="text-manso-cream/50 text-[9px] mt-0.5">Desbloqueá streaming exclusivo y más beneficios</p>
+            </div>
+            <ArrowRight size={14} className="text-manso-terra flex-shrink-0" />
+          </Link>
+        )}
+      </div>
+
       {/* ── TABS ── */}
       <div className="border-b border-manso-cream/10 bg-manso-black sticky top-16 z-20">
         <div className="max-w-3xl mx-auto px-4 flex gap-1 overflow-x-auto scrollbar-none">
@@ -233,15 +284,23 @@ export default function MiCuentaTabs({ userId, displayName, email, telefono, ava
               <div className="flex items-center gap-3 px-5 py-4 rounded-2xl bg-manso-terra/10 border border-manso-terra/30">
                 <span className="w-2 h-2 rounded-full bg-manso-terra animate-pulse flex-shrink-0" />
                 <p className="text-[10px] font-black uppercase tracking-widest text-manso-terra">
-                  Tu membresía incluye acceso completo al streaming
+                  Tu membresía incluye acceso exclusivo al streaming
                 </p>
               </div>
             ) : (
-              <div className="flex items-center gap-3 px-5 py-4 rounded-2xl bg-manso-cream/5 border border-manso-cream/10">
-                <Lock size={14} className="text-manso-cream/30 flex-shrink-0" />
-                <p className="text-[10px] font-black uppercase tracking-widest text-manso-cream/40">
-                  Necesitás una membresía para acceder al streaming
-                </p>
+              <div className="flex items-center justify-between gap-3 px-5 py-4 rounded-2xl bg-manso-cream/5 border border-manso-cream/10">
+                <div className="flex items-center gap-3">
+                  <span className="w-2 h-2 rounded-full bg-manso-cream/30 flex-shrink-0" />
+                  <p className="text-[10px] font-black uppercase tracking-widest text-manso-cream/50">
+                    Tenés acceso al contenido general
+                  </p>
+                </div>
+                <Link
+                  href="/membresias"
+                  className="text-[9px] font-black uppercase tracking-widest text-manso-terra whitespace-nowrap hover:underline"
+                >
+                  Ver membresías →
+                </Link>
               </div>
             )}
 
