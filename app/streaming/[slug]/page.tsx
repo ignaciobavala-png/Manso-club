@@ -113,26 +113,14 @@ export default async function StreamingPlayerPage({
                 Contenido exclusivo
               </p>
               <p className="text-manso-cream/50 text-sm mb-8 max-w-sm">
-                {contenido.precio_individual > 0
-                  ? `Obtené acceso a este contenido por USD $${contenido.precio_individual}`
-                  : 'Este contenido está disponible con una membresía activa'}
+                Este contenido está disponible con una membresía activa
               </p>
-              <div className="flex gap-3 flex-wrap justify-center">
-                <Link
-                  href="/membresias"
-                  className="px-6 py-3 bg-manso-terra text-manso-cream rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-manso-cream hover:text-manso-black transition-all"
-                >
-                  Ver membresías
-                </Link>
-                {contenido.precio_individual > 0 && (
-                  <Link
-                    href={`/membresias/pagar?nombre=${encodeURIComponent(contenido.titulo)}&precio=${contenido.precio_individual}&periodo=acceso`}
-                    className="px-6 py-3 border border-manso-cream/30 text-manso-cream rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-manso-cream/10 transition-all"
-                  >
-                    Comprar acceso — USD ${contenido.precio_individual}
-                  </Link>
-                )}
-              </div>
+              <Link
+                href="/membresias"
+                className="px-6 py-3 bg-manso-terra text-manso-cream rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-manso-cream hover:text-manso-black transition-all"
+              >
+                Ver membresías
+              </Link>
             </div>
           </div>
         )}

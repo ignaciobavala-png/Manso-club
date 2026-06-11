@@ -4,6 +4,16 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { motion } from 'framer-motion';
 import { ParticleBackground } from '@/components/Home/ParticleBackground';
+import Link from 'next/link';
+import { Users, Lock } from 'lucide-react';
+
+type Nivel = 'publico' | 'registrado' | 'miembro';
+
+const NIVELES_VISIBLES: Record<Nivel, string[]> = {
+  publico:    ['publico'],
+  registrado: ['publico', 'registrado'],
+  miembro:    ['publico', 'registrado', 'miembro'],
+};
 
 interface AgendaItem {
   id: string;
@@ -26,27 +36,56 @@ const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto'
 export default function AgendaPage() {
   const [items, setItems] = useState<AgendaItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [nivel, setNivel] = useState<Nivel>('publico');
+  const [hayOcultos, setHayOcultos] = useState(false);
 
   const now = new Date();
   const mesActual = MESES[now.getMonth()];
   const anioActual = now.getFullYear();
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetchData = async () => {
       try {
-        const { data } = await supabase
-          .from('agenda')
-          .select('*')
-          .eq('activo', true)
-          .order('created_at', { ascending: true });
-        setItems(data || []);
+        // Determinar nivel del usuario
+        let nivelActual: Nivel = 'publico';
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: profile } = await supabase
+            .from('user_profiles')
+            .select('membresia_activa, membresia_hasta')
+            .eq('id', user.id)
+            .single();
+          const activa = profile?.membresia_activa ?? false;
+          const hasta  = profile?.membresia_hasta ?? null;
+          nivelActual = activa && (!hasta || new Date(hasta) > new Date()) ? 'miembro' : 'registrado';
+        }
+        setNivel(nivelActual);
+
+        const nivelesVisibles = NIVELES_VISIBLES[nivelActual];
+
+        const [agendaRes, todasRes] = await Promise.all([
+          supabase
+            .from('agenda')
+            .select('*')
+            .eq('activo', true)
+            .in('visibilidad', nivelesVisibles)
+            .order('created_at', { ascending: true }),
+          nivelActual !== 'miembro'
+            ? supabase.from('agenda').select('visibilidad').eq('activo', true)
+            : Promise.resolve({ data: [] }),
+        ]);
+
+        setItems(agendaRes.data || []);
+
+        const todas = (todasRes.data || []) as { visibilidad: string }[];
+        setHayOcultos(nivelActual !== 'miembro' && todas.some(i => !nivelesVisibles.includes(i.visibilidad)));
       } catch {
         // silently fail
       } finally {
         setLoading(false);
       }
     };
-    fetch();
+    fetchData();
   }, []);
 
   // Agrupar por categoría
@@ -204,6 +243,41 @@ export default function AgendaPage() {
                 </div>
               </motion.div>
             ))}
+          </div>
+        )}
+
+        {/* Gate — eventos ocultos por nivel */}
+        {hayOcultos && (
+          <div className={`flex items-center gap-4 p-5 rounded-2xl border mt-12 ${
+            nivel === 'publico'
+              ? 'bg-manso-blue/10 border-manso-blue/30'
+              : 'bg-manso-terra/10 border-manso-terra/30'
+          }`}>
+            {nivel === 'publico'
+              ? <Users size={20} className="text-manso-blue shrink-0" />
+              : <Lock size={20} className="text-manso-terra shrink-0" />}
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-manso-cream">
+                {nivel === 'publico'
+                  ? 'Hay eventos exclusivos para miembros registrados'
+                  : 'Hay eventos exclusivos para miembros'}
+              </p>
+              <p className="text-xs text-manso-cream/50 mt-0.5">
+                {nivel === 'publico'
+                  ? 'Creá tu cuenta gratis para acceder'
+                  : 'Activá tu membresía para desbloquearlos'}
+              </p>
+            </div>
+            <Link
+              href={nivel === 'publico' ? '/login' : '/membresias'}
+              className={`shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${
+                nivel === 'publico'
+                  ? 'bg-manso-blue text-manso-cream hover:bg-manso-blue/80'
+                  : 'bg-manso-terra text-manso-cream hover:bg-manso-terra/80'
+              }`}
+            >
+              {nivel === 'publico' ? 'Registrarse' : 'Ver membresías'}
+            </Link>
           </div>
         )}
 

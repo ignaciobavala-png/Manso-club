@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
+import { VisibilidadToggle } from './VisibilidadToggle';
 
 interface EventoHome {
   id: string;
@@ -21,7 +22,8 @@ export function FormEventoHome() {
     titulo: '',
     categoria: 'Club',
     disponible: true,
-    orden: '0'
+    orden: '0',
+    visibilidad: 'publico' as 'publico' | 'registrado' | 'miembro',
   });
 
   const categorias = ['Club', 'Talleres', 'Tienda'];
@@ -37,6 +39,7 @@ export function FormEventoHome() {
         categoria: evento.categoria,
         disponible: evento.disponible,
         orden: evento.orden.toString(),
+        visibilidad: (evento as any).visibilidad ?? 'publico',
       });
     };
 
@@ -49,7 +52,7 @@ export function FormEventoHome() {
 
   const resetForm = () => {
     setEditingId(null);
-    setFormData({ fecha: '', titulo: '', categoria: 'Club', disponible: true, orden: '0' });
+    setFormData({ fecha: '', titulo: '', categoria: 'Club', disponible: true, orden: '0', visibilidad: 'publico' });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -167,6 +170,12 @@ export function FormEventoHome() {
             </label>
           </div>
         </div>
+
+        {/* Visibilidad */}
+        <VisibilidadToggle
+          value={formData.visibilidad}
+          onChange={v => setFormData(f => ({ ...f, visibilidad: v }))}
+        />
 
         {/* Botones dinámicos */}
         <div className="flex gap-4">

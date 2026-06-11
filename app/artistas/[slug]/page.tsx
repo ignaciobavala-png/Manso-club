@@ -2,13 +2,13 @@ import type { Metadata } from 'next';
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { createSupabaseAnon } from '@/lib/supabase';
-import { ArrowLeft, ExternalLink, Music } from 'lucide-react';
+import { createSupabaseAnon, createSupabaseServer } from '@/lib/supabase';
+import { ArrowLeft, ExternalLink, Music, Lock, Users } from 'lucide-react';
 import { ArtistProfilePlayer } from './ArtistProfilePlayer';
 import { ArtistTrackManager } from '@/components/artistas/ArtistTrackManager';
 import { GalleryGrid } from '@/components/Home/GalleryGrid';
 
-export const revalidate = 30;
+export const dynamic = 'force-dynamic';
 
 interface Artista {
   id: string;
@@ -22,6 +22,14 @@ interface Artista {
   // Formato viejo: {instagram, spotify, soundcloud}
   social_links?: { label: string; url: string }[] | { instagram?: string; spotify?: string; soundcloud?: string };
 }
+
+type Nivel = 'publico' | 'registrado' | 'miembro';
+
+const NIVELES_VISIBLES: Record<Nivel, string[]> = {
+  publico:    ['publico'],
+  registrado: ['publico', 'registrado'],
+  miembro:    ['publico', 'registrado', 'miembro'],
+};
 
 interface ArtistTrack {
   id: string;
@@ -63,16 +71,29 @@ async function getArtistaFotos(artistaId: string): Promise<ArtistaFoto[]> {
   return data || [];
 }
 
-async function getArtistTracks(artistaId: string): Promise<ArtistTrack[]> {
+async function getArtistTracks(artistaId: string, nivelesVisibles: string[]): Promise<ArtistTrack[]> {
   const supabase = createSupabaseAnon();
   const { data } = await supabase
     .from('artistas_tracks')
     .select('id, titulo, soundcloud_url, orden')
     .eq('artista_id', artistaId)
     .eq('activo', true)
+    .in('visibilidad', nivelesVisibles)
     .order('orden', { ascending: true });
 
   return data || [];
+}
+
+async function getHiddenTracksExist(artistaId: string, nivelesVisibles: string[]): Promise<boolean> {
+  const supabase = createSupabaseAnon();
+  const { data } = await supabase
+    .from('artistas_tracks')
+    .select('visibilidad')
+    .eq('artista_id', artistaId)
+    .eq('activo', true);
+
+  if (!data) return false;
+  return data.some(t => !nivelesVisibles.includes(t.visibilidad));
 }
 
 export async function generateStaticParams() {
@@ -110,13 +131,34 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ArtistaPage({ params }: Props) {
   const { slug } = await params;
-  const artista = await getArtista(slug);
 
+  // Determinar nivel del usuario
+  const supabaseServer = await createSupabaseServer();
+  const { data: { user } } = await supabaseServer.auth.getUser();
+
+  let nivel: Nivel = 'publico';
+  if (user) {
+    const { data: profile } = await supabaseServer
+      .from('user_profiles')
+      .select('membresia_activa, membresia_hasta')
+      .eq('id', user.id)
+      .single();
+
+    const activa = profile?.membresia_activa ?? false;
+    const hasta  = profile?.membresia_hasta ?? null;
+    nivel = activa && (!hasta || new Date(hasta) > new Date()) ? 'miembro' : 'registrado';
+  }
+
+  const nivelesVisibles = NIVELES_VISIBLES[nivel];
+
+  const artista = await getArtista(slug);
   if (!artista) notFound();
 
-  // Obtener tracks del artista
-  const tracks = await getArtistTracks(artista.id);
-  const fotos  = await getArtistaFotos(artista.id);
+  const [tracks, fotos, hayTracksOcultos] = await Promise.all([
+    getArtistTracks(artista.id, nivelesVisibles),
+    getArtistaFotos(artista.id),
+    nivel !== 'miembro' ? getHiddenTracksExist(artista.id, nivelesVisibles) : Promise.resolve(false),
+  ]);
 
   const scUrl = artista.soundcloud_url;
 
@@ -244,6 +286,45 @@ export default async function ArtistaPage({ params }: Props) {
           </div>
         </div>
       </section>
+
+      {/* Gate — contenido oculto por nivel */}
+      {hayTracksOcultos && (
+        <section className="max-w-[1400px] mx-auto px-6 md:px-12 pb-8">
+          <div className={`flex items-center gap-4 p-5 rounded-2xl border ${
+            nivel === 'publico'
+              ? 'bg-manso-blue/10 border-manso-blue/30'
+              : 'bg-manso-terra/10 border-manso-terra/30'
+          }`}>
+            {nivel === 'publico' ? (
+              <Users size={20} className="text-manso-blue shrink-0" />
+            ) : (
+              <Lock size={20} className="text-manso-terra shrink-0" />
+            )}
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-bold text-manso-cream">
+                {nivel === 'publico'
+                  ? `Hay más tracks de ${artista.nombre} para miembros registrados`
+                  : `Hay tracks exclusivos de ${artista.nombre} para miembros`}
+              </p>
+              <p className="text-xs text-manso-cream/50 mt-0.5">
+                {nivel === 'publico'
+                  ? 'Creá tu cuenta gratis para acceder'
+                  : 'Activá tu membresía para desbloquearlos'}
+              </p>
+            </div>
+            <Link
+              href={nivel === 'publico' ? '/login' : '/membresias'}
+              className={`shrink-0 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-wider transition-all ${
+                nivel === 'publico'
+                  ? 'bg-manso-blue text-manso-cream hover:bg-manso-blue/80'
+                  : 'bg-manso-terra text-manso-cream hover:bg-manso-terra/80'
+              }`}
+            >
+              {nivel === 'publico' ? 'Registrarse' : 'Ver membresías'}
+            </Link>
+          </div>
+        </section>
+      )}
 
       {/* Mosaico de obras — solo si hay fotos */}
       {fotos.length > 0 && (

@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { SoundCloudPlayer } from '../ui/SoundCloudPlayer';
+import { VisibilidadToggle } from './VisibilidadToggle';
 import { Music, X, Save, Plus } from 'lucide-react';
 
 interface ArtistTrack {
@@ -39,7 +40,8 @@ export function FormArtistaTrack({
     titulo: '',
     soundcloud_url: '',
     orden: '1',
-    activo: true
+    activo: true,
+    visibilidad: 'registrado' as 'publico' | 'registrado' | 'miembro',
   });
 
   useEffect(() => {
@@ -49,7 +51,8 @@ export function FormArtistaTrack({
         titulo: track.titulo,
         soundcloud_url: track.soundcloud_url,
         orden: track.orden.toString(),
-        activo: track.activo
+        activo: track.activo,
+        visibilidad: (track as any).visibilidad ?? 'registrado',
       });
     } else {
       // Modo creación - obtener siguiente orden
@@ -58,7 +61,8 @@ export function FormArtistaTrack({
         titulo: '',
         soundcloud_url: '',
         orden: nextOrden.toString(),
-        activo: true
+        activo: true,
+        visibilidad: 'registrado',
       });
     }
   }, [track, artistaId]);
@@ -104,7 +108,8 @@ export function FormArtistaTrack({
       titulo: '',
       soundcloud_url: '',
       orden: nextOrden.toString(),
-      activo: true
+      activo: true,
+      visibilidad: 'registrado' as 'publico' | 'registrado' | 'miembro',
     });
     setSoundcloudError('');
     setShowPreview(false);
@@ -130,7 +135,8 @@ export function FormArtistaTrack({
       titulo: formData.titulo.trim(),
       soundcloud_url: formData.soundcloud_url.trim() || null,
       orden: parseInt(String(formData.orden)) || 0,
-      activo: formData.activo
+      activo: formData.activo,
+      visibilidad: formData.visibilidad,
     };
 
     try {
@@ -296,6 +302,12 @@ export function FormArtistaTrack({
               )}
             </div>
           )}
+
+          {/* Visibilidad */}
+          <VisibilidadToggle
+            value={formData.visibilidad}
+            onChange={v => setFormData(f => ({ ...f, visibilidad: v }))}
+          />
 
           {/* Botones */}
           <div className="flex gap-4 pt-4">

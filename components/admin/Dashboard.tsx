@@ -35,17 +35,21 @@ import { MultimediaList } from './MultimediaList';
 import { FormStreamingContenido } from './FormStreamingContenido';
 import { StreamingContenidoList } from './StreamingContenidoList';
 import { StreamingCategoriasAdmin } from './StreamingCategoriasAdmin';
+import { CanalControl } from './CanalControl';
 import { PropuestasList } from './PropuestasList';
 import { FormManifiesto } from './FormManifiesto';
 import { FormOfertaEmpleo } from './FormOfertaEmpleo';
 import { OfertasEmpleoList } from './OfertasEmpleoList';
-import { LogOut, ShoppingBag, User, Home, Calendar, Music, Crown, Settings, Star, Users, Image, Layout, FileText, CreditCard, Package, Video, BookOpen, Calculator, Briefcase, Mail } from 'lucide-react';
+import { LogOut, ShoppingBag, User, Home, Calendar, Music, Crown, Settings, Star, Users, Image, Layout, FileText, CreditCard, Package, Video, BookOpen, Calculator, Briefcase, Mail, Network } from 'lucide-react';
 import { CotizadorConfigAdmin } from './CotizadorConfigAdmin';
 import { CotizacionesList } from './CotizacionesList';
 import { NewsletterList } from './NewsletterList';
+import { ComunidadAdmin } from './ComunidadAdmin';
+import { AsignarMembresia } from './AsignarMembresia';
+import { MembresiaActivasList } from './MembresiaActivasList';
 
 export function Dashboard() {
-  const [tab, setTab] = useState<'home' | 'tienda' | 'artistas' | 'agenda' | 'eventos' | 'musica' | 'membresias' | 'team' | 'hero' | 'galeria' | 'why' | 'about' | 'checkout' | 'pedidos' | 'contenidos' | 'manifiesto' | 'cotizador' | 'streaming' | 'empleos' | 'newsletter'>('home');
+  const [tab, setTab] = useState<'home' | 'tienda' | 'artistas' | 'agenda' | 'eventos' | 'musica' | 'membresias' | 'team' | 'hero' | 'galeria' | 'why' | 'about' | 'checkout' | 'pedidos' | 'contenidos' | 'manifiesto' | 'cotizador' | 'streaming' | 'empleos' | 'newsletter' | 'comunidad'>('home');
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
@@ -302,10 +306,26 @@ export function Dashboard() {
             <Mail size={12} className="sm:size-14" />
             <span className="hidden sm:inline">Newsletter</span>
           </button>
+          <button
+            onClick={() => setTab('comunidad')}
+            className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
+              tab === 'comunidad' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
+            }`}
+          >
+            <Network size={12} className="sm:size-14" />
+            <span className="hidden sm:inline">Comunidad</span>
+          </button>
         </div>
 
+        {/* Módulo Comunidad — ancho completo */}
+        {tab === 'comunidad' && (
+          <div className="mb-8">
+            <ComunidadAdmin />
+          </div>
+        )}
+
         {/* Contenido Principal */}
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-12">
+        {tab !== 'comunidad' && <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-12">
             {/* Columna Izquierda: Formularios de Creación */}
             <div className="xl:col-span-5">
               <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
@@ -419,12 +439,18 @@ export function Dashboard() {
                 <div></div>
               )}
             </div>
-        </div>
+        </div>}
 
-        {/* Sección adicional de Streaming: Categorías */}
+        {/* Sección adicional de Streaming: Canal + Categorías */}
         {tab === 'streaming' && (
           <div className="mt-10 grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-12">
-            <div className="xl:col-span-6">
+            <div className="xl:col-span-5">
+              <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
+                Control del Canal
+              </h2>
+              <CanalControl />
+            </div>
+            <div className="xl:col-span-7">
               <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
                 Categorías
               </h2>
@@ -436,6 +462,25 @@ export function Dashboard() {
         {/* Secciones adicionales de Membresías */}
         {tab === 'membresias' && (
           <>
+            {/* Otorgar membresía + Miembros activos */}
+            <div className="mt-10 grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-12">
+              <div className="xl:col-span-5">
+                <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
+                  Otorgar Membresía
+                </h2>
+                <div className="bg-manso-cream/5 p-6 rounded-[2rem] border border-manso-cream/10">
+                  <AsignarMembresia />
+                </div>
+              </div>
+              <div className="xl:col-span-7">
+                <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
+                  Miembros Activos
+                </h2>
+                <div className="bg-manso-cream/5 p-6 rounded-[2rem] border border-manso-cream/10">
+                  <MembresiaActivasList />
+                </div>
+              </div>
+            </div>
             <div className="mt-10 grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-12">
               <div className="xl:col-span-5">
                 <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">

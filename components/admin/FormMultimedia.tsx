@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { Youtube, Film, Image as ImageIcon } from 'lucide-react';
 import { VideoUploader } from './VideoUploader';
 import { ImageUploader } from './ImageUploader';
+import { VisibilidadToggle } from './VisibilidadToggle';
 
 const inputCls = "w-full p-3 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/40 text-sm";
 const labelCls = "block text-[10px] font-black uppercase tracking-widest text-manso-cream/50 mb-1";
@@ -24,6 +25,7 @@ export function FormMultimedia() {
   const [youtubeUrl, setYoutubeUrl] = useState('');
   const [archivoUrl, setArchivoUrl] = useState('');
   const [descripcion, setDescripcion] = useState('');
+  const [visibilidad, setVisibilidad] = useState<'publico' | 'registrado' | 'miembro'>('publico');
 
   const resetForm = () => {
     setTitulo('');
@@ -51,6 +53,7 @@ export function FormMultimedia() {
       tipo,
       orden,
       active: true,
+      visibilidad,
     };
 
     if (tipo === 'youtube') {
@@ -149,6 +152,9 @@ export function FormMultimedia() {
             />
           </div>
         )}
+
+        {/* Visibilidad */}
+        <VisibilidadToggle value={visibilidad} onChange={setVisibilidad} />
 
         {/* Descripción */}
         <div>
