@@ -119,12 +119,10 @@ export const Navbar = () => {
             {hasMounted && (
               <Link
                 href="/streaming"
-                className={`flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.4em] hover:text-manso-terra transition-colors duration-500 ${
-                  getTextColor(isLight)
-                } ${pathname?.startsWith('/streaming') ? 'text-manso-terra' : ''}`}
+                className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.4em] text-manso-terra hover:text-red-500 transition-colors duration-500"
               >
                 <Play size={10} className="fill-current" />
-                streaming
+                LIVE
               </Link>
             )}
 
@@ -290,7 +288,7 @@ export const Navbar = () => {
             {hasMounted && (
               <Link href="/streaming" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-center gap-2 text-sm font-black uppercase tracking-[0.4em] text-manso-terra hover:text-orange-600 transition-colors py-2 min-h-[44px]">
                 <Play size={12} className="fill-current" />
-                Streaming
+                LIVE
               </Link>
             )}
 

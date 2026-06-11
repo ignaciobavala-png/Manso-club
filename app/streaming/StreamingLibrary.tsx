@@ -72,13 +72,12 @@ function CanalPlayer({ canal, nivel }: { canal: Canal; nivel: Nivel }) {
 
   if (canal.modo === 'apagado') {
     return (
-      <div className="mb-14 rounded-[28px] border border-manso-cream/10 bg-manso-cream/5 flex items-center justify-center aspect-video max-h-[480px]">
+      <div className="mb-14 mx-auto max-w-4xl w-full rounded-[28px] border border-manso-cream/10 bg-manso-cream/5 flex items-center justify-center aspect-video max-h-[480px]">
         <div className="text-center px-8">
           <PowerOff size={36} className="text-manso-cream/15 mx-auto mb-4" />
           <p className="text-[10px] font-black uppercase tracking-[0.4em] text-manso-cream/25">
             Canal sin transmisión activa
           </p>
-          <p className="text-manso-cream/15 text-xs mt-2">Próximamente</p>
         </div>
       </div>
     );
@@ -115,11 +114,6 @@ function CanalPlayer({ canal, nivel }: { canal: Canal; nivel: Nivel }) {
 
   return (
     <div className="mb-14">
-      {/* Título del contenido activo */}
-      {titulo && (
-        <p className="text-manso-cream/40 text-xs font-medium mb-3 truncate">{titulo}</p>
-      )}
-
       {/* Player */}
       <div className="relative aspect-video rounded-[20px] overflow-hidden bg-zinc-900 border border-manso-cream/10">
         {embedSrc ? (
@@ -209,14 +203,7 @@ export default function StreamingLibrary({ contenido, categorias, nivel, canal }
   return (
     <div>
       {/* Header integrado con estado del canal */}
-      <div className="flex items-end gap-4 mb-8">
-        <div>
-          <h1 className="text-4xl md:text-5xl font-black uppercase italic tracking-tighter leading-none text-manso-cream">
-            Streaming<span className="text-manso-cream/20 cursor-blink">_</span>
-          </h1>
-        </div>
-        {canalBadge && <div className="mb-1">{canalBadge}</div>}
-      </div>
+      {canalBadge && <div className="mb-8">{canalBadge}</div>}
 
       {/* Canal en vivo / grabado */}
       <CanalPlayer canal={canal} nivel={nivel} />
@@ -261,16 +248,7 @@ export default function StreamingLibrary({ contenido, categorias, nivel, canal }
       )}
 
       {/* Grid de contenido */}
-      {filtrados.length === 0 ? (
-        <div className="py-24 text-center">
-          <div className="w-16 h-16 rounded-full bg-manso-cream/5 flex items-center justify-center mx-auto mb-4">
-            <Play size={24} className="text-manso-cream/20" />
-          </div>
-          <p className="text-manso-cream/30 text-sm uppercase tracking-widest font-black">
-            {contenido.length === 0 ? 'Próximamente' : 'Sin resultados en esta categoría'}
-          </p>
-        </div>
-      ) : (
+      {filtrados.length === 0 ? null : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {filtrados.map((item) => {
             const acceso = tieneAcceso(item);
