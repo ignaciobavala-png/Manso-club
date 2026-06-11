@@ -5,6 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { motion } from 'framer-motion';
 import { ParticleBackground } from '@/components/Home/ParticleBackground';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Users, Lock } from 'lucide-react';
 
 type Nivel = 'publico' | 'registrado' | 'miembro';
@@ -14,6 +15,17 @@ const NIVELES_VISIBLES: Record<Nivel, string[]> = {
   registrado: ['publico', 'registrado'],
   miembro:    ['publico', 'registrado', 'miembro'],
 };
+
+interface EventoFecha {
+  id: string;
+  fecha: string;
+  titulo: string;
+  categoria?: string;
+  disponible: boolean;
+  activo: boolean;
+  imagen_url?: string;
+  link_tickets?: string;
+}
 
 interface AgendaItem {
   id: string;
@@ -35,6 +47,7 @@ const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto'
 
 export default function AgendaPage() {
   const [items, setItems] = useState<AgendaItem[]>([]);
+  const [eventosFecha, setEventosFecha] = useState<EventoFecha[]>([]);
   const [loading, setLoading] = useState(true);
   const [nivel, setNivel] = useState<Nivel>('publico');
   const [hayOcultos, setHayOcultos] = useState(false);
@@ -63,7 +76,7 @@ export default function AgendaPage() {
 
         const nivelesVisibles = NIVELES_VISIBLES[nivelActual];
 
-        const [agendaRes, todasRes] = await Promise.all([
+        const [agendaRes, todasRes, eventosRes] = await Promise.all([
           supabase
             .from('agenda')
             .select('*')
@@ -73,9 +86,11 @@ export default function AgendaPage() {
           nivelActual !== 'miembro'
             ? supabase.from('agenda').select('visibilidad').eq('activo', true)
             : Promise.resolve({ data: [] }),
+          supabase.from('eventos').select('*').eq('activo', true).order('fecha', { ascending: true }),
         ]);
 
         setItems(agendaRes.data || []);
+        setEventosFecha(eventosRes.data || []);
 
         const todas = (todasRes.data || []) as { visibilidad: string }[];
         setHayOcultos(nivelActual !== 'miembro' && todas.some(i => !nivelesVisibles.includes(i.visibilidad)));
@@ -278,6 +293,57 @@ export default function AgendaPage() {
             >
               {nivel === 'publico' ? 'Registrarse' : 'Ver membresías'}
             </Link>
+          </div>
+        )}
+
+        {/* Carrusel de eventos / flyers */}
+        {eventosFecha.length > 0 && (
+          <div className="mt-24">
+            <div className="flex items-center gap-4 mb-8">
+              <span className="text-[9px] font-black uppercase tracking-[0.6em] text-manso-terra">Eventos</span>
+              <div className="flex-1 h-px bg-manso-cream/10" />
+            </div>
+            <div className="flex gap-[10px] overflow-x-auto snap-x snap-mandatory scrollbar-none -mx-6 md:-mx-12 px-6 md:px-12">
+              {eventosFecha.map((evento) => (
+                <a
+                  key={evento.id}
+                  href={evento.link_tickets || undefined}
+                  target={evento.link_tickets ? '_blank' : undefined}
+                  rel={evento.link_tickets ? 'noopener noreferrer' : undefined}
+                  className="group relative flex-shrink-0 w-[220px] sm:w-[260px] lg:w-[300px] aspect-[3/4] snap-start overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-manso-blue/30">
+                    {evento.imagen_url ? (
+                      <Image
+                        src={evento.imagen_url}
+                        alt={evento.titulo}
+                        fill
+                        className="object-cover transition-all duration-700 group-hover:scale-[1.03]"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center p-6">
+                        <h4 className="text-manso-cream font-bold text-center text-sm uppercase leading-tight">
+                          {evento.titulo}
+                        </h4>
+                      </div>
+                    )}
+                  </div>
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/20 transition-colors duration-500" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
+                  <div className="absolute bottom-3 right-3 z-10">
+                    {evento.disponible ? (
+                      <span className="inline-flex items-center text-[10px] font-black uppercase tracking-widest bg-manso-cream text-manso-black px-3 py-1.5">
+                        TICKETS →
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center text-[10px] font-black uppercase tracking-widest bg-black/60 text-white/80 px-3 py-1.5">
+                        SOLD OUT
+                      </span>
+                    )}
+                  </div>
+                </a>
+              ))}
+            </div>
           </div>
         )}
 
