@@ -40,6 +40,22 @@ function toSlug(text: string) {
     .replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').trim();
 }
 
+function extractYouTubeId(input: string): string {
+  const s = input.trim();
+  const patterns = [
+    /youtube\.com\/live\/([^?&/\s]+)/,
+    /youtu\.be\/([^?&/\s]+)/,
+    /youtube\.com\/watch\?v=([^&\s]+)/,
+    /youtube\.com\/embed\/([^?&/\s]+)/,
+  ];
+  for (const p of patterns) {
+    const m = s.match(p);
+    if (m) return m[1];
+  }
+  // Si no matchea ningún patrón, asumir que ya es un ID
+  return s;
+}
+
 export function FormStreamingContenido() {
   const [loading, setLoading]       = useState(false);
   const [editingId, setEditingId]   = useState<string | null>(null);
@@ -214,13 +230,18 @@ export function FormStreamingContenido() {
 
         {/* YouTube Video ID */}
         <div>
-          <label className={labelCls}>YouTube Video ID</label>
+          <label className={labelCls}>YouTube — URL o ID del video</label>
           <input
             className={inputCls + ' font-mono text-xs'}
-            placeholder="dQw4w9WgXcQ"
+            placeholder="https://youtube.com/watch?v=... o solo el ID"
             value={form.youtube_video_id}
-            onChange={e => set('youtube_video_id', e.target.value.trim())}
+            onChange={e => set('youtube_video_id', extractYouTubeId(e.target.value))}
           />
+          {form.youtube_video_id && (
+            <p className="mt-1 text-[9px] text-manso-cream/30 font-mono pl-1">
+              ID guardado: {form.youtube_video_id}
+            </p>
+          )}
         </div>
 
         {/* Thumbnail */}
