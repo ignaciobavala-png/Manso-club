@@ -71,8 +71,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL('/mi-cuenta', request.url))
   }
 
-  // /mi-cuenta y /streaming: requiere usuario autenticado
-  if ((isMiCuentaRoute || isStreamingRoute) && !user) {
+  // /mi-cuenta: requiere usuario autenticado
+  // /streaming: acceso público, el nivel lo maneja la página internamente
+  if (isMiCuentaRoute && !user) {
     const from = encodeURIComponent(pathname)
     return NextResponse.redirect(new URL(`/login?from=${from}`, request.url))
   }
@@ -103,8 +104,6 @@ export const config = {
     '/registro',
     '/mi-cuenta/:path*',
     '/mi-cuenta',
-    '/streaming/:path*',
-    '/streaming',
     '/actualizar-contrasena',
   ],
 }
