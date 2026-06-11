@@ -98,11 +98,11 @@ export default async function AboutPage() {
           Las personas detrás de Manso
         </p>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 lg:gap-8">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 px-2">
           {teamMembers.map((member) => {
             const initials = member.name.split(' ').map((w: string) => w[0]).slice(0, 2).join('').toUpperCase();
             return (
-              <div key={member.id} className="flex flex-col w-[88%] mx-auto">
+              <div key={member.id} className="flex flex-col w-full">
                 {member.photo_url ? (
                   <div className="relative w-full aspect-[3/4] rounded-lg overflow-hidden mb-3 flex-shrink-0">
                     <Image
@@ -126,7 +126,7 @@ export default async function AboutPage() {
           {teamMembers.length === 0 && (
             <>
               {(['AH', 'AM', 'FB', 'JP'] as const).map((ini) => (
-                <div key={ini} className="flex flex-col w-[88%] mx-auto">
+                <div key={ini} className="flex flex-col w-full">
                   <div className="w-full aspect-[3/4] bg-zinc-800 rounded-lg mb-3 flex items-center justify-center">
                     <span className="text-zinc-500 text-2xl font-black tracking-widest">{ini}</span>
                   </div>
