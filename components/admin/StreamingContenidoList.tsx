@@ -10,7 +10,7 @@ interface Item {
   slug: string;
   tipo: string;
   youtube_video_id: string | null;
-  precio_individual: number;
+
   duracion_minutos: number | null;
   is_live: boolean;
   activo: boolean;
@@ -31,7 +31,7 @@ export function StreamingContenidoList({ refreshTrigger }: { refreshTrigger: num
     setLoading(true);
     const { data } = await supabase
       .from('streaming_contenido')
-      .select('id, titulo, slug, tipo, youtube_video_id, precio_individual, duracion_minutos, is_live, activo, orden')
+      .select('id, titulo, slug, tipo, youtube_video_id, duracion_minutos, is_live, activo, orden')
       .order('orden', { ascending: true });
     setItems(data ?? []);
     setLoading(false);
@@ -57,10 +57,10 @@ export function StreamingContenidoList({ refreshTrigger }: { refreshTrigger: num
   };
 
   const terminarStream = async (id: string, titulo: string) => {
-    if (!confirm(`¿Terminar el stream "${titulo}"?\n\nEl badge "En vivo" se apagará y el video quedará disponible como grabación.`)) return;
+    if (!confirm(`¿Terminar el stream "${titulo}"?\n\nEl badge "En vivo" se apagará y el video quedará disponible como grabación en Multimedia.`)) return;
     const { error } = await supabase
       .from('streaming_contenido')
-      .update({ is_live: false, activo: true })
+      .update({ is_live: false, activo: true, fue_transmitido: true, transmitido_en: new Date().toISOString() })
       .eq('id', id);
     if (error) { alert(error.message); return; }
     fetch();
@@ -132,9 +132,6 @@ export function StreamingContenidoList({ refreshTrigger }: { refreshTrigger: num
                 )}
                 {item.duracion_minutos && (
                   <span className="text-manso-cream/30 text-[10px]">{item.duracion_minutos} min</span>
-                )}
-                {item.precio_individual > 0 && (
-                  <span className="text-manso-olive text-[10px] font-black">USD ${item.precio_individual}</span>
                 )}
               </div>
             </div>

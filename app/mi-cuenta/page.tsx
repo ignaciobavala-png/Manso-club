@@ -20,7 +20,7 @@ export default async function MiCuentaPage() {
   ] = await Promise.all([
     supabase
       .from('user_profiles')
-      .select('display_name, email, telefono, avatar_url')
+      .select('display_name, email, telefono, avatar_url, id')
       .eq('id', user.id)
       .single(),
 
@@ -36,7 +36,7 @@ export default async function MiCuentaPage() {
 
     supabase
       .from('streaming_contenido')
-      .select('id, titulo, slug, tipo, thumbnail_url, precio_individual')
+      .select('id, titulo, slug, tipo, thumbnail_url')
       .eq('activo', true)
       .order('orden', { ascending: true })
       .limit(3),
@@ -78,9 +78,11 @@ export default async function MiCuentaPage() {
       <ParticleBackground />
       <div className="relative z-10">
         <MiCuentaTabs
+          userId={user.id}
           displayName={displayName}
           email={profile?.email ?? user.email ?? ''}
           telefono={profile?.telefono ?? null}
+          avatarUrl={profile?.avatar_url ?? null}
           membresia={membresia}
           streaming={streamingRaw ?? []}
           tickets={ticketsRaw ?? []}

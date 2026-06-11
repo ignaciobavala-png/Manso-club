@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { ImageUploader } from './ImageUploader';
+import { VisibilidadToggle } from './VisibilidadToggle';
 import { Tag, DollarSign, Package, Plus, X, AlertCircle, CheckCircle } from 'lucide-react';
 import { CATEGORIAS_TIENDA } from '@/lib/constants';
 
@@ -22,7 +23,8 @@ export function FormProducto() {
     precio: 0,
     descripcion: '',
     imagenes_urls: [] as string[],
-    stock: 10 // Stock por defecto
+    stock: 10,
+    visibilidad: 'publico' as 'publico' | 'registrado' | 'miembro',
   });
 
   // Cargar categorias unicas desde la DB + las default
@@ -79,7 +81,8 @@ export function FormProducto() {
       precio: product.precio || 0,
       descripcion: product.descripcion || '',
       imagenes_urls: product.imagenes_urls || [],
-      stock: product.stock || 10 // Stock por defecto si no existe
+      stock: product.stock || 10,
+      visibilidad: product.visibilidad ?? 'publico',
     });
     setError(null);
     setSuccess(false);
@@ -94,7 +97,8 @@ export function FormProducto() {
       precio: 0,
       descripcion: '',
       imagenes_urls: [],
-      stock: 10 // Stock por defecto
+      stock: 10,
+      visibilidad: 'publico' as 'publico' | 'registrado' | 'miembro',
     });
     setError(null);
     setSuccess(false);
@@ -381,8 +385,14 @@ export function FormProducto() {
           </div>
         </div>
 
+        {/* Visibilidad */}
+        <VisibilidadToggle
+          value={formData.visibilidad}
+          onChange={v => setFormData(f => ({ ...f, visibilidad: v }))}
+        />
+
         {/* Boton de Accion */}
-        <button 
+        <button
           disabled={loading}
           className="w-full bg-manso-terra text-manso-cream py-4 sm:py-5 rounded-3xl font-black uppercase tracking-[0.2em] hover:bg-manso-cream hover:text-manso-black transition-all active:scale-95 disabled:opacity-50 text-sm sm:text-base"
         >

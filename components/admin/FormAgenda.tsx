@@ -27,11 +27,14 @@ const INITIAL = {
   cupos_maximos: '0',
   whatsapp_contacto: '',
   luma_url: '',
+  visibilidad: 'publico' as 'publico' | 'registrado' | 'miembro',
 };
 
 const categorias  = ['Taller', 'Curso', 'Sesión', 'Clase', 'Evento'];
 const duraciones  = ['1 hora', '2 horas', '3 horas', '4 horas', 'Medio día', 'Día completo'];
 const frecuencias = ['Semanal', 'Quincenal', 'Mensual', 'Bimensual', 'Trimestral'];
+
+import { VisibilidadToggle } from './VisibilidadToggle';
 
 const inputCls = "w-full p-3 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/40 text-sm";
 const labelCls = "block text-[10px] font-black uppercase tracking-widest text-manso-cream/50 mb-1";
@@ -54,7 +57,8 @@ export function FormAgenda() {
         precio:            ev.precio.toString(),
         cupos_maximos:     (ev.cupos_maximos || 0).toString(),
         whatsapp_contacto: ev.whatsapp_contacto || '',
-      luma_url:          ev.luma_url || '',
+        luma_url:          ev.luma_url || '',
+        visibilidad:       (ev as any).visibilidad ?? 'publico',
       });
     };
     window.addEventListener('editAgendaEvent', handle as EventListener);
@@ -81,6 +85,7 @@ export function FormAgenda() {
       whatsapp_contacto: formData.whatsapp_contacto,
       luma_url:          formData.luma_url || null,
       activo:            true,
+      visibilidad:       formData.visibilidad,
     };
 
     try {
@@ -211,6 +216,12 @@ export function FormAgenda() {
             Si tiene link de Luma, el botón "Inscribirme" irá directo ahí. Si no, irá por WhatsApp.
           </p>
         </div>
+
+        {/* Visibilidad */}
+        <VisibilidadToggle
+          value={formData.visibilidad}
+          onChange={v => set('visibilidad', v)}
+        />
 
         {/* Botones */}
         <div className="flex gap-4 pt-2">

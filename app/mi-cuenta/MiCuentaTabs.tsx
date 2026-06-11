@@ -25,7 +25,6 @@ type ContenidoItem = {
   slug: string;
   tipo: string;
   thumbnail_url: string | null;
-  precio_individual: number;
 };
 
 type TicketItem = {
@@ -38,9 +37,11 @@ type TicketItem = {
 };
 
 type Props = {
+  userId: string;
   displayName: string;
   email: string;
   telefono: string | null;
+  avatarUrl: string | null;
   membresia: Membresia;
   streaming: ContenidoItem[];
   tickets: TicketItem[];
@@ -54,8 +55,9 @@ const TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
   { id: 'perfil',    label: 'Perfil',     icon: <User size={14} /> },
 ];
 
-export default function MiCuentaTabs({ displayName, email, telefono, membresia, streaming, tickets, tieneMembresia }: Props) {
+export default function MiCuentaTabs({ userId, displayName, email, telefono, avatarUrl, membresia, streaming, tickets, tieneMembresia }: Props) {
   const [tab, setTab] = useState<Tab>('membresia');
+  const [currentAvatarUrl, setCurrentAvatarUrl] = useState<string | null>(avatarUrl);
   const router = useRouter();
 
   const initial = displayName?.[0]?.toUpperCase() ?? email?.[0]?.toUpperCase() ?? '?';
@@ -84,8 +86,14 @@ export default function MiCuentaTabs({ displayName, email, telefono, membresia, 
       >
         <div className="max-w-3xl mx-auto flex flex-col sm:flex-row items-center sm:items-end gap-6">
           {/* Avatar */}
-          <div className="w-20 h-20 rounded-full bg-manso-terra flex items-center justify-center text-3xl font-black text-white flex-shrink-0 shadow-lg">
-            {initial}
+          <div className="w-20 h-20 rounded-full flex-shrink-0 shadow-lg overflow-hidden">
+            {currentAvatarUrl ? (
+              <img src={currentAvatarUrl} alt={displayName} className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full bg-manso-terra flex items-center justify-center text-3xl font-black text-white">
+                {initial}
+              </div>
+            )}
           </div>
 
           <div className="text-center sm:text-left">
@@ -345,10 +353,13 @@ export default function MiCuentaTabs({ displayName, email, telefono, membresia, 
         {/* ────── PERFIL ────── */}
         {tab === 'perfil' && (
           <PerfilForm
+            userId={userId}
             displayName={displayName}
             email={email}
             telefono={telefono}
+            avatarUrl={currentAvatarUrl}
             onLogout={handleLogout}
+            onAvatarUpdated={setCurrentAvatarUrl}
           />
         )}
       </div>
@@ -356,13 +367,62 @@ export default function MiCuentaTabs({ displayName, email, telefono, membresia, 
   );
 }
 
-function PerfilForm({ displayName, email, telefono, onLogout }: {
+function PerfilForm({ userId, displayName, email, telefono, avatarUrl, onLogout, onAvatarUpdated }: {
+  userId: string;
   displayName: string;
   email: string;
   telefono: string | null;
+  avatarUrl: string | null;
   onLogout: () => void;
+  onAvatarUpdated: (url: string) => void;
 }) {
   const [state, action, pending] = useActionState(updateProfileAction, null);
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [localAvatar, setLocalAvatar] = useState<string | null>(avatarUrl);
+  const initial = displayName?.[0]?.toUpperCase() ?? email?.[0]?.toUpperCase() ?? '?';
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingAvatar(true);
+    try {
+      // Convertir a WebP
+      const webp = await new Promise<File>((resolve) => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d')!;
+        const img = new Image();
+        img.onload = () => {
+          const size = Math.min(img.width, img.height, 400);
+          canvas.width = size;
+          canvas.height = size;
+          const ox = (img.width - size) / 2;
+          const oy = (img.height - size) / 2;
+          ctx.drawImage(img, ox, oy, size, size, 0, 0, size, size);
+          canvas.toBlob((blob) => {
+            resolve(new File([blob!], 'avatar.webp', { type: 'image/webp' }));
+          }, 'image/webp', 0.85);
+        };
+        img.src = URL.createObjectURL(file);
+      });
+
+      const path = `${userId}/avatar.webp`;
+      const { error: uploadError } = await supabase.storage
+        .from('avatares')
+        .upload(path, webp, { upsert: true });
+      if (uploadError) throw uploadError;
+
+      const { data } = supabase.storage.from('avatares').getPublicUrl(path);
+      const url = `${data.publicUrl}?t=${Date.now()}`;
+
+      await supabase.from('user_profiles').update({ avatar_url: url }).eq('id', userId);
+      setLocalAvatar(url);
+      onAvatarUpdated(url);
+    } catch (err) {
+      console.error('Error subiendo avatar:', err);
+    } finally {
+      setUploadingAvatar(false);
+    }
+  };
 
   return (
     <div className="space-y-6 max-w-md">
@@ -377,6 +437,44 @@ function PerfilForm({ displayName, email, telefono, onLogout }: {
           {state.error}
         </div>
       )}
+
+      {/* Avatar upload */}
+      <div className="rounded-[28px] border border-manso-cream/10 p-8 bg-manso-cream/5">
+        <p className="text-[9px] font-black uppercase tracking-[0.5em] text-manso-terra mb-6">Foto de perfil</p>
+        <div className="flex items-center gap-6">
+          <div className="relative w-20 h-20 rounded-full overflow-hidden flex-shrink-0 bg-manso-terra">
+            {localAvatar ? (
+              <img src={localAvatar} alt="avatar" className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-2xl font-black text-white">
+                {initial}
+              </div>
+            )}
+            {uploadingAvatar && (
+              <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              </div>
+            )}
+          </div>
+          <div>
+            <label className={`inline-block px-4 py-2.5 rounded-xl text-xs font-black uppercase tracking-wider cursor-pointer transition-all ${
+              uploadingAvatar
+                ? 'bg-manso-cream/10 text-manso-cream/30 cursor-not-allowed'
+                : 'bg-manso-cream/10 text-manso-cream hover:bg-manso-cream/20'
+            }`}>
+              {uploadingAvatar ? 'Subiendo...' : 'Cambiar foto'}
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleAvatarChange}
+                disabled={uploadingAvatar}
+              />
+            </label>
+            <p className="text-[9px] text-manso-cream/30 mt-2">JPG, PNG o WebP. Se recorta en cuadrado.</p>
+          </div>
+        </div>
+      </div>
 
       <div className="rounded-[28px] border border-manso-cream/10 p-8 bg-manso-cream/5">
         <p className="text-[9px] font-black uppercase tracking-[0.5em] text-manso-terra mb-6">Datos personales</p>
