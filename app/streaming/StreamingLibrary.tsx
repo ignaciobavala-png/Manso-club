@@ -96,7 +96,18 @@ function CanalPlayer({ canal, nivel }: { canal: Canal; nivel: Nivel }) {
     titulo = 'En vivo';
   } else if (canal.modo === 'grabado' && canal.contenido) {
     if (canal.contenido.youtube_video_id) {
-      embedSrc = `https://www.youtube-nocookie.com/embed/${canal.contenido.youtube_video_id}?autoplay=1&modestbranding=1&rel=0&loop=1&playlist=${canal.contenido.youtube_video_id}`;
+      const patterns = [
+        /youtube\.com\/live\/([^?&/\s]+)/,
+        /youtu\.be\/([^?&/\s]+)/,
+        /youtube\.com\/watch\?v=([^&\s]+)/,
+        /youtube\.com\/embed\/([^?&/\s]+)/,
+      ];
+      let videoId = canal.contenido.youtube_video_id;
+      for (const p of patterns) {
+        const m = videoId.match(p);
+        if (m) { videoId = m[1]; break; }
+      }
+      embedSrc = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&modestbranding=1&rel=0&loop=1&playlist=${videoId}`;
     }
     thumbnailUrl = canal.contenido.thumbnail_url;
     titulo = canal.contenido.titulo;

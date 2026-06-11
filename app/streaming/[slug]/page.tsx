@@ -4,6 +4,20 @@ import { ParticleBackground } from '@/components/Home/ParticleBackground';
 import Link from 'next/link';
 import { ArrowLeft, Lock, Play, Clock, Wifi } from 'lucide-react';
 
+function extractYouTubeId(input: string): string {
+  const patterns = [
+    /youtube\.com\/live\/([^?&/\s]+)/,
+    /youtu\.be\/([^?&/\s]+)/,
+    /youtube\.com\/watch\?v=([^&\s]+)/,
+    /youtube\.com\/embed\/([^?&/\s]+)/,
+  ];
+  for (const p of patterns) {
+    const m = input.match(p);
+    if (m) return m[1];
+  }
+  return input;
+}
+
 export default async function StreamingPlayerPage({
   params,
 }: {
@@ -76,7 +90,7 @@ export default async function StreamingPlayerPage({
           <div className="w-full aspect-video rounded-[20px] overflow-hidden bg-black mb-8 shadow-2xl">
             {contenido.youtube_video_id ? (
               <iframe
-                src={`https://www.youtube.com/embed/${contenido.youtube_video_id}?rel=0&modestbranding=1`}
+                src={`https://www.youtube.com/embed/${extractYouTubeId(contenido.youtube_video_id)}?rel=0&modestbranding=1`}
                 title={contenido.titulo}
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                 allowFullScreen
