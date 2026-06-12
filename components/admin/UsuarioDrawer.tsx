@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { X, Crown, User, Mail, Calendar, Clock, CheckCircle, XCircle } from 'lucide-react';
+import { X, User, Mail, Calendar, Clock, CheckCircle, ExternalLink, EyeOff, Eye } from 'lucide-react';
 
 interface UserProfile {
   id: string;
@@ -42,6 +42,14 @@ const NIVEL_LABEL: Record<string, string> = {
   registrado: 'Registrado',
 };
 
+interface ArtistaInfo {
+  id: string;
+  nombre: string;
+  slug: string;
+  active: boolean;
+  tipo: string | null;
+}
+
 export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProps) {
   const [activa, setActiva] = useState(usuario.membresia_activa);
   const [tipo, setTipo] = useState(usuario.membresia_tipo ?? 'mensual');
@@ -50,8 +58,31 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
   );
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+  const [artista, setArtista] = useState<ArtistaInfo | null>(null);
+  const [togglingArtista, setTogglingArtista] = useState(false);
+
+  useEffect(() => {
+    supabase
+      .from('artistas')
+      .select('id, nombre, slug, active, tipo')
+      .eq('user_id', usuario.id)
+      .maybeSingle()
+      .then(({ data }) => setArtista(data));
+  }, [usuario.id]);
 
   const nivel = getNivel(usuario);
+
+  const handleToggleArtista = async () => {
+    if (!artista) return;
+    setTogglingArtista(true);
+    const newActive = !artista.active;
+    const { error } = await supabase
+      .from('artistas')
+      .update({ active: newActive })
+      .eq('id', artista.id);
+    if (!error) setArtista(prev => prev ? { ...prev, active: newActive } : null);
+    setTogglingArtista(false);
+  };
 
   const handleSave = async () => {
     setSaving(true);
@@ -126,6 +157,44 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
             </div>
           )}
         </div>
+
+        {/* Perfil de artista */}
+        {artista && (
+          <div className="px-6 py-5 border-b border-manso-cream/10">
+            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-manso-terra mb-4">
+              Perfil de artista
+            </p>
+            <div className="flex items-center justify-between gap-3 p-4 rounded-xl bg-manso-cream/5 border border-manso-cream/10">
+              <div className="min-w-0">
+                <p className="text-sm font-black text-manso-cream truncate">{artista.nombre}</p>
+                <p className="text-[9px] text-manso-cream/40 uppercase tracking-widest mt-0.5">{artista.tipo ?? 'DJ'}</p>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                <a
+                  href={`/artistas/${artista.slug}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="p-2 rounded-lg bg-manso-cream/10 hover:bg-manso-cream/20 text-manso-cream/60 hover:text-manso-cream transition-all"
+                  title="Ver perfil público"
+                >
+                  <ExternalLink size={13} />
+                </a>
+                <button
+                  onClick={handleToggleArtista}
+                  disabled={togglingArtista}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all disabled:opacity-50 ${
+                    artista.active
+                      ? 'bg-red-500/20 border border-red-500/30 text-red-400 hover:bg-red-500/30'
+                      : 'bg-green-500/20 border border-green-500/30 text-green-400 hover:bg-green-500/30'
+                  }`}
+                  title={artista.active ? 'Ocultar de /artistas' : 'Publicar en /artistas'}
+                >
+                  {artista.active ? <><EyeOff size={11} /> Ocultar</> : <><Eye size={11} /> Publicar</>}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Form membresía */}
         {usuario.role !== 'admin' && (

@@ -136,7 +136,7 @@ export default function MiCuentaTabs({ userId, displayName, email, telefono, ava
           >
             <Tv size={20} className="text-manso-terra mb-3 group-hover:scale-110 transition-transform" />
             <p className="text-manso-cream text-xs font-black uppercase tracking-tight">Manso Live</p>
-            <p className="text-manso-cream/30 text-[9px] mt-1 leading-tight">El stream que no para</p>
+            <p className="text-manso-cream/30 text-[11px] mt-1 leading-tight">Sesiones en vivo y archivo de transmisiones</p>
           </Link>
           <Link
             href="/agenda"
@@ -144,7 +144,7 @@ export default function MiCuentaTabs({ userId, displayName, email, telefono, ava
           >
             <Calendar size={20} className="text-manso-terra mb-3 group-hover:scale-110 transition-transform" />
             <p className="text-manso-cream text-xs font-black uppercase tracking-tight">Agenda</p>
-            <p className="text-manso-cream/30 text-[9px] mt-1 leading-tight">Próximos eventos</p>
+            <p className="text-manso-cream/30 text-[11px] mt-1 leading-tight">Fechas, sets y reservas anticipadas</p>
           </Link>
           <Link
             href="/artistas"
@@ -152,7 +152,7 @@ export default function MiCuentaTabs({ userId, displayName, email, telefono, ava
           >
             <Music size={20} className="text-manso-terra mb-3 group-hover:scale-110 transition-transform" />
             <p className="text-manso-cream text-xs font-black uppercase tracking-tight">Artistas</p>
-            <p className="text-manso-cream/30 text-[9px] mt-1 leading-tight">La comunidad Manso</p>
+            <p className="text-manso-cream/30 text-[11px] mt-1 leading-tight">DJs y artistas visuales del club</p>
           </Link>
           <Link
             href="/tienda"
@@ -160,7 +160,7 @@ export default function MiCuentaTabs({ userId, displayName, email, telefono, ava
           >
             <ShoppingBag size={20} className="text-manso-terra mb-3 group-hover:scale-110 transition-transform" />
             <p className="text-manso-cream text-xs font-black uppercase tracking-tight">Tienda</p>
-            <p className="text-manso-cream/30 text-[9px] mt-1 leading-tight">Merch oficial</p>
+            <p className="text-manso-cream/30 text-[11px] mt-1 leading-tight">Objetos y prendas del club</p>
           </Link>
         </div>
         {!membresia && !esMiembro && (

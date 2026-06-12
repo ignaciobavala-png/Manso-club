@@ -210,7 +210,7 @@ export default function MembresiasPage() {
 
                         <Link
                           href={`/membresias/pagar?nombre=${encodeURIComponent(membresia.nombre)}&precio=${membresia.precio}&periodo=${encodeURIComponent(membresia.periodo)}`}
-                          className={`mt-auto block w-full px-4 py-3 text-[10px] font-black uppercase tracking-widest transition-all duration-500 ease-out active:scale-95 rounded-full text-center ${
+                          className={`mt-auto flex items-center justify-center w-full px-4 min-h-[44px] text-[10px] font-black uppercase tracking-widest transition-all duration-500 ease-out active:scale-95 rounded-full text-center ${
                             membresia.destacado
                               ? 'bg-white text-black hover:bg-gray-100'
                               : 'bg-black text-white hover:bg-manso-black/80'

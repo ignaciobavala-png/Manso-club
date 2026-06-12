@@ -99,7 +99,9 @@ export function MiArtePerfilForm({ artista: initialArtista }: Props) {
         <form action={formAction} className="space-y-5">
           {/* Foto */}
           <div className="space-y-2">
-            <label className="text-[9px] font-black uppercase tracking-widest text-manso-cream/50">Foto</label>
+            <label className="text-[9px] font-black uppercase tracking-widest text-manso-cream/50">
+              {formData.tipo === 'Artista Visual' ? 'Foto de perfil' : 'Foto'}
+            </label>
             <ImageUploader
               key={imageKey}
               bucket="artist"
@@ -212,6 +214,15 @@ export function MiArtePerfilForm({ artista: initialArtista }: Props) {
               </div>
             ))}
           </div>
+
+          {!artista?.id && formData.tipo === 'Artista Visual' && (
+            <div className="flex items-start gap-3 px-4 py-3 rounded-xl bg-manso-cream/5 border border-manso-cream/10">
+              <span className="text-manso-terra text-base leading-none mt-0.5">↓</span>
+              <p className="text-[10px] text-manso-cream/50 leading-relaxed">
+                Después de crear tu perfil podrás subir tu galería de obras.
+              </p>
+            </div>
+          )}
 
           <button
             type="submit"

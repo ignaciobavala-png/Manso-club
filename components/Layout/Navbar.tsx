@@ -177,7 +177,7 @@ export const Navbar = () => {
                 className={`transition-colors duration-500 hover:text-orange-600 ${getTextColor(isLight)}`}
               />
               {hasMounted && itemCount > 0 && (
-                <span className="absolute -top-2 -right-2 bg-orange-600 text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center z-10">
+                <span className="absolute -top-2 -right-2 bg-orange-600 text-white text-[10px] font-black w-4 h-4 rounded-full flex items-center justify-center z-10">
                   {itemCount}
                 </span>
               )}
@@ -186,7 +186,8 @@ export const Navbar = () => {
             {/* Hamburger — solo mobile */}
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className={`md:hidden focus:outline-none transition-colors duration-500 hover:text-orange-600 ${
+              aria-label={isMenuOpen ? 'Cerrar menú' : 'Abrir menú'}
+              className={`md:hidden -m-2 p-2 focus:outline-none transition-colors duration-500 hover:text-orange-600 ${
                 getTextColor(isLight)
               }`}
             >

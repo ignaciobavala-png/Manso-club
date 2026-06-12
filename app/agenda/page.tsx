@@ -249,7 +249,7 @@ export default function AgendaPage() {
                       {/* CTA Inscripción */}
                       <a
                         href={`/agenda/pagar?titulo=${encodeURIComponent(item.titulo)}&precio=${item.precio || 0}&frecuencia=${encodeURIComponent(item.frecuencia || '')}&categoria=${encodeURIComponent(item.categoria || '')}`}
-                        className="flex-shrink-0 ml-0 md:ml-6 bg-manso-cream text-manso-black hover:bg-white px-4 py-2 rounded-full text-[9px] font-black uppercase tracking-widest transition-all whitespace-nowrap"
+                        className="flex-shrink-0 ml-0 md:ml-6 bg-manso-cream text-manso-black hover:bg-white px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap min-h-[44px] flex items-center"
                       >
                         Inscribirme
                       </a>
