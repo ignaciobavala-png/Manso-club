@@ -16,6 +16,7 @@ interface Artist {
   imagen_url?: string;
   soundcloud_url?: string;
   tipo?: string;
+  user_id?: string | null;
   social_links?: {
     instagram?: string;
     spotify?: string;
@@ -159,6 +160,13 @@ export function ArtistasClient({ artistas, obrasVisuales }: ArtistasClientProps)
                     )}
                   </div>
                   
+                  {/* Badge comunidad */}
+                  {artista.user_id && (
+                    <div className="absolute top-3 left-3 px-2 py-1 bg-manso-terra/80 backdrop-blur-sm rounded-full">
+                      <span className="text-[8px] font-black uppercase tracking-widest text-white">Comunidad</span>
+                    </div>
+                  )}
+
                   {/* Nombre visible siempre, se oculta en hover */}
                   <div className="absolute bottom-4 left-4 right-4 group-hover:opacity-0 transition-opacity duration-300">
                     <h3 className="text-white font-black text-sm uppercase tracking-tighter drop-shadow-lg">
@@ -197,6 +205,12 @@ export function ArtistasClient({ artistas, obrasVisuales }: ArtistasClientProps)
                       )}
                     </div>
                   </div>
+                  {artista.user_id && (
+                    <div className="absolute top-3 left-3 px-2 py-1 bg-manso-terra/80 backdrop-blur-sm rounded-full">
+                      <span className="text-[8px] font-black uppercase tracking-widest text-white">Comunidad</span>
+                    </div>
+                  )}
+
                   <div className="absolute bottom-4 left-4 right-4 group-hover:opacity-0 transition-opacity duration-300">
                     <h3 className="text-white font-black text-sm uppercase tracking-tighter drop-shadow-lg">{artista.nombre}</h3>
                   </div>

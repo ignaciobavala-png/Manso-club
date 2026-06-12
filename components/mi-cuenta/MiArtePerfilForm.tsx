@@ -6,11 +6,12 @@ import { ArtistasTracksList } from '@/components/admin/ArtistasTracksList';
 import { ArtistaFotosList } from '@/components/admin/ArtistaFotosList';
 import { FormArtistaTrack } from '@/components/admin/FormArtistaTrack';
 import { saveArtistaAction } from '@/app/mi-cuenta/actions';
-import { User, Music, Globe, Plus, Trash2, Check } from 'lucide-react';
+import { User, Music, Globe, Plus, Trash2, Check, ExternalLink } from 'lucide-react';
 
 interface Artista {
   id: string;
   nombre: string;
+  slug: string;
   bio?: string | null;
   estilo?: string | null;
   tipo?: string | null;
@@ -47,8 +48,14 @@ export function MiArtePerfilForm({ artista: initialArtista }: Props) {
       fd.set('social_links', JSON.stringify(links));
       if (artista?.id) fd.set('editing_id', artista.id);
       const result = await saveArtistaAction(_prev, fd);
-      if (result?.success && result.artistaId && !artista?.id) {
-        setArtista({ ...formData, id: result.artistaId, social_links: links });
+      if (result?.success && result.artistaId) {
+        setArtista(prev => ({
+          ...(prev ?? { nombre: '', slug: '' }),
+          ...formData,
+          id: result.artistaId!,
+          slug: result.slug ?? prev?.slug ?? '',
+          social_links: links,
+        }));
       }
       return result;
     },
@@ -72,6 +79,21 @@ export function MiArtePerfilForm({ artista: initialArtista }: Props) {
           <div className="mb-4 flex items-center gap-2 p-4 rounded-2xl bg-green-500/10 border border-green-500/20 text-green-400 text-xs font-black uppercase tracking-widest">
             <Check size={14} /> Guardado
           </div>
+        )}
+
+        {artista?.slug && (
+          <a
+            href={`/artistas/${artista.slug}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mb-4 flex items-center justify-between gap-3 px-5 py-4 rounded-2xl bg-manso-cream/5 border border-manso-cream/10 hover:border-manso-terra/40 hover:bg-manso-terra/5 transition-all group"
+          >
+            <div>
+              <p className="text-[9px] font-black uppercase tracking-[0.4em] text-manso-terra mb-0.5">Tu perfil público</p>
+              <p className="text-manso-cream/50 text-xs font-mono">mansoclub.com.ar/artistas/{artista.slug}</p>
+            </div>
+            <ExternalLink size={14} className="text-manso-cream/30 group-hover:text-manso-terra transition-colors shrink-0" />
+          </a>
         )}
 
         <form action={formAction} className="space-y-5">
@@ -137,18 +159,20 @@ export function MiArtePerfilForm({ artista: initialArtista }: Props) {
             className="w-full bg-manso-cream/10 p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-sm text-manso-cream placeholder:text-manso-cream/30 resize-none transition-all"
           />
 
-          {/* SoundCloud */}
-          <div className="relative">
-            <Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-manso-cream/40" size={16} />
-            <input
-              type="url"
-              name="soundcloud_url"
-              placeholder="https://soundcloud.com/tu-perfil"
-              value={formData.soundcloud_url}
-              onChange={e => setFormData(f => ({ ...f, soundcloud_url: e.target.value }))}
-              className="w-full bg-manso-cream/10 p-4 pl-11 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream placeholder:text-manso-cream/30 transition-all"
-            />
-          </div>
+          {/* SoundCloud — solo para DJs */}
+          {formData.tipo !== 'Artista Visual' && (
+            <div className="relative">
+              <Globe className="absolute left-4 top-1/2 -translate-y-1/2 text-manso-cream/40" size={16} />
+              <input
+                type="url"
+                name="soundcloud_url"
+                placeholder="https://soundcloud.com/tu-perfil"
+                value={formData.soundcloud_url}
+                onChange={e => setFormData(f => ({ ...f, soundcloud_url: e.target.value }))}
+                className="w-full bg-manso-cream/10 p-4 pl-11 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream placeholder:text-manso-cream/30 transition-all"
+              />
+            </div>
+          )}
 
           {/* Links sociales */}
           <div className="space-y-3">
@@ -202,29 +226,41 @@ export function MiArtePerfilForm({ artista: initialArtista }: Props) {
       {/* Tracks y fotos — solo si ya tiene perfil creado */}
       {artista?.id && (
         <>
-          <ArtistasTracksList
-            artistaId={artista.id}
-            artistaNombre={artista.nombre}
-            onEditTrack={(track) => { setEditingTrack(track); setShowTrackForm(true); }}
-            onNewTrack={() => { setEditingTrack(null); setShowTrackForm(true); }}
-            refreshTrigger={tracksRefresh}
-          />
-
-          <ArtistaFotosList
-            artistaId={artista.id}
-            artistaNombre={artista.nombre}
-            refreshTrigger={fotosRefresh}
-          />
-
-          {showTrackForm && (
-            <FormArtistaTrack
+          {/* Artista Visual: galería primero, sin tracks */}
+          {formData.tipo === 'Artista Visual' ? (
+            <ArtistaFotosList
               artistaId={artista.id}
               artistaNombre={artista.nombre}
-              track={editingTrack}
-              isOpen={showTrackForm}
-              onClose={() => { setShowTrackForm(false); setEditingTrack(null); }}
-              onSave={() => setTracksRefresh(n => n + 1)}
+              refreshTrigger={fotosRefresh}
             />
+          ) : (
+            /* DJ: tracks primero, luego galería */
+            <>
+              <ArtistasTracksList
+                artistaId={artista.id}
+                artistaNombre={artista.nombre}
+                onEditTrack={(track) => { setEditingTrack(track); setShowTrackForm(true); }}
+                onNewTrack={() => { setEditingTrack(null); setShowTrackForm(true); }}
+                refreshTrigger={tracksRefresh}
+              />
+
+              <ArtistaFotosList
+                artistaId={artista.id}
+                artistaNombre={artista.nombre}
+                refreshTrigger={fotosRefresh}
+              />
+
+              {showTrackForm && (
+                <FormArtistaTrack
+                  artistaId={artista.id}
+                  artistaNombre={artista.nombre}
+                  track={editingTrack}
+                  isOpen={showTrackForm}
+                  onClose={() => { setShowTrackForm(false); setEditingTrack(null); }}
+                  onSave={() => setTracksRefresh(n => n + 1)}
+                />
+              )}
+            </>
           )}
         </>
       )}

@@ -16,7 +16,6 @@ export default async function MiCuentaPage() {
     { data: profile },
     { data: membresiaRaw },
     { data: streamingRaw },
-    { data: ticketsRaw },
     { data: artistaRaw },
   ] = await Promise.all([
     supabase
@@ -43,15 +42,8 @@ export default async function MiCuentaPage() {
       .limit(3),
 
     supabase
-      .from('tickets')
-      .select('id, codigo, evento_nombre, tipo, usado, created_at')
-      .eq('email', user.email!)
-      .order('created_at', { ascending: false })
-      .limit(10),
-
-    supabase
       .from('artistas')
-      .select('id, nombre, bio, estilo, tipo, imagen_url, soundcloud_url, social_links')
+      .select('id, nombre, slug, bio, estilo, tipo, imagen_url, soundcloud_url, social_links')
       .eq('user_id', user.id)
       .maybeSingle(),
   ]);
@@ -93,7 +85,6 @@ export default async function MiCuentaPage() {
           avatarUrl={profile?.avatar_url ?? null}
           membresia={membresia}
           streaming={streamingRaw ?? []}
-          tickets={ticketsRaw ?? []}
           tieneMembresia={tieneMembresia}
           esMiembro={esMiembro}
           artista={artistaRaw ?? null}

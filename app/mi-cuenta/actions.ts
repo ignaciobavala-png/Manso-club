@@ -29,7 +29,7 @@ export async function updateProfileAction(
   return { success: true };
 }
 
-export type SaveArtistaState = { error?: string; success?: boolean; artistaId?: string } | null;
+export type SaveArtistaState = { error?: string; success?: boolean; artistaId?: string; slug?: string } | null;
 
 export async function saveArtistaAction(
   _prev: SaveArtistaState,
@@ -41,11 +41,13 @@ export async function saveArtistaAction(
 
   const { data: profile } = await supabase
     .from('user_profiles')
-    .select('membresia_activa')
+    .select('membresia_activa, membresia_hasta')
     .eq('id', user.id)
     .single();
 
-  if (!profile?.membresia_activa) return { error: 'Se requiere membresía activa' };
+  const hasta = profile?.membresia_hasta ?? null;
+  const vigente = profile?.membresia_activa && (!hasta || new Date(hasta) > new Date());
+  if (!vigente) return { error: 'Se requiere membresía activa' };
 
   const nombre = (formData.get('nombre') as string)?.trim();
   if (!nombre) return { error: 'El nombre es obligatorio' };
@@ -79,12 +81,12 @@ export async function saveArtistaAction(
     if (error) return { error: error.message };
     revalidatePath('/artistas');
     revalidatePath('/mi-cuenta');
-    return { success: true, artistaId: editingId };
+    return { success: true, artistaId: editingId, slug };
   } else {
     const { data, error } = await supabase.from('artistas').insert([payload]).select('id').single();
     if (error) return { error: error.message };
     revalidatePath('/artistas');
     revalidatePath('/mi-cuenta');
-    return { success: true, artistaId: data.id };
+    return { success: true, artistaId: data.id, slug };
   }
 }

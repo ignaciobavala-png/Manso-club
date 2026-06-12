@@ -2,13 +2,13 @@
 
 import { useState, useActionState } from 'react';
 import Link from 'next/link';
-import { Play, Ticket, User, CreditCard, ArrowRight, Check, Lock, Tv, Calendar, Music, ShoppingBag, Palette } from 'lucide-react';
+import { Play, User, CreditCard, ArrowRight, Check, Lock, Tv, Calendar, Music, ShoppingBag, Palette } from 'lucide-react';
 import { MiArtePerfilForm } from '@/components/mi-cuenta/MiArtePerfilForm';
 import { updateProfileAction } from './actions';
 import { supabase } from '@/lib/supabase';
 import { useRouter } from 'next/navigation';
 
-type Tab = 'membresia' | 'streaming' | 'tickets' | 'perfil' | 'miarte';
+type Tab = 'membresia' | 'streaming' | 'perfil' | 'miarte';
 
 type Beneficio = { texto: string; incluido: boolean };
 type Membresia = {
@@ -23,6 +23,7 @@ type Membresia = {
 type Artista = {
   id: string;
   nombre: string;
+  slug: string;
   bio?: string | null;
   estilo?: string | null;
   tipo?: string | null;
@@ -39,15 +40,6 @@ type ContenidoItem = {
   thumbnail_url: string | null;
 };
 
-type TicketItem = {
-  id: string;
-  codigo: string;
-  evento_nombre: string | null;
-  tipo: string;
-  usado: boolean;
-  created_at: string;
-};
-
 type Props = {
   userId: string;
   displayName: string;
@@ -56,25 +48,22 @@ type Props = {
   avatarUrl: string | null;
   membresia: Membresia;
   streaming: ContenidoItem[];
-  tickets: TicketItem[];
   tieneMembresia: boolean;
   esMiembro: boolean;
   artista: Artista;
 };
 
 const BASE_TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
-  { id: 'membresia', label: 'Membresía',  icon: <CreditCard size={14} /> },
-  { id: 'streaming', label: 'Streaming',  icon: <Play size={14} /> },
-  { id: 'tickets',   label: 'Tickets',    icon: <Ticket size={14} /> },
   { id: 'perfil',    label: 'Perfil',     icon: <User size={14} /> },
+  { id: 'miarte',    label: 'Mi Arte',    icon: <Palette size={14} /> },
+  { id: 'streaming', label: 'Streaming',  icon: <Play size={14} /> },
+  { id: 'membresia', label: 'Membresía',  icon: <CreditCard size={14} /> },
 ];
 
-export default function MiCuentaTabs({ userId, displayName, email, telefono, avatarUrl, membresia, streaming, tickets, tieneMembresia, esMiembro, artista }: Props) {
-  const TABS = esMiembro
-    ? [...BASE_TABS.slice(0, 3), { id: 'miarte' as Tab, label: 'Mi Arte', icon: <Palette size={14} /> }, BASE_TABS[3]]
-    : BASE_TABS;
+export default function MiCuentaTabs({ userId, displayName, email, telefono, avatarUrl, membresia, streaming, tieneMembresia, esMiembro, artista }: Props) {
+  const TABS = BASE_TABS;
 
-  const [tab, setTab] = useState<Tab>('membresia');
+  const [tab, setTab] = useState<Tab>('perfil');
   const [currentAvatarUrl, setCurrentAvatarUrl] = useState<string | null>(avatarUrl);
   const router = useRouter();
 
@@ -174,7 +163,7 @@ export default function MiCuentaTabs({ userId, displayName, email, telefono, ava
             <p className="text-manso-cream/30 text-[9px] mt-1 leading-tight">Merch oficial</p>
           </Link>
         </div>
-        {!membresia && (
+        {!membresia && !esMiembro && (
           <Link
             href="/membresias"
             className="mt-3 flex items-center justify-between p-5 rounded-[20px] bg-manso-terra/10 border border-manso-terra/30 hover:bg-manso-terra/20 transition-all"
@@ -373,63 +362,32 @@ export default function MiCuentaTabs({ userId, displayName, email, telefono, ava
           </div>
         )}
 
-        {/* ────── TICKETS ────── */}
-        {tab === 'tickets' && (
-          <div className="space-y-4">
-            {tickets.length > 0 ? (
-              <>
-                <p className="text-[9px] font-black uppercase tracking-[0.5em] text-manso-terra mb-4">Tus entradas</p>
-                {tickets.map(ticket => (
-                  <div key={ticket.id} className="flex items-center justify-between p-6 rounded-[20px] border border-manso-cream/10 bg-manso-cream/5">
-                    <div className="flex items-center gap-4">
-                      <div className="w-10 h-10 rounded-xl bg-manso-cream/10 flex items-center justify-center flex-shrink-0">
-                        <Ticket size={16} className="text-manso-cream/40" />
-                      </div>
-                      <div>
-                        <p className="text-manso-cream font-black uppercase tracking-tight text-sm">
-                          {ticket.evento_nombre ?? ticket.tipo}
-                        </p>
-                        <p className="text-manso-cream/30 text-[9px] uppercase tracking-widest font-black mt-0.5">
-                          {new Date(ticket.created_at).toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric' })}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-manso-cream/40 text-[9px] font-black uppercase tracking-widest mb-1">
-                        {ticket.codigo}
-                      </p>
-                      <span className={`text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${
-                        ticket.usado
-                          ? 'bg-zinc-800 text-manso-cream/30'
-                          : 'bg-green-500/20 text-green-400'
-                      }`}>
-                        {ticket.usado ? 'Usado' : 'Válido'}
-                      </span>
-                    </div>
-                  </div>
-                ))}
-              </>
-            ) : (
-              <div className="text-center py-16 rounded-[28px] border border-manso-cream/10 bg-manso-cream/5">
-                <div className="w-14 h-14 rounded-full bg-manso-cream/10 flex items-center justify-center mx-auto mb-4">
-                  <Ticket size={22} className="text-manso-cream/30" />
-                </div>
-                <p className="text-manso-cream font-black text-lg uppercase italic tracking-tight mb-2">Sin entradas</p>
-                <p className="text-manso-cream/40 text-sm mb-8">Cuando comprés un ticket aparecerá acá</p>
-                <Link
-                  href="/agenda"
-                  className="inline-block px-8 py-4 border border-manso-cream/20 text-manso-cream/50 rounded-full text-[10px] font-black uppercase tracking-widest hover:border-manso-terra hover:text-manso-terra transition-all"
-                >
-                  Ver agenda
-                </Link>
-              </div>
-            )}
-          </div>
-        )}
-
         {/* ────── MI ARTE ────── */}
         {tab === 'miarte' && (
-          <MiArtePerfilForm artista={artista} />
+          esMiembro ? (
+            <MiArtePerfilForm artista={artista} />
+          ) : (
+            <div className="text-center py-16 rounded-[28px] border border-manso-terra/20 bg-manso-terra/5">
+              <div className="w-14 h-14 rounded-full bg-manso-terra/20 flex items-center justify-center mx-auto mb-4">
+                <Palette size={22} className="text-manso-terra/60" />
+              </div>
+              <p className="text-manso-cream font-black text-lg uppercase italic tracking-tight mb-2">
+                Tu espacio de artista
+              </p>
+              <p className="text-manso-cream/40 text-sm mb-2 max-w-xs mx-auto leading-relaxed">
+                Con la membresía publicás tu música, galería y perfil público dentro de Manso.
+              </p>
+              <p className="text-manso-cream/25 text-xs mb-8 max-w-xs mx-auto">
+                Tu perfil vive en mansoclub.com.ar/artistas y es descubrible por toda la comunidad.
+              </p>
+              <Link
+                href="/membresias"
+                className="inline-block px-8 py-4 bg-manso-terra text-manso-cream rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-manso-cream hover:text-manso-black transition-all"
+              >
+                Ver membresías
+              </Link>
+            </div>
+          )
         )}
 
         {/* ────── PERFIL ────── */}
