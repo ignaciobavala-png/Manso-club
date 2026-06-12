@@ -3,6 +3,7 @@ import { redirect, notFound } from 'next/navigation';
 import { ParticleBackground } from '@/components/Home/ParticleBackground';
 import Link from 'next/link';
 import { ArrowLeft, Lock, Play, Clock, Wifi } from 'lucide-react';
+import { YouTubePlayer } from '@/components/streaming/YouTubePlayer';
 
 function extractYouTubeId(input: string): string {
   const patterns = [
@@ -87,17 +88,14 @@ export default async function StreamingPlayerPage({
 
         {/* Player o Paywall */}
         {tieneAcceso ? (
-          <div className="w-full aspect-video rounded-[20px] overflow-hidden bg-black mb-8 shadow-2xl">
+          <div className="mb-8 shadow-2xl">
             {contenido.youtube_video_id ? (
-              <iframe
-                src={`https://www.youtube.com/embed/${extractYouTubeId(contenido.youtube_video_id)}?rel=0&modestbranding=1`}
+              <YouTubePlayer
+                videoId={extractYouTubeId(contenido.youtube_video_id)}
                 title={contenido.titulo}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                allowFullScreen
-                className="w-full h-full"
               />
             ) : (
-              <div className="w-full h-full flex flex-col items-center justify-center bg-zinc-900">
+              <div className="w-full aspect-video rounded-[20px] overflow-hidden bg-zinc-900 flex flex-col items-center justify-center">
                 <Play size={48} className="text-manso-cream/20 mb-4" />
                 <p className="text-manso-cream/30 text-sm uppercase tracking-widest font-black">
                   Video próximamente disponible
