@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Play, Expand, Wifi, Clock } from 'lucide-react';
 import { ParticleBackground } from '@/components/Home/ParticleBackground';
+import { YouTubePlayer } from '@/components/streaming/YouTubePlayer';
 
 interface MediaItem {
   id: string;
@@ -35,50 +36,6 @@ function getYouTubeId(url: string): string | null {
     if (match) return match[1];
   }
   return null;
-}
-
-function YouTubeEmbed({ videoId, titulo }: { videoId: string; titulo: string }) {
-  const [playing, setPlaying] = useState(false);
-  const src = `https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&modestbranding=1&rel=0&controls=1&color=white`;
-
-  return (
-    <div className="group">
-      <div className="relative aspect-video w-full overflow-hidden rounded-2xl bg-zinc-900">
-        {playing ? (
-          <iframe
-            src={src}
-            title={titulo}
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-            allowFullScreen
-            className="w-full h-full"
-          />
-        ) : (
-          <>
-            <img
-              src={`https://img.youtube.com/vi/${videoId}/maxresdefault.jpg`}
-              alt={titulo}
-              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-            />
-            <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-colors duration-300" />
-            <button
-              onClick={() => setPlaying(true)}
-              className="absolute inset-0 flex items-center justify-center"
-              aria-label={`Reproducir ${titulo}`}
-            >
-              <div className="w-16 h-16 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 flex items-center justify-center transition-all duration-300 group-hover:scale-110 group-hover:bg-white/20">
-                <div className="w-0 h-0 border-t-[10px] border-t-transparent border-l-[18px] border-l-white border-b-[10px] border-b-transparent ml-1" />
-              </div>
-            </button>
-          </>
-        )}
-      </div>
-      <div className="mt-4 px-1">
-        <h3 className="text-manso-cream font-black uppercase italic tracking-tighter text-xl leading-tight">
-          {titulo}
-        </h3>
-      </div>
-    </div>
-  );
 }
 
 function VideoEmbed({ src, titulo }: { src: string; titulo: string }) {
@@ -209,7 +166,16 @@ export default function MultimediaClient({
               if (item.tipo === 'youtube') {
                 const videoId = item.youtube_url ? getYouTubeId(item.youtube_url) : null;
                 if (!videoId) return null;
-                return <YouTubeEmbed key={item.id} videoId={videoId} titulo={item.titulo} />;
+                return (
+                  <div key={item.id}>
+                    <YouTubePlayer videoId={videoId} title={item.titulo} />
+                    <div className="mt-4 px-1">
+                      <h3 className="text-manso-cream font-black uppercase italic tracking-tighter text-xl leading-tight">
+                        {item.titulo}
+                      </h3>
+                    </div>
+                  </div>
+                );
               }
               if (item.tipo === 'video' && item.archivo_url) {
                 return <VideoEmbed key={item.id} src={item.archivo_url} titulo={item.titulo} />;
@@ -248,8 +214,8 @@ export default function MultimediaClient({
                 {transmisiones.map(t => {
                   if (!t.youtube_video_id) return null;
                   return (
-                    <div key={t.id} className="group">
-                      <YouTubeEmbed videoId={t.youtube_video_id} titulo={t.titulo} />
+                    <div key={t.id}>
+                      <YouTubePlayer videoId={t.youtube_video_id} title={t.titulo} />
                       <div className="mt-2 px-1 flex items-center gap-3">
                         {t.transmitido_en && (
                           <span className="text-[9px] text-manso-cream/30 uppercase tracking-widest font-black">
