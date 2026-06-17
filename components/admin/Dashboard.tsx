@@ -402,12 +402,7 @@ export function Dashboard() {
                   </div>
                 </div>
               ) : tab === 'contenidos' ? (
-                <div className="space-y-8">
-                  <MultimediaList refreshTrigger={refreshTrigger} />
-                  <div className="border-t border-manso-cream/10 pt-8">
-                    <PropuestasList refreshTrigger={refreshTrigger} />
-                  </div>
-                </div>
+                <MultimediaList refreshTrigger={refreshTrigger} />
               ) : tab === 'manifiesto' ? (
                 <div className="bg-manso-cream/5 p-8 rounded-[2.5rem] border border-manso-cream/10">
                   <div className="text-center">
@@ -428,7 +423,12 @@ export function Dashboard() {
               ) : tab === 'streaming' ? (
                 <StreamingContenidoList refreshTrigger={refreshTrigger} />
               ) : tab === 'empleos' ? (
-                <OfertasEmpleoList refreshTrigger={refreshTrigger} />
+                <div className="space-y-8">
+                  <OfertasEmpleoList refreshTrigger={refreshTrigger} />
+                  <div className="border-t border-manso-cream/10 pt-8">
+                    <PropuestasList refreshTrigger={refreshTrigger} />
+                  </div>
+                </div>
               ) : tab === 'newsletter' ? (
                 <NewsletterList />
               ) : tab === 'pedidos' ? (

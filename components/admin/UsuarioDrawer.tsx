@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { X, User, Mail, Calendar, Clock, CheckCircle, ExternalLink, EyeOff, Eye } from 'lucide-react';
+import { X, User, Mail, Calendar, Clock, CheckCircle, ExternalLink, EyeOff, Eye, Building2 } from 'lucide-react';
 
 interface UserProfile {
   id: string;
@@ -51,6 +51,15 @@ interface ArtistaInfo {
   tipo: string | null;
 }
 
+interface PlanCowork {
+  nombre: string;
+  categoria: string;
+  precio: number;
+  periodo: string;
+  vencimiento: string;
+  estado: string;
+}
+
 export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProps) {
   const [activa, setActiva] = useState(usuario.membresia_activa);
   const [tipo, setTipo] = useState(usuario.membresia_tipo ?? 'mensual');
@@ -62,6 +71,7 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
   const [saved, setSaved] = useState(false);
   const [artista, setArtista] = useState<ArtistaInfo | null>(null);
   const [togglingArtista, setTogglingArtista] = useState(false);
+  const [planCowork, setPlanCowork] = useState<PlanCowork | null>(null);
 
   useEffect(() => {
     supabase
@@ -70,6 +80,29 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
       .eq('user_id', usuario.id)
       .maybeSingle()
       .then(({ data }) => setArtista(data));
+
+    supabase
+      .from('user_membresias_activas')
+      .select('vencimiento, estado, membresias(nombre, categoria, precio, periodo)')
+      .eq('user_id', usuario.id)
+      .eq('estado', 'activa')
+      .gt('vencimiento', new Date().toISOString())
+      .order('vencimiento', { ascending: false })
+      .limit(1)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data?.membresias) {
+          const m = data.membresias as unknown as { nombre: string; categoria: string; precio: number; periodo: string };
+          setPlanCowork({
+            nombre: m.nombre,
+            categoria: m.categoria,
+            precio: m.precio,
+            periodo: m.periodo,
+            vencimiento: data.vencimiento,
+            estado: data.estado,
+          });
+        }
+      });
   }, [usuario.id]);
 
   const nivel = getNivel(usuario);
@@ -196,6 +229,36 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
                 </button>
               </div>
             </div>
+          </div>
+        )}
+
+        {/* Plan Cowork activo */}
+        {usuario.role !== 'admin' && (
+          <div className="px-6 py-5 border-b border-manso-cream/10">
+            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-manso-terra mb-4">
+              Plan Cowork
+            </p>
+            {planCowork ? (
+              <div className="flex items-center justify-between gap-3 p-4 rounded-xl bg-manso-olive/10 border border-manso-olive/30">
+                <div className="flex items-center gap-3 min-w-0">
+                  <Building2 size={14} className="text-manso-olive flex-shrink-0" />
+                  <div className="min-w-0">
+                    <p className="text-sm font-black text-manso-cream">{planCowork.nombre}</p>
+                    <p className="text-[9px] text-manso-cream/40 uppercase tracking-widest mt-0.5">
+                      {planCowork.categoria} · ${planCowork.precio.toLocaleString('es-AR')}/{planCowork.periodo}
+                    </p>
+                  </div>
+                </div>
+                <div className="text-right flex-shrink-0">
+                  <p className="text-[9px] text-manso-cream/40 uppercase tracking-widest">Vence</p>
+                  <p className="text-xs font-black text-manso-olive">
+                    {new Date(planCowork.vencimiento).toLocaleDateString('es-AR', { day: 'numeric', month: 'short' })}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <p className="text-xs text-manso-cream/30">Sin plan cowork activo</p>
+            )}
           </div>
         )}
 
