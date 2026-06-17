@@ -277,8 +277,9 @@ export function CRMGestion() {
     </div>
   );
 
-  const activos = events.filter(e => e.is_active);
-  const pasados = events.filter(e => !e.is_active);
+  const now = new Date();
+  const proximos = events.filter(e => new Date(e.start_date) >= now);
+  const pasados  = events.filter(e => new Date(e.start_date) <  now);
 
   const renderEvent = (event: GestionEvent) => {
     const isExpanded = expanded === event.id;
@@ -293,10 +294,21 @@ export function CRMGestion() {
           className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-manso-cream/5 border border-manso-cream/10 rounded-2xl hover:border-manso-cream/30 transition-all text-left"
         >
           <div className="flex items-center gap-3 min-w-0">
-            <div className={`w-2 h-2 rounded-full flex-shrink-0 ${event.is_active ? 'bg-green-400' : 'bg-manso-cream/20'}`} />
             <div className="min-w-0">
-              <p className="text-sm font-bold text-manso-cream truncate">{event.name}</p>
-              <p className="text-[9px] text-manso-cream/40 mt-0.5">
+              <div className="flex items-center gap-2 mb-0.5">
+                <p className="text-sm font-bold text-manso-cream truncate">{event.name}</p>
+                {event.is_private && (
+                  <span className="text-[7px] font-black uppercase tracking-widest px-1.5 py-0.5 bg-manso-blue/30 border border-manso-blue/40 rounded-full text-blue-300 flex-shrink-0">
+                    Privado
+                  </span>
+                )}
+                {event.is_active && (
+                  <span className="text-[7px] font-black uppercase tracking-widest px-1.5 py-0.5 bg-green-500/20 border border-green-500/30 rounded-full text-green-400 flex-shrink-0">
+                    En curso
+                  </span>
+                )}
+              </div>
+              <p className="text-[9px] text-manso-cream/40">
                 {formatDate(event.start_date)}
                 {capacity !== null && ` · ${capacity}% capacidad`}
               </p>
@@ -324,13 +336,13 @@ export function CRMGestion() {
 
   return (
     <div className="space-y-6">
-      {/* Activos */}
-      {activos.length > 0 && (
+      {/* Próximas fechas */}
+      {proximos.length > 0 && (
         <div className="space-y-2">
-          <p className="text-[9px] font-black uppercase tracking-[0.3em] text-green-400/60 px-1">
-            Activos · {activos.length}
+          <p className="text-[9px] font-black uppercase tracking-[0.3em] text-manso-cream/40 px-1">
+            Próximas fechas · {proximos.length}
           </p>
-          {activos.map(renderEvent)}
+          {proximos.map(renderEvent)}
         </div>
       )}
 
