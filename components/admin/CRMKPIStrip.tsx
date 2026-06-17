@@ -1,16 +1,17 @@
 'use client';
 
-import { Crown, AlertTriangle, XCircle, Calendar, Users, Zap, TrendingUp } from 'lucide-react';
+import { Crown, AlertTriangle, XCircle, Calendar, Users, Zap, TrendingUp, Ticket } from 'lucide-react';
 import { CRMUser, GestionEvent } from './CRMAdmin';
 
 interface CRMKPIStripProps {
   users: CRMUser[];
   events: GestionEvent[];
   mrr: number;
+  ticketsRevenue: number;
   loading: boolean;
 }
 
-export function CRMKPIStrip({ users, events, mrr, loading }: CRMKPIStripProps) {
+export function CRMKPIStrip({ users, events, mrr, ticketsRevenue, loading }: CRMKPIStripProps) {
   const now = new Date();
   const in7days  = new Date(now.getTime() + 7  * 24 * 60 * 60 * 1000);
   const in7daysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
@@ -56,51 +57,53 @@ export function CRMKPIStrip({ users, events, mrr, loading }: CRMKPIStripProps) {
     <div className="flex gap-2 mb-5 overflow-x-auto pb-1">
 
       {/* Ingresos por membresías */}
-      <div className="flex-shrink-0 bg-manso-olive/5 border border-manso-olive/20 rounded-2xl px-4 py-3 min-w-[150px]">
+      <div className="flex-shrink-0 bg-manso-cream/5 border border-manso-cream/10 rounded-2xl px-4 py-3 min-w-[150px]">
         <div className="flex items-center gap-1.5 mb-1">
           <TrendingUp size={11} className="text-manso-olive" />
-          <p className="text-[8px] font-black uppercase tracking-widest text-manso-olive/70">Ingresos membresías / mes</p>
+          <p className="text-[8px] font-black uppercase tracking-widest text-manso-cream/40">Ingresos membresías / mes</p>
         </div>
         <p className="text-2xl font-black text-manso-olive leading-none">{formatARS(mrr)}</p>
-        <p className="text-[8px] text-manso-olive/40 mt-0.5">suma de planes activos vigentes</p>
+        <p className="text-[8px] text-manso-cream/30 mt-0.5">suma de planes activos vigentes</p>
+      </div>
+
+      {/* Ingresos por tickets */}
+      <div className="flex-shrink-0 bg-manso-cream/5 border border-manso-cream/10 rounded-2xl px-4 py-3 min-w-[150px]">
+        <div className="flex items-center gap-1.5 mb-1">
+          <Ticket size={11} className="text-manso-terra" />
+          <p className="text-[8px] font-black uppercase tracking-widest text-manso-cream/40">Ingresos tickets</p>
+        </div>
+        <p className="text-2xl font-black text-manso-terra leading-none">{formatARS(ticketsRevenue)}</p>
+        <p className="text-[8px] text-manso-cream/30 mt-0.5">acumulado eventos propios</p>
       </div>
 
       {/* Miembros activos */}
-      <div className="flex-shrink-0 bg-green-500/5 border border-green-500/20 rounded-2xl px-4 py-3 min-w-[120px]">
+      <div className="flex-shrink-0 bg-manso-cream/5 border border-manso-cream/10 rounded-2xl px-4 py-3 min-w-[120px]">
         <div className="flex items-center gap-1.5 mb-1">
           <Crown size={11} className="text-green-400" />
-          <p className="text-[8px] font-black uppercase tracking-widest text-green-400/70">Activos</p>
+          <p className="text-[8px] font-black uppercase tracking-widest text-manso-cream/40">Activos</p>
         </div>
         <p className="text-2xl font-black text-green-400 leading-none">{activos}</p>
-        <p className="text-[8px] text-green-400/40 mt-0.5">+{nuevosEstaSemana} esta semana</p>
+        <p className="text-[8px] text-manso-cream/30 mt-0.5">+{nuevosEstaSemana} esta semana</p>
       </div>
 
       {/* Por vencer */}
-      <div className={`flex-shrink-0 rounded-2xl px-4 py-3 min-w-[110px] border ${
-        porVencer > 0 ? 'bg-yellow-500/5 border-yellow-500/20' : 'bg-manso-cream/5 border-manso-cream/10'
-      }`}>
+      <div className="flex-shrink-0 bg-manso-cream/5 border border-manso-cream/10 rounded-2xl px-4 py-3 min-w-[110px]">
         <div className="flex items-center gap-1.5 mb-1">
           <AlertTriangle size={11} className={porVencer > 0 ? 'text-yellow-400' : 'text-manso-cream/20'} />
-          <p className={`text-[8px] font-black uppercase tracking-widest ${porVencer > 0 ? 'text-yellow-400/70' : 'text-manso-cream/20'}`}>
-            Vencen
-          </p>
+          <p className="text-[8px] font-black uppercase tracking-widest text-manso-cream/40">Vencen</p>
         </div>
         <p className={`text-2xl font-black leading-none ${porVencer > 0 ? 'text-yellow-400' : 'text-manso-cream/20'}`}>{porVencer}</p>
-        <p className={`text-[8px] mt-0.5 ${porVencer > 0 ? 'text-yellow-400/40' : 'text-manso-cream/20'}`}>esta semana</p>
+        <p className="text-[8px] text-manso-cream/30 mt-0.5">esta semana</p>
       </div>
 
       {/* Vencidos */}
-      <div className={`flex-shrink-0 rounded-2xl px-4 py-3 min-w-[110px] border ${
-        vencidos > 0 ? 'bg-red-500/5 border-red-500/20' : 'bg-manso-cream/5 border-manso-cream/10'
-      }`}>
+      <div className="flex-shrink-0 bg-manso-cream/5 border border-manso-cream/10 rounded-2xl px-4 py-3 min-w-[110px]">
         <div className="flex items-center gap-1.5 mb-1">
           <XCircle size={11} className={vencidos > 0 ? 'text-red-400' : 'text-manso-cream/20'} />
-          <p className={`text-[8px] font-black uppercase tracking-widest ${vencidos > 0 ? 'text-red-400/70' : 'text-manso-cream/20'}`}>
-            Vencidos
-          </p>
+          <p className="text-[8px] font-black uppercase tracking-widest text-manso-cream/40">Vencidos</p>
         </div>
         <p className={`text-2xl font-black leading-none ${vencidos > 0 ? 'text-red-400' : 'text-manso-cream/20'}`}>{vencidos}</p>
-        <p className={`text-[8px] mt-0.5 ${vencidos > 0 ? 'text-red-400/40' : 'text-manso-cream/20'}`}>reactivar</p>
+        <p className="text-[8px] text-manso-cream/30 mt-0.5">reactivar</p>
       </div>
 
       {/* Separador */}
@@ -108,10 +111,10 @@ export function CRMKPIStrip({ users, events, mrr, loading }: CRMKPIStripProps) {
 
       {/* Evento en curso */}
       {enCurso && (
-        <div className="flex-shrink-0 bg-manso-terra/10 border border-manso-terra/30 rounded-2xl px-4 py-3 min-w-[170px]">
+        <div className="flex-shrink-0 bg-manso-cream/5 border border-manso-cream/10 rounded-2xl px-4 py-3 min-w-[170px]">
           <div className="flex items-center gap-1.5 mb-1">
             <Zap size={11} className="text-manso-terra" />
-            <p className="text-[8px] font-black uppercase tracking-widest text-manso-terra/70">En curso</p>
+            <p className="text-[8px] font-black uppercase tracking-widest text-manso-cream/40">En curso</p>
           </div>
           <p className="text-sm font-black text-manso-cream truncate max-w-[150px]">{enCurso.name}</p>
           {enCurso.max_capacity ? (

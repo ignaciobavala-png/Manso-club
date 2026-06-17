@@ -40,6 +40,7 @@ export interface GestionEvent {
   invited_ticket_price: number | null;
   is_paid: boolean;
   is_private: boolean;
+  ticket_alias_pago: string | null;
   flyer_url: string | null;
   registrations_count: number;
   ticket_sales_count: number;
@@ -60,6 +61,7 @@ export function CRMAdmin() {
   const [events, setEvents] = useState<GestionEvent[]>([]);
   const [mrr, setMrr] = useState(0);
   const [pedidosMes, setPedidosMes] = useState<{ count: number; total: number }>({ count: 0, total: 0 });
+  const [ticketsRevenue, setTicketsRevenue] = useState(0);
   const [loading, setLoading] = useState(true);
   const [lastFetch, setLastFetch] = useState<Date | null>(null);
 
@@ -71,6 +73,7 @@ export function CRMAdmin() {
       { data: artistasData },
       { data: membresiaData },
       eventsRes,
+      ticketsRevenueRes,
       { data: pedidosData },
     ] = await Promise.all([
       supabase
@@ -89,6 +92,9 @@ export function CRMAdmin() {
       fetch('/api/gestion/events')
         .then(r => r.ok ? r.json() : { events: [] })
         .catch(() => ({ events: [] })),
+      fetch('/api/gestion/tickets-revenue')
+        .then(r => r.ok ? r.json() : { total: 0 })
+        .catch(() => ({ total: 0 })),
       (() => {
         const desde = new Date();
         desde.setDate(1); desde.setHours(0, 0, 0, 0);
@@ -115,6 +121,7 @@ export function CRMAdmin() {
     setMrr(mrrTotal);
 
     setEvents(eventsRes.events ?? []);
+    setTicketsRevenue(ticketsRevenueRes.mansoTotal ?? 0);
     setPedidosMes({
       count: pedidosData?.length ?? 0,
       total: pedidosData?.reduce((s, p) => s + (p.total ?? 0), 0) ?? 0,
@@ -309,7 +316,7 @@ ${proximos.length === 0
       </div>
 
       {/* KPI Strip — siempre visible */}
-      <CRMKPIStrip users={users} events={events} mrr={mrr} loading={loading} />
+      <CRMKPIStrip users={users} events={events} mrr={mrr} ticketsRevenue={ticketsRevenue} loading={loading} />
 
       {/* Resumen — siempre visible, no colapsable */}
       <div className="bg-manso-cream/5 border border-manso-cream/10 rounded-2xl px-5 py-5">
