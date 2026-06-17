@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { X, User, Mail, Calendar, Clock, CheckCircle, ExternalLink, EyeOff, Eye, Building2 } from 'lucide-react';
+import { X, User, Mail, Calendar, CheckCircle, ExternalLink, EyeOff, Eye, Crown, Plus } from 'lucide-react';
 
 interface UserProfile {
   id: string;
@@ -51,27 +51,48 @@ interface ArtistaInfo {
   tipo: string | null;
 }
 
-interface PlanCowork {
+interface PlanActivo {
+  id: string;
   nombre: string;
   categoria: string;
   precio: number;
   periodo: string;
   vencimiento: string;
-  estado: string;
+}
+
+interface Plan {
+  id: string;
+  nombre: string;
+  precio: number;
+  periodo: string;
+  categoria: string;
+}
+
+function calcularVencimiento(periodo: string): string {
+  const d = new Date();
+  if (periodo === 'mes') d.setMonth(d.getMonth() + 1);
+  else if (periodo === 'año' || periodo === 'anual') d.setFullYear(d.getFullYear() + 1);
+  else d.setMonth(d.getMonth() + 1);
+  return d.toISOString().split('T')[0];
 }
 
 export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProps) {
-  const [activa, setActiva] = useState(usuario.membresia_activa);
-  const [tipo, setTipo] = useState(usuario.membresia_tipo ?? 'mensual');
-  const [hasta, setHasta] = useState(
-    usuario.membresia_hasta ? usuario.membresia_hasta.split('T')[0] : ''
-  );
-  const [permisos, setPermisos] = useState(usuario.permisos_totales);
-  const [saving, setSaving] = useState(false);
-  const [saved, setSaved] = useState(false);
   const [artista, setArtista] = useState<ArtistaInfo | null>(null);
   const [togglingArtista, setTogglingArtista] = useState(false);
-  const [planCowork, setPlanCowork] = useState<PlanCowork | null>(null);
+
+  // Membresía
+  const [planActivo, setPlanActivo] = useState<PlanActivo | null>(null);
+  const [planes, setPlanes] = useState<Plan[]>([]);
+  const [asignando, setAsignando] = useState(false);
+  const [planSelId, setPlanSelId] = useState('');
+  const [vencimientoInput, setVencimientoInput] = useState('');
+  const [guardandoPlan, setGuardandoPlan] = useState(false);
+  const [cancelandoPlan, setCelandoPlan] = useState(false);
+
+  // Permisos
+  const [permisos, setPermisos] = useState(usuario.permisos_totales);
+  const [guardandoPermisos, setGuardandoPermisos] = useState(false);
+  const [savedPermisos, setSavedPermisos] = useState(false);
 
   useEffect(() => {
     supabase
@@ -83,7 +104,7 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
 
     supabase
       .from('user_membresias_activas')
-      .select('vencimiento, estado, membresias(nombre, categoria, precio, periodo)')
+      .select('id, vencimiento, membresias(id, nombre, categoria, precio, periodo)')
       .eq('user_id', usuario.id)
       .eq('estado', 'activa')
       .gt('vencimiento', new Date().toISOString())
@@ -92,17 +113,24 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
       .maybeSingle()
       .then(({ data }) => {
         if (data?.membresias) {
-          const m = data.membresias as unknown as { nombre: string; categoria: string; precio: number; periodo: string };
-          setPlanCowork({
+          const m = data.membresias as unknown as { id: string; nombre: string; categoria: string; precio: number; periodo: string };
+          setPlanActivo({
+            id: data.id,
             nombre: m.nombre,
             categoria: m.categoria,
             precio: m.precio,
             periodo: m.periodo,
             vencimiento: data.vencimiento,
-            estado: data.estado,
           });
         }
       });
+
+    supabase
+      .from('membresias')
+      .select('id, nombre, precio, periodo, categoria')
+      .eq('activo', true)
+      .order('orden', { ascending: true })
+      .then(({ data }) => setPlanes(data ?? []));
   }, [usuario.id]);
 
   const nivel = getNivel(usuario);
@@ -111,42 +139,97 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
     if (!artista) return;
     setTogglingArtista(true);
     const newActive = !artista.active;
-    const { error } = await supabase
-      .from('artistas')
-      .update({ active: newActive })
-      .eq('id', artista.id);
+    const { error } = await supabase.from('artistas').update({ active: newActive }).eq('id', artista.id);
     if (!error) setArtista(prev => prev ? { ...prev, active: newActive } : null);
     setTogglingArtista(false);
   };
 
-  const handleSave = async () => {
-    setSaving(true);
-    const payload: Partial<UserProfile> = {
-      membresia_activa: activa,
-      membresia_tipo: activa ? tipo : null,
-      membresia_hasta: activa && tipo !== 'vitalicio' && hasta ? hasta : null,
-      permisos_totales: permisos,
+  const handlePlanSelect = (id: string) => {
+    setPlanSelId(id);
+    const plan = planes.find(p => p.id === id);
+    if (plan) setVencimientoInput(calcularVencimiento(plan.periodo));
+  };
+
+  const handleAsignarPlan = async () => {
+    if (!planSelId || !vencimientoInput) return;
+    setGuardandoPlan(true);
+
+    const plan = planes.find(p => p.id === planSelId)!;
+    const vencIso = new Date(vencimientoInput + 'T00:00:00').toISOString();
+
+    // Cancelar planes activos previos
+    await supabase
+      .from('user_membresias_activas')
+      .update({ estado: 'cancelada' })
+      .eq('user_id', usuario.id)
+      .eq('estado', 'activa');
+
+    // Crear nuevo registro
+    const { data: nuevo } = await supabase
+      .from('user_membresias_activas')
+      .insert({
+        user_id: usuario.id,
+        membresia_id: planSelId,
+        inicio: new Date().toISOString(),
+        vencimiento: vencIso,
+        estado: 'activa',
+      })
+      .select('id')
+      .single();
+
+    // Sincronizar user_profiles
+    const profileUpdate = {
+      membresia_activa: true,
+      membresia_tipo: plan.periodo,
+      membresia_hasta: vencIso,
     };
+    await supabase.from('user_profiles').update(profileUpdate).eq('id', usuario.id);
 
-    const { error } = await supabase
-      .from('user_profiles')
-      .update(payload)
-      .eq('id', usuario.id);
+    setPlanActivo({
+      id: nuevo?.id ?? '',
+      nombre: plan.nombre,
+      categoria: plan.categoria,
+      precio: plan.precio,
+      periodo: plan.periodo,
+      vencimiento: vencIso,
+    });
+    setAsignando(false);
+    setPlanSelId('');
+    setGuardandoPlan(false);
+    onUpdated({ ...usuario, ...profileUpdate });
+  };
 
-    setSaving(false);
-    if (!error) {
-      setSaved(true);
-      onUpdated({ ...usuario, ...payload } as UserProfile);
-      setTimeout(() => setSaved(false), 2000);
-    }
+  const handleCancelarPlan = async () => {
+    if (!confirm('¿Cancelar la membresía de este usuario?')) return;
+    setCelandoPlan(true);
+
+    await supabase
+      .from('user_membresias_activas')
+      .update({ estado: 'cancelada' })
+      .eq('user_id', usuario.id)
+      .eq('estado', 'activa');
+
+    const profileUpdate = { membresia_activa: false, membresia_tipo: null, membresia_hasta: null };
+    await supabase.from('user_profiles').update(profileUpdate).eq('id', usuario.id);
+
+    setPlanActivo(null);
+    setCelandoPlan(false);
+    onUpdated({ ...usuario, ...profileUpdate });
+  };
+
+  const handleGuardarPermisos = async () => {
+    setGuardandoPermisos(true);
+    await supabase.from('user_profiles').update({ permisos_totales: permisos }).eq('id', usuario.id);
+    setGuardandoPermisos(false);
+    setSavedPermisos(true);
+    onUpdated({ ...usuario, permisos_totales: permisos });
+    setTimeout(() => setSavedPermisos(false), 2000);
   };
 
   return (
     <div className="fixed inset-0 z-50 flex justify-end">
-      {/* Overlay */}
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
-      {/* Panel */}
       <div className="relative w-full max-w-md bg-[#1D1D1B] border-l border-manso-cream/10 h-full overflow-y-auto flex flex-col">
 
         {/* Header */}
@@ -184,14 +267,6 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
               Registrado el {new Date(usuario.created_at).toLocaleDateString('es-AR', { day: 'numeric', month: 'long', year: 'numeric' })}
             </span>
           </div>
-          {usuario.membresia_hasta && (
-            <div className="flex items-center gap-2 text-manso-cream/60">
-              <Clock size={13} />
-              <span className="text-xs">
-                Membresía hasta {new Date(usuario.membresia_hasta).toLocaleDateString('es-AR', { day: 'numeric', month: 'long', year: 'numeric' })}
-              </span>
-            </div>
-          )}
         </div>
 
         {/* Perfil de artista */}
@@ -211,7 +286,6 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
                   target="_blank"
                   rel="noopener noreferrer"
                   className="p-2 rounded-lg bg-manso-cream/10 hover:bg-manso-cream/20 text-manso-cream/60 hover:text-manso-cream transition-all"
-                  title="Ver perfil público"
                 >
                   <ExternalLink size={13} />
                 </a>
@@ -223,7 +297,6 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
                       ? 'bg-red-500/20 border border-red-500/30 text-red-400 hover:bg-red-500/30'
                       : 'bg-green-500/20 border border-green-500/30 text-green-400 hover:bg-green-500/30'
                   }`}
-                  title={artista.active ? 'Ocultar de /artistas' : 'Publicar en /artistas'}
                 >
                   {artista.active ? <><EyeOff size={11} /> Ocultar</> : <><Eye size={11} /> Publicar</>}
                 </button>
@@ -232,98 +305,119 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
           </div>
         )}
 
-        {/* Plan Cowork activo */}
+        {/* Membresía */}
         {usuario.role !== 'admin' && (
           <div className="px-6 py-5 border-b border-manso-cream/10">
             <p className="text-[9px] font-black uppercase tracking-[0.3em] text-manso-terra mb-4">
-              Plan Cowork
-            </p>
-            {planCowork ? (
-              <div className="flex items-center justify-between gap-3 p-4 rounded-xl bg-manso-olive/10 border border-manso-olive/30">
-                <div className="flex items-center gap-3 min-w-0">
-                  <Building2 size={14} className="text-manso-olive flex-shrink-0" />
-                  <div className="min-w-0">
-                    <p className="text-sm font-black text-manso-cream">{planCowork.nombre}</p>
-                    <p className="text-[9px] text-manso-cream/40 uppercase tracking-widest mt-0.5">
-                      {planCowork.categoria} · ${planCowork.precio.toLocaleString('es-AR')}/{planCowork.periodo}
-                    </p>
-                  </div>
-                </div>
-                <div className="text-right flex-shrink-0">
-                  <p className="text-[9px] text-manso-cream/40 uppercase tracking-widest">Vence</p>
-                  <p className="text-xs font-black text-manso-olive">
-                    {new Date(planCowork.vencimiento).toLocaleDateString('es-AR', { day: 'numeric', month: 'short' })}
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <p className="text-xs text-manso-cream/30">Sin plan cowork activo</p>
-            )}
-          </div>
-        )}
-
-        {/* Membresía — informativa: registra que pagó */}
-        {usuario.role !== 'admin' && (
-          <div className="px-6 py-5 border-b border-manso-cream/10">
-            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-manso-terra mb-5">
               Membresía
             </p>
-            <p className="text-[9px] text-manso-cream/30 uppercase tracking-widest mb-4">
-              Registro de pago — no controla el acceso
-            </p>
 
-            <div className="flex items-center justify-between mb-5">
-              <span className="text-sm font-bold text-manso-cream">Pagó membresía</span>
-              <button
-                onClick={() => setActiva(!activa)}
-                className={`w-12 h-6 rounded-full transition-colors relative ${activa ? 'bg-manso-terra' : 'bg-manso-cream/20'}`}
-              >
-                <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform ${activa ? 'translate-x-6' : 'translate-x-0.5'}`} />
-              </button>
-            </div>
+            {planActivo && !asignando ? (
+              <div className="space-y-3">
+                {/* Plan activo */}
+                <div className="p-4 rounded-xl bg-manso-terra/10 border border-manso-terra/30">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <Crown size={13} className="text-manso-terra flex-shrink-0 mt-0.5" />
+                      <div className="min-w-0">
+                        <p className="text-sm font-black text-manso-cream">{planActivo.nombre}</p>
+                        <p className="text-[9px] text-manso-cream/40 uppercase tracking-widest mt-0.5">
+                          {planActivo.categoria} · ${planActivo.precio.toLocaleString('es-AR')}/{planActivo.periodo}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right flex-shrink-0">
+                      <p className="text-[9px] text-manso-cream/40 uppercase tracking-widest">Vence</p>
+                      <p className="text-xs font-black text-manso-terra">
+                        {new Date(planActivo.vencimiento).toLocaleDateString('es-AR', { day: 'numeric', month: 'short', year: '2-digit' })}
+                      </p>
+                    </div>
+                  </div>
+                </div>
 
-            {activa && (
+                {/* Acciones */}
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => { setAsignando(true); }}
+                    className="flex-1 py-2 text-[9px] font-black uppercase tracking-widest rounded-xl border border-manso-cream/20 text-manso-cream/60 hover:text-manso-cream hover:border-manso-cream/40 transition-all"
+                  >
+                    Cambiar plan
+                  </button>
+                  <button
+                    onClick={handleCancelarPlan}
+                    disabled={cancelandoPlan}
+                    className="flex-1 py-2 text-[9px] font-black uppercase tracking-widest rounded-xl border border-red-500/20 text-red-400/60 hover:text-red-400 hover:border-red-500/40 transition-all disabled:opacity-50"
+                  >
+                    {cancelandoPlan ? 'Cancelando...' : 'Cancelar membresía'}
+                  </button>
+                </div>
+              </div>
+            ) : !asignando ? (
+              <div className="space-y-3">
+                <p className="text-xs text-manso-cream/30">Sin membresía activa</p>
+                <button
+                  onClick={() => setAsignando(true)}
+                  className="flex items-center gap-2 px-4 py-2.5 bg-manso-terra/10 border border-manso-terra/30 rounded-xl text-[9px] font-black uppercase tracking-widest text-manso-terra hover:bg-manso-terra/20 transition-all"
+                >
+                  <Plus size={11} /> Asignar plan
+                </button>
+              </div>
+            ) : null}
+
+            {/* Form asignación */}
+            {asignando && (
               <div className="space-y-4">
                 <div>
                   <label className="text-[9px] font-black uppercase tracking-widest text-manso-cream/50 block mb-2">
-                    Tipo
+                    Plan
                   </label>
                   <select
-                    value={tipo}
-                    onChange={e => setTipo(e.target.value)}
+                    value={planSelId}
+                    onChange={e => handlePlanSelect(e.target.value)}
                     className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-3 py-2 text-sm text-manso-cream focus:outline-none focus:border-manso-terra"
                   >
-                    <option value="mensual">Mensual</option>
-                    <option value="anual">Anual</option>
-                    <option value="vitalicio">Vitalicio</option>
-                    <option value="promo">Promo</option>
+                    <option value="">Seleccioná un plan...</option>
+                    {planes.map(p => (
+                      <option key={p.id} value={p.id}>
+                        {p.nombre} — ${p.precio.toLocaleString('es-AR')}/{p.periodo}
+                      </option>
+                    ))}
                   </select>
                 </div>
 
-                {tipo !== 'vitalicio' && (
-                  <div>
-                    <label className="text-[9px] font-black uppercase tracking-widest text-manso-cream/50 block mb-2">
-                      Vence el
-                    </label>
-                    <input
-                      type="date"
-                      value={hasta}
-                      onChange={e => setHasta(e.target.value)}
-                      className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-3 py-2 text-sm text-manso-cream focus:outline-none focus:border-manso-terra"
-                    />
-                  </div>
-                )}
-                {tipo === 'vitalicio' && (
-                  <p className="text-[9px] text-manso-cream/30 uppercase tracking-widest">
-                    Sin fecha de vencimiento
-                  </p>
-                )}
+                <div>
+                  <label className="text-[9px] font-black uppercase tracking-widest text-manso-cream/50 block mb-2">
+                    Vence el
+                  </label>
+                  <input
+                    type="date"
+                    value={vencimientoInput}
+                    onChange={e => setVencimientoInput(e.target.value)}
+                    className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-3 py-2 text-sm text-manso-cream focus:outline-none focus:border-manso-terra"
+                  />
+                </div>
+
+                <div className="flex gap-2 pt-1">
+                  <button
+                    onClick={() => { setAsignando(false); setPlanSelId(''); }}
+                    className="flex-1 py-2.5 text-[9px] font-black uppercase tracking-widest rounded-xl border border-manso-cream/10 text-manso-cream/40 hover:text-manso-cream transition-all"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={handleAsignarPlan}
+                    disabled={!planSelId || !vencimientoInput || guardandoPlan}
+                    className="flex-1 py-2.5 bg-manso-terra text-white text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-manso-terra/80 transition-all disabled:opacity-40"
+                  >
+                    {guardandoPlan ? 'Guardando...' : 'Confirmar'}
+                  </button>
+                </div>
               </div>
             )}
           </div>
         )}
 
-        {/* Permisos — controla el acceso real a features */}
+        {/* Permisos */}
         {usuario.role !== 'admin' && (
           <div className="px-6 py-5 flex-1">
             <p className="text-[9px] font-black uppercase tracking-[0.3em] text-manso-terra mb-5">
@@ -332,8 +426,7 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
             <p className="text-[9px] text-manso-cream/30 uppercase tracking-widest mb-4">
               Activa el acceso a streaming, tienda y perfil de artista
             </p>
-
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-6">
               <span className="text-sm font-bold text-manso-cream">Permisos totales</span>
               <button
                 onClick={() => setPermisos(!permisos)}
@@ -342,23 +435,17 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
                 <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform ${permisos ? 'translate-x-6' : 'translate-x-0.5'}`} />
               </button>
             </div>
-          </div>
-        )}
-
-        {/* Guardar */}
-        {usuario.role !== 'admin' && (
-          <div className="px-6 py-5 border-t border-manso-cream/10">
             <button
-              onClick={handleSave}
-              disabled={saving}
+              onClick={handleGuardarPermisos}
+              disabled={guardandoPermisos}
               className="w-full py-3 bg-manso-cream text-manso-black font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-manso-cream/90 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
-              {saving ? (
+              {guardandoPermisos ? (
                 <div className="w-4 h-4 border-2 border-manso-black/30 border-t-manso-black rounded-full animate-spin" />
-              ) : saved ? (
+              ) : savedPermisos ? (
                 <><CheckCircle size={14} /> Guardado</>
               ) : (
-                'Guardar cambios'
+                'Guardar permisos'
               )}
             </button>
           </div>
