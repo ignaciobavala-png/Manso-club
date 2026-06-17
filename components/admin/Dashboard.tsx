@@ -38,16 +38,17 @@ import { PropuestasList } from './PropuestasList';
 import { FormManifiesto } from './FormManifiesto';
 import { FormOfertaEmpleo } from './FormOfertaEmpleo';
 import { OfertasEmpleoList } from './OfertasEmpleoList';
-import { LogOut, ShoppingBag, User, Home, Calendar, Music, Crown, Settings, Star, Users, Image, Layout, FileText, CreditCard, Package, Video, BookOpen, Calculator, Briefcase, Mail, Network } from 'lucide-react';
+import { LogOut, ShoppingBag, User, Home, Calendar, Music, Crown, Settings, Star, Users, Image, Layout, FileText, CreditCard, Package, Video, BookOpen, Calculator, Briefcase, Mail, Network, BarChart2 } from 'lucide-react';
 import { CotizadorConfigAdmin } from './CotizadorConfigAdmin';
 import { CotizacionesList } from './CotizacionesList';
 import { NewsletterList } from './NewsletterList';
 import { ComunidadAdmin } from './ComunidadAdmin';
 import { AsignarMembresia } from './AsignarMembresia';
 import { MembresiaActivasList } from './MembresiaActivasList';
+import { CRMAdmin } from './CRMAdmin';
 
 export function Dashboard() {
-  const [tab, setTab] = useState<'home' | 'tienda' | 'artistas' | 'agenda' | 'eventos' | 'musica' | 'membresias' | 'team' | 'hero' | 'galeria' | 'why' | 'about' | 'contenidos' | 'manifiesto' | 'cotizador' | 'streaming' | 'empleos' | 'newsletter' | 'comunidad'>('home');
+  const [tab, setTab] = useState<'crm' | 'home' | 'tienda' | 'artistas' | 'agenda' | 'eventos' | 'musica' | 'membresias' | 'team' | 'hero' | 'galeria' | 'why' | 'about' | 'contenidos' | 'manifiesto' | 'cotizador' | 'streaming' | 'empleos' | 'newsletter' | 'comunidad'>('home');
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
@@ -124,6 +125,10 @@ export function Dashboard() {
 
         {/* Selector de Pestañas Estilizado */}
         <div className="flex flex-wrap gap-1 sm:gap-2 mb-6 sm:mb-10 bg-manso-cream/10 p-1 rounded-2xl w-full">
+          <button onClick={() => setTab('crm')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'crm' ? 'bg-manso-terra text-white shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
+            <BarChart2 size={12} className="sm:size-14" />
+            <span className="hidden sm:inline">CRM</span>
+          </button>
           <button onClick={() => setTab('comunidad')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'comunidad' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
             <Network size={12} className="sm:size-14" />
             <span className="hidden sm:inline">Comunidad</span>
@@ -203,13 +208,14 @@ export function Dashboard() {
         </div>
 
         {/* Módulos full-width */}
+        {tab === 'crm'       && <div className="mb-8"><CRMAdmin /></div>}
         {tab === 'comunidad' && <div className="mb-8"><ComunidadAdmin /></div>}
         {tab === 'streaming' && <div className="mb-8"><StreamingAdmin refreshTrigger={refreshTrigger} /></div>}
         {tab === 'membresias' && <div className="mb-8"><MembresiasAdmin refreshTrigger={refreshTrigger} /></div>}
         {tab === 'tienda' && <div className="mb-8"><TiendaAdmin refreshTrigger={refreshTrigger} /></div>}
 
         {/* Contenido Principal — grid dos columnas */}
-        {tab !== 'comunidad' && tab !== 'streaming' && tab !== 'membresias' && tab !== 'tienda' && <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-12">
+        {tab !== 'crm' && tab !== 'comunidad' && tab !== 'streaming' && tab !== 'membresias' && tab !== 'tienda' && <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-12">
             {/* Columna Izquierda: Formularios de Creación */}
             <div className="xl:col-span-5">
               <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
