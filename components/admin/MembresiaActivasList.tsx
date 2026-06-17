@@ -3,14 +3,21 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Crown, AlertTriangle, RefreshCw } from 'lucide-react';
+import { UsuarioDrawer } from './UsuarioDrawer';
 
 interface UserProfile {
   id: string;
   email: string;
+  role: 'admin' | 'member';
   display_name: string | null;
+  avatar_url: string | null;
+  telefono: string | null;
+  created_at: string;
+  updated_at: string;
   membresia_activa: boolean;
   membresia_hasta: string | null;
   membresia_tipo: string | null;
+  permisos_totales: boolean;
 }
 
 function diasRestantes(hasta: string | null): number | null {
@@ -20,7 +27,7 @@ function diasRestantes(hasta: string | null): number | null {
 }
 
 function estadoColor(dias: number | null): string {
-  if (dias === null) return 'text-manso-cream/50'; // vitalicio
+  if (dias === null) return 'text-manso-cream/50';
   if (dias < 0) return 'text-red-400';
   if (dias <= 7) return 'text-yellow-400';
   return 'text-green-400';
@@ -36,6 +43,7 @@ function estadoBg(dias: number | null): string {
 export function MembresiaActivasList() {
   const [usuarios, setUsuarios] = useState<UserProfile[]>([]);
   const [loading, setLoading] = useState(true);
+  const [seleccionado, setSeleccionado] = useState<UserProfile | null>(null);
 
   useEffect(() => {
     fetchMiembros();
@@ -45,11 +53,16 @@ export function MembresiaActivasList() {
     setLoading(true);
     const { data } = await supabase
       .from('user_profiles')
-      .select('id, email, display_name, membresia_activa, membresia_hasta, membresia_tipo')
+      .select('id, email, role, display_name, avatar_url, telefono, created_at, updated_at, membresia_activa, membresia_hasta, membresia_tipo, permisos_totales')
       .eq('membresia_activa', true)
       .order('membresia_hasta', { ascending: true, nullsFirst: false });
     setUsuarios(data ?? []);
     setLoading(false);
+  };
+
+  const handleUpdated = (updated: UserProfile) => {
+    setSeleccionado(updated);
+    setUsuarios(prev => prev.map(u => u.id === updated.id ? updated : u));
   };
 
   const vencidos = usuarios.filter(u => {
@@ -117,9 +130,10 @@ export function MembresiaActivasList() {
           {usuarios.map(u => {
             const dias = diasRestantes(u.membresia_hasta);
             return (
-              <div
+              <button
                 key={u.id}
-                className={`border rounded-2xl px-4 py-3 flex items-center justify-between gap-3 ${estadoBg(dias)}`}
+                onClick={() => setSeleccionado(u)}
+                className={`w-full border rounded-2xl px-4 py-3 flex items-center justify-between gap-3 hover:brightness-125 transition-all text-left ${estadoBg(dias)}`}
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <Crown size={14} className="text-manso-terra flex-shrink-0" />
@@ -148,10 +162,18 @@ export function MembresiaActivasList() {
                       : `${dias}d restantes`}
                   </span>
                 </div>
-              </div>
+              </button>
             );
           })}
         </div>
+      )}
+
+      {seleccionado && (
+        <UsuarioDrawer
+          usuario={seleccionado}
+          onClose={() => setSeleccionado(null)}
+          onUpdated={handleUpdated}
+        />
       )}
     </div>
   );

@@ -13,7 +13,7 @@ import { ArtistasList } from './ArtistasList';
 import { FormMainMusic } from './FormMainMusic';
 import { MainMusicList } from './MainMusicList';
 import { FormMembresia } from './FormMembresia';
-import { MembresiasList } from './MembresiasList';
+import { MembresiasAdmin } from './MembresiasAdmin';
 import { FormEvento } from './FormEvento';
 import { FormTeam } from './FormTeam';
 import { EventosList } from './EventosList';
@@ -379,7 +379,7 @@ export function Dashboard() {
               ) : tab === 'musica' ? (
                 <MainMusicList refreshTrigger={refreshTrigger} />
               ) : tab === 'membresias' ? (
-                <MembresiasList refreshTrigger={refreshTrigger} />
+                <MembresiasAdmin refreshTrigger={refreshTrigger} />
               ) : tab === 'team' ? (
                 <TeamList refreshTrigger={refreshTrigger} />
               ) : tab === 'hero' ? (
@@ -459,52 +459,6 @@ export function Dashboard() {
           </div>
         )}
 
-        {/* Secciones adicionales de Membresías */}
-        {tab === 'membresias' && (
-          <>
-            {/* Otorgar membresía + Miembros activos */}
-            <div className="mt-10 grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-12">
-              <div className="xl:col-span-5">
-                <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
-                  Otorgar Membresía
-                </h2>
-                <div className="bg-manso-cream/5 p-6 rounded-[2rem] border border-manso-cream/10">
-                  <AsignarMembresia />
-                </div>
-              </div>
-              <div className="xl:col-span-7">
-                <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
-                  Miembros Activos
-                </h2>
-                <div className="bg-manso-cream/5 p-6 rounded-[2rem] border border-manso-cream/10">
-                  <MembresiaActivasList />
-                </div>
-              </div>
-            </div>
-            <div className="mt-10 grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-12">
-              <div className="xl:col-span-5">
-                <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
-                  Texto Intro
-                </h2>
-                <FormMembresiaTexto />
-              </div>
-              <div className="xl:col-span-7">
-                <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
-                  Galería Cowork
-                </h2>
-                <FormMembresiaGallery />
-              </div>
-            </div>
-            <div className="mt-10 grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-12">
-              <div className="xl:col-span-12">
-                <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
-                  Fotos Existentes
-                </h2>
-                <MembresiaGalleryList refreshTrigger={refreshTrigger} />
-              </div>
-            </div>
-          </>
-        )}
       </div>
     </div>
   );
