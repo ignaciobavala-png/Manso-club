@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { ChevronDown, BarChart2, Users, GitBranch, RefreshCw } from 'lucide-react';
+import { ChevronDown, BarChart2, Users, GitBranch, RefreshCw, CalendarDays } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { CRMResumen } from './CRMResumen';
 import { CRMContactos } from './CRMContactos';
 import { CRMPipeline } from './CRMPipeline';
+import { CRMGestion } from './CRMGestion';
 
 export interface CRMUser {
   id: string;
@@ -23,12 +24,13 @@ export interface CRMUser {
   artistas: { id: string; nombre: string; slug: string; active: boolean }[] | null;
 }
 
-type SectionId = 'resumen' | 'contactos' | 'pipeline';
+type SectionId = 'resumen' | 'contactos' | 'pipeline' | 'gestion';
 
 const SECTIONS: { id: SectionId; label: string; icon: React.ReactNode }[] = [
   { id: 'resumen',   label: 'Resumen del negocio', icon: <BarChart2 size={14} /> },
   { id: 'contactos', label: 'Base de contactos',   icon: <Users size={14} /> },
   { id: 'pipeline',  label: 'Pipeline',             icon: <GitBranch size={14} /> },
+  { id: 'gestion',   label: 'Eventos & Finanzas',  icon: <CalendarDays size={14} /> },
 ];
 
 export function CRMAdmin() {
@@ -128,6 +130,7 @@ export function CRMAdmin() {
                     {section.id === 'resumen'   && <CRMResumen users={users} />}
                     {section.id === 'contactos' && <CRMContactos users={users} onRefresh={fetchUsers} />}
                     {section.id === 'pipeline'  && <CRMPipeline users={users} onRefresh={fetchUsers} />}
+                    {section.id === 'gestion'   && <CRMGestion />}
                   </>
                 )}
               </div>
