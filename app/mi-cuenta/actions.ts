@@ -41,13 +41,11 @@ export async function saveArtistaAction(
 
   const { data: profile } = await supabase
     .from('user_profiles')
-    .select('membresia_activa, membresia_hasta')
+    .select('permisos_totales')
     .eq('id', user.id)
     .single();
 
-  const hasta = profile?.membresia_hasta ?? null;
-  const vigente = profile?.membresia_activa && (!hasta || new Date(hasta) > new Date());
-  if (!vigente) return { error: 'Se requiere membresía activa' };
+  if (!profile?.permisos_totales) return { error: 'Se requiere membresía activa' };
 
   const nombre = (formData.get('nombre') as string)?.trim();
   if (!nombre) return { error: 'El nombre es obligatorio' };

@@ -17,6 +17,7 @@ interface UserProfile {
   membresia_activa: boolean;
   membresia_hasta: string | null;
   membresia_tipo: string | null;
+  permisos_totales: boolean;
 }
 
 function getNivel(u: UserProfile) {
@@ -51,7 +52,7 @@ export function UsuariosList() {
     setLoading(true);
     const { data } = await supabase
       .from('user_profiles')
-      .select('id, email, role, display_name, avatar_url, telefono, created_at, updated_at, membresia_activa, membresia_hasta, membresia_tipo')
+      .select('id, email, role, display_name, avatar_url, telefono, created_at, updated_at, membresia_activa, membresia_hasta, membresia_tipo, permisos_totales')
       .order('email', { ascending: true });
     setUsuarios(data ?? []);
     setLoading(false);

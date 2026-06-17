@@ -16,6 +16,7 @@ interface UserProfile {
   membresia_activa: boolean;
   membresia_hasta: string | null;
   membresia_tipo: string | null;
+  permisos_totales: boolean;
 }
 
 interface UsuarioDrawerProps {
@@ -56,6 +57,7 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
   const [hasta, setHasta] = useState(
     usuario.membresia_hasta ? usuario.membresia_hasta.split('T')[0] : ''
   );
+  const [permisos, setPermisos] = useState(usuario.permisos_totales);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [artista, setArtista] = useState<ArtistaInfo | null>(null);
@@ -90,6 +92,7 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
       membresia_activa: activa,
       membresia_tipo: activa ? tipo : null,
       membresia_hasta: activa && tipo !== 'vitalicio' && hasta ? hasta : null,
+      permisos_totales: permisos,
     };
 
     const { error } = await supabase
@@ -196,16 +199,18 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
           </div>
         )}
 
-        {/* Form membresía */}
+        {/* Membresía — informativa: registra que pagó */}
         {usuario.role !== 'admin' && (
-          <div className="px-6 py-5 flex-1">
+          <div className="px-6 py-5 border-b border-manso-cream/10">
             <p className="text-[9px] font-black uppercase tracking-[0.3em] text-manso-terra mb-5">
               Membresía
             </p>
+            <p className="text-[9px] text-manso-cream/30 uppercase tracking-widest mb-4">
+              Registro de pago — no controla el acceso
+            </p>
 
-            {/* Toggle activa */}
             <div className="flex items-center justify-between mb-5">
-              <span className="text-sm font-bold text-manso-cream">Membresía activa</span>
+              <span className="text-sm font-bold text-manso-cream">Pagó membresía</span>
               <button
                 onClick={() => setActiva(!activa)}
                 className={`w-12 h-6 rounded-full transition-colors relative ${activa ? 'bg-manso-terra' : 'bg-manso-cream/20'}`}
@@ -216,7 +221,6 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
 
             {activa && (
               <div className="space-y-4">
-                {/* Tipo */}
                 <div>
                   <label className="text-[9px] font-black uppercase tracking-widest text-manso-cream/50 block mb-2">
                     Tipo
@@ -233,7 +237,6 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
                   </select>
                 </div>
 
-                {/* Fecha hasta (solo si no es vitalicio) */}
                 {tipo !== 'vitalicio' && (
                   <div>
                     <label className="text-[9px] font-black uppercase tracking-widest text-manso-cream/50 block mb-2">
@@ -254,6 +257,28 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
                 )}
               </div>
             )}
+          </div>
+        )}
+
+        {/* Permisos — controla el acceso real a features */}
+        {usuario.role !== 'admin' && (
+          <div className="px-6 py-5 flex-1">
+            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-manso-terra mb-5">
+              Permisos
+            </p>
+            <p className="text-[9px] text-manso-cream/30 uppercase tracking-widest mb-4">
+              Activa el acceso a streaming, tienda y perfil de artista
+            </p>
+
+            <div className="flex items-center justify-between">
+              <span className="text-sm font-bold text-manso-cream">Permisos totales</span>
+              <button
+                onClick={() => setPermisos(!permisos)}
+                className={`w-12 h-6 rounded-full transition-colors relative ${permisos ? 'bg-manso-olive' : 'bg-manso-cream/20'}`}
+              >
+                <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform ${permisos ? 'translate-x-6' : 'translate-x-0.5'}`} />
+              </button>
+            </div>
           </div>
         )}
 

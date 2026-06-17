@@ -42,13 +42,11 @@ export default async function TiendaPage() {
   if (user) {
     const { data: profile } = await supabaseServer
       .from('user_profiles')
-      .select('membresia_activa, membresia_hasta')
+      .select('permisos_totales')
       .eq('id', user.id)
       .single();
 
-    const activa = profile?.membresia_activa ?? false;
-    const hasta  = profile?.membresia_hasta ?? null;
-    nivel = activa && (!hasta || new Date(hasta) > new Date()) ? 'miembro' : 'registrado';
+    nivel = profile?.permisos_totales ? 'miembro' : 'registrado';
   }
 
   const nivelesVisibles = NIVELES_VISIBLES[nivel];

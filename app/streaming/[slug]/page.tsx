@@ -43,13 +43,11 @@ export default async function StreamingPlayerPage({
   // Determinar nivel del usuario
   const { data: profile } = await supabase
     .from('user_profiles')
-    .select('membresia_activa, membresia_hasta')
+    .select('permisos_totales')
     .eq('id', user.id)
     .single();
 
-  const membresiaActiva = profile?.membresia_activa ?? false;
-  const membresiaHasta  = profile?.membresia_hasta  ?? null;
-  const esMiembro = membresiaActiva && (!membresiaHasta || new Date(membresiaHasta) > new Date());
+  const esMiembro = profile?.permisos_totales ?? false;
 
   const visibilidad = contenido.visibilidad ?? 'publico';
   const tieneAcceso =

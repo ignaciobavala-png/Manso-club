@@ -65,12 +65,10 @@ export default function AgendaPage() {
         if (user) {
           const { data: profile } = await supabase
             .from('user_profiles')
-            .select('membresia_activa, membresia_hasta')
+            .select('permisos_totales')
             .eq('id', user.id)
             .single();
-          const activa = profile?.membresia_activa ?? false;
-          const hasta  = profile?.membresia_hasta ?? null;
-          nivelActual = activa && (!hasta || new Date(hasta) > new Date()) ? 'miembro' : 'registrado';
+          nivelActual = profile?.permisos_totales ? 'miembro' : 'registrado';
         }
         setNivel(nivelActual);
 

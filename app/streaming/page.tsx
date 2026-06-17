@@ -24,18 +24,11 @@ export default async function StreamingPage() {
   if (user) {
     const { data: profile } = await supabase
       .from('user_profiles')
-      .select('membresia_activa, membresia_hasta')
+      .select('permisos_totales')
       .eq('id', user.id)
       .single();
 
-    if (
-      profile?.membresia_activa &&
-      (!profile.membresia_hasta || new Date(profile.membresia_hasta) > new Date())
-    ) {
-      nivel = 'miembro';
-    } else {
-      nivel = 'registrado';
-    }
+    nivel = profile?.permisos_totales ? 'miembro' : 'registrado';
   }
 
   const nivelesVisibles = NIVELES_VISIBLES[nivel];
