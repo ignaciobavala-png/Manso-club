@@ -1,26 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Calendar, Users, Ticket, DollarSign, ChevronDown, RefreshCw, UserCheck, X } from 'lucide-react';
-
-interface GestionEvent {
-  id: string;
-  name: string;
-  description: string | null;
-  slug: string;
-  start_date: string;
-  end_date: string | null;
-  is_active: boolean;
-  registrations_open: boolean;
-  max_capacity: number | null;
-  regular_ticket_price: number | null;
-  invited_ticket_price: number | null;
-  is_paid: boolean;
-  is_private: boolean;
-  flyer_url: string | null;
-  registrations_count: number;
-  ticket_sales_count: number;
-}
+import { Calendar, Users, Ticket, ChevronDown, RefreshCw, X } from 'lucide-react';
+import { GestionEvent } from './CRMAdmin';
 
 interface Registration {
   id: string;
@@ -240,42 +222,13 @@ function EventDetail({ eventId, onClose }: { eventId: string; onClose: () => voi
   );
 }
 
-export function CRMGestion() {
-  const [events, setEvents] = useState<GestionEvent[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+interface CRMGestionProps {
+  events: GestionEvent[];
+  onRefresh: () => void;
+}
+
+export function CRMGestion({ events, onRefresh }: CRMGestionProps) {
   const [expanded, setExpanded] = useState<string | null>(null);
-
-  const fetchEvents = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const r = await fetch('/api/gestion/events');
-      if (!r.ok) throw new Error('No se pudo conectar con Manso Gestión');
-      const d = await r.json();
-      setEvents(d.events ?? []);
-    } catch (e: any) {
-      setError(e.message);
-    }
-    setLoading(false);
-  };
-
-  useEffect(() => { fetchEvents(); }, []);
-
-  if (loading) return (
-    <div className="flex justify-center py-12">
-      <div className="w-6 h-6 border-2 border-manso-terra/30 border-t-manso-terra rounded-full animate-spin" />
-    </div>
-  );
-
-  if (error) return (
-    <div className="text-center py-10 space-y-3">
-      <p className="text-sm text-red-400">{error}</p>
-      <button onClick={fetchEvents} className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40 hover:text-manso-cream transition-colors flex items-center gap-1.5 mx-auto">
-        <RefreshCw size={11} /> Reintentar
-      </button>
-    </div>
-  );
 
   const now = new Date();
   const proximos = events.filter(e => new Date(e.start_date) >= now);

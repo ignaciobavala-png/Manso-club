@@ -7,6 +7,7 @@ import { CRMResumen } from './CRMResumen';
 import { CRMContactos } from './CRMContactos';
 import { CRMPipeline } from './CRMPipeline';
 import { CRMGestion } from './CRMGestion';
+import { CRMKPIStrip } from './CRMKPIStrip';
 
 export interface CRMUser {
   id: string;
@@ -24,6 +25,25 @@ export interface CRMUser {
   artistas: { id: string; nombre: string; slug: string; active: boolean }[] | null;
 }
 
+export interface GestionEvent {
+  id: string;
+  name: string;
+  description: string | null;
+  slug: string;
+  start_date: string;
+  end_date: string | null;
+  is_active: boolean;
+  registrations_open: boolean;
+  max_capacity: number | null;
+  regular_ticket_price: number | null;
+  invited_ticket_price: number | null;
+  is_paid: boolean;
+  is_private: boolean;
+  flyer_url: string | null;
+  registrations_count: number;
+  ticket_sales_count: number;
+}
+
 type SectionId = 'resumen' | 'contactos' | 'pipeline' | 'gestion';
 
 const SECTIONS: { id: SectionId; label: string; icon: React.ReactNode }[] = [
@@ -36,13 +56,18 @@ const SECTIONS: { id: SectionId; label: string; icon: React.ReactNode }[] = [
 export function CRMAdmin() {
   const [open, setOpen] = useState<Set<SectionId>>(new Set(['resumen']));
   const [users, setUsers] = useState<CRMUser[]>([]);
+  const [events, setEvents] = useState<GestionEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [lastFetch, setLastFetch] = useState<Date | null>(null);
 
-  const fetchUsers = useCallback(async () => {
+  const fetchData = useCallback(async () => {
     setLoading(true);
 
-    const [{ data: profilesData }, { data: artistasData }] = await Promise.all([
+    const [
+      { data: profilesData },
+      { data: artistasData },
+      eventsRes,
+    ] = await Promise.all([
       supabase
         .from('user_profiles')
         .select('id, email, role, display_name, avatar_url, telefono, created_at, updated_at, membresia_activa, membresia_hasta, membresia_tipo, permisos_totales')
@@ -51,25 +76,26 @@ export function CRMAdmin() {
         .from('artistas')
         .select('id, nombre, slug, active, user_id')
         .not('user_id', 'is', null),
+      fetch('/api/gestion/events').then(r => r.ok ? r.json() : { events: [] }).catch(() => ({ events: [] })),
     ]);
 
-    // Indexar artistas por user_id para merge O(1)
+    // Merge artistas por user_id
     const artistaMap = new Map<string, { id: string; nombre: string; slug: string; active: boolean }>();
     artistasData?.forEach(a => {
       if (a.user_id) artistaMap.set(a.user_id, { id: a.id, nombre: a.nombre, slug: a.slug, active: a.active });
     });
 
-    const merged: CRMUser[] = (profilesData ?? []).map(u => ({
+    setUsers((profilesData ?? []).map(u => ({
       ...u,
       artistas: artistaMap.has(u.id) ? [artistaMap.get(u.id)!] : [],
-    }));
+    })));
 
-    setUsers(merged);
+    setEvents(eventsRes.events ?? []);
     setLastFetch(new Date());
     setLoading(false);
   }, []);
 
-  useEffect(() => { fetchUsers(); }, [fetchUsers]);
+  useEffect(() => { fetchData(); }, [fetchData]);
 
   const toggle = (id: SectionId) => {
     setOpen(prev => {
@@ -82,7 +108,7 @@ export function CRMAdmin() {
   return (
     <div className="space-y-2">
       {/* Header */}
-      <div className="flex items-center justify-between px-1 mb-5">
+      <div className="flex items-center justify-between px-1 mb-4">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.25em] text-manso-cream">CRM — Vista del negocio</p>
           {lastFetch && (
@@ -92,7 +118,7 @@ export function CRMAdmin() {
           )}
         </div>
         <button
-          onClick={fetchUsers}
+          onClick={fetchData}
           disabled={loading}
           className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-manso-cream/10 text-manso-cream/40 hover:text-manso-cream hover:border-manso-cream/30 transition-all text-[9px] font-black uppercase tracking-widest disabled:opacity-40"
         >
@@ -101,6 +127,10 @@ export function CRMAdmin() {
         </button>
       </div>
 
+      {/* KPI Strip — siempre visible */}
+      <CRMKPIStrip users={users} events={events} loading={loading} />
+
+      {/* Acordeones */}
       {SECTIONS.map(section => {
         const isOpen = open.has(section.id);
         return (
@@ -128,9 +158,9 @@ export function CRMAdmin() {
                 ) : (
                   <>
                     {section.id === 'resumen'   && <CRMResumen users={users} />}
-                    {section.id === 'contactos' && <CRMContactos users={users} onRefresh={fetchUsers} />}
-                    {section.id === 'pipeline'  && <CRMPipeline users={users} onRefresh={fetchUsers} />}
-                    {section.id === 'gestion'   && <CRMGestion />}
+                    {section.id === 'contactos' && <CRMContactos users={users} onRefresh={fetchData} />}
+                    {section.id === 'pipeline'  && <CRMPipeline users={users} onRefresh={fetchData} />}
+                    {section.id === 'gestion'   && <CRMGestion events={events} onRefresh={fetchData} />}
                   </>
                 )}
               </div>
