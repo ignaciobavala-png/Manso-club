@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { getSiteConfig, setSiteConfig } from '@/lib/siteConfig';
-import { Settings, BarChart3, Type, Search } from 'lucide-react';
+import { Search } from 'lucide-react';
 
 export function FormSiteConfig() {
   const [loading, setLoading] = useState(false);
@@ -140,104 +140,6 @@ export function FormSiteConfig() {
           <p className="text-[10px] text-manso-cream/30 text-right -mt-2">
             {(formData.seo_description || '').length}/160 caracteres recomendados
           </p>
-        </div>
-
-        <div className="w-full h-px bg-manso-cream/10" />
-
-        {/* Sección Títulos Principales */}
-        <div className="space-y-6">
-          <div className="text-center mb-6">
-            <label className="block text-sm font-bold uppercase tracking-widest text-manso-cream/60 mb-4">
-              Título Principal de la Sección
-            </label>
-            {/* Preview del título */}
-            <div className="bg-manso-cream/5 rounded-2xl p-6 border border-manso-cream/10 mb-4">
-              <h2 className="text-2xl md:text-4xl font-bold uppercase tracking-tighter text-manso-cream leading-[0.9]">
-                {formData.porque_titulo || 'Why Manso'}
-              </h2>
-              <p className="text-lg text-manso-cream/70 mt-2">
-                {formData.porque_subtitulo || 'More than just a workspace...'}
-              </p>
-            </div>
-            {/* Input del título */}
-            <input
-              type="text"
-              placeholder="Título principal"
-              className="w-full bg-manso-cream/10 p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all mb-3"
-              value={formData.porque_titulo || ''}
-              onChange={(e) => handleInputChange('porque_titulo', e.target.value)}
-            />
-            <textarea
-              placeholder="Subtítulo descriptivo"
-              className="w-full bg-manso-cream/10 p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none h-20 resize-none text-manso-cream placeholder:text-manso-cream/40"
-              value={formData.porque_subtitulo || ''}
-              onChange={(e) => handleInputChange('porque_subtitulo', e.target.value)}
-            />
-          </div>
-        </div>
-
-        {/* Sección Cards de Beneficios */}
-        <div className="space-y-6">
-          <div className="flex items-center gap-3 mb-4">
-            <Settings size={20} className="text-manso-terra" />
-            <h3 className="text-lg font-black uppercase tracking-tighter text-manso-cream">
-              Cards de Beneficios
-            </h3>
-          </div>
-
-          {/* Cards con preview visual */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {[1, 2, 3, 4].map((num) => (
-              <div key={num} className="bg-manso-cream/5 rounded-2xl p-4 border border-manso-cream/10">
-                {/* Mini preview */}
-                <div className="bg-manso-black/50 rounded-2xl p-4 mb-4 border border-manso-cream/10">
-                  <h4 className="text-lg font-bold text-white mb-2">
-                    {formData[`beneficio${num}_titulo`] || `Título del Beneficio ${num}`}
-                  </h4>
-                  <p className="text-sm text-white/60">
-                    {formData[`beneficio${num}_descripcion`] || `Descripción del beneficio ${num}...`}
-                  </p>
-                </div>
-                {/* Campos de edición */}
-                <div className="space-y-2">
-                  <input 
-                    placeholder="Título del beneficio"
-                    className="w-full bg-manso-cream/10 p-3 rounded-xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/30 text-sm"
-                    value={formData[`beneficio${num}_titulo`] || ''}
-                    onChange={e => handleInputChange(`beneficio${num}_titulo`, e.target.value)}
-                  />
-                  <textarea 
-                    placeholder="Descripción del beneficio"
-                    className="w-full bg-manso-cream/10 p-3 rounded-xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/30 text-sm h-20 resize-none"
-                    value={formData[`beneficio${num}_descripcion`] || ''}
-                    onChange={e => handleInputChange(`beneficio${num}_descripcion`, e.target.value)}
-                  />
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Sección Texto Adicional */}
-        <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-bold uppercase tracking-widest text-manso-cream/60 mb-4">
-              Texto Adicional (Opcional) — aparece debajo de las cards
-            </label>
-            {/* Preview del texto */}
-            <div className="bg-manso-cream/5 rounded-2xl p-6 border border-manso-cream/10 mb-4">
-              <p className="text-lg md:text-xl font-light text-manso-cream/70 leading-relaxed">
-                {formData.porque_main_text || 'Texto descriptivo adicional...'}
-              </p>
-            </div>
-            {/* Textarea del texto */}
-            <textarea
-              placeholder="Texto adicional que aparecerá debajo de las cards de beneficios"
-              className="w-full bg-manso-cream/10 p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none h-32 resize-none text-manso-cream placeholder:text-manso-cream/40"
-              value={formData.porque_main_text || ''}
-              onChange={(e) => handleInputChange('porque_main_text', e.target.value)}
-            />
-          </div>
         </div>
 
         {/* Mensaje de feedback */}

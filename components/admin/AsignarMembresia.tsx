@@ -28,6 +28,9 @@ export function AsignarMembresia() {
 
   useEffect(() => {
     cargarTodos();
+    const handler = () => cargarTodos();
+    window.addEventListener('dashboardRefresh', handler);
+    return () => window.removeEventListener('dashboardRefresh', handler);
   }, []);
 
   const cargarTodos = async () => {

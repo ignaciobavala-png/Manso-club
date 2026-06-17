@@ -46,6 +46,9 @@ export function UsuariosList() {
 
   useEffect(() => {
     fetchUsuarios();
+    const handler = () => fetchUsuarios();
+    window.addEventListener('dashboardRefresh', handler);
+    return () => window.removeEventListener('dashboardRefresh', handler);
   }, []);
 
   const fetchUsuarios = async () => {

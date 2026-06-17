@@ -1,4 +1,3 @@
-import type { Metadata } from 'next';
 import Image from 'next/image';
 import { AdaptiveSectionLayout } from '@/components/ui/AdaptiveSectionLayout';
 import { getTeamMembers } from '@/lib/team';
@@ -6,22 +5,6 @@ import { getAboutUs } from '@/lib/aboutUs';
 import { ParticleBackground } from '@/components/Home/ParticleBackground';
 
 export const revalidate = 60;
-
-export const metadata: Metadata = {
-  title: 'Nosotros | Manso Club',
-  description: 'Conocé el espacio creativo Manso Club en Buenos Aires. Nuestro equipo, nuestra historia y nuestra comunidad.',
-  openGraph: {
-    title: 'Nosotros | Manso Club',
-    description: 'Conocé el espacio creativo Manso Club en Buenos Aires.',
-    images: [{ url: '/og-image.png', width: 800, height: 800 }],
-  },
-  twitter: {
-    card: 'summary_large_image',
-    title: 'Nosotros | Manso Club',
-    description: 'Conocé el espacio creativo Manso Club en Buenos Aires.',
-    images: ['/og-image.png'],
-  },
-};
 
 export default async function AboutPage() {
   const teamMembers = await getTeamMembers();
@@ -104,22 +87,22 @@ export default async function AboutPage() {
             return (
               <div key={member.id} className="flex flex-col w-full">
                 {member.photo_url ? (
-                  <div className="relative w-full aspect-[3/4] rounded-lg overflow-hidden mb-3 flex-shrink-0">
+                  <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden mb-3 flex-shrink-0 mx-auto">
                     <Image
                       src={member.photo_url}
                       alt={member.name}
                       fill
                       className="object-cover"
-                      sizes="(max-width: 768px) 45vw, 22vw"
+                      sizes="(max-width: 768px) 96px, 128px"
                     />
                   </div>
                 ) : (
-                  <div className="w-full aspect-[3/4] bg-zinc-800 rounded-lg mb-3 flex items-center justify-center">
+                  <div className="w-24 h-24 md:w-32 md:h-32 bg-zinc-800 rounded-full mb-3 flex items-center justify-center mx-auto">
                     <span className="text-zinc-500 text-2xl md:text-3xl font-black tracking-widest">{initials}</span>
                   </div>
                 )}
-                <p className="text-manso-cream font-black uppercase text-base md:text-lg tracking-tight leading-tight">{member.name}</p>
-                <p className="text-zinc-500 text-sm md:text-base mt-1">{member.role}</p>
+                <p className="text-manso-cream font-black uppercase text-base md:text-lg tracking-tight leading-tight text-center">{member.name}</p>
+                <p className="text-zinc-500 text-sm md:text-base mt-3 text-center">{member.role}</p>
               </div>
             );
           })}
@@ -127,11 +110,11 @@ export default async function AboutPage() {
             <>
               {(['AH', 'AM', 'FB', 'JP'] as const).map((ini) => (
                 <div key={ini} className="flex flex-col w-full">
-                  <div className="w-full aspect-[3/4] bg-zinc-800 rounded-lg mb-3 flex items-center justify-center">
+                  <div className="w-24 h-24 md:w-32 md:h-32 bg-zinc-800 rounded-full mb-3 flex items-center justify-center mx-auto">
                     <span className="text-zinc-500 text-2xl font-black tracking-widest">{ini}</span>
                   </div>
-                  <p className="text-manso-black font-black uppercase text-base md:text-lg tracking-tight leading-tight">Nombre</p>
-                  <p className="text-zinc-500 text-sm md:text-base mt-1">Rol</p>
+                  <p className="text-manso-cream font-black uppercase text-base md:text-lg tracking-tight leading-tight text-center">Nombre</p>
+                  <p className="text-zinc-500 text-sm md:text-base mt-1 text-center">Rol</p>
                 </div>
               ))}
             </>

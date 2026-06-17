@@ -38,7 +38,7 @@ import { PropuestasList } from './PropuestasList';
 import { FormManifiesto } from './FormManifiesto';
 import { FormOfertaEmpleo } from './FormOfertaEmpleo';
 import { OfertasEmpleoList } from './OfertasEmpleoList';
-import { LogOut, ShoppingBag, User, Home, Calendar, Music, Crown, Settings, Star, Users, Image, Layout, FileText, CreditCard, Package, Video, BookOpen, Calculator, Briefcase, Mail, Network, BarChart2 } from 'lucide-react';
+import { LogOut, ShoppingBag, User, Home, Calendar, Music, Crown, Settings, Star, Users, Image, Layout, FileText, CreditCard, Package, Video, BookOpen, Calculator, Briefcase, Mail, Network, BarChart2, Search } from 'lucide-react';
 import { CotizadorConfigAdmin } from './CotizadorConfigAdmin';
 import { CotizacionesList } from './CotizacionesList';
 import { NewsletterList } from './NewsletterList';
@@ -194,8 +194,8 @@ export function Dashboard() {
             <span className="hidden sm:inline">Team</span>
           </button>
           <button onClick={() => setTab('why')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'why' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
-            <Settings size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Why</span>
+            <Search size={12} className="sm:size-14" />
+            <span className="hidden sm:inline">SEO</span>
           </button>
           <button onClick={() => setTab('about')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'about' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
             <FileText size={12} className="sm:size-14" />

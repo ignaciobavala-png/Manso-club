@@ -47,6 +47,9 @@ export function MembresiaActivasList() {
 
   useEffect(() => {
     fetchMiembros();
+    const handler = () => fetchMiembros();
+    window.addEventListener('dashboardRefresh', handler);
+    return () => window.removeEventListener('dashboardRefresh', handler);
   }, []);
 
   const fetchMiembros = async () => {
