@@ -32,10 +32,7 @@ import { MembresiaGalleryList } from './MembresiaGalleryList';
 import { FormMembresiaTexto } from './FormMembresiaTexto';
 import { FormMultimedia } from './FormMultimedia';
 import { MultimediaList } from './MultimediaList';
-import { FormStreamingContenido } from './FormStreamingContenido';
-import { StreamingContenidoList } from './StreamingContenidoList';
-import { StreamingCategoriasAdmin } from './StreamingCategoriasAdmin';
-import { CanalControl } from './CanalControl';
+import { StreamingAdmin } from './StreamingAdmin';
 import { PropuestasList } from './PropuestasList';
 import { FormManifiesto } from './FormManifiesto';
 import { FormOfertaEmpleo } from './FormOfertaEmpleo';
@@ -224,10 +221,10 @@ export function Dashboard() {
             {/* Columna Izquierda: Formularios de Creación */}
             <div className="xl:col-span-5">
               <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
-                {tab === 'about' ? 'Editar About Us' : tab === 'home' ? 'Evento del Home' : tab === 'tienda' ? 'Producto' : tab === 'artistas' ? 'Artista' : tab === 'agenda' ? 'Evento de Agenda' : tab === 'eventos' ? 'Evento' : tab === 'musica' ? 'Track para el Home' : tab === 'membresias' ? 'Membresía' : tab === 'team' ? 'Miembro del Team' : tab === 'hero' ? 'Slide del Hero' : tab === 'galeria' ? 'Foto de Galería' : tab === 'checkout' ? 'Configuración del Checkout' : tab === 'pedidos' ? 'Gestión de Pedidos' : tab === 'contenidos' ? 'Nuevo Video' : tab === 'manifiesto' ? 'Editar Manifiesto' : tab === 'cotizador' ? 'Configuración' : tab === 'streaming' ? 'Nuevo Contenido' : tab === 'empleos' ? 'Nueva Oferta' : tab === 'newsletter' ? 'Newsletter' : 'Configuración Why'}
+                {tab === 'about' ? 'Editar About Us' : tab === 'home' ? 'Evento del Home' : tab === 'tienda' ? 'Producto' : tab === 'artistas' ? 'Artista' : tab === 'agenda' ? 'Evento de Agenda' : tab === 'eventos' ? 'Evento' : tab === 'musica' ? 'Track para el Home' : tab === 'membresias' ? 'Membresía' : tab === 'team' ? 'Miembro del Team' : tab === 'hero' ? 'Slide del Hero' : tab === 'galeria' ? 'Foto de Galería' : tab === 'checkout' ? 'Configuración del Checkout' : tab === 'pedidos' ? 'Gestión de Pedidos' : tab === 'contenidos' ? 'Nuevo Video' : tab === 'manifiesto' ? 'Editar Manifiesto' : tab === 'cotizador' ? 'Configuración' : tab === 'empleos' ? 'Nueva Oferta' : tab === 'newsletter' ? 'Newsletter' : 'Configuración Why'}
               </h2>
               <div className="sticky top-4 sm:top-8">
-                {tab === 'about' ? <FormAboutUs /> : tab === 'home' ? <FormEventoHome /> : tab === 'tienda' ? <FormProducto /> : tab === 'artistas' ? <FormArtista /> : tab === 'agenda' ? <FormAgenda /> : tab === 'eventos' ? <FormEvento /> : tab === 'musica' ? <FormMainMusic /> : tab === 'membresias' ? <FormMembresia /> : tab === 'team' ? <FormTeam /> : tab === 'hero' ? <FormHero /> : tab === 'galeria' ? <FormGallery /> : tab === 'checkout' ? <FormCheckoutConfig /> : tab === 'contenidos' ? <FormMultimedia /> : tab === 'manifiesto' ? <FormManifiesto /> : tab === 'cotizador' ? <CotizadorConfigAdmin /> : tab === 'streaming' ? <FormStreamingContenido /> : tab === 'empleos' ? <FormOfertaEmpleo /> : tab === 'newsletter' ? <div className="bg-manso-cream/5 p-8 rounded-[2.5rem] border border-manso-cream/10"><div className="text-center"><Mail className="mx-auto text-manso-cream/40 mb-4" size={48} /><h3 className="text-lg font-black uppercase tracking-tighter text-manso-cream mb-2">Newsletter</h3><p className="text-sm text-manso-cream/60">Los suscriptores se muestran en el panel de la derecha.</p></div></div> : tab === 'pedidos' ?<div className="bg-manso-cream/5 p-8 rounded-[2.5rem] border border-manso-cream/10">
+                {tab === 'about' ? <FormAboutUs /> : tab === 'home' ? <FormEventoHome /> : tab === 'tienda' ? <FormProducto /> : tab === 'artistas' ? <FormArtista /> : tab === 'agenda' ? <FormAgenda /> : tab === 'eventos' ? <FormEvento /> : tab === 'musica' ? <FormMainMusic /> : tab === 'membresias' ? <FormMembresia /> : tab === 'team' ? <FormTeam /> : tab === 'hero' ? <FormHero /> : tab === 'galeria' ? <FormGallery /> : tab === 'checkout' ? <FormCheckoutConfig /> : tab === 'contenidos' ? <FormMultimedia /> : tab === 'manifiesto' ? <FormManifiesto /> : tab === 'cotizador' ? <CotizadorConfigAdmin /> : tab === 'empleos' ? <FormOfertaEmpleo /> : tab === 'newsletter' ? <div className="bg-manso-cream/5 p-8 rounded-[2.5rem] border border-manso-cream/10"><div className="text-center"><Mail className="mx-auto text-manso-cream/40 mb-4" size={48} /><h3 className="text-lg font-black uppercase tracking-tighter text-manso-cream mb-2">Newsletter</h3><p className="text-sm text-manso-cream/60">Los suscriptores se muestran en el panel de la derecha.</p></div></div> : tab === 'pedidos' ?<div className="bg-manso-cream/5 p-8 rounded-[2.5rem] border border-manso-cream/10">
                   <div className="text-center">
                     <Package className="mx-auto text-manso-cream/40 mb-4" size={48} />
                     <h3 className="text-lg font-black uppercase tracking-tighter text-manso-cream mb-2">
@@ -316,7 +313,7 @@ export function Dashboard() {
               ) : tab === 'cotizador' ? (
                 <CotizacionesList refreshTrigger={refreshTrigger} />
               ) : tab === 'streaming' ? (
-                <StreamingContenidoList refreshTrigger={refreshTrigger} />
+                <StreamingAdmin refreshTrigger={refreshTrigger} />
               ) : tab === 'empleos' ? (
                 <div className="space-y-8">
                   <OfertasEmpleoList refreshTrigger={refreshTrigger} />
@@ -336,23 +333,6 @@ export function Dashboard() {
             </div>
         </div>}
 
-        {/* Sección adicional de Streaming: Canal + Categorías */}
-        {tab === 'streaming' && (
-          <div className="mt-10 grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-12">
-            <div className="xl:col-span-5">
-              <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
-                Control del Canal
-              </h2>
-              <CanalControl />
-            </div>
-            <div className="xl:col-span-7">
-              <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
-                Categorías
-              </h2>
-              <StreamingCategoriasAdmin />
-            </div>
-          </div>
-        )}
 
       </div>
     </div>
