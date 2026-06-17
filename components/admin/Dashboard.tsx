@@ -33,6 +33,7 @@ import { FormMembresiaTexto } from './FormMembresiaTexto';
 import { FormMultimedia } from './FormMultimedia';
 import { MultimediaList } from './MultimediaList';
 import { StreamingAdmin } from './StreamingAdmin';
+import { TiendaAdmin } from './TiendaAdmin';
 import { PropuestasList } from './PropuestasList';
 import { FormManifiesto } from './FormManifiesto';
 import { FormOfertaEmpleo } from './FormOfertaEmpleo';
@@ -46,7 +47,7 @@ import { AsignarMembresia } from './AsignarMembresia';
 import { MembresiaActivasList } from './MembresiaActivasList';
 
 export function Dashboard() {
-  const [tab, setTab] = useState<'home' | 'tienda' | 'artistas' | 'agenda' | 'eventos' | 'musica' | 'membresias' | 'team' | 'hero' | 'galeria' | 'why' | 'about' | 'checkout' | 'pedidos' | 'contenidos' | 'manifiesto' | 'cotizador' | 'streaming' | 'empleos' | 'newsletter' | 'comunidad'>('home');
+  const [tab, setTab] = useState<'home' | 'tienda' | 'artistas' | 'agenda' | 'eventos' | 'musica' | 'membresias' | 'team' | 'hero' | 'galeria' | 'why' | 'about' | 'contenidos' | 'manifiesto' | 'cotizador' | 'streaming' | 'empleos' | 'newsletter' | 'comunidad'>('home');
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
@@ -139,10 +140,6 @@ export function Dashboard() {
             <Video size={12} className="sm:size-14" />
             <span className="hidden sm:inline">Streaming</span>
           </button>
-          <button onClick={() => setTab('pedidos')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'pedidos' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
-            <Package size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Pedidos</span>
-          </button>
           <button onClick={() => setTab('artistas')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'artistas' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
             <User size={12} className="sm:size-14" />
             <span className="hidden sm:inline">Artistas</span>
@@ -183,11 +180,7 @@ export function Dashboard() {
             <Image size={12} className="sm:size-14" />
             <span className="hidden sm:inline">Galería</span>
           </button>
-          <button onClick={() => setTab('checkout')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'checkout' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
-            <CreditCard size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Checkout</span>
-          </button>
-          <button onClick={() => setTab('cotizador')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'cotizador' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
+          <button onClick={() => setTab('cotizador')}className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'cotizador' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
             <Calculator size={12} className="sm:size-14" />
             <span className="hidden sm:inline">Cotizador</span>
           </button>
@@ -213,26 +206,17 @@ export function Dashboard() {
         {tab === 'comunidad' && <div className="mb-8"><ComunidadAdmin /></div>}
         {tab === 'streaming' && <div className="mb-8"><StreamingAdmin refreshTrigger={refreshTrigger} /></div>}
         {tab === 'membresias' && <div className="mb-8"><MembresiasAdmin refreshTrigger={refreshTrigger} /></div>}
+        {tab === 'tienda' && <div className="mb-8"><TiendaAdmin refreshTrigger={refreshTrigger} /></div>}
 
         {/* Contenido Principal — grid dos columnas */}
-        {tab !== 'comunidad' && tab !== 'streaming' && tab !== 'membresias' && <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-12">
+        {tab !== 'comunidad' && tab !== 'streaming' && tab !== 'membresias' && tab !== 'tienda' && <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-12">
             {/* Columna Izquierda: Formularios de Creación */}
             <div className="xl:col-span-5">
               <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
-                {tab === 'about' ? 'Editar About Us' : tab === 'home' ? 'Evento del Home' : tab === 'tienda' ? 'Producto' : tab === 'artistas' ? 'Artista' : tab === 'agenda' ? 'Evento de Agenda' : tab === 'eventos' ? 'Evento' : tab === 'musica' ? 'Track para el Home' : tab === 'team' ? 'Miembro del Team' : tab === 'hero' ? 'Slide del Hero' : tab === 'galeria' ? 'Foto de Galería' : tab === 'checkout' ? 'Configuración del Checkout' : tab === 'pedidos' ? 'Gestión de Pedidos' : tab === 'contenidos' ? 'Nuevo Video' : tab === 'manifiesto' ? 'Editar Manifiesto' : tab === 'cotizador' ? 'Configuración' : tab === 'empleos' ? 'Nueva Oferta' : tab === 'newsletter' ? 'Newsletter' : 'Configuración Why'}
+                {tab === 'about' ? 'Editar About Us' : tab === 'home' ? 'Evento del Home' : tab === 'artistas' ? 'Artista' : tab === 'agenda' ? 'Evento de Agenda' : tab === 'eventos' ? 'Evento' : tab === 'musica' ? 'Track para el Home' : tab === 'team' ? 'Miembro del Team' : tab === 'hero' ? 'Slide del Hero' : tab === 'galeria' ? 'Foto de Galería' : tab === 'contenidos' ? 'Nuevo Video' : tab === 'manifiesto' ? 'Editar Manifiesto' : tab === 'cotizador' ? 'Configuración' : tab === 'empleos' ? 'Nueva Oferta' : tab === 'newsletter' ? 'Newsletter' : 'Configuración Why'}
               </h2>
               <div className="sticky top-4 sm:top-8">
-                {tab === 'about' ? <FormAboutUs /> : tab === 'home' ? <FormEventoHome /> : tab === 'tienda' ? <FormProducto /> : tab === 'artistas' ? <FormArtista /> : tab === 'agenda' ? <FormAgenda /> : tab === 'eventos' ? <FormEvento /> : tab === 'musica' ? <FormMainMusic /> : tab === 'team' ? <FormTeam /> : tab === 'hero' ? <FormHero /> : tab === 'galeria' ? <FormGallery /> : tab === 'checkout' ? <FormCheckoutConfig /> : tab === 'contenidos' ? <FormMultimedia /> : tab === 'manifiesto' ? <FormManifiesto /> : tab === 'cotizador' ? <CotizadorConfigAdmin /> : tab === 'empleos' ? <FormOfertaEmpleo /> : tab === 'newsletter' ? <div className="bg-manso-cream/5 p-8 rounded-[2.5rem] border border-manso-cream/10"><div className="text-center"><Mail className="mx-auto text-manso-cream/40 mb-4" size={48} /><h3 className="text-lg font-black uppercase tracking-tighter text-manso-cream mb-2">Newsletter</h3><p className="text-sm text-manso-cream/60">Los suscriptores se muestran en el panel de la derecha.</p></div></div> : tab === 'pedidos' ?<div className="bg-manso-cream/5 p-8 rounded-[2.5rem] border border-manso-cream/10">
-                  <div className="text-center">
-                    <Package className="mx-auto text-manso-cream/40 mb-4" size={48} />
-                    <h3 className="text-lg font-black uppercase tracking-tighter text-manso-cream mb-2">
-                      Gestión de Pedidos
-                    </h3>
-                    <p className="text-sm text-manso-cream/60 mb-4">
-                      Visualiza y gestiona todos los pedidos recibidos desde el panel de la derecha.
-                    </p>
-                  </div>
-                </div> : <FormSiteConfig />}
+                {tab === 'about' ? <FormAboutUs /> : tab === 'home' ? <FormEventoHome /> : tab === 'artistas' ? <FormArtista /> : tab === 'agenda' ? <FormAgenda /> : tab === 'eventos' ? <FormEvento /> : tab === 'musica' ? <FormMainMusic /> : tab === 'team' ? <FormTeam /> : tab === 'hero' ? <FormHero /> : tab === 'galeria' ? <FormGallery /> : tab === 'contenidos' ? <FormMultimedia /> : tab === 'manifiesto' ? <FormManifiesto /> : tab === 'cotizador' ? <CotizadorConfigAdmin /> : tab === 'empleos' ? <FormOfertaEmpleo /> : tab === 'newsletter' ? <div className="bg-manso-cream/5 p-8 rounded-[2.5rem] border border-manso-cream/10"><div className="text-center"><Mail className="mx-auto text-manso-cream/40 mb-4" size={48} /><h3 className="text-lg font-black uppercase tracking-tighter text-manso-cream mb-2">Newsletter</h3><p className="text-sm text-manso-cream/60">Los suscriptores se muestran en el panel de la derecha.</p></div></div> : <FormSiteConfig />}
               </div>
             </div>
 
@@ -258,8 +242,6 @@ export function Dashboard() {
                 </div>
               ) : tab === 'home' ? (
                 <EventosHomeList refreshTrigger={refreshTrigger} />
-              ) : tab === 'tienda' ? (
-                <ItemList table="productos" title="Inventario de Tienda" refreshTrigger={refreshTrigger} onEdit={handleEditProduct} />
               ) : tab === 'artistas' ? (
                 <ArtistasList refreshTrigger={refreshTrigger} />
               ) : tab === 'agenda' ? (
@@ -274,21 +256,6 @@ export function Dashboard() {
                 <HeroList refreshTrigger={refreshTrigger} />
               ) : tab === 'galeria' ? (
                 <GalleryList refreshTrigger={refreshTrigger} />
-              ) : tab === 'checkout' ? (
-                <div className="bg-manso-cream/5 p-8 rounded-[2.5rem] border border-manso-cream/10">
-                  <div className="text-center">
-                    <CreditCard className="mx-auto text-manso-cream/40 mb-4" size={48} />
-                    <h3 className="text-lg font-black uppercase tracking-tighter text-manso-cream mb-2">
-                      Configuración del Checkout
-                    </h3>
-                    <p className="text-sm text-manso-cream/60 mb-4">
-                      Configura los datos bancarios y notificaciones desde el formulario de la izquierda.
-                    </p>
-                    <p className="text-xs text-manso-cream/40">
-                      Los cambios se reflejarán inmediatamente en la página de checkout
-                    </p>
-                  </div>
-                </div>
               ) : tab === 'contenidos' ? (
                 <MultimediaList refreshTrigger={refreshTrigger} />
               ) : tab === 'manifiesto' ? (
@@ -317,8 +284,6 @@ export function Dashboard() {
                 </div>
               ) : tab === 'newsletter' ? (
                 <NewsletterList />
-              ) : tab === 'pedidos' ? (
-                <PedidosList refreshTrigger={refreshTrigger} />
               ) : tab === 'why' ? (
                 <SiteConfigList refreshTrigger={refreshTrigger} />
               ) : (
