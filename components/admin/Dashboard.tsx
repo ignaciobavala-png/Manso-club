@@ -126,194 +126,89 @@ export function Dashboard() {
 
         {/* Selector de Pestañas Estilizado */}
         <div className="flex flex-wrap gap-1 sm:gap-2 mb-6 sm:mb-10 bg-manso-cream/10 p-1 rounded-2xl w-full">
-          <button 
-            onClick={() => setTab('home')} 
-            className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
-              tab === 'home' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
-            }`}
-          >
-            <Home size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Home</span>
+          <button onClick={() => setTab('comunidad')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'comunidad' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
+            <Network size={12} className="sm:size-14" />
+            <span className="hidden sm:inline">Comunidad</span>
           </button>
-          <button 
-            onClick={() => setTab('tienda')} 
-            className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
-              tab === 'tienda' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
-            }`}
-          >
-            <ShoppingBag size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Tienda</span>
-          </button>
-          <button 
-            onClick={() => setTab('artistas')} 
-            className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
-              tab === 'artistas' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
-            }`}
-          >
-            <User size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Artistas</span>
-          </button>
-          <button 
-            onClick={() => setTab('agenda')} 
-            className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
-              tab === 'agenda' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
-            }`}
-          >
-            <Calendar size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Agenda</span>
-          </button>
-          <button 
-            onClick={() => setTab('eventos')} 
-            className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
-              tab === 'eventos' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
-            }`}
-          >
-            <Star size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Eventos</span>
-          </button>
-          <button 
-            onClick={() => setTab('musica')} 
-            className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
-              tab === 'musica' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
-            }`}
-          >
-            <Music size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Música</span>
-          </button>
-          <button 
-            onClick={() => setTab('membresias')} 
-            className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
-              tab === 'membresias' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
-            }`}
-          >
+          <button onClick={() => setTab('membresias')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'membresias' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
             <Crown size={12} className="sm:size-14" />
             <span className="hidden sm:inline">Membresías</span>
           </button>
-          <button 
-            onClick={() => setTab('team')} 
-            className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
-              tab === 'team' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
-            }`}
-          >
-            <Users size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Team</span>
+          <button onClick={() => setTab('agenda')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'agenda' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
+            <Calendar size={12} className="sm:size-14" />
+            <span className="hidden sm:inline">Agenda</span>
           </button>
-          <button 
-            onClick={() => setTab('hero')} 
-            className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
-              tab === 'hero' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
-            }`}
-          >
-            <Layout size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Hero</span>
-          </button>
-          <button 
-            onClick={() => setTab('galeria')} 
-            className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
-              tab === 'galeria' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
-            }`}
-          >
-            <Image size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Galería</span>
-          </button>
-          <button 
-            onClick={() => setTab('why')} 
-            className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
-              tab === 'why' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
-            }`}
-          >
-            <Settings size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Why</span>
-          </button>
-          <button 
-            onClick={() => setTab('about')} 
-            className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
-              tab === 'about' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
-            }`}
-          >
-            <FileText size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">About</span>
-          </button>
-          <button 
-            onClick={() => setTab('checkout')} 
-            className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
-              tab === 'checkout' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
-            }`}
-          >
-            <CreditCard size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Checkout</span>
-          </button>
-          <button
-            onClick={() => setTab('pedidos')}
-            className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
-              tab === 'pedidos' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
-            }`}
-          >
-            <Package size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Pedidos</span>
-          </button>
-          <button
-            onClick={() => setTab('contenidos')}
-            className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
-              tab === 'contenidos' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
-            }`}
-          >
-            <Video size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Contenidos</span>
-          </button>
-          <button
-            onClick={() => setTab('manifiesto')}
-            className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
-              tab === 'manifiesto' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
-            }`}
-          >
-            <BookOpen size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Manifiesto</span>
-          </button>
-          <button
-            onClick={() => setTab('cotizador')}
-            className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
-              tab === 'cotizador' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
-            }`}
-          >
-            <Calculator size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Cotizador</span>
-          </button>
-          <button
-            onClick={() => setTab('streaming')}
-            className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
-              tab === 'streaming' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
-            }`}
-          >
+          <button onClick={() => setTab('streaming')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'streaming' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
             <Video size={12} className="sm:size-14" />
             <span className="hidden sm:inline">Streaming</span>
           </button>
-          <button
-            onClick={() => setTab('empleos')}
-            className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
-              tab === 'empleos' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
-            }`}
-          >
+          <button onClick={() => setTab('pedidos')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'pedidos' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
+            <Package size={12} className="sm:size-14" />
+            <span className="hidden sm:inline">Pedidos</span>
+          </button>
+          <button onClick={() => setTab('artistas')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'artistas' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
+            <User size={12} className="sm:size-14" />
+            <span className="hidden sm:inline">Artistas</span>
+          </button>
+          <button onClick={() => setTab('home')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'home' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
+            <Home size={12} className="sm:size-14" />
+            <span className="hidden sm:inline">Home</span>
+          </button>
+          <button onClick={() => setTab('contenidos')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'contenidos' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
+            <Video size={12} className="sm:size-14" />
+            <span className="hidden sm:inline">Contenidos</span>
+          </button>
+          <button onClick={() => setTab('empleos')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'empleos' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
             <Briefcase size={12} className="sm:size-14" />
             <span className="hidden sm:inline">Empleos</span>
           </button>
-          <button
-            onClick={() => setTab('newsletter')}
-            className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
-              tab === 'newsletter' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
-            }`}
-          >
+          <button onClick={() => setTab('newsletter')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'newsletter' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
             <Mail size={12} className="sm:size-14" />
             <span className="hidden sm:inline">Newsletter</span>
           </button>
-          <button
-            onClick={() => setTab('comunidad')}
-            className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${
-              tab === 'comunidad' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'
-            }`}
-          >
-            <Network size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Comunidad</span>
+          <button onClick={() => setTab('tienda')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'tienda' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
+            <ShoppingBag size={12} className="sm:size-14" />
+            <span className="hidden sm:inline">Tienda</span>
+          </button>
+          <button onClick={() => setTab('eventos')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'eventos' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
+            <Star size={12} className="sm:size-14" />
+            <span className="hidden sm:inline">Eventos</span>
+          </button>
+          <button onClick={() => setTab('musica')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'musica' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
+            <Music size={12} className="sm:size-14" />
+            <span className="hidden sm:inline">Música</span>
+          </button>
+          <button onClick={() => setTab('hero')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'hero' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
+            <Layout size={12} className="sm:size-14" />
+            <span className="hidden sm:inline">Hero</span>
+          </button>
+          <button onClick={() => setTab('galeria')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'galeria' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
+            <Image size={12} className="sm:size-14" />
+            <span className="hidden sm:inline">Galería</span>
+          </button>
+          <button onClick={() => setTab('checkout')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'checkout' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
+            <CreditCard size={12} className="sm:size-14" />
+            <span className="hidden sm:inline">Checkout</span>
+          </button>
+          <button onClick={() => setTab('cotizador')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'cotizador' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
+            <Calculator size={12} className="sm:size-14" />
+            <span className="hidden sm:inline">Cotizador</span>
+          </button>
+          <button onClick={() => setTab('team')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'team' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
+            <Users size={12} className="sm:size-14" />
+            <span className="hidden sm:inline">Team</span>
+          </button>
+          <button onClick={() => setTab('why')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'why' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
+            <Settings size={12} className="sm:size-14" />
+            <span className="hidden sm:inline">Why</span>
+          </button>
+          <button onClick={() => setTab('about')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'about' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
+            <FileText size={12} className="sm:size-14" />
+            <span className="hidden sm:inline">About</span>
+          </button>
+          <button onClick={() => setTab('manifiesto')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'manifiesto' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
+            <BookOpen size={12} className="sm:size-14" />
+            <span className="hidden sm:inline">Manifiesto</span>
           </button>
         </div>
 
