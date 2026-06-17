@@ -1,7 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Users, Crown, AlertTriangle, XCircle, UserMinus, Music, ShoppingBag } from 'lucide-react';
+import { Users, UserMinus, Flame, ShoppingBag, TrendingUp } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { CRMUser } from './CRMAdmin';
 
@@ -9,18 +9,8 @@ interface CRMResumenProps {
   users: CRMUser[];
 }
 
-interface StatCard {
-  label: string;
-  value: number | string;
-  icon: React.ReactNode;
-  color: string;
-  bg: string;
-  border: string;
-  sub?: string;
-}
-
 export function CRMResumen({ users }: CRMResumenProps) {
-  const [pedidosMes, setPedidosMes] = useState<number | null>(null);
+  const [pedidosMes, setPedidosMes] = useState<{ count: number; total: number } | null>(null);
 
   useEffect(() => {
     const desde = new Date();
@@ -28,113 +18,118 @@ export function CRMResumen({ users }: CRMResumenProps) {
     desde.setHours(0, 0, 0, 0);
     supabase
       .from('pedidos')
-      .select('*', { count: 'exact', head: true })
+      .select('total')
       .gte('created_at', desde.toISOString())
-      .then(({ count }) => setPedidosMes(count ?? 0));
+      .then(({ data }) => {
+        const count = data?.length ?? 0;
+        const total = data?.reduce((s, p) => s + (p.total ?? 0), 0) ?? 0;
+        setPedidosMes({ count, total });
+      });
   }, []);
 
   const now = new Date();
-  const in7days = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+  const hace7dias  = new Date(now.getTime() - 7  * 24 * 60 * 60 * 1000);
   const hace30dias = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
   const nonAdmin = users.filter(u => u.role !== 'admin');
 
-  const activos = nonAdmin.filter(u =>
-    u.membresia_activa && (!u.membresia_hasta || new Date(u.membresia_hasta) > in7days)
-  ).length;
-
-  const porVencer = nonAdmin.filter(u => {
-    if (!u.membresia_activa || !u.membresia_hasta) return false;
-    const d = new Date(u.membresia_hasta);
-    return d > now && d <= in7days;
-  }).length;
-
-  const vencidos = nonAdmin.filter(u =>
-    u.membresia_activa && !!u.membresia_hasta && new Date(u.membresia_hasta) < now
-  ).length;
-
-  const sinMembresia = nonAdmin.filter(u => !u.membresia_activa).length;
-  const artistas = users.filter(u => u.artistas && u.artistas.length > 0).length;
+  const nuevos7d  = nonAdmin.filter(u => new Date(u.created_at) >= hace7dias).length;
   const nuevos30d = nonAdmin.filter(u => new Date(u.created_at) >= hace30dias).length;
 
-  const stats: StatCard[] = [
-    {
-      label: 'Total usuarios',
-      value: nonAdmin.length,
-      icon: <Users size={18} />,
-      color: 'text-manso-cream',
-      bg: 'bg-manso-cream/5',
-      border: 'border-manso-cream/10',
-      sub: `+${nuevos30d} últimos 30d`,
-    },
-    {
-      label: 'Miembros activos',
-      value: activos,
-      icon: <Crown size={18} />,
-      color: 'text-green-400',
-      bg: 'bg-green-500/5',
-      border: 'border-green-500/20',
-      sub: nonAdmin.length > 0 ? `${Math.round((activos / nonAdmin.length) * 100)}% conversión` : undefined,
-    },
-    {
-      label: 'Vencen esta semana',
-      value: porVencer,
-      icon: <AlertTriangle size={18} />,
-      color: porVencer > 0 ? 'text-yellow-400' : 'text-manso-cream/30',
-      bg: porVencer > 0 ? 'bg-yellow-500/5' : 'bg-manso-cream/5',
-      border: porVencer > 0 ? 'border-yellow-500/20' : 'border-manso-cream/10',
-      sub: porVencer > 0 ? 'Acción urgente' : 'Sin vencimientos',
-    },
-    {
-      label: 'Membresías vencidas',
-      value: vencidos,
-      icon: <XCircle size={18} />,
-      color: vencidos > 0 ? 'text-red-400' : 'text-manso-cream/30',
-      bg: vencidos > 0 ? 'bg-red-500/5' : 'bg-manso-cream/5',
-      border: vencidos > 0 ? 'border-red-500/20' : 'border-manso-cream/10',
-      sub: vencidos > 0 ? 'Para reactivar' : undefined,
-    },
-    {
-      label: 'Sin membresía',
-      value: sinMembresia,
-      icon: <UserMinus size={18} />,
-      color: 'text-manso-cream/50',
-      bg: 'bg-manso-cream/5',
-      border: 'border-manso-cream/10',
-      sub: 'Leads fríos',
-    },
-    {
-      label: 'Artistas',
-      value: artistas,
-      icon: <Music size={18} />,
-      color: 'text-manso-olive',
-      bg: 'bg-manso-olive/5',
-      border: 'border-manso-olive/20',
-    },
-    {
-      label: 'Pedidos este mes',
-      value: pedidosMes ?? '—',
-      icon: <ShoppingBag size={18} />,
-      color: 'text-manso-terra',
-      bg: 'bg-manso-terra/5',
-      border: 'border-manso-terra/20',
-    },
-  ];
+  // Leads calientes: sin membresía, registrados en los últimos 30 días
+  const leadsCalientes = nonAdmin.filter(u =>
+    !u.membresia_activa && new Date(u.created_at) >= hace30dias
+  );
+
+  // Leads fríos: sin membresía, registrados hace más de 30 días
+  const leadsFrios = nonAdmin.filter(u =>
+    !u.membresia_activa && new Date(u.created_at) < hace30dias
+  );
+
+  const formatARS = (n: number) => `$${n.toLocaleString('es-AR', { maximumFractionDigits: 0 })}`;
 
   return (
-    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-      {stats.map(stat => (
-        <div key={stat.label} className={`${stat.bg} border ${stat.border} rounded-2xl p-4 flex flex-col gap-2`}>
-          <span className={`${stat.color} opacity-60`}>{stat.icon}</span>
-          <p className={`text-3xl font-black leading-none ${stat.color}`}>{stat.value}</p>
-          <div>
-            <p className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40">{stat.label}</p>
-            {stat.sub && (
-              <p className={`text-[8px] uppercase tracking-widest mt-0.5 ${stat.color} opacity-60`}>{stat.sub}</p>
-            )}
+    <div className="space-y-4">
+
+      {/* Crecimiento */}
+      <div>
+        <p className="text-[9px] font-black uppercase tracking-[0.3em] text-manso-cream/30 mb-3 flex items-center gap-2">
+          <TrendingUp size={11} /> Crecimiento de usuarios registrados
+        </p>
+        <div className="grid grid-cols-2 gap-2">
+          <div className="bg-manso-cream/5 border border-manso-cream/10 rounded-2xl p-4">
+            <p className="text-3xl font-black text-manso-cream leading-none">+{nuevos7d}</p>
+            <p className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40 mt-2">Usuarios nuevos esta semana</p>
+            <p className="text-[8px] text-manso-cream/20 mt-0.5">Se registraron en los últimos 7 días</p>
+          </div>
+          <div className="bg-manso-cream/5 border border-manso-cream/10 rounded-2xl p-4">
+            <p className="text-3xl font-black text-manso-cream leading-none">+{nuevos30d}</p>
+            <p className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40 mt-2">Usuarios nuevos este mes</p>
+            <p className="text-[8px] text-manso-cream/20 mt-0.5">{nonAdmin.length} usuarios en total</p>
           </div>
         </div>
-      ))}
+      </div>
+
+      {/* Leads */}
+      <div>
+        <p className="text-[9px] font-black uppercase tracking-[0.3em] text-manso-cream/30 mb-3 flex items-center gap-2">
+          <Users size={11} /> Usuarios registrados sin membresía activa
+        </p>
+        <div className="grid grid-cols-2 gap-2">
+          <div className="bg-manso-terra/5 border border-manso-terra/20 rounded-2xl p-4">
+            <div className="flex items-center gap-1.5 mb-2">
+              <Flame size={12} className="text-manso-terra" />
+              <p className="text-[8px] font-black uppercase tracking-widest text-manso-terra/70">Leads calientes</p>
+            </div>
+            <p className="text-3xl font-black text-manso-terra leading-none">{leadsCalientes.length}</p>
+            <p className="text-[8px] text-manso-terra/40 mt-1.5">Se registraron hace menos de 30 días — oportunidad de conversión</p>
+            {leadsCalientes.length > 0 && (
+              <div className="mt-2 space-y-0.5">
+                {leadsCalientes.slice(0, 3).map(u => (
+                  <p key={u.id} className="text-[8px] text-manso-cream/40 truncate">
+                    {u.display_name ?? u.email}
+                  </p>
+                ))}
+                {leadsCalientes.length > 3 && (
+                  <p className="text-[8px] text-manso-cream/20">+{leadsCalientes.length - 3} más</p>
+                )}
+              </div>
+            )}
+          </div>
+          <div className="bg-manso-cream/5 border border-manso-cream/10 rounded-2xl p-4">
+            <div className="flex items-center gap-1.5 mb-2">
+              <UserMinus size={12} className="text-manso-cream/40" />
+              <p className="text-[8px] font-black uppercase tracking-widest text-manso-cream/30">Leads fríos</p>
+            </div>
+            <p className="text-3xl font-black text-manso-cream/40 leading-none">{leadsFrios.length}</p>
+            <p className="text-[8px] text-manso-cream/20 mt-1.5">Registrados hace más de 30 días sin convertir</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Tienda */}
+      <div>
+        <p className="text-[9px] font-black uppercase tracking-[0.3em] text-manso-cream/30 mb-3 flex items-center gap-2">
+          <ShoppingBag size={11} /> Ventas en tienda — mes en curso
+        </p>
+        <div className="grid grid-cols-2 gap-2">
+          <div className="bg-manso-terra/5 border border-manso-terra/20 rounded-2xl p-4">
+            <p className="text-3xl font-black text-manso-terra leading-none">
+              {pedidosMes ? formatARS(pedidosMes.total) : '—'}
+            </p>
+            <p className="text-[9px] font-black uppercase tracking-widest text-manso-terra/50 mt-2">Total facturado</p>
+            <p className="text-[8px] text-manso-terra/30 mt-0.5">Suma de todos los pedidos del mes</p>
+          </div>
+          <div className="bg-manso-cream/5 border border-manso-cream/10 rounded-2xl p-4">
+            <p className="text-3xl font-black text-manso-cream leading-none">
+              {pedidosMes?.count ?? '—'}
+            </p>
+            <p className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40 mt-2">Pedidos recibidos</p>
+            <p className="text-[8px] text-manso-cream/20 mt-0.5">Desde el 1ro del mes</p>
+          </div>
+        </div>
+      </div>
+
     </div>
   );
 }

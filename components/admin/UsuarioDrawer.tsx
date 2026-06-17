@@ -199,6 +199,7 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
     setVitalicio(false);
     setGuardandoPlan(false);
     onUpdated({ ...usuario, ...profileUpdate });
+    window.dispatchEvent(new CustomEvent('dashboardRefresh'));
   };
 
   const handleCancelarPlan = async () => {
@@ -217,6 +218,7 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
     setPlanActivo(null);
     setCelandoPlan(false);
     onUpdated({ ...usuario, ...profileUpdate });
+    window.dispatchEvent(new CustomEvent('dashboardRefresh'));
   };
 
   const handleGuardarPermisos = async () => {

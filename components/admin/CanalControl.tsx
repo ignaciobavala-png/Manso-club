@@ -95,6 +95,7 @@ export function CanalControl() {
       setConfig(prev => prev ? { ...prev, ...payload } : prev);
       setSaved(true);
       setTimeout(() => setSaved(false), 2000);
+      window.dispatchEvent(new CustomEvent('dashboardRefresh'));
     }
   };
 

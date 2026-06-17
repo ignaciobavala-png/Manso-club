@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { ChevronDown, BarChart2, Users, GitBranch, RefreshCw, CalendarDays } from 'lucide-react';
+import { ChevronDown, BarChart2, Users, GitBranch, Calendar, DollarSign, RefreshCw } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { CRMResumen } from './CRMResumen';
 import { CRMContactos } from './CRMContactos';
 import { CRMPipeline } from './CRMPipeline';
-import { CRMGestion } from './CRMGestion';
+import { CRMEventos } from './CRMEventos';
+import { CRMFinanzas } from './CRMFinanzas';
 import { CRMKPIStrip } from './CRMKPIStrip';
 
 export interface CRMUser {
@@ -44,19 +45,20 @@ export interface GestionEvent {
   ticket_sales_count: number;
 }
 
-type SectionId = 'resumen' | 'contactos' | 'pipeline' | 'gestion';
+type SectionId = 'contactos' | 'pipeline' | 'eventos' | 'finanzas';
 
 const SECTIONS: { id: SectionId; label: string; icon: React.ReactNode }[] = [
-  { id: 'resumen',   label: 'Resumen del negocio', icon: <BarChart2 size={14} /> },
-  { id: 'contactos', label: 'Base de contactos',   icon: <Users size={14} /> },
-  { id: 'pipeline',  label: 'Pipeline',             icon: <GitBranch size={14} /> },
-  { id: 'gestion',   label: 'Eventos & Finanzas',  icon: <CalendarDays size={14} /> },
+  { id: 'contactos', label: 'Contactos',         icon: <Users size={14} /> },
+  { id: 'pipeline',  label: 'Estado de miembros', icon: <GitBranch size={14} /> },
+  { id: 'eventos',   label: 'Eventos',           icon: <Calendar size={14} /> },
+  { id: 'finanzas',  label: 'Finanzas',          icon: <DollarSign size={14} /> },
 ];
 
 export function CRMAdmin() {
-  const [open, setOpen] = useState<Set<SectionId>>(new Set(['resumen']));
+  const [open, setOpen] = useState<Set<SectionId>>(new Set([]));
   const [users, setUsers] = useState<CRMUser[]>([]);
   const [events, setEvents] = useState<GestionEvent[]>([]);
+  const [mrr, setMrr] = useState(0);
   const [loading, setLoading] = useState(true);
   const [lastFetch, setLastFetch] = useState<Date | null>(null);
 
@@ -66,6 +68,7 @@ export function CRMAdmin() {
     const [
       { data: profilesData },
       { data: artistasData },
+      { data: membresiaData },
       eventsRes,
     ] = await Promise.all([
       supabase
@@ -76,10 +79,17 @@ export function CRMAdmin() {
         .from('artistas')
         .select('id, nombre, slug, active, user_id')
         .not('user_id', 'is', null),
-      fetch('/api/gestion/events').then(r => r.ok ? r.json() : { events: [] }).catch(() => ({ events: [] })),
+      supabase
+        .from('user_membresias_activas')
+        .select('membresias(precio)')
+        .eq('estado', 'activa')
+        .or(`vencimiento.is.null,vencimiento.gt.${new Date().toISOString()}`),
+      fetch('/api/gestion/events')
+        .then(r => r.ok ? r.json() : { events: [] })
+        .catch(() => ({ events: [] })),
     ]);
 
-    // Merge artistas por user_id
+    // Merge artistas
     const artistaMap = new Map<string, { id: string; nombre: string; slug: string; active: boolean }>();
     artistasData?.forEach(a => {
       if (a.user_id) artistaMap.set(a.user_id, { id: a.id, nombre: a.nombre, slug: a.slug, active: a.active });
@@ -89,6 +99,13 @@ export function CRMAdmin() {
       ...u,
       artistas: artistaMap.has(u.id) ? [artistaMap.get(u.id)!] : [],
     })));
+
+    // MRR: suma de precios de membresías activas vigentes
+    const mrrTotal = (membresiaData ?? []).reduce((sum, row) => {
+      const precio = (row.membresias as unknown as { precio: number } | null)?.precio ?? 0;
+      return sum + precio;
+    }, 0);
+    setMrr(mrrTotal);
 
     setEvents(eventsRes.events ?? []);
     setLastFetch(new Date());
@@ -128,7 +145,22 @@ export function CRMAdmin() {
       </div>
 
       {/* KPI Strip — siempre visible */}
-      <CRMKPIStrip users={users} events={events} loading={loading} />
+      <CRMKPIStrip users={users} events={events} mrr={mrr} loading={loading} />
+
+      {/* Resumen — siempre visible, no colapsable */}
+      <div className="bg-manso-cream/5 border border-manso-cream/10 rounded-2xl px-5 py-5">
+        <div className="flex items-center gap-3 mb-5">
+          <BarChart2 size={14} className="text-manso-cream/40" />
+          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-manso-cream">Resumen</span>
+        </div>
+        {loading ? (
+          <div className="flex items-center justify-center py-8">
+            <div className="w-6 h-6 border-2 border-manso-terra/30 border-t-manso-terra rounded-full animate-spin" />
+          </div>
+        ) : (
+          <CRMResumen users={users} />
+        )}
+      </div>
 
       {/* Acordeones */}
       {SECTIONS.map(section => {
@@ -157,10 +189,10 @@ export function CRMAdmin() {
                   </div>
                 ) : (
                   <>
-                    {section.id === 'resumen'   && <CRMResumen users={users} />}
                     {section.id === 'contactos' && <CRMContactos users={users} onRefresh={fetchData} />}
                     {section.id === 'pipeline'  && <CRMPipeline users={users} onRefresh={fetchData} />}
-                    {section.id === 'gestion'   && <CRMGestion events={events} onRefresh={fetchData} />}
+                    {section.id === 'eventos'   && <CRMEventos events={events} />}
+                    {section.id === 'finanzas'  && <CRMFinanzas events={events} />}
                   </>
                 )}
               </div>

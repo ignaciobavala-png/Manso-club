@@ -14,8 +14,8 @@ interface TiendaAdminProps {
 type SectionId = 'pedidos' | 'productos' | 'checkout';
 
 const SECTIONS: { id: SectionId; label: string; icon: React.ReactNode }[] = [
-  { id: 'pedidos',   label: 'Pedidos',           icon: <Package size={14} /> },
   { id: 'productos', label: 'Productos',          icon: <ShoppingBag size={14} /> },
+  { id: 'pedidos',   label: 'Pedidos',            icon: <Package size={14} /> },
   { id: 'checkout',  label: 'Config. checkout',   icon: <CreditCard size={14} /> },
 ];
 
@@ -24,7 +24,7 @@ const handleEditProduct = (product: unknown) => {
 };
 
 export function TiendaAdmin({ refreshTrigger }: TiendaAdminProps) {
-  const [open, setOpen] = useState<Set<SectionId>>(new Set(['pedidos']));
+  const [open, setOpen] = useState<Set<SectionId>>(new Set(['productos']));
 
   const toggle = (id: SectionId) => {
     setOpen(prev => {

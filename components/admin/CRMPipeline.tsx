@@ -13,12 +13,11 @@ interface CRMPipelineProps {
 interface Stage {
   id: string;
   label: string;
-  description: string;
   icon: React.ReactNode;
   color: string;
-  bg: string;
   border: string;
   headerBg: string;
+  countColor: string;
   users: CRMUser[];
 }
 
@@ -33,23 +32,21 @@ export function CRMPipeline({ users, onRefresh }: CRMPipelineProps) {
     {
       id: 'sin-membresia',
       label: 'Sin membresía',
-      description: 'Registrados sin plan — leads fríos',
-      icon: <UserMinus size={14} />,
-      color: 'text-manso-cream/60',
-      bg: 'bg-manso-cream/[0.03]',
+      icon: <UserMinus size={12} />,
+      color: 'text-manso-cream/50',
       border: 'border-manso-cream/10',
       headerBg: 'bg-manso-cream/5',
+      countColor: 'text-manso-cream/40',
       users: nonAdmin.filter(u => !u.membresia_activa),
     },
     {
       id: 'activos',
       label: 'Activos',
-      description: 'Plan vigente',
-      icon: <Crown size={14} />,
+      icon: <Crown size={12} />,
       color: 'text-green-400',
-      bg: 'bg-green-500/[0.03]',
       border: 'border-green-500/20',
       headerBg: 'bg-green-500/5',
+      countColor: 'text-green-400',
       users: nonAdmin.filter(u =>
         u.membresia_activa && (!u.membresia_hasta || new Date(u.membresia_hasta) > in7days)
       ),
@@ -57,12 +54,11 @@ export function CRMPipeline({ users, onRefresh }: CRMPipelineProps) {
     {
       id: 'por-vencer',
       label: 'Por vencer',
-      description: 'Vencen en ≤7 días',
-      icon: <AlertTriangle size={14} />,
+      icon: <AlertTriangle size={12} />,
       color: 'text-yellow-400',
-      bg: 'bg-yellow-500/[0.03]',
       border: 'border-yellow-500/20',
       headerBg: 'bg-yellow-500/5',
+      countColor: 'text-yellow-400',
       users: nonAdmin.filter(u => {
         if (!u.membresia_activa || !u.membresia_hasta) return false;
         const d = new Date(u.membresia_hasta);
@@ -72,12 +68,11 @@ export function CRMPipeline({ users, onRefresh }: CRMPipelineProps) {
     {
       id: 'vencidos',
       label: 'Vencidos',
-      description: 'Plan expirado — reactivar',
-      icon: <XCircle size={14} />,
+      icon: <XCircle size={12} />,
       color: 'text-red-400',
-      bg: 'bg-red-500/[0.03]',
       border: 'border-red-500/20',
       headerBg: 'bg-red-500/5',
+      countColor: 'text-red-400',
       users: nonAdmin.filter(u =>
         u.membresia_activa && !!u.membresia_hasta && new Date(u.membresia_hasta) < now
       ),
@@ -87,61 +82,59 @@ export function CRMPipeline({ users, onRefresh }: CRMPipelineProps) {
   const inicial = (u: CRMUser) => (u.display_name ?? u.email)[0].toUpperCase();
 
   return (
-    <div className="space-y-3">
-      {stages.map(stage => (
-        <div key={stage.id} className={`border ${stage.border} rounded-2xl overflow-hidden`}>
-          {/* Header de stage */}
-          <div className={`${stage.headerBg} px-5 py-4 flex items-center justify-between`}>
-            <div className="flex items-center gap-3">
-              <span className={stage.color}>{stage.icon}</span>
-              <div>
-                <p className={`text-[10px] font-black uppercase tracking-[0.2em] ${stage.color}`}>
-                  {stage.label}
-                </p>
-                <p className="text-[8px] text-manso-cream/30 uppercase tracking-widest mt-0.5">
-                  {stage.description}
-                </p>
+    <>
+      {/* Columnas side-by-side */}
+      <div className="grid grid-cols-2 xl:grid-cols-4 gap-2">
+        {stages.map(stage => (
+          <div key={stage.id} className={`border ${stage.border} rounded-2xl overflow-hidden flex flex-col`}>
+            {/* Header */}
+            <div className={`${stage.headerBg} px-3 py-3 border-b ${stage.border}`}>
+              <div className="flex items-center justify-between mb-1">
+                <span className={stage.color}>{stage.icon}</span>
+                <span className={`text-2xl font-black leading-none ${stage.countColor}`}>
+                  {stage.users.length}
+                </span>
               </div>
+              <p className={`text-[9px] font-black uppercase tracking-widest ${stage.color}`}>
+                {stage.label}
+              </p>
             </div>
-            <span className={`text-3xl font-black leading-none ${stage.color}`}>
-              {stage.users.length}
-            </span>
-          </div>
 
-          {/* Usuarios de la stage */}
-          {stage.users.length > 0 && (
-            <div className={`${stage.bg} border-t ${stage.border} px-4 pb-3 pt-2 space-y-0.5 max-h-52 overflow-y-auto`}>
+            {/* Lista */}
+            <div className="flex-1 overflow-y-auto max-h-64 p-1.5 space-y-0.5">
+              {stage.users.length === 0 && (
+                <p className="text-[8px] text-manso-cream/20 text-center py-4 uppercase tracking-widest">
+                  Vacío
+                </p>
+              )}
               {stage.users.map(u => (
                 <button
                   key={u.id}
                   onClick={() => setSeleccionado(u)}
-                  className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg hover:bg-manso-cream/10 transition-colors text-left"
+                  className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-manso-cream/10 transition-colors text-left"
                 >
-                  <div className="flex items-center gap-2 min-w-0">
-                    <div className="w-6 h-6 rounded-full bg-manso-cream/10 flex items-center justify-center flex-shrink-0 text-[9px] font-black text-manso-cream/50">
-                      {inicial(u)}
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-xs text-manso-cream truncate">{u.display_name ?? u.email}</p>
-                      {u.display_name && (
-                        <p className="text-[9px] text-manso-cream/30 truncate">{u.email}</p>
-                      )}
-                    </div>
+                  <div className="w-5 h-5 rounded-full bg-manso-cream/10 flex items-center justify-center flex-shrink-0 text-[8px] font-black text-manso-cream/50">
+                    {inicial(u)}
                   </div>
-                  {u.membresia_hasta && (
-                    <span className="text-[8px] text-manso-cream/30 flex-shrink-0">
-                      {new Date(u.membresia_hasta).toLocaleDateString('es-AR', { day: 'numeric', month: 'short' })}
-                    </span>
-                  )}
-                  {!u.membresia_hasta && u.membresia_activa && (
-                    <span className="text-[8px] text-manso-olive/60 flex-shrink-0">Vitalicio</span>
-                  )}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-[10px] text-manso-cream truncate leading-tight">
+                      {u.display_name ?? u.email.split('@')[0]}
+                    </p>
+                    {u.membresia_hasta && (
+                      <p className="text-[8px] text-manso-cream/30 leading-tight">
+                        {new Date(u.membresia_hasta).toLocaleDateString('es-AR', { day: 'numeric', month: 'short' })}
+                      </p>
+                    )}
+                    {!u.membresia_hasta && u.membresia_activa && (
+                      <p className="text-[8px] text-manso-olive/60 leading-tight">Vitalicio</p>
+                    )}
+                  </div>
                 </button>
               ))}
             </div>
-          )}
-        </div>
-      ))}
+          </div>
+        ))}
+      </div>
 
       {seleccionado && (
         <UsuarioDrawer
@@ -153,6 +146,6 @@ export function CRMPipeline({ users, onRefresh }: CRMPipelineProps) {
           }}
         />
       )}
-    </div>
+    </>
   );
 }

@@ -48,7 +48,7 @@ import { MembresiaActivasList } from './MembresiaActivasList';
 import { CRMAdmin } from './CRMAdmin';
 
 export function Dashboard() {
-  const [tab, setTab] = useState<'crm' | 'home' | 'tienda' | 'artistas' | 'agenda' | 'eventos' | 'musica' | 'membresias' | 'team' | 'hero' | 'galeria' | 'why' | 'about' | 'contenidos' | 'manifiesto' | 'cotizador' | 'streaming' | 'empleos' | 'newsletter' | 'comunidad'>('home');
+  const [tab, setTab] = useState<'crm' | 'home' | 'tienda' | 'artistas' | 'agenda' | 'eventos' | 'musica' | 'membresias' | 'team' | 'hero' | 'galeria' | 'why' | 'about' | 'contenidos' | 'manifiesto' | 'cotizador' | 'streaming' | 'empleos' | 'newsletter' | 'comunidad'>('crm');
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
