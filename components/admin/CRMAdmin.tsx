@@ -39,16 +39,30 @@ export function CRMAdmin() {
 
   const fetchUsers = useCallback(async () => {
     setLoading(true);
-    const { data } = await supabase
-      .from('user_profiles')
-      .select(`
-        id, email, role, display_name, avatar_url, telefono,
-        created_at, updated_at, membresia_activa, membresia_hasta,
-        membresia_tipo, permisos_totales,
-        artistas(id, nombre, slug, active)
-      `)
-      .order('created_at', { ascending: false });
-    setUsers((data as CRMUser[]) ?? []);
+
+    const [{ data: profilesData }, { data: artistasData }] = await Promise.all([
+      supabase
+        .from('user_profiles')
+        .select('id, email, role, display_name, avatar_url, telefono, created_at, updated_at, membresia_activa, membresia_hasta, membresia_tipo, permisos_totales')
+        .order('created_at', { ascending: false }),
+      supabase
+        .from('artistas')
+        .select('id, nombre, slug, active, user_id')
+        .not('user_id', 'is', null),
+    ]);
+
+    // Indexar artistas por user_id para merge O(1)
+    const artistaMap = new Map<string, { id: string; nombre: string; slug: string; active: boolean }>();
+    artistasData?.forEach(a => {
+      if (a.user_id) artistaMap.set(a.user_id, { id: a.id, nombre: a.nombre, slug: a.slug, active: a.active });
+    });
+
+    const merged: CRMUser[] = (profilesData ?? []).map(u => ({
+      ...u,
+      artistas: artistaMap.has(u.id) ? [artistaMap.get(u.id)!] : [],
+    }));
+
+    setUsers(merged);
     setLastFetch(new Date());
     setLoading(false);
   }, []);
