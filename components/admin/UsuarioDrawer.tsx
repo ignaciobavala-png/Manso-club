@@ -86,6 +86,7 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
   const [asignando, setAsignando] = useState(false);
   const [planSelId, setPlanSelId] = useState('');
   const [vencimientoInput, setVencimientoInput] = useState('');
+  const [vitalicio, setVitalicio] = useState(false);
   const [guardandoPlan, setGuardandoPlan] = useState(false);
   const [cancelandoPlan, setCelandoPlan] = useState(false);
 
@@ -107,8 +108,8 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
       .select('id, vencimiento, membresias(id, nombre, categoria, precio, periodo)')
       .eq('user_id', usuario.id)
       .eq('estado', 'activa')
-      .gt('vencimiento', new Date().toISOString())
-      .order('vencimiento', { ascending: false })
+      .or(`vencimiento.gt.${new Date().toISOString()},vencimiento.is.null`)
+      .order('vencimiento', { ascending: false, nullsFirst: true })
       .limit(1)
       .maybeSingle()
       .then(({ data }) => {
@@ -147,15 +148,15 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
   const handlePlanSelect = (id: string) => {
     setPlanSelId(id);
     const plan = planes.find(p => p.id === id);
-    if (plan) setVencimientoInput(calcularVencimiento(plan.periodo));
+    if (plan && !vitalicio) setVencimientoInput(calcularVencimiento(plan.periodo));
   };
 
   const handleAsignarPlan = async () => {
-    if (!planSelId || !vencimientoInput) return;
+    if (!planSelId || (!vitalicio && !vencimientoInput)) return;
     setGuardandoPlan(true);
 
     const plan = planes.find(p => p.id === planSelId)!;
-    const vencIso = new Date(vencimientoInput + 'T00:00:00').toISOString();
+    const vencIso = vitalicio ? null : new Date(vencimientoInput + 'T00:00:00').toISOString();
 
     // Cancelar planes activos previos
     await supabase
@@ -180,7 +181,7 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
     // Sincronizar user_profiles
     const profileUpdate = {
       membresia_activa: true,
-      membresia_tipo: plan.periodo,
+      membresia_tipo: vitalicio ? 'vitalicio' : plan.periodo,
       membresia_hasta: vencIso,
     };
     await supabase.from('user_profiles').update(profileUpdate).eq('id', usuario.id);
@@ -190,11 +191,12 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
       nombre: plan.nombre,
       categoria: plan.categoria,
       precio: plan.precio,
-      periodo: plan.periodo,
-      vencimiento: vencIso,
+      periodo: vitalicio ? 'vitalicio' : plan.periodo,
+      vencimiento: vencIso ?? '',
     });
     setAsignando(false);
     setPlanSelId('');
+    setVitalicio(false);
     setGuardandoPlan(false);
     onUpdated({ ...usuario, ...profileUpdate });
   };
@@ -327,10 +329,16 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
                       </div>
                     </div>
                     <div className="text-right flex-shrink-0">
-                      <p className="text-[9px] text-manso-cream/40 uppercase tracking-widest">Vence</p>
-                      <p className="text-xs font-black text-manso-terra">
-                        {new Date(planActivo.vencimiento).toLocaleDateString('es-AR', { day: 'numeric', month: 'short', year: '2-digit' })}
-                      </p>
+                      {planActivo.vencimiento ? (
+                        <>
+                          <p className="text-[9px] text-manso-cream/40 uppercase tracking-widest">Vence</p>
+                          <p className="text-xs font-black text-manso-terra">
+                            {new Date(planActivo.vencimiento).toLocaleDateString('es-AR', { day: 'numeric', month: 'short', year: '2-digit' })}
+                          </p>
+                        </>
+                      ) : (
+                        <p className="text-xs font-black text-manso-olive">Vitalicio</p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -386,27 +394,49 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
                 </div>
 
                 <div>
-                  <label className="text-[9px] font-black uppercase tracking-widest text-manso-cream/50 block mb-2">
-                    Vence el
-                  </label>
-                  <input
-                    type="date"
-                    value={vencimientoInput}
-                    onChange={e => setVencimientoInput(e.target.value)}
-                    className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-3 py-2 text-sm text-manso-cream focus:outline-none focus:border-manso-terra"
-                  />
+                  <div className="flex items-center justify-between mb-2">
+                    <label className="text-[9px] font-black uppercase tracking-widest text-manso-cream/50">
+                      Vence el
+                    </label>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setVitalicio(v => !v);
+                        if (!vitalicio) setVencimientoInput('');
+                      }}
+                      className={`flex items-center gap-1.5 text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border transition-all ${
+                        vitalicio
+                          ? 'bg-manso-olive/20 border-manso-olive/40 text-manso-olive'
+                          : 'border-manso-cream/10 text-manso-cream/30 hover:text-manso-cream/60'
+                      }`}
+                    >
+                      <Crown size={10} />
+                      Vitalicio
+                    </button>
+                  </div>
+                  {!vitalicio && (
+                    <input
+                      type="date"
+                      value={vencimientoInput}
+                      onChange={e => setVencimientoInput(e.target.value)}
+                      className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-3 py-2 text-sm text-manso-cream focus:outline-none focus:border-manso-terra"
+                    />
+                  )}
+                  {vitalicio && (
+                    <p className="text-xs text-manso-olive/70 px-1">Sin fecha de vencimiento</p>
+                  )}
                 </div>
 
                 <div className="flex gap-2 pt-1">
                   <button
-                    onClick={() => { setAsignando(false); setPlanSelId(''); }}
+                    onClick={() => { setAsignando(false); setPlanSelId(''); setVitalicio(false); }}
                     className="flex-1 py-2.5 text-[9px] font-black uppercase tracking-widest rounded-xl border border-manso-cream/10 text-manso-cream/40 hover:text-manso-cream transition-all"
                   >
                     Cancelar
                   </button>
                   <button
                     onClick={handleAsignarPlan}
-                    disabled={!planSelId || !vencimientoInput || guardandoPlan}
+                    disabled={!planSelId || (!vitalicio && !vencimientoInput) || guardandoPlan}
                     className="flex-1 py-2.5 bg-manso-terra text-white text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-manso-terra/80 transition-all disabled:opacity-40"
                   >
                     {guardandoPlan ? 'Guardando...' : 'Confirmar'}
