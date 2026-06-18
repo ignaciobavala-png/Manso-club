@@ -1,6 +1,6 @@
 'use client';
 
-import { Crown, AlertTriangle, XCircle, Calendar, Users, Zap, TrendingUp, Ticket } from 'lucide-react';
+import { Crown, AlertTriangle, XCircle, Calendar, Users, Zap, TrendingUp, Ticket, UserSearch, TrendingDown, Percent } from 'lucide-react';
 import { CRMUser, GestionEvent } from './CRMAdmin';
 
 interface CRMKPIStripProps {
@@ -32,6 +32,16 @@ export function CRMKPIStrip({ users, events, mrr, ticketsRevenue, loading }: CRM
   ).length;
 
   const nuevosEstaSemana = nonAdmin.filter(u => new Date(u.created_at) >= in7daysAgo).length;
+
+  const hace30d = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+  const leads = nonAdmin.filter(u => !u.membresia_activa).length;
+  const leadsCalientes = nonAdmin.filter(u => !u.membresia_activa && new Date(u.created_at) >= hace30d).length;
+  const churnMes = nonAdmin.filter(u =>
+    u.membresia_hasta &&
+    new Date(u.membresia_hasta) >= hace30d &&
+    new Date(u.membresia_hasta) < now
+  ).length;
+  const tasaConversion = nonAdmin.length > 0 ? Math.round((activos / nonAdmin.length) * 100) : 0;
 
   const proximos = events
     .filter(e => new Date(e.start_date) >= now)
@@ -104,6 +114,38 @@ export function CRMKPIStrip({ users, events, mrr, ticketsRevenue, loading }: CRM
         </div>
         <p className={`text-2xl font-black leading-none ${vencidos > 0 ? 'text-red-400' : 'text-manso-cream/20'}`}>{vencidos}</p>
         <p className="text-[8px] text-manso-cream/30 mt-0.5">reactivar</p>
+      </div>
+
+      {/* Leads — sin membresía */}
+      <div className="flex-shrink-0 bg-manso-cream/5 border border-manso-cream/10 rounded-2xl px-4 py-3 min-w-[140px]">
+        <div className="flex items-center gap-1.5 mb-1">
+          <UserSearch size={11} className="text-manso-blue" style={{ color: '#4f8ef7' }} />
+          <p className="text-[8px] font-black uppercase tracking-widest text-manso-cream/40">Leads</p>
+        </div>
+        <p className="text-2xl font-black leading-none" style={{ color: '#4f8ef7' }}>{leads}</p>
+        <p className="text-[8px] text-manso-cream/30 mt-0.5">
+          {leadsCalientes > 0 ? <><span className="text-orange-400">{leadsCalientes} calientes</span> · {leads - leadsCalientes} fríos</> : 'sin membresía activa'}
+        </p>
+      </div>
+
+      {/* Churn este mes */}
+      <div className="flex-shrink-0 bg-manso-cream/5 border border-manso-cream/10 rounded-2xl px-4 py-3 min-w-[130px]">
+        <div className="flex items-center gap-1.5 mb-1">
+          <TrendingDown size={11} className={churnMes > 0 ? 'text-orange-400' : 'text-manso-cream/20'} />
+          <p className="text-[8px] font-black uppercase tracking-widest text-manso-cream/40">Churn / mes</p>
+        </div>
+        <p className={`text-2xl font-black leading-none ${churnMes > 0 ? 'text-orange-400' : 'text-manso-cream/20'}`}>{churnMes}</p>
+        <p className="text-[8px] text-manso-cream/30 mt-0.5">vencieron últimos 30d</p>
+      </div>
+
+      {/* Tasa de conversión */}
+      <div className="flex-shrink-0 bg-manso-cream/5 border border-manso-cream/10 rounded-2xl px-4 py-3 min-w-[120px]">
+        <div className="flex items-center gap-1.5 mb-1">
+          <Percent size={11} className="text-manso-olive" />
+          <p className="text-[8px] font-black uppercase tracking-widest text-manso-cream/40">Conversión</p>
+        </div>
+        <p className="text-2xl font-black text-manso-olive leading-none">{tasaConversion}%</p>
+        <p className="text-[8px] text-manso-cream/30 mt-0.5">{activos} de {nonAdmin.length} usuarios</p>
       </div>
 
       {/* Separador */}
