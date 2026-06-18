@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { Wifi, Pencil, Trash2, WifiOff, Eye, Users, Lock } from 'lucide-react';
 
@@ -144,6 +145,7 @@ function ItemRow({ item, onEdit, onDelete, onToggle, onTerminar }: {
 }
 
 export function StreamingContenidoList({ refreshTrigger }: { refreshTrigger: number }) {
+  const router = useRouter();
   const [items, setItems]     = useState<Item[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -166,20 +168,33 @@ export function StreamingContenidoList({ refreshTrigger }: { refreshTrigger: num
 
   const dispatch = () => window.dispatchEvent(new CustomEvent('dashboardRefresh'));
 
+  const checkSession = async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+      alert('Tu sesión expiró. Por favor iniciá sesión nuevamente.');
+      router.push('/login');
+      return false;
+    }
+    return true;
+  };
+
   const handleDelete = async (id: string, titulo: string) => {
     if (!confirm(`¿Eliminar "${titulo}"? Esta acción no se puede deshacer.`)) return;
+    if (!await checkSession()) return;
     const { error } = await supabase.from('streaming_contenido').delete().eq('id', id);
     if (error) { alert(error.message); return; }
     load(); dispatch();
   };
 
   const toggleActivo = async (id: string, current: boolean) => {
+    if (!await checkSession()) return;
     await supabase.from('streaming_contenido').update({ activo: !current }).eq('id', id);
     load(); dispatch();
   };
 
   const terminarStream = async (id: string, titulo: string) => {
     if (!confirm(`¿Terminar el stream "${titulo}"?\n\nEl badge "En vivo" se apagará y el video quedará disponible como grabación.`)) return;
+    if (!await checkSession()) return;
     const { error } = await supabase
       .from('streaming_contenido')
       .update({ is_live: false, activo: true, fue_transmitido: true, transmitido_en: new Date().toISOString() })

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { ImageUploader } from './ImageUploader';
 import { VisibilidadToggle } from './VisibilidadToggle';
@@ -57,6 +58,7 @@ function extractYouTubeId(input: string): string {
 }
 
 export function FormStreamingContenido() {
+  const router = useRouter();
   const [loading, setLoading]       = useState(false);
   const [editingId, setEditingId]   = useState<string | null>(null);
   const [form, setForm]             = useState<FormData>(EMPTY);
@@ -106,6 +108,13 @@ export function FormStreamingContenido() {
     e.preventDefault();
     setLoading(true);
     try {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        alert('Tu sesión expiró. Por favor iniciá sesión nuevamente.');
+        router.push('/login');
+        return;
+      }
+
       const payload = {
         titulo:            form.titulo.trim(),
         slug:              form.slug.trim() || toSlug(form.titulo),
