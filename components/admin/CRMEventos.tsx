@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Calendar, Users, ChevronDown, X, CheckCircle, Ban } from 'lucide-react';
+import { Calendar, Users, ChevronDown, X, CheckCircle, Ban, HelpCircle } from 'lucide-react';
 import { GestionEvent } from './CRMAdmin';
 
 interface Registration {
@@ -166,6 +166,7 @@ interface CRMEventosProps {
 
 export function CRMEventos({ events }: CRMEventosProps) {
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [ayuda, setAyuda] = useState(false);
   const now = new Date();
 
   const proximos = events.filter(e => new Date(e.start_date) >= now)
@@ -213,6 +214,44 @@ export function CRMEventos({ events }: CRMEventosProps) {
     );
   };
 
+  const modalAyuda = (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setAyuda(false)}>
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+      <div
+        className="relative bg-[#1D1D1B] border border-manso-cream/15 rounded-[2rem] p-8 max-w-sm w-full shadow-2xl"
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between mb-6">
+          <h3 className="text-sm font-black uppercase tracking-tight text-manso-cream">Cómo funciona esta sección</h3>
+          <button onClick={() => setAyuda(false)} className="w-8 h-8 rounded-full border border-manso-cream/15 flex items-center justify-center text-manso-cream/40 hover:text-manso-cream transition-colors">
+            <X size={14} />
+          </button>
+        </div>
+        <div className="space-y-4 text-sm text-manso-cream/60 leading-relaxed">
+          <p>Los datos vienen de <span className="text-manso-cream font-bold">Manso Gestión</span>, el sistema donde se cargan y administran todos los eventos.</p>
+          <div className="space-y-3">
+            <div>
+              <p className="text-[9px] font-black uppercase tracking-widest text-manso-cream/30 mb-1">Registraciones</p>
+              <p>Personas que se anotaron al evento desde el formulario online. Cada fila muestra si ingresaron al evento (<CheckCircle size={10} className="inline text-green-400 mx-0.5" />), si el pago fue verificado (<span className="font-black text-manso-olive">$</span>) o si están baneadas (<Ban size={10} className="inline text-red-400 mx-0.5" />).</p>
+            </div>
+            <div>
+              <p className="text-[9px] font-black uppercase tracking-widest text-manso-cream/30 mb-1">Guests</p>
+              <p>Invitados cargados manualmente por el equipo, fuera del flujo de registro online. No pagan entrada.</p>
+            </div>
+            <div>
+              <p className="text-[9px] font-black uppercase tracking-widest text-manso-cream/30 mb-1">Ocupación</p>
+              <p>Porcentaje de cupos usados sobre el máximo del evento. En rojo cuando supera el 90%.</p>
+            </div>
+            <div>
+              <p className="text-[9px] font-black uppercase tracking-widest text-manso-cream/30 mb-1">Eventos de terceros</p>
+              <p>Aparecen en la lista pero el dinero de tickets <span className="text-manso-cream font-bold">no se suma</span> al revenue de Manso. Se identifican por el alias de pago distinto en la sección Finanzas.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   if (events.length === 0) return (
     <div className="text-center py-10">
       <Calendar size={32} className="text-manso-cream/20 mx-auto mb-3" />
@@ -222,6 +261,28 @@ export function CRMEventos({ events }: CRMEventosProps) {
 
   return (
     <div className="space-y-5">
+      {ayuda && modalAyuda}
+
+      {/* Header con contexto + ayuda */}
+      <div className="flex items-start justify-between gap-4 px-1">
+        <div className="space-y-1">
+          <p className="text-[10px] text-manso-cream/40 leading-relaxed">
+            Datos en tiempo real desde Manso Gestión. Expandí cada evento para ver registraciones, guests y ocupación.
+          </p>
+          <p className="text-[10px] text-manso-cream/25 leading-relaxed">
+            {proximos.length > 0 && `${proximos.length} ${proximos.length === 1 ? 'evento próximo' : 'eventos próximos'} · `}
+            {pasados.length > 0 && `${pasados.length} pasados`}
+          </p>
+        </div>
+        <button
+          onClick={() => setAyuda(true)}
+          className="flex-shrink-0 w-7 h-7 rounded-full border border-manso-cream/15 flex items-center justify-center text-manso-cream/30 hover:text-manso-cream/60 hover:border-manso-cream/30 transition-all"
+          title="¿Cómo funciona esta sección?"
+        >
+          <HelpCircle size={14} />
+        </button>
+      </div>
+
       {proximos.length > 0 && (
         <div className="space-y-2">
           <p className="text-xs font-black uppercase tracking-[0.2em] text-manso-cream/50 px-1">Próximas fechas · {proximos.length}</p>
