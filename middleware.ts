@@ -47,6 +47,7 @@ export async function middleware(request: NextRequest) {
     return data as string | null
   }
 
+  const isForoNuevoRoute = pathname === '/foro/nuevo'
   const isActualizarContrasenaRoute = pathname === '/actualizar-contrasena'
 
   // Si el usuario tiene password_reset_pending y no está en /actualizar-contrasena, forzar el cambio
@@ -78,6 +79,11 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(`/login?from=${from}`, request.url))
   }
 
+  // /foro/nuevo: requiere usuario autenticado (permisos_totales se verifica en la página)
+  if (isForoNuevoRoute && !user) {
+    return NextResponse.redirect(new URL('/login?from=/foro/nuevo', request.url))
+  }
+
   // /mansoadm/*: requiere usuario autenticado con rol admin
   if (isAdminRoute && !isAdminLoginRoute) {
     if (!user) {
@@ -105,5 +111,6 @@ export const config = {
     '/mi-cuenta/:path*',
     '/mi-cuenta',
     '/actualizar-contrasena',
+    '/foro/nuevo',
   ],
 }

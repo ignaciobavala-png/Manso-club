@@ -2,7 +2,7 @@
 
 import { useState, useActionState } from 'react';
 import Link from 'next/link';
-import { Play, User, CreditCard, ArrowRight, Check, Lock, Tv, Calendar, Music, ShoppingBag, Palette } from 'lucide-react';
+import { Play, User, CreditCard, ArrowRight, Check, Lock, Tv, Calendar, Music, ShoppingBag, Palette, MessageSquare } from 'lucide-react';
 import { MiArtePerfilForm } from '@/components/mi-cuenta/MiArtePerfilForm';
 import { updateProfileAction } from './actions';
 import { supabase } from '@/lib/supabase';
@@ -129,7 +129,7 @@ export default function MiCuentaTabs({ userId, displayName, email, telefono, ava
       {/* ── DESCUBRÍ MANSO ── */}
       <div className="max-w-3xl mx-auto px-6 pb-8">
         <p className="text-[9px] font-black uppercase tracking-[0.5em] text-manso-terra mb-5">Descubrí Manso</p>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
           <Link
             href="/streaming"
             className="group rounded-[20px] border border-manso-cream/10 bg-manso-cream/5 p-5 hover:border-manso-terra/40 hover:bg-manso-terra/5 transition-all"
@@ -161,6 +161,14 @@ export default function MiCuentaTabs({ userId, displayName, email, telefono, ava
             <ShoppingBag size={20} className="text-manso-terra mb-3 group-hover:scale-110 transition-transform" />
             <p className="text-manso-cream text-xs font-black uppercase tracking-tight">Tienda</p>
             <p className="text-manso-cream/30 text-[11px] mt-1 leading-tight">Objetos y prendas del club</p>
+          </Link>
+          <Link
+            href="/foro"
+            className="group rounded-[20px] border border-manso-cream/10 bg-manso-cream/5 p-5 hover:border-manso-terra/40 hover:bg-manso-terra/5 transition-all"
+          >
+            <MessageSquare size={20} className="text-manso-terra mb-3 group-hover:scale-110 transition-transform" />
+            <p className="text-manso-cream text-xs font-black uppercase tracking-tight">Foro</p>
+            <p className="text-manso-cream/30 text-[11px] mt-1 leading-tight">Conversaciones de la comunidad</p>
           </Link>
         </div>
         {!membresia && !esMiembro && (

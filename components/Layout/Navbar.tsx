@@ -61,6 +61,7 @@ export const Navbar = () => {
     { name: 'membresias', href: '/membresias' },
     { name: 'agenda',     href: '/agenda' },
     { name: 'artistas',   href: '/artistas' },
+    { name: 'foro',       href: '/foro' },
     { name: 'tienda',     href: '/tienda' },
   ];
 
@@ -102,7 +103,7 @@ export const Navbar = () => {
           </div>
 
           {/* NAVEGACIÓN DESKTOP */}
-          <div className="hidden md:flex items-center gap-10">
+          <div className="hidden md:flex items-center gap-4 lg:gap-8 xl:gap-10">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
