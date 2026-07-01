@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
+import { toSlug } from '@/lib/slug';
 import { ImageUploader } from './ImageUploader';
 import { VisibilidadToggle } from './VisibilidadToggle';
 import { ChevronDown, HelpCircle, X, Wifi, Eye } from 'lucide-react';
@@ -36,10 +37,6 @@ const EMPTY: FormData = {
   is_live: false, activo: true, visibilidad: 'registrado',
 };
 
-function toSlug(text: string) {
-  return text.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '')
-    .replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').trim();
-}
 
 function extractYouTubeId(input: string): string {
   const s = input.trim();

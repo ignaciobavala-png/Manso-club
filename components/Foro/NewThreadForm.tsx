@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useTransition } from 'react'
+import { unstable_rethrow } from 'next/navigation'
 import { crearThread } from '@/app/foro/actions'
 import type { ForoCategoria } from '@/lib/types/foro'
 
@@ -18,6 +19,7 @@ export default function NewThreadForm({ categorias }: Props) {
       try {
         await crearThread(formData)
       } catch (e) {
+        unstable_rethrow(e)
         setError(e instanceof Error ? e.message : 'Error al crear el thread')
       }
     })

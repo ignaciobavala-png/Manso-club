@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import { createSupabaseAnon, createSupabaseServer } from '@/lib/supabase'
+import { getForoPermisos } from '@/lib/foro/permisos'
 import { ParticleBackground } from '@/components/Home/ParticleBackground'
 import ThreadView from '@/components/Foro/ThreadView'
 
@@ -36,34 +37,28 @@ export default async function ThreadPage({
   const reaccionesFilter = replyIds.length > 0
     ? `thread_id.eq.${threadId},reply_id.in.(${replyIds.join(',')})`
     : `thread_id.eq.${threadId}`
-  const { data: reacciones } = await supabase
-    .from('foro_reacciones')
-    .select('emoji, autor_id, thread_id, reply_id')
-    .or(reaccionesFilter)
-
-  // Categoría
-  let categoria = null
-  if (thread.categoria_id) {
-    const { data } = await supabase
-      .from('foro_categorias')
-      .select('nombre, slug')
-      .eq('id', thread.categoria_id)
-      .single()
-    categoria = data
-  }
 
   // Permisos del usuario actual
-  const supabaseAuth = await createSupabaseServer()
-  const { data: { user } } = await supabaseAuth.auth.getUser()
-  let puedeEscribir = false
-  if (user) {
-    const { data: profile } = await supabaseAuth
-      .from('user_profiles')
-      .select('permisos_totales')
-      .eq('id', user.id)
-      .single()
-    puedeEscribir = profile?.permisos_totales ?? false
+  async function resolvePermisos() {
+    const supabaseAuth = await createSupabaseServer()
+    const { data: { user } } = await supabaseAuth.auth.getUser()
+    if (!user) return { user: null, puedeEscribir: false, estaBaneado: false }
+    const { puedeEscribir, estaBaneado } = await getForoPermisos(supabaseAuth, user.id)
+    return { user, puedeEscribir, estaBaneado }
   }
+
+  const [{ data: reacciones }, categoriaResult, { user, puedeEscribir, estaBaneado }] = await Promise.all([
+    supabase
+      .from('foro_reacciones')
+      .select('emoji, autor_id, thread_id, reply_id')
+      .or(reaccionesFilter),
+    thread.categoria_id
+      ? supabase.from('foro_categorias').select('nombre, slug').eq('id', thread.categoria_id).single()
+      : Promise.resolve({ data: null }),
+    resolvePermisos(),
+  ])
+
+  const categoria = categoriaResult.data
 
   return (
     <div
@@ -83,6 +78,7 @@ export default async function ThreadPage({
           currentUserId={user?.id ?? null}
           puedeEscribir={puedeEscribir}
           estaLogueado={!!user}
+          estaBaneado={estaBaneado}
         />
       </div>
     </div>

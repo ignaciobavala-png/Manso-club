@@ -26,7 +26,7 @@ export default function ThreadCard({ thread }: Props) {
       <div className="flex items-start gap-3">
         {/* Avatar inicial */}
         <div className="shrink-0 w-8 h-8 rounded-full bg-manso-blue flex items-center justify-center text-manso-cream text-xs font-bold mt-0.5">
-          {(thread.autor_nombre ?? '?')[0].toUpperCase()}
+          {(thread.autor_nombre?.trim() || '?')[0].toUpperCase()}
         </div>
 
         <div className="flex-1 min-w-0">

@@ -34,8 +34,12 @@ export default function ReactionBar({ reactions, currentUserId, threadId, replyI
     if (!currentUserId) return
     const hasReaction = optimistic.some(r => r.emoji === code && r.autor_id === currentUserId)
     updateOptimistic({ emoji: code, action: hasReaction ? 'remove' : 'add' })
-    startTransition(() => {
-      toggleReaccion({ emoji: code, threadId, replyId, path })
+    startTransition(async () => {
+      try {
+        await toggleReaccion({ emoji: code, threadId, replyId, path })
+      } catch {
+        // La reacción optimista se revierte sola al terminar la transición
+      }
     })
   }
 

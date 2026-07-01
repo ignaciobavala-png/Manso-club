@@ -1,6 +1,7 @@
 'use client'
 
 import { useRef, useState, useTransition } from 'react'
+import { unstable_rethrow } from 'next/navigation'
 import { crearReply } from '@/app/foro/actions'
 
 export default function ReplyForm({ threadId }: { threadId: string }) {
@@ -15,6 +16,7 @@ export default function ReplyForm({ threadId }: { threadId: string }) {
         await crearReply(threadId, formData)
         formRef.current?.reset()
       } catch (e) {
+        unstable_rethrow(e)
         setError(e instanceof Error ? e.message : 'Error al enviar la respuesta')
       }
     })

@@ -1,18 +1,21 @@
 'use client';
 
 import { useState } from 'react';
-import { Users, Crown, Mail, BarChart2, Shield } from 'lucide-react';
+import { Users, Crown, Mail, BarChart2, Shield, Tag } from 'lucide-react';
 import { UsuariosList } from './UsuariosList';
 import { MembresiaActivasList } from './MembresiaActivasList';
+import { ModeracionForo } from './ModeracionForo';
+import { ForoCategoriasAdmin } from './ForoCategoriasAdmin';
 
-type SubTab = 'usuarios' | 'membresias' | 'comunicacion' | 'actividad' | 'moderacion';
+type SubTab = 'usuarios' | 'membresias' | 'comunicacion' | 'actividad' | 'moderacion' | 'categorias-foro';
 
 const SUBTABS: { id: SubTab; label: string; icon: React.ReactNode }[] = [
-  { id: 'usuarios',      label: 'Usuarios',      icon: <Users size={13} /> },
-  { id: 'membresias',   label: 'Membresías',    icon: <Crown size={13} /> },
-  { id: 'comunicacion', label: 'Comunicación',  icon: <Mail size={13} /> },
-  { id: 'actividad',    label: 'Actividad',     icon: <BarChart2 size={13} /> },
-  { id: 'moderacion',   label: 'Moderación',    icon: <Shield size={13} /> },
+  { id: 'usuarios',        label: 'Usuarios',        icon: <Users size={13} /> },
+  { id: 'membresias',      label: 'Membresías',      icon: <Crown size={13} /> },
+  { id: 'comunicacion',    label: 'Comunicación',    icon: <Mail size={13} /> },
+  { id: 'actividad',       label: 'Actividad',       icon: <BarChart2 size={13} /> },
+  { id: 'moderacion',      label: 'Moderación',      icon: <Shield size={13} /> },
+  { id: 'categorias-foro', label: 'Categorías Foro', icon: <Tag size={13} /> },
 ];
 
 function Placeholder({ label, icon }: { label: string; icon: React.ReactNode }) {
@@ -74,12 +77,9 @@ export function ComunidadAdmin() {
         />
       )}
 
-      {subTab === 'moderacion' && (
-        <Placeholder
-          label="Moderación"
-          icon={<Shield size={40} />}
-        />
-      )}
+      {subTab === 'moderacion' && <ModeracionForo />}
+
+      {subTab === 'categorias-foro' && <ForoCategoriasAdmin />}
     </div>
   );
 }

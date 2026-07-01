@@ -34,14 +34,16 @@ export async function toggleReaccion({
   const { data: existing } = await query.maybeSingle()
 
   if (existing) {
-    await supabase.from('foro_reacciones').delete().eq('id', existing.id)
+    const { error } = await supabase.from('foro_reacciones').delete().eq('id', existing.id)
+    if (error) throw new Error(error.message)
   } else {
-    await supabase.from('foro_reacciones').insert({
+    const { error } = await supabase.from('foro_reacciones').insert({
       emoji,
       autor_id: user.id,
       thread_id: threadId ?? null,
       reply_id: replyId ?? null,
     })
+    if (error) throw new Error(error.message)
   }
 
   revalidatePath(path)

@@ -167,7 +167,7 @@ export default function MiCuentaTabs({ userId, displayName, email, telefono, ava
             className="group rounded-[20px] border border-manso-cream/10 bg-manso-cream/5 p-5 hover:border-manso-terra/40 hover:bg-manso-terra/5 transition-all"
           >
             <MessageSquare size={20} className="text-manso-terra mb-3 group-hover:scale-110 transition-transform" />
-            <p className="text-manso-cream text-xs font-black uppercase tracking-tight">Foro</p>
+            <p className="text-manso-cream text-xs font-black uppercase tracking-tight">Comunidad Manso</p>
             <p className="text-manso-cream/30 text-[11px] mt-1 leading-tight">Conversaciones de la comunidad</p>
           </Link>
         </div>

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
+import { toSlug } from '@/lib/slug';
 import { Trash2, Plus } from 'lucide-react';
 
 interface Categoria {
@@ -19,10 +20,6 @@ const COLORES = [
   { label: 'Terra',  value: 'bg-manso-terra text-manso-cream' },
   { label: 'Zinc',   value: 'bg-zinc-700 text-white' },
 ];
-
-function toSlug(text: string) {
-  return text.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9\s-]/g, '').replace(/\s+/g, '-').replace(/-+/g, '-').trim();
-}
 
 export function StreamingCategoriasAdmin() {
   const [categorias, setCategorias] = useState<Categoria[]>([]);

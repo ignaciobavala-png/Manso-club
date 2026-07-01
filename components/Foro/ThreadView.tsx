@@ -2,6 +2,7 @@ import Link from 'next/link'
 import type { ForoThread, ForoReply, ForoCategoria, ForoReaccion } from '@/lib/types/foro'
 import ReplyForm from './ReplyForm'
 import ReactionBar from './ReactionBar'
+import ReportButton from './ReportButton'
 
 type Props = {
   thread: ForoThread & { categoria: Pick<ForoCategoria, 'nombre' | 'slug'> | null }
@@ -10,6 +11,7 @@ type Props = {
   currentUserId: string | null
   puedeEscribir: boolean
   estaLogueado: boolean
+  estaBaneado: boolean
 }
 
 function formatFecha(iso: string) {
@@ -25,12 +27,12 @@ function formatFecha(iso: string) {
 function Avatar({ nombre }: { nombre: string | null }) {
   return (
     <div className="shrink-0 w-9 h-9 rounded-full bg-manso-blue flex items-center justify-center text-manso-cream text-sm font-bold">
-      {(nombre ?? '?')[0].toUpperCase()}
+      {(nombre?.trim() || '?')[0].toUpperCase()}
     </div>
   )
 }
 
-export default function ThreadView({ thread, replies, reacciones, currentUserId, puedeEscribir, estaLogueado }: Props) {
+export default function ThreadView({ thread, replies, reacciones, currentUserId, puedeEscribir, estaLogueado, estaBaneado }: Props) {
   const path = `/foro/${thread.id}`
 
   const threadReacciones = reacciones.filter(r => r.thread_id === thread.id)
@@ -39,7 +41,7 @@ export default function ThreadView({ thread, replies, reacciones, currentUserId,
     <div>
       {/* Breadcrumb */}
       <div className="flex items-center gap-2 text-xs text-manso-cream/30 mb-8">
-        <Link href="/foro" className="hover:text-manso-cream/60 transition-colors">Foro</Link>
+        <Link href="/foro" className="hover:text-manso-cream/60 transition-colors">Comunidad Manso</Link>
         <span>/</span>
         {thread.categoria && (
           <>
@@ -93,6 +95,7 @@ export default function ThreadView({ thread, replies, reacciones, currentUserId,
                 threadId={thread.id}
                 path={path}
               />
+              {estaLogueado && <ReportButton threadId={thread.id} />}
             </div>
           </div>
         </div>
@@ -129,6 +132,7 @@ export default function ThreadView({ thread, replies, reacciones, currentUserId,
                       replyId={reply.id}
                       path={path}
                     />
+                    {estaLogueado && <ReportButton replyId={reply.id} />}
                   </div>
                 </div>
               )
@@ -145,6 +149,10 @@ export default function ThreadView({ thread, replies, reacciones, currentUserId,
           </p>
         ) : puedeEscribir ? (
           <ReplyForm threadId={thread.id} />
+        ) : estaBaneado ? (
+          <p className="text-manso-cream/30 text-sm text-center py-4">
+            Tu cuenta fue restringida para participar en el foro. Contactá a Ana si creés que es un error.
+          </p>
         ) : estaLogueado ? (
           <p className="text-manso-cream/30 text-sm text-center py-4">
             Tu cuenta aún no tiene acceso para participar. Contactá a Ana.

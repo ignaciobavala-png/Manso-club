@@ -44,3 +44,15 @@ export interface ForoReply {
   created_at: string
   updated_at: string
 }
+
+export interface ForoReporte {
+  id: string
+  thread_id: string | null
+  reply_id: string | null
+  reportado_por: string
+  motivo: string
+  estado: 'pendiente' | 'resuelto' | 'descartado'
+  created_at: string
+  resuelto_por: string | null
+  resuelto_at: string | null
+}
