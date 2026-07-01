@@ -18,6 +18,8 @@ interface UserProfile {
   membresia_hasta: string | null;
   membresia_tipo: string | null;
   permisos_totales: boolean;
+  foro_baneado: boolean;
+  foro_baneado_motivo: string | null;
 }
 
 function getNivel(u: UserProfile) {
@@ -55,7 +57,7 @@ export function UsuariosList() {
     setLoading(true);
     const { data } = await supabase
       .from('user_profiles')
-      .select('id, email, role, display_name, avatar_url, telefono, created_at, updated_at, membresia_activa, membresia_hasta, membresia_tipo, permisos_totales')
+      .select('id, email, role, display_name, avatar_url, telefono, created_at, updated_at, membresia_activa, membresia_hasta, membresia_tipo, permisos_totales, foro_baneado, foro_baneado_motivo')
       .order('email', { ascending: true });
     setUsuarios(data ?? []);
     setLoading(false);
@@ -155,6 +157,11 @@ export function UsuariosList() {
                   </div>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
+                  {u.foro_baneado && (
+                    <span className="px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest bg-red-500/20 text-red-400">
+                      Baneado
+                    </span>
+                  )}
                   {vencida && (
                     <span className="px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest bg-red-500/20 text-red-400">
                       Vencida

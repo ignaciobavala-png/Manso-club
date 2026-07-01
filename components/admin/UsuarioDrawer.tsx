@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { X, User, Mail, Calendar, CheckCircle, ExternalLink, EyeOff, Eye, Crown, Plus } from 'lucide-react';
+import { X, User, Mail, Calendar, CheckCircle, ExternalLink, EyeOff, Eye, Crown, Plus, Ban, ShieldOff } from 'lucide-react';
 
 interface UserProfile {
   id: string;
@@ -17,6 +17,8 @@ interface UserProfile {
   membresia_hasta: string | null;
   membresia_tipo: string | null;
   permisos_totales: boolean;
+  foro_baneado: boolean;
+  foro_baneado_motivo: string | null;
 }
 
 interface UsuarioDrawerProps {
@@ -94,6 +96,12 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
   const [permisos, setPermisos] = useState(usuario.permisos_totales);
   const [guardandoPermisos, setGuardandoPermisos] = useState(false);
   const [savedPermisos, setSavedPermisos] = useState(false);
+
+  // Foro (ban preventivo, sin necesidad de una denuncia previa)
+  const [baneado, setBaneado] = useState(usuario.foro_baneado);
+  const [motivoBaneo, setMotivoBaneo] = useState(usuario.foro_baneado_motivo ?? '');
+  const [guardandoBaneo, setGuardandoBaneo] = useState(false);
+  const [savedBaneo, setSavedBaneo] = useState(false);
 
   useEffect(() => {
     supabase
@@ -228,6 +236,22 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
     setSavedPermisos(true);
     onUpdated({ ...usuario, permisos_totales: permisos });
     setTimeout(() => setSavedPermisos(false), 2000);
+  };
+
+  const handleGuardarBaneo = async () => {
+    setGuardandoBaneo(true);
+    const motivo = baneado ? (motivoBaneo.trim() || null) : null;
+    const update = {
+      foro_baneado: baneado,
+      foro_baneado_motivo: motivo,
+      foro_baneado_at: baneado ? new Date().toISOString() : null,
+    };
+    await supabase.from('user_profiles').update(update).eq('id', usuario.id);
+    setMotivoBaneo(motivo ?? '');
+    setGuardandoBaneo(false);
+    setSavedBaneo(true);
+    onUpdated({ ...usuario, ...update });
+    setTimeout(() => setSavedBaneo(false), 2000);
   };
 
   return (
@@ -451,7 +475,7 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
 
         {/* Permisos */}
         {usuario.role !== 'admin' && (
-          <div className="px-6 py-5 flex-1">
+          <div className="px-6 py-5 border-b border-manso-cream/10">
             <p className="text-[9px] font-black uppercase tracking-[0.3em] text-manso-terra mb-5">
               Permisos
             </p>
@@ -478,6 +502,56 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
                 <><CheckCircle size={14} /> Guardado</>
               ) : (
                 'Guardar permisos'
+              )}
+            </button>
+          </div>
+        )}
+
+        {/* Foro */}
+        {usuario.role !== 'admin' && (
+          <div className="px-6 py-5 flex-1">
+            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-manso-terra mb-5">
+              Foro
+            </p>
+            <p className="text-[9px] text-manso-cream/30 uppercase tracking-widest mb-4">
+              Impide crear threads, responder y reaccionar en el foro. No afecta el resto de la cuenta
+            </p>
+            <div className="flex items-center justify-between mb-4">
+              <span className="text-sm font-bold text-manso-cream flex items-center gap-1.5">
+                {baneado && <Ban size={13} className="text-red-400" />}
+                Baneado del foro
+              </span>
+              <button
+                onClick={() => setBaneado(!baneado)}
+                className={`w-12 h-6 rounded-full transition-colors relative ${baneado ? 'bg-red-500' : 'bg-manso-cream/20'}`}
+              >
+                <div className={`w-5 h-5 bg-white rounded-full absolute top-0.5 transition-transform ${baneado ? 'translate-x-6' : 'translate-x-0.5'}`} />
+              </button>
+            </div>
+            {baneado && (
+              <textarea
+                value={motivoBaneo}
+                onChange={e => setMotivoBaneo(e.target.value)}
+                placeholder="Motivo del baneo (opcional, visible solo para el equipo)"
+                rows={2}
+                className="w-full mb-4 bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-3 py-2 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra"
+              />
+            )}
+            <button
+              onClick={handleGuardarBaneo}
+              disabled={guardandoBaneo}
+              className={`w-full py-3 font-black text-[10px] uppercase tracking-widest rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 ${
+                baneado ? 'bg-red-500 text-white hover:bg-red-500/80' : 'bg-manso-cream text-manso-black hover:bg-manso-cream/90'
+              }`}
+            >
+              {guardandoBaneo ? (
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+              ) : savedBaneo ? (
+                <><CheckCircle size={14} /> Guardado</>
+              ) : baneado ? (
+                <><Ban size={13} /> Banear del foro</>
+              ) : (
+                <><ShieldOff size={13} /> Guardar</>
               )}
             </button>
           </div>
