@@ -155,7 +155,7 @@ export default function ThreadView({ thread, replies, reacciones, currentUserId,
           </p>
         ) : estaLogueado ? (
           <p className="text-manso-cream/30 text-sm text-center py-4">
-            Tu cuenta aún no tiene acceso para participar. Contactá a Ana.
+            Sumate a la red Manso para participar. Contactá a Ana.
           </p>
         ) : (
           <p className="text-manso-cream/30 text-sm text-center py-4">
