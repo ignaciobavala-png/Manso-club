@@ -42,7 +42,7 @@ export default async function NuevoThreadPage() {
           <p className="text-manso-terra text-xs tracking-[0.2em] uppercase mb-4">Comunidad Manso</p>
           <h1 className="text-manso-cream text-2xl font-bold mb-4">Acceso restringido</h1>
           <p className="text-manso-cream/50 text-sm">
-            Tu cuenta aún no tiene acceso para participar en el foro.
+            Sumate a la red Manso para participar en el foro.
             Contactá a Ana para solicitar permisos.
           </p>
         </div>

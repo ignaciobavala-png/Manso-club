@@ -94,20 +94,20 @@ export default async function ForoPage({
           <div>
             <p className="text-manso-terra text-xs tracking-[0.2em] uppercase mb-2">Comunidad</p>
             <h1 className="text-manso-cream font-bold text-4xl md:text-5xl tracking-tight">
-              COMUNIDAD MANSO_
+              CHARLEMOS :)
             </h1>
           </div>
           {puedeEscribir && (
             <Link
               href="/foro/nuevo"
-              className="bg-manso-terra text-manso-cream text-sm font-semibold px-5 py-2.5 hover:bg-manso-terra/80 transition-colors"
+              className="bg-manso-terra text-manso-cream text-sm font-semibold px-4 py-2 hover:bg-manso-terra/80 transition-colors inline-flex items-center gap-1.5"
             >
-              + Nuevo Post
+              <span className="text-base leading-none -translate-y-[3px]">+</span> Rompé el hielo
             </Link>
           )}
           {!puedeEscribir && user && (
             <p className="text-manso-cream/40 text-xs text-right max-w-[200px]">
-              Tu cuenta aún no tiene acceso para participar
+              Sumate a la red Manso para participar
             </p>
           )}
           {!user && (
