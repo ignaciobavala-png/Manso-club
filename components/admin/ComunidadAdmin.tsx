@@ -6,6 +6,7 @@ import { UsuariosList } from './UsuariosList';
 import { MembresiaActivasList } from './MembresiaActivasList';
 import { ModeracionForo } from './ModeracionForo';
 import { ForoCategoriasAdmin } from './ForoCategoriasAdmin';
+import { ActividadForo } from './ActividadForo';
 
 type SubTab = 'usuarios' | 'membresias' | 'comunicacion' | 'actividad' | 'moderacion' | 'categorias-foro';
 
@@ -70,12 +71,7 @@ export function ComunidadAdmin() {
         />
       )}
 
-      {subTab === 'actividad' && (
-        <Placeholder
-          label="Actividad"
-          icon={<BarChart2 size={40} />}
-        />
-      )}
+      {subTab === 'actividad' && <ActividadForo />}
 
       {subTab === 'moderacion' && <ModeracionForo />}
 

@@ -172,16 +172,18 @@ export default function MiCuentaTabs({ userId, displayName, email, telefono, ava
           </Link>
         </div>
         {!membresia && !esMiembro && (
-          <Link
-            href="/membresias"
-            className="mt-3 flex items-center justify-between p-5 rounded-[20px] bg-manso-terra/10 border border-manso-terra/30 hover:bg-manso-terra/20 transition-all"
-          >
-            <div>
-              <p className="text-manso-terra text-xs font-black uppercase tracking-tight">Sumá la membresía</p>
-              <p className="text-manso-cream/50 text-[9px] mt-0.5">Desbloqueá streaming exclusivo y más beneficios</p>
-            </div>
-            <ArrowRight size={14} className="text-manso-terra flex-shrink-0" />
-          </Link>
+          <div className="mt-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 p-5 rounded-[20px] bg-manso-cream/5 border border-manso-cream/10">
+            <p className="text-manso-cream/50 text-[11px] leading-tight">
+              Desbloqueá streaming exclusivo y más beneficios
+            </p>
+            <Link
+              href="/membresias"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-manso-terra text-manso-cream text-[10px] font-black uppercase tracking-widest hover:bg-manso-cream hover:text-manso-black transition-all whitespace-nowrap"
+            >
+              Membresías
+              <ArrowRight size={14} className="flex-shrink-0" />
+            </Link>
+          </div>
         )}
       </div>
 
