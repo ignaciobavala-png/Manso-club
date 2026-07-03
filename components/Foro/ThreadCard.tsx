@@ -58,8 +58,6 @@ export default function ThreadCard({ thread }: Props) {
             <span>{formatFecha(thread.updated_at)}</span>
             <span>·</span>
             <span>{thread.reply_count} {thread.reply_count === 1 ? 'respuesta' : 'respuestas'}</span>
-            <span>·</span>
-            <span>{thread.views} {thread.views === 1 ? 'vista' : 'vistas'}</span>
           </div>
         </div>
       </div>

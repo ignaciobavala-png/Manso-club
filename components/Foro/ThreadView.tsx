@@ -101,7 +101,9 @@ export default function ThreadView({ thread, replies, reacciones, currentUserId,
         </div>
 
         <div className="mt-4 text-manso-cream/20 text-xs flex gap-4 pl-12">
-          <span>{thread.views} vistas</span>
+          {currentUserId === thread.autor_id && (
+            <span title="Solo vos ves las vistas de tu publicación">{thread.views} vistas</span>
+          )}
           <span>{thread.reply_count} respuestas</span>
         </div>
       </div>
