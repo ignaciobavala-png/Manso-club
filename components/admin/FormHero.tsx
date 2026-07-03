@@ -5,7 +5,18 @@ import { supabase } from '@/lib/supabase';
 import { ImageUploader } from './ImageUploader';
 import { VideoUploader } from './VideoUploader';
 import { HeroSlide } from '@/lib/hero';
-import { Type, Image, Video, Hash, FileText, Monitor, Smartphone, Link2, Film } from 'lucide-react';
+import { Type, Image, Video, Hash, FileText, Monitor, Smartphone, Link2, Film, AlertTriangle } from 'lucide-react';
+
+const UNSUPPORTED_VIDEO_HOSTS = ['youtube.com', 'youtu.be', 'vimeo.com'];
+
+function isUnsupportedVideoUrl(url: string): boolean {
+  try {
+    const hostname = new URL(url).hostname.replace(/^www\./, '');
+    return UNSUPPORTED_VIDEO_HOSTS.some(host => hostname === host || hostname.endsWith(`.${host}`));
+  } catch {
+    return false;
+  }
+}
 
 interface HeroSlideEdit {
   id: string;
@@ -84,6 +95,12 @@ export function FormHero() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (formData.tipo === 'video' && isUnsupportedVideoUrl(formData.media_url)) {
+      alert('Ese link de YouTube/Vimeo no va a reproducirse en el banner. Descargá el video y subilo como archivo (.mp4, .webm), o pegá un link directo al archivo de video.');
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -94,8 +111,10 @@ export function FormHero() {
         description: formData.description || null,
         tipo: formData.tipo,
         media_url: (formData.tipo === 'imagen' || formData.tipo === 'video') ? formData.media_url : null,
-        media_url_desktop: (formData.tipo === 'imagen') ? formData.media_url_desktop : null,
-        media_url_mobile: (formData.tipo === 'imagen') ? formData.media_url_mobile : null,
+        // No se limpian al cambiar de tipo: si se prueba "video" y no se guarda nada,
+        // las imágenes desktop/mobile ya cargadas no deben perderse.
+        media_url_desktop: formData.media_url_desktop || null,
+        media_url_mobile: formData.media_url_mobile || null,
         order_index: parseInt(String(formData.order_index)) || 1,
         active: true,
         device_type: formData.device_type
@@ -303,6 +322,12 @@ export function FormHero() {
                   onChange={e => setFormData({...formData, media_url: e.target.value})}
                 />
               </div>
+              {isUnsupportedVideoUrl(formData.media_url) && (
+                <p className="flex items-start gap-2 text-[10px] text-red-400 ml-2 mt-1">
+                  <AlertTriangle size={14} className="flex-shrink-0 mt-0.5" />
+                  Los links de YouTube/Vimeo no funcionan acá: el banner necesita un archivo de video directo (.mp4, .webm). Descargá el video y subilo con el botón de arriba.
+                </p>
+              )}
             </div>
           </div>
         )}

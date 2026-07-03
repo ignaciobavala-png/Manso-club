@@ -11,6 +11,13 @@ interface Props {
   initialPreview?: string | null;
 }
 
+function extractStoragePath(url: string, bucket: string): string | null {
+  const marker = `/object/public/${bucket}/`;
+  const index = url.indexOf(marker);
+  if (index === -1) return null;
+  return decodeURIComponent(url.slice(index + marker.length));
+}
+
 export function VideoUploader({ onUpload, bucket = 'hero-media', folder = 'videos', initialPreview = null }: Props) {
   const [isUploading, setIsUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(initialPreview);
@@ -32,6 +39,12 @@ export function VideoUploader({ onUpload, bucket = 'hero-media', folder = 'video
       if (uploadError) throw uploadError;
 
       const { data } = supabase.storage.from(bucket).getPublicUrl(filePath);
+
+      // Borrar el archivo anterior (si había uno en este mismo bucket) para no dejar huérfanos
+      const oldPath = preview ? extractStoragePath(preview, bucket) : null;
+      if (oldPath) {
+        supabase.storage.from(bucket).remove([oldPath]).catch(() => {});
+      }
 
       setPreview(data.publicUrl);
       onUpload(data.publicUrl);

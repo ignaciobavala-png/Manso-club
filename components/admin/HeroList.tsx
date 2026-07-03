@@ -55,27 +55,39 @@ export function HeroList({ refreshTrigger }: HeroListProps) {
     if (!confirm(`¿Eliminar slide "${title}"? Esta acción no se puede deshacer.`)) return;
 
     try {
-      // Borrar archivo de storage si existe
-      if (slide.media_url && slide.media_url.includes('supabase.co/storage/v1')) {
+      // Borrar archivos de storage si existen (media_url, y las variantes desktop/mobile)
+      const mediaUrls = Array.from(new Set(
+        [slide.media_url, slide.media_url_desktop, slide.media_url_mobile].filter(
+          (u): u is string => !!u && u.includes('supabase.co/storage/v1')
+        )
+      ));
+
+      // Agrupar por bucket, ya que remove() borra varios paths de un mismo bucket a la vez
+      const pathsByBucket = new Map<string, string[]>();
+      for (const mediaUrl of mediaUrls) {
         try {
-          // Extraer path del archivo de la URL
-          const url = new URL(slide.media_url);
+          const url = new URL(mediaUrl);
           const pathParts = url.pathname.split('/');
           const objectIndex = pathParts.findIndex(part => part === 'object') + 2;
           if (objectIndex < pathParts.length) {
             const filePath = pathParts.slice(objectIndex).join('/');
             const bucket = pathParts[objectIndex - 1];
-            
-            const { error: storageError } = await supabase.storage
-              .from(bucket)
-              .remove([filePath]);
-            
-            if (storageError) {
-              console.warn('Error al eliminar archivo de storage:', storageError);
-            }
+            const existing = pathsByBucket.get(bucket) || [];
+            existing.push(filePath);
+            pathsByBucket.set(bucket, existing);
           }
         } catch (storageError) {
           console.warn('Error procesando URL de storage:', storageError);
+        }
+      }
+
+      for (const [bucket, filePaths] of pathsByBucket) {
+        const { error: storageError } = await supabase.storage
+          .from(bucket)
+          .remove(filePaths);
+
+        if (storageError) {
+          console.warn('Error al eliminar archivo de storage:', storageError);
         }
       }
 
