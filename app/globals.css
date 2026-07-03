@@ -100,8 +100,50 @@
   50%       { opacity: 0; }
 }
 
+@keyframes cta-pulse {
+  0%, 100% { opacity: 0.55; text-shadow: 0 0 0 rgba(255, 252, 220, 0); }
+  50%       { opacity: 1;    text-shadow: 0 0 12px rgba(255, 252, 220, 0.6); }
+}
+
+@utility animate-cta-pulse { animation: cta-pulse 2.2s ease-in-out infinite; }
+
 .cursor-blink {
   animation: blink 1.1s step-start infinite;
+}
+
+.reader-word {
+  display: inline-block;
+  opacity: 0.45;
+  /* Solo opacidad/color/glow a propósito: cualquier cambio de tamaño
+     (font-size o transform: scale) fuerza reflow o pisa el espaciado del
+     renglón vecino, y como la palabra activa cambia cada ~350ms eso se ve
+     como un temblor constante en el párrafo. Sin cambiar dimensiones no
+     hay reflow ni solapamiento — cero movimiento, solo contraste. */
+  transition: opacity 300ms ease-out, color 300ms ease-out, text-shadow 300ms ease-out;
+}
+
+/* Estela: 0 = palabra actual (más brillante), 1-4 = va apagándose hacia
+   atrás, dando sensación de avance continuo en vez de un salto seco. */
+.reader-word[data-trail="0"] {
+  opacity: 1;
+  color: var(--color-manso-cream);
+  text-shadow: 0 0 16px rgba(255, 252, 220, 0.45), 0 0 4px rgba(255, 252, 220, 0.6);
+}
+.reader-word[data-trail="1"] {
+  opacity: 0.85;
+  color: var(--color-manso-cream);
+  text-shadow: 0 0 10px rgba(255, 252, 220, 0.3);
+}
+.reader-word[data-trail="2"] {
+  opacity: 0.68;
+  color: var(--color-manso-cream);
+  text-shadow: 0 0 6px rgba(255, 252, 220, 0.18);
+}
+.reader-word[data-trail="3"] {
+  opacity: 0.56;
+}
+.reader-word[data-trail="4"] {
+  opacity: 0.5;
 }
 
 @layer base {

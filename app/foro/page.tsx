@@ -47,7 +47,7 @@ export default async function ForoPage({
 
   let threadsQuery = supabase
     .from('foro_threads')
-    .select('id, titulo, categoria_id, autor_nombre, views, reply_count, pinned, cerrado, created_at, updated_at', { count: 'exact' })
+    .select('id, titulo, categoria_id, autor_nombre, autor_avatar, views, reply_count, pinned, cerrado, created_at, updated_at', { count: 'exact' })
     .order('pinned', { ascending: false })
     .order('updated_at', { ascending: false })
 
@@ -78,14 +78,7 @@ export default async function ForoPage({
   const puedeEscribir = user ? (await getForoPermisos(supabaseAuth, user.id)).puedeEscribir : false
 
   return (
-    <div
-      className="relative min-h-screen bg-manso-black"
-      style={{
-        backgroundImage:
-          'linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px)',
-        backgroundSize: '48px 48px',
-      }}
-    >
+    <div className="relative min-h-screen bg-manso-black">
       <ParticleBackground />
       <div className="relative z-10 max-w-[1000px] mx-auto px-4 md:px-8 pt-32 pb-20">
 
@@ -111,7 +104,7 @@ export default async function ForoPage({
             </p>
           )}
           {!user && (
-            <Link href="/login?from=/foro" className="text-manso-cream/50 text-sm hover:text-manso-cream transition-colors">
+            <Link href="/login?from=/foro" className="animate-cta-pulse text-manso-cream text-sm font-semibold hover:text-manso-terra transition-colors">
               Iniciá sesión para participar
             </Link>
           )}

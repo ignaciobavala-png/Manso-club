@@ -57,14 +57,7 @@ export default async function NuevoThreadPage() {
     .order('orden')
 
   return (
-    <div
-      className="relative min-h-screen bg-manso-black"
-      style={{
-        backgroundImage:
-          'linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px)',
-        backgroundSize: '48px 48px',
-      }}
-    >
+    <div className="relative min-h-screen bg-manso-black">
       <ParticleBackground />
       <div className="relative z-10 max-w-[700px] mx-auto px-4 md:px-8 pt-32 pb-20">
         <div className="mb-8">

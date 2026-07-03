@@ -3,6 +3,9 @@ import type { ForoThread, ForoReply, ForoCategoria, ForoReaccion } from '@/lib/t
 import ReplyForm from './ReplyForm'
 import ReactionBar from './ReactionBar'
 import ReportButton from './ReportButton'
+import { ReaderProvider } from './Reader/ReaderProvider'
+import { ReaderText } from './Reader/ReaderText'
+import { ReaderButton } from './Reader/ReaderButton'
 
 type Props = {
   thread: ForoThread & { categoria: Pick<ForoCategoria, 'nombre' | 'slug'> | null }
@@ -24,10 +27,22 @@ function formatFecha(iso: string) {
   })
 }
 
-function Avatar({ nombre }: { nombre: string | null }) {
+function Avatar({ nombre, avatarUrl, size = 'md' }: { nombre: string | null; avatarUrl: string | null; size?: 'md' | 'lg' }) {
+  const dimensions = size === 'lg' ? 'w-16 h-16' : 'w-12 h-12'
+  const textSize = size === 'lg' ? 'text-lg' : 'text-base'
   return (
-    <div className="shrink-0 w-9 h-9 rounded-full bg-manso-blue flex items-center justify-center text-manso-cream text-sm font-bold">
-      {(nombre?.trim() || '?')[0].toUpperCase()}
+    <div className={`shrink-0 ${dimensions} rounded-full overflow-hidden ring-2 ring-manso-cream/15`}>
+      {avatarUrl ? (
+        <img
+          src={avatarUrl}
+          alt={nombre ?? 'Usuario'}
+          className="w-full h-full object-cover"
+        />
+      ) : (
+        <div className={`w-full h-full bg-manso-blue flex items-center justify-center text-manso-cream ${textSize} font-bold`}>
+          {(nombre?.trim() || '?')[0].toUpperCase()}
+        </div>
+      )}
     </div>
   )
 }
@@ -38,9 +53,10 @@ export default function ThreadView({ thread, replies, reacciones, currentUserId,
   const threadReacciones = reacciones.filter(r => r.thread_id === thread.id)
 
   return (
-    <div>
+    <ReaderProvider>
+      <div>
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-xs text-manso-cream/30 mb-8">
+      <div className="flex items-center gap-2 text-sm text-manso-cream/30 mb-8">
         <Link href="/foro" className="hover:text-manso-cream/60 transition-colors">Comunidad Manso</Link>
         <span>/</span>
         {thread.categoria && (
@@ -74,19 +90,22 @@ export default function ThreadView({ thread, replies, reacciones, currentUserId,
           )}
         </div>
 
-        <h1 className="text-manso-cream font-bold text-2xl md:text-3xl leading-tight mb-6">
-          {thread.titulo}
-        </h1>
+        <div className="flex items-start justify-between gap-4 mb-6">
+          <h1 className="text-manso-cream font-bold text-2xl md:text-3xl leading-tight">
+            {thread.titulo}
+          </h1>
+          <ReaderButton />
+        </div>
 
-        <div className="flex items-start gap-3">
-          <Avatar nombre={thread.autor_nombre} />
+        <div className="flex items-start gap-4">
+          <Avatar nombre={thread.autor_nombre} avatarUrl={thread.autor_avatar} size="lg" />
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-manso-cream text-sm font-semibold">{thread.autor_nombre ?? 'Anónimo'}</span>
+              <span className="text-manso-cream text-lg font-semibold">{thread.autor_nombre ?? 'Anónimo'}</span>
               <span className="text-manso-cream/30 text-xs">{formatFecha(thread.created_at)}</span>
             </div>
-            <div className="text-manso-cream/80 text-sm leading-relaxed whitespace-pre-wrap border-l-2 border-manso-cream/10 pl-4">
-              {thread.cuerpo}
+            <div className="border-l-2 border-manso-cream/10 pl-4">
+              <ReaderText text={thread.cuerpo} variant="post" />
             </div>
             <div className="pl-4">
               <ReactionBar
@@ -100,7 +119,7 @@ export default function ThreadView({ thread, replies, reacciones, currentUserId,
           </div>
         </div>
 
-        <div className="mt-4 text-manso-cream/20 text-xs flex gap-4 pl-12">
+        <div className="mt-4 text-manso-cream/20 text-xs flex gap-4 pl-20">
           {currentUserId === thread.autor_id && (
             <span title="Solo vos ves las vistas de tu publicación">{thread.views} vistas</span>
           )}
@@ -118,16 +137,14 @@ export default function ThreadView({ thread, replies, reacciones, currentUserId,
             {replies.map((reply) => {
               const replyReacciones = reacciones.filter(r => r.reply_id === reply.id)
               return (
-                <div key={reply.id} className="flex items-start gap-3">
-                  <Avatar nombre={reply.autor_nombre} />
+                <div key={reply.id} className="flex items-start gap-4">
+                  <Avatar nombre={reply.autor_nombre} avatarUrl={reply.autor_avatar} />
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-manso-cream text-sm font-semibold">{reply.autor_nombre ?? 'Anónimo'}</span>
+                      <span className="text-manso-cream text-base font-semibold">{reply.autor_nombre ?? 'Anónimo'}</span>
                       <span className="text-manso-cream/30 text-xs">{formatFecha(reply.created_at)}</span>
                     </div>
-                    <div className="text-manso-cream/75 text-sm leading-relaxed whitespace-pre-wrap">
-                      {reply.cuerpo}
-                    </div>
+                    <ReaderText text={reply.cuerpo} variant="reply" />
                     <ReactionBar
                       reactions={replyReacciones}
                       currentUserId={currentUserId}
@@ -169,5 +186,6 @@ export default function ThreadView({ thread, replies, reacciones, currentUserId,
         )}
       </div>
     </div>
+    </ReaderProvider>
   )
 }

@@ -5,6 +5,7 @@ type ThreadPreview = {
   id: string
   titulo: string
   autor_nombre: string | null
+  autor_avatar: string | null
   views: number
   reply_count: number
   pinned: boolean
@@ -24,9 +25,19 @@ export default function ThreadCard({ thread }: Props) {
   return (
     <Link href={`/foro/${thread.id}`} className="block group py-4 hover:bg-manso-cream/[0.02] transition-colors px-2 -mx-2">
       <div className="flex items-start gap-3">
-        {/* Avatar inicial */}
-        <div className="shrink-0 w-8 h-8 rounded-full bg-manso-blue flex items-center justify-center text-manso-cream text-xs font-bold mt-0.5">
-          {(thread.autor_nombre?.trim() || '?')[0].toUpperCase()}
+        {/* Avatar */}
+        <div className="shrink-0 w-11 h-11 rounded-full overflow-hidden ring-2 ring-manso-cream/15 mt-0.5">
+          {thread.autor_avatar ? (
+            <img
+              src={thread.autor_avatar}
+              alt={thread.autor_nombre ?? 'Usuario'}
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <div className="w-full h-full bg-manso-blue flex items-center justify-center text-manso-cream text-sm font-bold">
+              {(thread.autor_nombre?.trim() || '?')[0].toUpperCase()}
+            </div>
+          )}
         </div>
 
         <div className="flex-1 min-w-0">
@@ -48,11 +59,11 @@ export default function ThreadCard({ thread }: Props) {
             )}
           </div>
 
-          <h2 className="text-manso-cream font-semibold text-sm md:text-base leading-snug group-hover:text-manso-cream/80 transition-colors truncate">
+          <h2 className="text-manso-cream font-semibold text-lg md:text-xl leading-snug group-hover:text-manso-cream/80 transition-colors truncate">
             {thread.titulo}
           </h2>
 
-          <div className="flex items-center gap-3 mt-1.5 text-manso-cream/35 text-xs">
+          <div className="flex items-center gap-3 mt-1.5 text-manso-cream/35 text-sm">
             <span>{thread.autor_nombre ?? 'Anónimo'}</span>
             <span>·</span>
             <span>{formatFecha(thread.updated_at)}</span>

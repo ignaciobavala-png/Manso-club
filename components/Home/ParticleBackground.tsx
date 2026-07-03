@@ -12,9 +12,11 @@ interface Particle {
 
 interface Props {
   mode?: 'dark' | 'light';
+  radiusScale?: number;
+  opacity?: number;
 }
 
-export const ParticleBackground = ({ mode = 'dark' }: Props) => {
+export const ParticleBackground = ({ mode = 'dark', radiusScale = 1, opacity = 0.3 }: Props) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -33,7 +35,7 @@ export const ParticleBackground = ({ mode = 'dark' }: Props) => {
         y: Math.random() * canvas.height,
         vx: (Math.random() - 0.5) * 0.28,
         vy: (Math.random() - 0.5) * 0.28,
-        radius: Math.random() * 1.2 + 0.4,
+        radius: (Math.random() * 1.2 + 0.4) * radiusScale,
       }));
     };
 
@@ -56,7 +58,7 @@ export const ParticleBackground = ({ mode = 'dark' }: Props) => {
         // Draw dot
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
-        ctx.fillStyle = mode === 'light' ? 'rgba(0,0,0,0.35)' : 'rgba(255,255,255,0.3)';
+        ctx.fillStyle = mode === 'light' ? 'rgba(0,0,0,0.35)' : `rgba(255,255,255,${opacity})`;
         ctx.fill();
       }
 
@@ -95,7 +97,7 @@ export const ParticleBackground = ({ mode = 'dark' }: Props) => {
       cancelAnimationFrame(animationId);
       ro.disconnect();
     };
-  }, [mode]);
+  }, [mode, radiusScale, opacity]);
 
   return (
     <canvas

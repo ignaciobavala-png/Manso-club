@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { GoogleSignInButton } from '@/components/GoogleSignInButton';
+import { ParticleBackground } from '@/components/Home/ParticleBackground';
 
 function LoginForm() {
   const [email, setEmail] = useState('');
@@ -36,8 +37,9 @@ function LoginForm() {
   };
 
   return (
-    <div className="fixed inset-0 z-30 flex items-center justify-center p-6 pt-24" style={{ backgroundColor: '#1D1D1B' }}>
-      <div className="w-full max-w-sm bg-manso-cream/5 p-8 rounded-[40px] border border-manso-cream/10 shadow-2xl">
+    <div className="fixed inset-0 z-30 flex items-center justify-center p-6 pt-24 overflow-hidden" style={{ backgroundColor: '#1D1D1B' }}>
+      <ParticleBackground radiusScale={1.8} opacity={0.55} />
+      <div className="relative z-10 w-full max-w-sm bg-manso-cream/5 p-8 rounded-[40px] border border-manso-cream/10 shadow-2xl">
         <div className="text-center mb-6">
           <h1 className="text-4xl font-black italic tracking-tighter uppercase text-manso-cream">Manso<span className="cursor-blink">_</span></h1>
         </div>
