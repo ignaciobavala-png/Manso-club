@@ -12,7 +12,7 @@ type Props = {
   replies: ForoReply[]
   reacciones: ForoReaccion[]
   currentUserId: string | null
-  puedeEscribir: boolean
+  puedeComentar: boolean
   estaLogueado: boolean
   estaBaneado: boolean
 }
@@ -47,7 +47,7 @@ function Avatar({ nombre, avatarUrl, size = 'md' }: { nombre: string | null; ava
   )
 }
 
-export default function ThreadView({ thread, replies, reacciones, currentUserId, puedeEscribir, estaLogueado, estaBaneado }: Props) {
+export default function ThreadView({ thread, replies, reacciones, currentUserId, puedeComentar, estaLogueado, estaBaneado }: Props) {
   const path = `/foro/${thread.id}`
 
   const threadReacciones = reacciones.filter(r => r.thread_id === thread.id)
@@ -166,7 +166,7 @@ export default function ThreadView({ thread, replies, reacciones, currentUserId,
           <p className="text-manso-cream/30 text-sm text-center py-4">
             Este thread está cerrado. No se pueden agregar más respuestas.
           </p>
-        ) : puedeEscribir ? (
+        ) : puedeComentar ? (
           <ReplyForm threadId={thread.id} />
         ) : estaBaneado ? (
           <p className="text-manso-cream/30 text-sm text-center py-4">

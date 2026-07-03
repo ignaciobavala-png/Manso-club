@@ -4,6 +4,7 @@ type SupabaseServerClient = Awaited<ReturnType<typeof createSupabaseServer>>
 
 export type ForoPermisos = {
   puedeEscribir: boolean
+  puedeComentar: boolean
   estaBaneado: boolean
 }
 
@@ -17,6 +18,7 @@ export async function getForoPermisos(supabase: SupabaseServerClient, userId: st
   const estaBaneado = profile?.foro_baneado ?? false
   return {
     puedeEscribir: (profile?.permisos_totales ?? false) && !estaBaneado,
+    puedeComentar: !estaBaneado,
     estaBaneado,
   }
 }

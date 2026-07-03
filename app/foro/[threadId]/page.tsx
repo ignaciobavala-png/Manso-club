@@ -42,12 +42,12 @@ export default async function ThreadPage({
   async function resolvePermisos() {
     const supabaseAuth = await createSupabaseServer()
     const { data: { user } } = await supabaseAuth.auth.getUser()
-    if (!user) return { user: null, puedeEscribir: false, estaBaneado: false }
-    const { puedeEscribir, estaBaneado } = await getForoPermisos(supabaseAuth, user.id)
-    return { user, puedeEscribir, estaBaneado }
+    if (!user) return { user: null, puedeComentar: false, estaBaneado: false }
+    const { puedeComentar, estaBaneado } = await getForoPermisos(supabaseAuth, user.id)
+    return { user, puedeComentar, estaBaneado }
   }
 
-  const [{ data: reacciones }, categoriaResult, { user, puedeEscribir, estaBaneado }] = await Promise.all([
+  const [{ data: reacciones }, categoriaResult, { user, puedeComentar, estaBaneado }] = await Promise.all([
     supabase
       .from('foro_reacciones')
       .select('emoji, autor_id, thread_id, reply_id')
@@ -69,7 +69,7 @@ export default async function ThreadPage({
           replies={replies ?? []}
           reacciones={reacciones ?? []}
           currentUserId={user?.id ?? null}
-          puedeEscribir={puedeEscribir}
+          puedeComentar={puedeComentar}
           estaLogueado={!!user}
           estaBaneado={estaBaneado}
         />

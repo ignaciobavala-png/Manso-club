@@ -8,9 +8,9 @@ import { redirect } from 'next/navigation'
 async function getPermisos() {
   const supabase = await createSupabaseServer()
   const { data: { user } } = await supabase.auth.getUser()
-  if (!user) return { user: null, puedeEscribir: false, estaBaneado: false, supabase }
-  const { puedeEscribir, estaBaneado } = await getForoPermisos(supabase, user.id)
-  return { user, puedeEscribir, estaBaneado, supabase }
+  if (!user) return { user: null, puedeEscribir: false, puedeComentar: false, estaBaneado: false, supabase }
+  const { puedeEscribir, puedeComentar, estaBaneado } = await getForoPermisos(supabase, user.id)
+  return { user, puedeEscribir, puedeComentar, estaBaneado, supabase }
 }
 
 export async function crearThread(formData: FormData) {
@@ -38,10 +38,10 @@ export async function crearThread(formData: FormData) {
 }
 
 export async function crearReply(threadId: string, formData: FormData) {
-  const { user, puedeEscribir, estaBaneado, supabase } = await getPermisos()
+  const { user, puedeComentar, estaBaneado, supabase } = await getPermisos()
   if (!user) redirect(`/login?from=/foro/${threadId}`)
   if (estaBaneado) throw new Error('Tu cuenta fue restringida para participar en el foro')
-  if (!puedeEscribir) throw new Error('Sin permisos para responder')
+  if (!puedeComentar) throw new Error('Sin permisos para responder')
 
   const cuerpo = (formData.get('cuerpo') as string).trim()
   if (!cuerpo) throw new Error('El mensaje no puede estar vacío')
