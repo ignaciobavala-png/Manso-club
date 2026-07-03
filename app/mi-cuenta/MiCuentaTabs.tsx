@@ -442,12 +442,13 @@ function PerfilForm({ userId, displayName, email, telefono, avatarUrl, onLogout,
         const ctx = canvas.getContext('2d')!;
         const img = new Image();
         img.onload = () => {
-          const size = Math.min(img.width, img.height, 400);
-          canvas.width = size;
-          canvas.height = size;
-          const ox = (img.width - size) / 2;
-          const oy = (img.height - size) / 2;
-          ctx.drawImage(img, ox, oy, size, size, 0, 0, size, size);
+          const cropSize = Math.min(img.width, img.height);
+          const outputSize = Math.min(cropSize, 400);
+          canvas.width = outputSize;
+          canvas.height = outputSize;
+          const ox = (img.width - cropSize) / 2;
+          const oy = (img.height - cropSize) / 2;
+          ctx.drawImage(img, ox, oy, cropSize, cropSize, 0, 0, outputSize, outputSize);
           canvas.toBlob((blob) => {
             resolve(new File([blob!], 'avatar.webp', { type: 'image/webp' }));
           }, 'image/webp', 0.85);
