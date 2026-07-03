@@ -6,6 +6,10 @@ import { Play, Pause, Volume2, VolumeX, Maximize, Minimize, Loader2 } from 'luci
 interface Props {
   videoId: string;
   title?: string;
+  /** Si es true, usa el embed nativo de YouTube (controles y branding
+   * normales, permite ir al canal). Si es false/omitido, usa el player
+   * bloqueado de siempre. */
+  allowYoutubeLink?: boolean;
 }
 
 type PlayerState = 'idle' | 'loading' | 'ready' | 'playing' | 'paused' | 'ended' | 'error';
@@ -46,7 +50,7 @@ function loadYTScript(): Promise<void> {
   });
 }
 
-export function YouTubePlayer({ videoId, title }: Props) {
+export function YouTubePlayer({ videoId, title, allowYoutubeLink = false }: Props) {
   // ID único estable por instancia del componente
   const uid           = useId().replace(/:/g, '');
   const playerId      = `yt-player-${uid}`;
@@ -84,6 +88,8 @@ export function YouTubePlayer({ videoId, title }: Props) {
   }, [stopPoll]);
 
   useEffect(() => {
+    if (allowYoutubeLink) return;
+
     mountedRef.current = true;
     setState('loading');
 
@@ -133,7 +139,7 @@ export function YouTubePlayer({ videoId, title }: Props) {
     };
   // videoId cambia → recrea el player desde cero
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [videoId]);
+  }, [videoId, allowYoutubeLink]);
 
   // Auto-ocultar controles tras 3s reproduciendo
   const revealControls = useCallback(() => {
@@ -189,6 +195,20 @@ export function YouTubePlayer({ videoId, title }: Props) {
     if (!document.fullscreenElement) containerRef.current.requestFullscreen();
     else document.exitFullscreen();
   };
+
+  if (allowYoutubeLink) {
+    return (
+      <div className="w-full aspect-video rounded-[20px] overflow-hidden bg-black">
+        <iframe
+          src={`https://www.youtube.com/embed/${videoId}?rel=0`}
+          title={title}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          className="w-full h-full"
+        />
+      </div>
+    );
+  }
 
   if (fallback) {
     return (

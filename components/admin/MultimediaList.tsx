@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Trash2, Eye, EyeOff, Youtube, Film, Image as ImageIcon } from 'lucide-react';
+import { Trash2, Eye, EyeOff, Youtube, Film, Image as ImageIcon, ExternalLink, Lock } from 'lucide-react';
 
 interface MultimediaItem {
   id: string;
@@ -13,6 +13,7 @@ interface MultimediaItem {
   tipo: string;
   orden: number;
   active: boolean;
+  permitir_youtube?: boolean;
 }
 
 const TIPO_META: Record<string, { icon: typeof Youtube; label: string }> = {
@@ -48,6 +49,11 @@ export function MultimediaList({ refreshTrigger }: { refreshTrigger?: number }) 
   const toggleActive = async (id: string, active: boolean) => {
     await supabase.from('multimedia_videos').update({ active: !active }).eq('id', id);
     setItems(prev => prev.map(v => v.id === id ? { ...v, active: !active } : v));
+  };
+
+  const togglePermitirYoutube = async (id: string, permitirYoutube: boolean) => {
+    await supabase.from('multimedia_videos').update({ permitir_youtube: !permitirYoutube }).eq('id', id);
+    setItems(prev => prev.map(v => v.id === id ? { ...v, permitir_youtube: !permitirYoutube } : v));
   };
 
   const handleDelete = async (id: string) => {
@@ -103,6 +109,15 @@ export function MultimediaList({ refreshTrigger }: { refreshTrigger?: number }) 
                 </div>
               </div>
               <div className="flex items-center gap-2 shrink-0">
+                {item.tipo === 'youtube' && (
+                  <button
+                    onClick={() => togglePermitirYoutube(item.id, !!item.permitir_youtube)}
+                    title={item.permitir_youtube ? 'Lleva a YouTube (click para bloquear)' : 'Bloqueado en la página (click para permitir link a YouTube)'}
+                    className={`p-2 rounded-lg transition-all ${item.permitir_youtube ? 'bg-blue-500/20 ring-2 ring-blue-500/30' : 'bg-manso-cream/10 ring-2 ring-manso-cream/15'}`}
+                  >
+                    {item.permitir_youtube ? <ExternalLink size={14} className="text-blue-400" /> : <Lock size={14} className="text-manso-cream/50" />}
+                  </button>
+                )}
                 <button onClick={() => toggleActive(item.id, item.active)}
                   className={`p-2 rounded-lg transition-all ${item.active ? 'bg-green-500/20 ring-2 ring-green-500/30' : 'bg-red-500/20 ring-2 ring-red-500/30'}`}>
                   {item.active ? <Eye size={14} className="text-green-400" /> : <EyeOff size={14} className="text-red-400" />}

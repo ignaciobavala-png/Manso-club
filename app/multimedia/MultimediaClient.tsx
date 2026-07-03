@@ -14,6 +14,7 @@ interface MediaItem {
   descripcion?: string;
   tipo: string;
   orden: number;
+  permitir_youtube?: boolean;
 }
 
 interface Transmision {
@@ -168,7 +169,7 @@ export default function MultimediaClient({
                 if (!videoId) return null;
                 return (
                   <div key={item.id}>
-                    <YouTubePlayer videoId={videoId} title={item.titulo} />
+                    <YouTubePlayer videoId={videoId} title={item.titulo} allowYoutubeLink={item.permitir_youtube} />
                     <div className="mt-4 px-1">
                       <h3 className="text-manso-cream font-black uppercase italic tracking-tighter text-xl leading-tight">
                         {item.titulo}

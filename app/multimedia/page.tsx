@@ -10,7 +10,7 @@ export default async function MultimediaPage() {
   // Multimedia pública
   const { data: items } = await supabase
     .from('multimedia_videos')
-    .select('id, titulo, youtube_url, archivo_url, descripcion, tipo, orden')
+    .select('id, titulo, youtube_url, archivo_url, descripcion, tipo, orden, permitir_youtube')
     .eq('active', true)
     .order('orden', { ascending: true });
 

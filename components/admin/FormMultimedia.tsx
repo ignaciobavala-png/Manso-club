@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Youtube, Film, Image as ImageIcon } from 'lucide-react';
+import { Youtube, Film, Image as ImageIcon, ExternalLink, Lock } from 'lucide-react';
 import { VideoUploader } from './VideoUploader';
 import { ImageUploader } from './ImageUploader';
 import { VisibilidadToggle } from './VisibilidadToggle';
@@ -26,12 +26,14 @@ export function FormMultimedia() {
   const [archivoUrl, setArchivoUrl] = useState('');
   const [descripcion, setDescripcion] = useState('');
   const [visibilidad, setVisibilidad] = useState<'publico' | 'registrado' | 'miembro'>('publico');
+  const [permitirYoutube, setPermitirYoutube] = useState(false);
 
   const resetForm = () => {
     setTitulo('');
     setYoutubeUrl('');
     setArchivoUrl('');
     setDescripcion('');
+    setPermitirYoutube(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -59,9 +61,11 @@ export function FormMultimedia() {
     if (tipo === 'youtube') {
       payload.youtube_url = youtubeUrl;
       payload.archivo_url = null;
+      payload.permitir_youtube = permitirYoutube;
     } else {
       payload.youtube_url = null;
       payload.archivo_url = archivoUrl;
+      payload.permitir_youtube = false;
     }
 
     const { error } = await supabase.from('multimedia_videos').insert(payload);
@@ -126,6 +130,40 @@ export function FormMultimedia() {
               <input type="url" placeholder="https://youtube.com/watch?v=..." className={`${inputCls} pl-9`}
                 value={youtubeUrl} onChange={e => setYoutubeUrl(e.target.value)} required />
             </div>
+          </div>
+        )}
+
+        {/* Toggle: permitir link a YouTube */}
+        {tipo === 'youtube' && (
+          <div>
+            <label className={labelCls}>Comportamiento del reproductor</label>
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => setPermitirYoutube(false)}
+                className={`flex items-center justify-center gap-1.5 p-3 rounded-xl border-2 transition-all text-xs font-bold uppercase tracking-wider ${
+                  !permitirYoutube
+                    ? 'bg-manso-terra/20 border-manso-terra text-manso-cream'
+                    : 'bg-manso-cream/5 border-manso-cream/10 text-manso-cream/50 hover:border-manso-cream/30'
+                }`}
+              >
+                <Lock size={14} /> Bloqueado
+              </button>
+              <button
+                type="button"
+                onClick={() => setPermitirYoutube(true)}
+                className={`flex items-center justify-center gap-1.5 p-3 rounded-xl border-2 transition-all text-xs font-bold uppercase tracking-wider ${
+                  permitirYoutube
+                    ? 'bg-manso-terra/20 border-manso-terra text-manso-cream'
+                    : 'bg-manso-cream/5 border-manso-cream/10 text-manso-cream/50 hover:border-manso-cream/30'
+                }`}
+              >
+                <ExternalLink size={14} /> Lleva a YouTube
+              </button>
+            </div>
+            <p className="text-[10px] text-manso-cream/40 mt-1.5">
+              &quot;Bloqueado&quot; mantiene al usuario en la página. &quot;Lleva a YouTube&quot; muestra los controles nativos y permite ir al canal.
+            </p>
           </div>
         )}
 
