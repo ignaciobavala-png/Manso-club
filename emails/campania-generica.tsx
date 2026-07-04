@@ -10,9 +10,18 @@ import {
   Text,
 } from "react-email";
 
+type Separacion = "pegado" | "poco" | "normal" | "mucho";
+
+const PX_POR_SEPARACION: Record<Separacion, number> = {
+  pegado: 0,
+  poco: 10,
+  normal: 20,
+  mucho: 40,
+};
+
 export type BloqueMailing =
   | { tipo: "imagen"; url: string; alt?: string }
-  | { tipo: "boton"; texto: string; link: string; color?: string }
+  | { tipo: "boton"; texto: string; link: string; color?: string; separacion?: Separacion }
   | { tipo: "texto"; contenido: string };
 
 interface CampaniaGenericaProps {
@@ -40,8 +49,9 @@ export default function CampaniaGenerica({ asunto, bloques }: CampaniaGenericaPr
               );
             }
             if (bloque.tipo === "boton") {
+              const px = PX_POR_SEPARACION[bloque.separacion ?? "normal"];
               return (
-                <Section key={i} style={{ padding: "20px 0", textAlign: "center" }}>
+                <Section key={i} style={{ padding: `${px}px 0`, textAlign: "center" }}>
                   <Button
                     href={bloque.link}
                     style={{

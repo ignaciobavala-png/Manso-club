@@ -7,7 +7,15 @@ import { AUDIENCIAS, type Audiencia } from '@/lib/mailing-audiencias';
 import { Image as ImageIcon, MousePointerClick, Type, Trash2, ArrowUp, ArrowDown, Plus, AlertCircle, CheckCircle } from 'lucide-react';
 
 type BloqueImagen = { tipo: 'imagen'; url: string; alt: string };
-type BloqueBoton = { tipo: 'boton'; texto: string; link: string; color: string };
+type Separacion = 'pegado' | 'poco' | 'normal' | 'mucho';
+type BloqueBoton = { tipo: 'boton'; texto: string; link: string; color: string; separacion: Separacion };
+
+const SEPARACIONES: { id: Separacion; label: string }[] = [
+  { id: 'pegado', label: 'Pegado a la imagen' },
+  { id: 'poco', label: 'Poco espacio' },
+  { id: 'normal', label: 'Espacio normal' },
+  { id: 'mucho', label: 'Mucho espacio' },
+];
 type BloqueTexto = { tipo: 'texto'; contenido: string };
 type Bloque = BloqueImagen | BloqueBoton | BloqueTexto;
 
@@ -25,7 +33,7 @@ export function FormMailingCampania({ onSaved }: Props) {
 
   const agregarBloque = (tipo: Bloque['tipo']) => {
     if (tipo === 'imagen') setBloques([...bloques, { tipo: 'imagen', url: '', alt: '' }]);
-    if (tipo === 'boton') setBloques([...bloques, { tipo: 'boton', texto: 'Ver más', link: 'https://mansoclub.com.ar', color: '#BC2915' }]);
+    if (tipo === 'boton') setBloques([...bloques, { tipo: 'boton', texto: 'Ver más', link: 'https://mansoclub.com.ar', color: '#BC2915', separacion: 'normal' }]);
     if (tipo === 'texto') setBloques([...bloques, { tipo: 'texto', contenido: '' }]);
   };
 
@@ -185,6 +193,20 @@ export function FormMailingCampania({ onSaved }: Props) {
                   onChange={(e) => actualizarBloque(i, { color: e.target.value })}
                   className="h-full w-full bg-manso-cream/5 border border-manso-cream/10 rounded-lg cursor-pointer"
                 />
+                <div className="col-span-2">
+                  <label className="text-[8px] font-black uppercase tracking-widest text-manso-cream/30 block mb-1">
+                    Separación con la imagen
+                  </label>
+                  <select
+                    value={bloque.separacion}
+                    onChange={(e) => actualizarBloque(i, { separacion: e.target.value as Separacion })}
+                    className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-1.5 text-xs text-manso-cream focus:outline-none"
+                  >
+                    {SEPARACIONES.map((s) => (
+                      <option key={s.id} value={s.id} className="bg-manso-black">{s.label}</option>
+                    ))}
+                  </select>
+                </div>
               </div>
             )}
 

@@ -3,7 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '@/lib/supabase';
 import { AUDIENCIAS } from '@/lib/mailing-audiencias';
-import { Send, Trash2, Loader2, CheckCircle2, Clock } from 'lucide-react';
+import { Send, Trash2, Loader2, CheckCircle2, Clock, MailCheck, MailX, MailWarning } from 'lucide-react';
 
 interface Campania {
   id: string;
@@ -14,12 +14,20 @@ interface Campania {
   sent_at: string | null;
 }
 
+interface Metricas {
+  total: number;
+  delivered: number;
+  bounced: number;
+  failed: number;
+}
+
 interface Props {
   refreshTrigger?: number;
 }
 
 export function MailingCampaniasList({ refreshTrigger }: Props) {
   const [campanias, setCampanias] = useState<Campania[]>([]);
+  const [metricas, setMetricas] = useState<Record<string, Metricas>>({});
   const [loading, setLoading] = useState(true);
   const [enviandoId, setEnviandoId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
@@ -30,7 +38,28 @@ export function MailingCampaniasList({ refreshTrigger }: Props) {
       .from('mailing_campanias')
       .select('id, asunto, audiencia, estado, created_at, sent_at')
       .order('created_at', { ascending: false });
-    setCampanias(data || []);
+    const lista = data || [];
+    setCampanias(lista);
+
+    const idsEnviadas = lista.filter((c) => c.estado === 'enviada').map((c) => c.id);
+    if (idsEnviadas.length > 0) {
+      const { data: envios } = await supabase
+        .from('mailing_envios')
+        .select('campania_id, estado')
+        .in('campania_id', idsEnviadas);
+
+      const acumulado: Record<string, Metricas> = {};
+      (envios || []).forEach((e) => {
+        const m = acumulado[e.campania_id] ?? { total: 0, delivered: 0, bounced: 0, failed: 0 };
+        m.total += 1;
+        if (e.estado === 'delivered') m.delivered += 1;
+        if (e.estado === 'bounced') m.bounced += 1;
+        if (e.estado === 'failed') m.failed += 1;
+        acumulado[e.campania_id] = m;
+      });
+      setMetricas(acumulado);
+    }
+
     setLoading(false);
   }, []);
 
@@ -85,37 +114,59 @@ export function MailingCampaniasList({ refreshTrigger }: Props) {
         <p className="text-xs text-manso-cream/30 uppercase tracking-widest">Sin campañas aún</p>
       ) : (
         <div className="space-y-2 max-h-[500px] overflow-y-auto">
-          {campanias.map((c) => (
-            <div key={c.id} className="flex items-center justify-between py-3 px-3 rounded-xl bg-manso-cream/5 border border-manso-cream/5">
-              <div className="min-w-0">
-                <p className="text-sm text-manso-cream/90 truncate">{c.asunto}</p>
-                <p className="text-[9px] font-black uppercase tracking-widest text-manso-cream/30 flex items-center gap-1.5 mt-0.5">
-                  {c.estado === 'enviada' ? <CheckCircle2 size={10} className="text-green-400" /> : <Clock size={10} />}
-                  {c.estado} · {audienciaLabel(c.audiencia)}
-                </p>
-              </div>
+          {campanias.map((c) => {
+            const m = metricas[c.id];
+            return (
+              <div key={c.id} className="py-3 px-3 rounded-xl bg-manso-cream/5 border border-manso-cream/5">
+                <div className="flex items-center justify-between">
+                  <div className="min-w-0">
+                    <p className="text-sm text-manso-cream/90 truncate">{c.asunto}</p>
+                    <p className="text-[9px] font-black uppercase tracking-widest text-manso-cream/30 flex items-center gap-1.5 mt-0.5">
+                      {c.estado === 'enviada' ? <CheckCircle2 size={10} className="text-green-400" /> : <Clock size={10} />}
+                      {c.estado} · {audienciaLabel(c.audiencia)}
+                    </p>
+                  </div>
 
-              {c.estado === 'borrador' ? (
-                <div className="flex items-center gap-2 shrink-0">
-                  <button
-                    onClick={() => enviar(c)}
-                    disabled={enviandoId === c.id}
-                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-manso-terra hover:bg-manso-terra/90 text-manso-cream text-[9px] font-black uppercase tracking-widest transition-colors disabled:opacity-50"
-                  >
-                    {enviandoId === c.id ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
-                    Enviar
-                  </button>
-                  <button onClick={() => eliminar(c.id)} className="p-1.5 text-manso-cream/30 hover:text-red-400">
-                    <Trash2 size={12} />
-                  </button>
+                  {c.estado === 'borrador' ? (
+                    <div className="flex items-center gap-2 shrink-0">
+                      <button
+                        onClick={() => enviar(c)}
+                        disabled={enviandoId === c.id}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-manso-terra hover:bg-manso-terra/90 text-manso-cream text-[9px] font-black uppercase tracking-widest transition-colors disabled:opacity-50"
+                      >
+                        {enviandoId === c.id ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
+                        Enviar
+                      </button>
+                      <button onClick={() => eliminar(c.id)} className="p-1.5 text-manso-cream/30 hover:text-red-400">
+                        <Trash2 size={12} />
+                      </button>
+                    </div>
+                  ) : (
+                    <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/30 shrink-0">
+                      {c.sent_at && new Date(c.sent_at).toLocaleDateString('es-AR')}
+                    </span>
+                  )}
                 </div>
-              ) : (
-                <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/30 shrink-0">
-                  {c.sent_at && new Date(c.sent_at).toLocaleDateString('es-AR')}
-                </span>
-              )}
-            </div>
-          ))}
+
+                {c.estado === 'enviada' && m && (
+                  <div className="flex items-center gap-4 mt-2 pt-2 border-t border-manso-cream/5">
+                    <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-manso-cream/50">
+                      <MailCheck size={11} className="text-manso-olive" /> {m.delivered} entregados
+                    </span>
+                    <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-manso-cream/50">
+                      <MailWarning size={11} className="text-yellow-400" /> {m.bounced} rebotados
+                    </span>
+                    <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-manso-cream/50">
+                      <MailX size={11} className="text-red-400" /> {m.failed} fallidos
+                    </span>
+                    <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/20">
+                      de {m.total} enviados
+                    </span>
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
