@@ -18,7 +18,7 @@ type Props = { thread: ThreadPreview }
 
 function formatFecha(iso: string) {
   const d = new Date(iso)
-  return d.toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric' })
+  return d.toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'America/Argentina/Buenos_Aires' })
 }
 
 export default function ThreadCard({ thread }: Props) {
