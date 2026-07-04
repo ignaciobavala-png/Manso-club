@@ -19,6 +19,16 @@ type Props = { thread: ThreadPreview }
 
 function formatFecha(iso: string) {
   const d = new Date(iso)
+  const diffMs = Date.now() - d.getTime()
+  const diffMin = Math.floor(diffMs / 60_000)
+
+  if (diffMin < 1) return 'ahora'
+  if (diffMin < 60) return `hace ${diffMin} min`
+  const diffH = Math.floor(diffMin / 60)
+  if (diffH < 24) return `hace ${diffH} ${diffH === 1 ? 'hora' : 'horas'}`
+  const diffD = Math.floor(diffH / 24)
+  if (diffD < 7) return `hace ${diffD} ${diffD === 1 ? 'día' : 'días'}`
+
   return d.toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'America/Argentina/Buenos_Aires' })
 }
 

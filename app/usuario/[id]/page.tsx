@@ -33,6 +33,13 @@ export default async function PerfilUsuarioPage({ params }: Props) {
 
   if (!perfil) notFound()
 
+  const { data: threadsRecientes } = await supabase
+    .from('foro_threads')
+    .select('id, titulo, created_at')
+    .eq('autor_id', id)
+    .order('created_at', { ascending: false })
+    .limit(5)
+
   const nombre = perfil.display_name ?? 'Usuario'
   const inicial = (nombre.trim() || '?')[0].toUpperCase()
   const links: { label: string; url: string }[] = Array.isArray(perfil.social_links) ? perfil.social_links : []
@@ -54,8 +61,8 @@ export default async function PerfilUsuarioPage({ params }: Props) {
               </div>
             )}
           </div>
-          <div className="pt-1">
-            <h1 className="text-manso-cream font-bold text-2xl md:text-3xl leading-tight">{nombre}</h1>
+          <div className="pt-1 min-w-0">
+            <h1 className="break-words text-manso-cream font-bold text-2xl md:text-3xl leading-tight">{nombre}</h1>
             {miembroDesde && (
               <p className="text-manso-cream/30 text-xs mt-1 uppercase tracking-widest">Miembro desde {miembroDesde}</p>
             )}
@@ -63,7 +70,7 @@ export default async function PerfilUsuarioPage({ params }: Props) {
         </div>
 
         {perfil.bio ? (
-          <p className="text-manso-cream/70 text-base leading-relaxed whitespace-pre-line mb-8">{perfil.bio}</p>
+          <p className="text-manso-cream/70 text-base leading-relaxed whitespace-pre-line break-words mb-8">{perfil.bio}</p>
         ) : (
           <p className="text-manso-cream/30 text-sm italic mb-8">Este usuario todavía no completó su perfil.</p>
         )}
@@ -82,6 +89,25 @@ export default async function PerfilUsuarioPage({ params }: Props) {
                 {link.label || link.url}
               </a>
             ))}
+          </div>
+        )}
+
+        {threadsRecientes && threadsRecientes.length > 0 && (
+          <div className="mt-12 pt-8 border-t border-manso-cream/10">
+            <p className="text-manso-cream/30 text-xs uppercase tracking-widest mb-4">
+              Últimos posts en la comunidad
+            </p>
+            <div className="flex flex-col gap-3">
+              {threadsRecientes.map((t) => (
+                <Link
+                  key={t.id}
+                  href={`/foro/${t.id}`}
+                  className="text-manso-cream/70 text-sm hover:text-manso-cream transition-colors truncate"
+                >
+                  {t.titulo}
+                </Link>
+              ))}
+            </div>
           </div>
         )}
 

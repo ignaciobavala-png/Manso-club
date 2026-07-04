@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { useCart } from '@/store/useCart';
 import { CartSidebar } from '@/components/shop/CartSidebar';
 import { useUser } from '@/hooks/useUser';
+import { useForoNotifications } from '@/hooks/useForoNotifications';
 
 const sidebarLinks = [
   { name: 'Manifiesto',           href: '/manifiesto' },
@@ -28,6 +29,7 @@ export const Navbar = () => {
 
   const { user, profile, role, loading: userLoading } = useUser();
   const accountHref = role === 'admin' ? '/mansoadm' : '/mi-cuenta';
+  const tieneNotificacionesForo = useForoNotifications(user?.id ?? null);
 
   useEffect(() => { setHasMounted(true); }, []);
 
@@ -108,11 +110,14 @@ export const Navbar = () => {
               <Link
                 key={link.name}
                 href={link.href}
-                className={`text-[10px] font-black uppercase tracking-[0.4em] hover:text-orange-600 transition-colors duration-500 ${
+                className={`relative text-[10px] font-black uppercase tracking-[0.4em] hover:text-orange-600 transition-colors duration-500 ${
                   getTextColor(isLight)
                 }`}
               >
                 {link.name}
+                {link.href === '/foro' && hasMounted && tieneNotificacionesForo && (
+                  <span className="absolute -top-1.5 -right-2 w-1.5 h-1.5 rounded-full bg-manso-terra" />
+                )}
               </Link>
             ))}
 
@@ -284,8 +289,11 @@ export const Navbar = () => {
             )}
 
             {navLinks.map((link) => (
-              <Link key={link.name} href={link.href} onClick={() => setIsMenuOpen(false)} className="text-sm font-black uppercase tracking-[0.4em] text-manso-black hover:text-orange-600 transition-colors py-2 min-h-[44px] flex items-center justify-center">
+              <Link key={link.name} href={link.href} onClick={() => setIsMenuOpen(false)} className="relative text-sm font-black uppercase tracking-[0.4em] text-manso-black hover:text-orange-600 transition-colors py-2 min-h-[44px] flex items-center justify-center gap-1.5">
                 {link.name}
+                {link.href === '/foro' && tieneNotificacionesForo && (
+                  <span className="w-1.5 h-1.5 rounded-full bg-manso-terra" />
+                )}
               </Link>
             ))}
 

@@ -72,6 +72,9 @@ export default function NewThreadForm({ categorias }: Props) {
           placeholder="Escribí tu mensaje..."
           className="w-full bg-manso-cream/5 border border-manso-cream/15 text-manso-cream text-sm placeholder:text-manso-cream/25 px-4 py-3 resize-none focus:outline-none focus:border-manso-cream/40 transition-colors"
         />
+        <p className="text-manso-cream/25 text-[11px] mt-1.5">
+          Podés usar **negrita**, *cursiva* y pegar links directamente.
+        </p>
       </div>
 
       {error && (
