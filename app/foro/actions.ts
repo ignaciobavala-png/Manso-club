@@ -55,6 +55,29 @@ export async function crearReply(threadId: string, formData: FormData) {
   revalidatePath(`/foro/${threadId}`)
 }
 
+export async function borrarThread(threadId: string) {
+  const supabase = await createSupabaseServer()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Debés iniciar sesión')
+
+  const { error } = await supabase.from('foro_threads').delete().eq('id', threadId)
+  if (error) throw new Error(error.message)
+
+  revalidatePath('/foro')
+  redirect('/foro')
+}
+
+export async function borrarReply(replyId: string, threadId: string) {
+  const supabase = await createSupabaseServer()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Debés iniciar sesión')
+
+  const { error } = await supabase.from('foro_replies').delete().eq('id', replyId)
+  if (error) throw new Error(error.message)
+
+  revalidatePath(`/foro/${threadId}`)
+}
+
 export async function reportarContenido({
   threadId,
   replyId,

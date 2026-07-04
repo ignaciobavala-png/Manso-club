@@ -3,6 +3,7 @@ import type { ForoThread, ForoReply, ForoCategoria, ForoReaccion } from '@/lib/t
 import ReplyForm from './ReplyForm'
 import ReactionBar from './ReactionBar'
 import ReportButton from './ReportButton'
+import DeleteButton from './DeleteButton'
 import { ReaderProvider } from './Reader/ReaderProvider'
 import { ReaderText } from './Reader/ReaderText'
 import { ReaderButton } from './Reader/ReaderButton'
@@ -117,7 +118,11 @@ export default function ThreadView({ thread, replies, reacciones, currentUserId,
                 threadId={thread.id}
                 path={path}
               />
-              {estaLogueado && <ReportButton threadId={thread.id} />}
+              {currentUserId === thread.autor_id ? (
+                <DeleteButton threadId={thread.id} />
+              ) : (
+                estaLogueado && <ReportButton threadId={thread.id} />
+              )}
             </div>
           </div>
         </div>
@@ -156,7 +161,11 @@ export default function ThreadView({ thread, replies, reacciones, currentUserId,
                       replyId={reply.id}
                       path={path}
                     />
-                    {estaLogueado && <ReportButton replyId={reply.id} />}
+                    {currentUserId === reply.autor_id ? (
+                      <DeleteButton replyId={reply.id} threadId={thread.id} />
+                    ) : (
+                      estaLogueado && <ReportButton replyId={reply.id} />
+                    )}
                   </div>
                 </div>
               )
