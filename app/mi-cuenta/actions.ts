@@ -85,20 +85,23 @@ export async function saveArtistaAction(
     imagen_url: (formData.get('imagen_url') as string) || null,
     soundcloud_url: (formData.get('soundcloud_url') as string) || null,
     social_links,
-    active: true,
     user_id: user.id,
   };
 
   const editingId = formData.get('editing_id') as string | null;
 
   if (editingId) {
+    // No se toca `active` acá: la curaduría (publicar/ocultar) la decide
+    // Ana desde el admin, no se resetea sola al editar el formulario.
     const { error } = await supabase.from('artistas').update(payload).eq('id', editingId).eq('user_id', user.id);
     if (error) return { error: error.message };
     revalidatePath('/artistas');
     revalidatePath('/mi-cuenta');
     return { success: true, artistaId: editingId, slug };
   } else {
-    const { data, error } = await supabase.from('artistas').insert([payload]).select('id').single();
+    // Perfil nuevo: queda oculto (active: false) hasta que Ana lo revise
+    // y lo publique desde el admin. No puede ser automático.
+    const { data, error } = await supabase.from('artistas').insert([{ ...payload, active: false }]).select('id').single();
     if (error) return { error: error.message };
     revalidatePath('/artistas');
     revalidatePath('/mi-cuenta');

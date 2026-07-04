@@ -18,6 +18,7 @@ interface Artista {
   imagen_url?: string | null;
   soundcloud_url?: string | null;
   social_links?: { label: string; url: string }[] | null;
+  active?: boolean;
 }
 
 interface Props {
@@ -50,7 +51,7 @@ export function MiArtePerfilForm({ artista: initialArtista }: Props) {
       const result = await saveArtistaAction(_prev, fd);
       if (result?.success && result.artistaId) {
         setArtista(prev => ({
-          ...(prev ?? { nombre: '', slug: '' }),
+          ...(prev ?? { nombre: '', slug: '', active: false }),
           ...formData,
           id: result.artistaId!,
           slug: result.slug ?? prev?.slug ?? '',
@@ -81,7 +82,7 @@ export function MiArtePerfilForm({ artista: initialArtista }: Props) {
           </div>
         )}
 
-        {artista?.slug && (
+        {artista?.slug && artista.active && (
           <a
             href={`/artistas/${artista.slug}`}
             target="_blank"
@@ -94,6 +95,15 @@ export function MiArtePerfilForm({ artista: initialArtista }: Props) {
             </div>
             <ExternalLink size={14} className="text-manso-cream/30 group-hover:text-manso-terra transition-colors shrink-0" />
           </a>
+        )}
+
+        {artista?.slug && !artista.active && (
+          <div className="mb-4 px-5 py-4 rounded-2xl bg-manso-olive/10 border border-manso-olive/30">
+            <p className="text-[9px] font-black uppercase tracking-[0.4em] text-manso-olive mb-0.5">En revisión</p>
+            <p className="text-manso-cream/50 text-xs leading-relaxed">
+              Ana revisa los perfiles nuevos antes de publicarlos. Vas a poder verlo en mansoclub.com.ar/artistas cuando lo aprueben.
+            </p>
+          </div>
         )}
 
         <form action={formAction} className="space-y-5">

@@ -43,7 +43,7 @@ export default async function MiCuentaPage() {
 
     supabase
       .from('artistas')
-      .select('id, nombre, slug, bio, estilo, tipo, imagen_url, soundcloud_url, social_links')
+      .select('id, nombre, slug, bio, estilo, tipo, imagen_url, soundcloud_url, social_links, active')
       .eq('user_id', user.id)
       .maybeSingle(),
   ]);

@@ -30,6 +30,7 @@ type Artista = {
   imagen_url?: string | null;
   soundcloud_url?: string | null;
   social_links?: { label: string; url: string }[] | null;
+  active?: boolean;
 } | null;
 
 type ContenidoItem = {
