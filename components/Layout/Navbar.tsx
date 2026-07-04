@@ -1,6 +1,6 @@
 'use client';
 
-import { Menu, X, ShoppingBag, Play } from 'lucide-react';
+import { Menu, X, ShoppingBag } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
@@ -120,9 +120,12 @@ export const Navbar = () => {
             {hasMounted && (
               <Link
                 href="/streaming"
-                className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.4em] text-manso-terra hover:text-red-500 transition-colors duration-500"
+                className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.4em] text-manso-terra hover:text-red-500 transition-colors duration-500"
               >
-                <Play size={10} className="fill-current" />
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-manso-terra opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-manso-terra" />
+                </span>
                 LIVE
               </Link>
             )}
@@ -289,7 +292,10 @@ export const Navbar = () => {
             {/* Streaming mobile — siempre público; el acceso lo controla la página */}
             {hasMounted && (
               <Link href="/streaming" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-center gap-2 text-sm font-black uppercase tracking-[0.4em] text-manso-terra hover:text-orange-600 transition-colors py-2 min-h-[44px]">
-                <Play size={12} className="fill-current" />
+                <span className="relative flex h-2.5 w-2.5">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-manso-terra opacity-75" />
+                  <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-manso-terra" />
+                </span>
                 LIVE
               </Link>
             )}

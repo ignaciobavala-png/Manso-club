@@ -11,8 +11,19 @@ export async function updateProfileAction(
 ): Promise<UpdateProfileState> {
   const displayName = (formData.get('display_name') as string)?.trim();
   const telefono    = (formData.get('telefono') as string)?.trim();
+  const bio         = (formData.get('bio') as string)?.trim();
+  const socialLinksRaw = formData.get('social_links') as string | null;
 
   if (!displayName) return { error: 'El nombre no puede estar vacío' };
+
+  let socialLinks: { label: string; url: string }[] = [];
+  if (socialLinksRaw) {
+    try {
+      socialLinks = JSON.parse(socialLinksRaw);
+    } catch {
+      socialLinks = [];
+    }
+  }
 
   const supabase = await createSupabaseServer();
   const { data: { user } } = await supabase.auth.getUser();
@@ -20,7 +31,13 @@ export async function updateProfileAction(
 
   const { error } = await supabase
     .from('user_profiles')
-    .update({ display_name: displayName, telefono: telefono || null, updated_at: new Date().toISOString() })
+    .update({
+      display_name: displayName,
+      telefono: telefono || null,
+      bio: bio || null,
+      social_links: socialLinks,
+      updated_at: new Date().toISOString(),
+    })
     .eq('id', user.id);
 
   if (error) return { error: 'No se pudieron guardar los cambios' };

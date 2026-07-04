@@ -20,7 +20,7 @@ export default async function MiCuentaPage() {
   ] = await Promise.all([
     supabase
       .from('user_profiles')
-      .select('display_name, email, telefono, avatar_url, id, membresia_activa, permisos_totales')
+      .select('display_name, email, telefono, avatar_url, id, membresia_activa, permisos_totales, bio, social_links')
       .eq('id', user.id)
       .single(),
 
@@ -83,6 +83,8 @@ export default async function MiCuentaPage() {
           email={profile?.email ?? user.email ?? ''}
           telefono={profile?.telefono ?? null}
           avatarUrl={profile?.avatar_url ?? null}
+          bio={profile?.bio ?? null}
+          socialLinks={Array.isArray(profile?.social_links) ? profile.social_links : []}
           membresia={membresia}
           streaming={streamingRaw ?? []}
           tieneMembresia={tieneMembresia}

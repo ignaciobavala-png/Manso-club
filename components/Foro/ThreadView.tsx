@@ -102,7 +102,9 @@ export default function ThreadView({ thread, replies, reacciones, currentUserId,
           <Avatar nombre={thread.autor_nombre} avatarUrl={thread.autor_avatar} size="lg" />
           <div className="flex-1">
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-manso-cream text-lg font-semibold">{thread.autor_nombre ?? 'Anónimo'}</span>
+              <Link href={`/usuario/${thread.autor_id}`} className="text-manso-cream text-lg font-semibold hover:text-manso-cream/80 hover:underline transition-colors">
+                {thread.autor_nombre ?? 'Anónimo'}
+              </Link>
               <span className="text-manso-cream/30 text-xs">{formatFecha(thread.created_at)}</span>
             </div>
             <div className="border-l-2 border-manso-cream/10 pl-4">
@@ -142,7 +144,9 @@ export default function ThreadView({ thread, replies, reacciones, currentUserId,
                   <Avatar nombre={reply.autor_nombre} avatarUrl={reply.autor_avatar} />
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-manso-cream text-base font-semibold">{reply.autor_nombre ?? 'Anónimo'}</span>
+                      <Link href={`/usuario/${reply.autor_id}`} className="text-manso-cream text-base font-semibold hover:text-manso-cream/80 hover:underline transition-colors">
+                        {reply.autor_nombre ?? 'Anónimo'}
+                      </Link>
                       <span className="text-manso-cream/30 text-xs">{formatFecha(reply.created_at)}</span>
                     </div>
                     <ReaderText text={reply.cuerpo} variant="reply" />
