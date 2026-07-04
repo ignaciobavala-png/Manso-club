@@ -1,11 +1,20 @@
 'use client';
 
 import React from 'react';
+import { usePathname } from 'next/navigation';
 
 import { WHATSAPP_NUMBER } from '@/lib/constants';
+import { useUser } from '@/hooks/useUser';
 export { WHATSAPP_NUMBER };
 
 export const WhatsAppButton: React.FC = () => {
+  const pathname = usePathname();
+  const { user, loading } = useUser();
+
+  const isPrivateArea = pathname?.startsWith('/mansoadm') || pathname?.startsWith('/foro');
+
+  if (loading || user || isPrivateArea) return null;
+
   const MESSAGE = encodeURIComponent("Hola Manso Club, quería hacer una consulta...");
 
   const waUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${MESSAGE}`;
