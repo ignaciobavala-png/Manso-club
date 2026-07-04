@@ -41,7 +41,7 @@ import { OfertasEmpleoList } from './OfertasEmpleoList';
 import { LogOut, ShoppingBag, User, Home, Calendar, Music, Crown, Settings, Star, Users, Image, Layout, FileText, CreditCard, Package, Video, BookOpen, Calculator, Briefcase, Mail, Network, BarChart2, Search } from 'lucide-react';
 import { CotizadorConfigAdmin } from './CotizadorConfigAdmin';
 import { CotizacionesList } from './CotizacionesList';
-import { NewsletterList } from './NewsletterList';
+import { MailingAdmin } from './MailingAdmin';
 import { ComunidadAdmin } from './ComunidadAdmin';
 import { AsignarMembresia } from './AsignarMembresia';
 import { MembresiaActivasList } from './MembresiaActivasList';
@@ -163,7 +163,7 @@ export function Dashboard() {
           </button>
           <button onClick={() => setTab('newsletter')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'newsletter' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
             <Mail size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Newsletter</span>
+            <span className="hidden sm:inline">Mailing</span>
           </button>
           <button onClick={() => setTab('tienda')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'tienda' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
             <ShoppingBag size={12} className="sm:size-14" />
@@ -213,16 +213,17 @@ export function Dashboard() {
         {tab === 'streaming' && <div className="mb-8"><StreamingAdmin refreshTrigger={refreshTrigger} /></div>}
         {tab === 'membresias' && <div className="mb-8"><MembresiasAdmin refreshTrigger={refreshTrigger} /></div>}
         {tab === 'tienda' && <div className="mb-8"><TiendaAdmin refreshTrigger={refreshTrigger} /></div>}
+        {tab === 'newsletter' && <div className="mb-8"><MailingAdmin /></div>}
 
         {/* Contenido Principal — grid dos columnas */}
-        {tab !== 'crm' && tab !== 'comunidad' && tab !== 'streaming' && tab !== 'membresias' && tab !== 'tienda' && <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-12">
+        {tab !== 'crm' && tab !== 'comunidad' && tab !== 'streaming' && tab !== 'membresias' && tab !== 'tienda' && tab !== 'newsletter' && <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-12">
             {/* Columna Izquierda: Formularios de Creación */}
             <div className="xl:col-span-5">
               <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
-                {tab === 'about' ? 'Editar About Us' : tab === 'home' ? 'Evento del Home' : tab === 'artistas' ? 'Artista' : tab === 'agenda' ? 'Evento de Agenda' : tab === 'eventos' ? 'Evento' : tab === 'musica' ? 'Track para el Home' : tab === 'team' ? 'Miembro del Team' : tab === 'hero' ? 'Slide del Hero' : tab === 'galeria' ? 'Foto de Galería' : tab === 'contenidos' ? 'Nuevo Video' : tab === 'manifiesto' ? 'Editar Manifiesto' : tab === 'cotizador' ? 'Configuración' : tab === 'empleos' ? 'Nueva Oferta' : tab === 'newsletter' ? 'Newsletter' : 'Configuración Why'}
+                {tab === 'about' ? 'Editar About Us' : tab === 'home' ? 'Evento del Home' : tab === 'artistas' ? 'Artista' : tab === 'agenda' ? 'Evento de Agenda' : tab === 'eventos' ? 'Evento' : tab === 'musica' ? 'Track para el Home' : tab === 'team' ? 'Miembro del Team' : tab === 'hero' ? 'Slide del Hero' : tab === 'galeria' ? 'Foto de Galería' : tab === 'contenidos' ? 'Nuevo Video' : tab === 'manifiesto' ? 'Editar Manifiesto' : tab === 'cotizador' ? 'Configuración' : tab === 'empleos' ? 'Nueva Oferta' : 'Configuración Why'}
               </h2>
               <div className="sticky top-4 sm:top-8">
-                {tab === 'about' ? <FormAboutUs /> : tab === 'home' ? <FormEventoHome /> : tab === 'artistas' ? <FormArtista /> : tab === 'agenda' ? <FormAgenda /> : tab === 'eventos' ? <FormEvento /> : tab === 'musica' ? <FormMainMusic /> : tab === 'team' ? <FormTeam /> : tab === 'hero' ? <FormHero /> : tab === 'galeria' ? <FormGallery /> : tab === 'contenidos' ? <FormMultimedia /> : tab === 'manifiesto' ? <FormManifiesto /> : tab === 'cotizador' ? <CotizadorConfigAdmin /> : tab === 'empleos' ? <FormOfertaEmpleo /> : tab === 'newsletter' ? <div className="bg-manso-cream/5 p-8 rounded-[2.5rem] border border-manso-cream/10"><div className="text-center"><Mail className="mx-auto text-manso-cream/40 mb-4" size={48} /><h3 className="text-lg font-black uppercase tracking-tighter text-manso-cream mb-2">Newsletter</h3><p className="text-sm text-manso-cream/60">Los suscriptores se muestran en el panel de la derecha.</p></div></div> : <FormSiteConfig />}
+                {tab === 'about' ? <FormAboutUs /> : tab === 'home' ? <FormEventoHome /> : tab === 'artistas' ? <FormArtista /> : tab === 'agenda' ? <FormAgenda /> : tab === 'eventos' ? <FormEvento /> : tab === 'musica' ? <FormMainMusic /> : tab === 'team' ? <FormTeam /> : tab === 'hero' ? <FormHero /> : tab === 'galeria' ? <FormGallery /> : tab === 'contenidos' ? <FormMultimedia /> : tab === 'manifiesto' ? <FormManifiesto /> : tab === 'cotizador' ? <CotizadorConfigAdmin /> : tab === 'empleos' ? <FormOfertaEmpleo /> : <FormSiteConfig />}
               </div>
             </div>
 
@@ -288,8 +289,6 @@ export function Dashboard() {
                     <PropuestasList refreshTrigger={refreshTrigger} />
                   </div>
                 </div>
-              ) : tab === 'newsletter' ? (
-                <NewsletterList />
               ) : tab === 'why' ? (
                 <SiteConfigList refreshTrigger={refreshTrigger} />
               ) : (
