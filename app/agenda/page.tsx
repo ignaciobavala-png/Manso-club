@@ -7,6 +7,7 @@ import { ParticleBackground } from '@/components/Home/ParticleBackground';
 import Link from 'next/link';
 import Image from 'next/image';
 import { Users, Lock } from 'lucide-react';
+import { ShareButton } from '@/components/ShareButton';
 
 type Nivel = 'publico' | 'registrado' | 'miembro';
 
@@ -244,13 +245,22 @@ export default function AgendaPage() {
                         </div>
                       </div>
 
-                      {/* CTA Inscripción */}
-                      <a
-                        href={`/agenda/pagar?titulo=${encodeURIComponent(item.titulo)}&precio=${item.precio || 0}&frecuencia=${encodeURIComponent(item.frecuencia || '')}&categoria=${encodeURIComponent(item.categoria || '')}`}
-                        className="flex-shrink-0 ml-0 md:ml-6 bg-manso-cream text-manso-black hover:bg-white px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap min-h-[44px] flex items-center"
-                      >
-                        Inscribirme
-                      </a>
+                      {/* CTA Inscripción + Compartir */}
+                      <div className="flex-shrink-0 ml-0 md:ml-6 flex items-center gap-3">
+                        <ShareButton
+                          title={`${item.titulo} | Manso Club`}
+                          text={item.descripcion || `${item.titulo} en Manso Club.`}
+                          url="/agenda"
+                          className="flex items-center justify-center w-11 h-11 bg-manso-cream/5 border border-manso-cream/10 rounded-full text-manso-cream hover:bg-manso-cream/10 hover:border-manso-cream/20 transition-all"
+                          label=""
+                        />
+                        <a
+                          href={`/agenda/pagar?titulo=${encodeURIComponent(item.titulo)}&precio=${item.precio || 0}&frecuencia=${encodeURIComponent(item.frecuencia || '')}&categoria=${encodeURIComponent(item.categoria || '')}`}
+                          className="bg-manso-cream text-manso-black hover:bg-white px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap min-h-[44px] flex items-center"
+                        >
+                          Inscribirme
+                        </a>
+                      </div>
                     </motion.div>
                   ))}
                 </div>

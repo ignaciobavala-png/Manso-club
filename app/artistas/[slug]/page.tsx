@@ -7,6 +7,7 @@ import { ArrowLeft, ExternalLink, Music, Lock, Users } from 'lucide-react';
 import { ArtistProfilePlayer } from './ArtistProfilePlayer';
 import { ArtistTrackManager } from '@/components/artistas/ArtistTrackManager';
 import { GalleryGrid } from '@/components/Home/GalleryGrid';
+import { ShareButton } from '@/components/ShareButton';
 
 export const dynamic = 'force-dynamic';
 
@@ -236,6 +237,20 @@ export default async function ArtistaPage({ params }: Props) {
                     <span className="text-xs font-medium">SoundCloud</span>
                   </a>
                 )}
+                <ShareButton
+                  title={`${artista.nombre} | Manso Club`}
+                  text={artista.bio || `${artista.nombre} — ${artista.estilo || 'DJ'} en Manso Club.`}
+                  url={`/artistas/${artista.slug}`}
+                />
+              </div>
+            )}
+            {publicLinks.length === 0 && !scUrl && (
+              <div className="pt-2">
+                <ShareButton
+                  title={`${artista.nombre} | Manso Club`}
+                  text={artista.bio || `${artista.nombre} — ${artista.estilo || 'DJ'} en Manso Club.`}
+                  url={`/artistas/${artista.slug}`}
+                />
               </div>
             )}
 
