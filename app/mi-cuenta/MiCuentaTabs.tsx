@@ -2,7 +2,7 @@
 
 import { useState, useActionState } from 'react';
 import Link from 'next/link';
-import { Play, User, CreditCard, ArrowRight, Check, Lock, Tv, Calendar, Music, ShoppingBag, Palette, MessageSquare } from 'lucide-react';
+import { Play, User, CreditCard, ArrowRight, Check, Lock, Tv, Calendar, Music, ShoppingBag, Palette, MessageSquare, Plus, Trash2 } from 'lucide-react';
 import { MiArtePerfilForm } from '@/components/mi-cuenta/MiArtePerfilForm';
 import { updateProfileAction } from './actions';
 import { supabase } from '@/lib/supabase';
@@ -30,6 +30,7 @@ type Artista = {
   imagen_url?: string | null;
   soundcloud_url?: string | null;
   social_links?: { label: string; url: string }[] | null;
+  active?: boolean;
 } | null;
 
 type ContenidoItem = {
@@ -46,6 +47,8 @@ type Props = {
   email: string;
   telefono: string | null;
   avatarUrl: string | null;
+  bio: string | null;
+  socialLinks: { label: string; url: string }[];
   membresia: Membresia;
   streaming: ContenidoItem[];
   tieneMembresia: boolean;
@@ -60,7 +63,7 @@ const BASE_TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
   { id: 'membresia', label: 'Membresía',  icon: <CreditCard size={14} /> },
 ];
 
-export default function MiCuentaTabs({ userId, displayName, email, telefono, avatarUrl, membresia, streaming, tieneMembresia, esMiembro, artista }: Props) {
+export default function MiCuentaTabs({ userId, displayName, email, telefono, avatarUrl, bio, socialLinks, membresia, streaming, tieneMembresia, esMiembro, artista }: Props) {
   const TABS = BASE_TABS;
 
   const [tab, setTab] = useState<Tab>('perfil');
@@ -408,6 +411,8 @@ export default function MiCuentaTabs({ userId, displayName, email, telefono, ava
             email={email}
             telefono={telefono}
             avatarUrl={currentAvatarUrl}
+            bio={bio}
+            socialLinks={socialLinks}
             onLogout={handleLogout}
             onAvatarUpdated={setCurrentAvatarUrl}
           />
@@ -417,19 +422,29 @@ export default function MiCuentaTabs({ userId, displayName, email, telefono, ava
   );
 }
 
-function PerfilForm({ userId, displayName, email, telefono, avatarUrl, onLogout, onAvatarUpdated }: {
+function PerfilForm({ userId, displayName, email, telefono, avatarUrl, bio, socialLinks, onLogout, onAvatarUpdated }: {
   userId: string;
   displayName: string;
   email: string;
   telefono: string | null;
   avatarUrl: string | null;
+  bio: string | null;
+  socialLinks: { label: string; url: string }[];
   onLogout: () => void;
   onAvatarUpdated: (url: string) => void;
 }) {
-  const [state, action, pending] = useActionState(updateProfileAction, null);
+  const [state, rawAction, pending] = useActionState(updateProfileAction, null);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
   const [localAvatar, setLocalAvatar] = useState<string | null>(avatarUrl);
+  const [links, setLinks] = useState<{ label: string; url: string }[]>(socialLinks ?? []);
+  const [bioValue, setBioValue] = useState(bio ?? '');
   const initial = displayName?.[0]?.toUpperCase() ?? email?.[0]?.toUpperCase() ?? '?';
+
+  const action = (formData: FormData) => {
+    formData.set('social_links', JSON.stringify(links));
+    formData.set('bio', bioValue);
+    return rawAction(formData);
+  };
 
   const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -569,6 +584,76 @@ function PerfilForm({ userId, displayName, email, telefono, avatarUrl, onLogout,
             className="w-full p-4 rounded-xl font-black uppercase tracking-widest text-xs bg-manso-terra text-manso-cream hover:bg-manso-cream hover:text-manso-black transition-all active:scale-95 disabled:opacity-50 mt-2"
           >
             {pending ? 'Guardando...' : 'Guardar cambios'}
+          </button>
+        </form>
+      </div>
+
+      <div className="rounded-[28px] border border-manso-cream/10 p-8 bg-manso-cream/5">
+        <p className="text-[9px] font-black uppercase tracking-[0.5em] text-manso-terra mb-2">Carta de presentación</p>
+        <p className="text-manso-cream/40 text-[11px] mb-6 leading-relaxed">
+          Se muestra cuando alguien clickea tu nombre en la Comunidad Manso. Es opcional.
+        </p>
+
+        <form action={action} className="space-y-5">
+          <input type="hidden" name="display_name" value={displayName} />
+          <input type="hidden" name="telefono" value={telefono ?? ''} />
+
+          <div className="space-y-1.5">
+            <label className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40">Bio</label>
+            <textarea
+              name="bio"
+              value={bioValue}
+              onChange={e => setBioValue(e.target.value)}
+              placeholder="Contá quién sos, a qué te dedicás, qué te gusta..."
+              rows={4}
+              className="w-full p-4 bg-manso-cream/10 border border-manso-cream/20 rounded-xl outline-none text-sm text-manso-cream placeholder:text-manso-cream/30 focus:ring-2 focus:ring-manso-terra resize-none transition-all"
+            />
+          </div>
+
+          <div className="space-y-3">
+            <div className="flex items-center justify-between">
+              <p className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40">Links</p>
+              <button
+                type="button"
+                onClick={() => setLinks(l => [...l, { label: '', url: '' }])}
+                className="flex items-center gap-1 px-3 py-1.5 bg-manso-terra/20 border border-manso-terra/30 rounded-full text-manso-terra text-[9px] font-black uppercase tracking-widest hover:bg-manso-terra/30 transition-all"
+              >
+                <Plus size={11} /> Agregar
+              </button>
+            </div>
+            {links.map((link, i) => (
+              <div key={i} className="flex gap-2">
+                <input
+                  type="text"
+                  placeholder="Nombre"
+                  value={link.label}
+                  onChange={e => setLinks(l => l.map((x, j) => j === i ? { ...x, label: e.target.value } : x))}
+                  className="w-28 shrink-0 bg-manso-cream/10 px-3 py-3 rounded-xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-sm text-manso-cream placeholder:text-manso-cream/30"
+                />
+                <input
+                  type="url"
+                  placeholder="https://..."
+                  value={link.url}
+                  onChange={e => setLinks(l => l.map((x, j) => j === i ? { ...x, url: e.target.value } : x))}
+                  className="flex-1 bg-manso-cream/10 px-3 py-3 rounded-xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream placeholder:text-manso-cream/30"
+                />
+                <button
+                  type="button"
+                  onClick={() => setLinks(l => l.filter((_, j) => j !== i))}
+                  className="p-2 rounded-xl bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-all shrink-0"
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
+            ))}
+          </div>
+
+          <button
+            type="submit"
+            disabled={pending}
+            className="w-full p-4 rounded-xl font-black uppercase tracking-widest text-xs bg-manso-terra text-manso-cream hover:bg-manso-cream hover:text-manso-black transition-all active:scale-95 disabled:opacity-50"
+          >
+            {pending ? 'Guardando...' : 'Guardar carta de presentación'}
           </button>
         </form>
       </div>

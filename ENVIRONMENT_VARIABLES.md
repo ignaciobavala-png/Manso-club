@@ -1,5 +1,29 @@
 # Variables de Entorno - Manso Club (Seguridad Implementada)
 
+## 📧 Mailing (Resend) — pendiente de activar
+
+```
+RESEND_API_KEY=re_xxxxxxxxx
+RESEND_FROM_EMAIL=Manso Club <hola@mansoclub.com.ar>
+RESEND_WEBHOOK_SECRET=whsec_xxxxxxxxx
+```
+
+**Estado:** cuenta creada (`devops@mansoclub.com.ar`), dominio `mansoclub.com.ar` **aún sin verificar** en Resend.
+Hasta verificar el dominio, `lib/resend.ts` usa `onboarding@resend.dev` como remitente por defecto —
+no hace falta cargar `RESEND_FROM_EMAIL` todavía.
+
+**Pasos para activar cuando se verifique el dominio:**
+1. Verificar dominio (o subdominio) en resend.com/domains, cargando los DNS en Hostinger
+2. Copiar el API key desde el dashboard de Resend → cargar `RESEND_API_KEY` en Vercel
+3. Cargar `RESEND_FROM_EMAIL` con el remitente definitivo (ej. `Manso Club <hola@mansoclub.com.ar>`)
+4. Templates en `emails/` (preview local: `pnpm email`)
+
+**Webhook de estado de entrega** (`RESEND_WEBHOOK_SECRET`):
+- Endpoint: `app/api/mailing/webhook/route.ts` — recibe eventos `email.delivered`/`email.bounced`/`email.complained`/`email.failed` y actualiza `mailing_envios.estado`
+- Se registra en resend.com/webhooks (o vía `resend.webhooks.create()`) apuntando a `https://<dominio-de-producción>/api/mailing/webhook`, suscripto a esos 4 eventos
+- Resend devuelve un `signing_secret` al crear el webhook — ese valor es `RESEND_WEBHOOK_SECRET`
+- Requiere que el sitio esté desplegado en una URL pública (no funciona con `localhost`)
+
 ## 🔴 ALTO 2 - Variables de Entorno Nuevas Requeridas en Vercel
 
 ### Variables Críticas de Mercado Pago

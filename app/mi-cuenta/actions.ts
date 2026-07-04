@@ -11,8 +11,19 @@ export async function updateProfileAction(
 ): Promise<UpdateProfileState> {
   const displayName = (formData.get('display_name') as string)?.trim();
   const telefono    = (formData.get('telefono') as string)?.trim();
+  const bio         = (formData.get('bio') as string)?.trim();
+  const socialLinksRaw = formData.get('social_links') as string | null;
 
   if (!displayName) return { error: 'El nombre no puede estar vacío' };
+
+  let socialLinks: { label: string; url: string }[] = [];
+  if (socialLinksRaw) {
+    try {
+      socialLinks = JSON.parse(socialLinksRaw);
+    } catch {
+      socialLinks = [];
+    }
+  }
 
   const supabase = await createSupabaseServer();
   const { data: { user } } = await supabase.auth.getUser();
@@ -20,7 +31,13 @@ export async function updateProfileAction(
 
   const { error } = await supabase
     .from('user_profiles')
-    .update({ display_name: displayName, telefono: telefono || null, updated_at: new Date().toISOString() })
+    .update({
+      display_name: displayName,
+      telefono: telefono || null,
+      bio: bio || null,
+      social_links: socialLinks,
+      updated_at: new Date().toISOString(),
+    })
     .eq('id', user.id);
 
   if (error) return { error: 'No se pudieron guardar los cambios' };
@@ -68,20 +85,23 @@ export async function saveArtistaAction(
     imagen_url: (formData.get('imagen_url') as string) || null,
     soundcloud_url: (formData.get('soundcloud_url') as string) || null,
     social_links,
-    active: true,
     user_id: user.id,
   };
 
   const editingId = formData.get('editing_id') as string | null;
 
   if (editingId) {
+    // No se toca `active` acá: la curaduría (publicar/ocultar) la decide
+    // Ana desde el admin, no se resetea sola al editar el formulario.
     const { error } = await supabase.from('artistas').update(payload).eq('id', editingId).eq('user_id', user.id);
     if (error) return { error: error.message };
     revalidatePath('/artistas');
     revalidatePath('/mi-cuenta');
     return { success: true, artistaId: editingId, slug };
   } else {
-    const { data, error } = await supabase.from('artistas').insert([payload]).select('id').single();
+    // Perfil nuevo: queda oculto (active: false) hasta que Ana lo revise
+    // y lo publique desde el admin. No puede ser automático.
+    const { data, error } = await supabase.from('artistas').insert([{ ...payload, active: false }]).select('id').single();
     if (error) return { error: error.message };
     revalidatePath('/artistas');
     revalidatePath('/mi-cuenta');

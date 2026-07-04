@@ -16,7 +16,7 @@ interface ThreadActividad {
 type Orden = 'views' | 'reply_count' | 'created_at';
 
 function formatFecha(iso: string) {
-  return new Date(iso).toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric' });
+  return new Date(iso).toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'America/Argentina/Buenos_Aires' });
 }
 
 export function ActividadForo() {

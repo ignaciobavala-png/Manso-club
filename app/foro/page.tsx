@@ -47,7 +47,7 @@ export default async function ForoPage({
 
   let threadsQuery = supabase
     .from('foro_threads')
-    .select('id, titulo, categoria_id, autor_nombre, autor_avatar, views, reply_count, pinned, cerrado, created_at, updated_at', { count: 'exact' })
+    .select('id, titulo, categoria_id, autor_id, autor_nombre, autor_avatar, views, reply_count, pinned, cerrado, created_at, updated_at', { count: 'exact' })
     .order('pinned', { ascending: false })
     .order('updated_at', { ascending: false })
 
@@ -71,6 +71,7 @@ export default async function ForoPage({
     ...t,
     categoria: t.categoria_id ? (categoriaMap[t.categoria_id] ?? null) : null,
   }))
+
 
   // Verificar permisos del usuario actual
   const supabaseAuth = await createSupabaseServer()

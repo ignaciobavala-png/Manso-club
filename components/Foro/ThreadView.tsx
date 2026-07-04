@@ -3,9 +3,11 @@ import type { ForoThread, ForoReply, ForoCategoria, ForoReaccion } from '@/lib/t
 import ReplyForm from './ReplyForm'
 import ReactionBar from './ReactionBar'
 import ReportButton from './ReportButton'
+import DeleteButton from './DeleteButton'
 import { ReaderProvider } from './Reader/ReaderProvider'
 import { ReaderText } from './Reader/ReaderText'
 import { ReaderButton } from './Reader/ReaderButton'
+import { MarkThreadSeen } from './MarkThreadSeen'
 
 type Props = {
   thread: ForoThread & { categoria: Pick<ForoCategoria, 'nombre' | 'slug'> | null }
@@ -24,6 +26,7 @@ function formatFecha(iso: string) {
     year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
+    timeZone: 'America/Argentina/Buenos_Aires',
   })
 }
 
@@ -55,16 +58,19 @@ export default function ThreadView({ thread, replies, reacciones, currentUserId,
   return (
     <ReaderProvider>
       <div>
+      {currentUserId === thread.autor_id && (
+        <MarkThreadSeen threadId={thread.id} replyCount={thread.reply_count} />
+      )}
       {/* Breadcrumb */}
-      <div className="flex items-center gap-2 text-sm text-manso-cream/30 mb-8">
-        <Link href="/foro" className="hover:text-manso-cream/60 transition-colors">Comunidad Manso</Link>
-        <span>/</span>
+      <div className="flex flex-wrap items-center gap-2 text-sm text-manso-cream/30 mb-8">
+        <Link href="/foro" className="shrink-0 hover:text-manso-cream/60 transition-colors">Comunidad Manso</Link>
+        <span className="shrink-0">/</span>
         {thread.categoria && (
           <>
-            <Link href={`/foro?categoria=${thread.categoria.slug}`} className="hover:text-manso-cream/60 transition-colors">
+            <Link href={`/foro?categoria=${thread.categoria.slug}`} className="shrink-0 hover:text-manso-cream/60 transition-colors">
               {thread.categoria.nombre}
             </Link>
-            <span>/</span>
+            <span className="shrink-0">/</span>
           </>
         )}
         <span className="text-manso-cream/50 truncate max-w-[200px]">{thread.titulo}</span>
@@ -91,7 +97,7 @@ export default function ThreadView({ thread, replies, reacciones, currentUserId,
         </div>
 
         <div className="flex items-start justify-between gap-4 mb-6">
-          <h1 className="text-manso-cream font-bold text-2xl md:text-3xl leading-tight">
+          <h1 className="min-w-0 break-words text-manso-cream font-bold text-2xl md:text-3xl leading-tight">
             {thread.titulo}
           </h1>
           <ReaderButton />
@@ -99,9 +105,11 @@ export default function ThreadView({ thread, replies, reacciones, currentUserId,
 
         <div className="flex items-start gap-4">
           <Avatar nombre={thread.autor_nombre} avatarUrl={thread.autor_avatar} size="lg" />
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-3">
-              <span className="text-manso-cream text-lg font-semibold">{thread.autor_nombre ?? 'Anónimo'}</span>
+              <Link href={`/usuario/${thread.autor_id}`} className="text-manso-cream text-lg font-semibold hover:text-manso-cream/80 hover:underline transition-colors">
+                {thread.autor_nombre ?? 'Anónimo'}
+              </Link>
               <span className="text-manso-cream/30 text-xs">{formatFecha(thread.created_at)}</span>
             </div>
             <div className="border-l-2 border-manso-cream/10 pl-4">
@@ -114,7 +122,11 @@ export default function ThreadView({ thread, replies, reacciones, currentUserId,
                 threadId={thread.id}
                 path={path}
               />
-              {estaLogueado && <ReportButton threadId={thread.id} />}
+              {currentUserId === thread.autor_id ? (
+                <DeleteButton threadId={thread.id} />
+              ) : (
+                estaLogueado && <ReportButton threadId={thread.id} />
+              )}
             </div>
           </div>
         </div>
@@ -139,9 +151,11 @@ export default function ThreadView({ thread, replies, reacciones, currentUserId,
               return (
                 <div key={reply.id} className="flex items-start gap-4">
                   <Avatar nombre={reply.autor_nombre} avatarUrl={reply.autor_avatar} />
-                  <div className="flex-1">
+                  <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-2">
-                      <span className="text-manso-cream text-base font-semibold">{reply.autor_nombre ?? 'Anónimo'}</span>
+                      <Link href={`/usuario/${reply.autor_id}`} className="text-manso-cream text-base font-semibold hover:text-manso-cream/80 hover:underline transition-colors">
+                        {reply.autor_nombre ?? 'Anónimo'}
+                      </Link>
                       <span className="text-manso-cream/30 text-xs">{formatFecha(reply.created_at)}</span>
                     </div>
                     <ReaderText text={reply.cuerpo} variant="reply" />
@@ -151,7 +165,11 @@ export default function ThreadView({ thread, replies, reacciones, currentUserId,
                       replyId={reply.id}
                       path={path}
                     />
-                    {estaLogueado && <ReportButton replyId={reply.id} />}
+                    {currentUserId === reply.autor_id ? (
+                      <DeleteButton replyId={reply.id} threadId={thread.id} />
+                    ) : (
+                      estaLogueado && <ReportButton replyId={reply.id} />
+                    )}
                   </div>
                 </div>
               )
@@ -166,23 +184,16 @@ export default function ThreadView({ thread, replies, reacciones, currentUserId,
           <p className="text-manso-cream/30 text-sm text-center py-4">
             Este thread está cerrado. No se pueden agregar más respuestas.
           </p>
-        ) : puedeComentar ? (
-          <ReplyForm threadId={thread.id} />
         ) : estaBaneado ? (
           <p className="text-manso-cream/30 text-sm text-center py-4">
             Tu cuenta fue restringida para participar en el foro. Contactá a Ana si creés que es un error.
           </p>
-        ) : estaLogueado ? (
+        ) : estaLogueado && !puedeComentar ? (
           <p className="text-manso-cream/30 text-sm text-center py-4">
             Sumate a la red Manso para participar. Contactá a Ana.
           </p>
         ) : (
-          <p className="text-manso-cream/30 text-sm text-center py-4">
-            <Link href={`/login?from=/foro/${thread.id}`} className="underline hover:text-manso-cream/60 transition-colors">
-              Iniciá sesión
-            </Link>{' '}
-            para responder.
-          </p>
+          <ReplyForm threadId={thread.id} estaLogueado={estaLogueado} />
         )}
       </div>
     </div>
