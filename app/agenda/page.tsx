@@ -32,6 +32,7 @@ interface AgendaItem {
   id: string;
   titulo: string;
   descripcion?: string;
+  slug?: string;
   fecha?: string;
   categoria?: string;
   duracion?: string;
@@ -208,7 +209,13 @@ export default function AgendaPage() {
                       {/* Título + descripción */}
                       <div className="flex-1 min-w-0">
                         <h2 className="text-xl md:text-2xl font-black uppercase italic tracking-tighter text-manso-cream leading-tight">
-                          {item.titulo}
+                          {item.slug ? (
+                            <Link href={`/agenda/${item.slug}`} className="hover:text-manso-terra transition-colors">
+                              {item.titulo}
+                            </Link>
+                          ) : (
+                            item.titulo
+                          )}
                         </h2>
                         {item.descripcion && (
                           <p className="text-sm text-manso-cream/40 mt-2 font-light leading-relaxed max-w-xl">
@@ -250,7 +257,7 @@ export default function AgendaPage() {
                         <ShareButton
                           title={`${item.titulo} | Manso Club`}
                           text={item.descripcion || `${item.titulo} en Manso Club.`}
-                          url="/agenda"
+                          url={item.slug ? `/agenda/${item.slug}` : '/agenda'}
                           className="flex items-center justify-center w-11 h-11 bg-manso-cream/5 border border-manso-cream/10 rounded-full text-manso-cream hover:bg-manso-cream/10 hover:border-manso-cream/20 transition-all"
                           label=""
                         />

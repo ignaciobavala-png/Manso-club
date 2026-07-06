@@ -7,10 +7,12 @@ import { supabase } from '@/lib/supabase';
 import { WHATSAPP_NUMBER } from '@/lib/constants';
 import { TYPE } from '@/lib/ui-constants';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface AgendaItem {
   id: string;
   titulo: string;
+  slug?: string;
   descripcion?: string;
   categoria?: string;
   duracion?: string;
@@ -246,7 +248,17 @@ export const EventosHome = () => {
                             </span>
                           )}
                           <h4 className="text-lg sm:text-xl md:text-2xl font-bold uppercase tracking-tight text-white leading-none">
-                            {item.titulo}
+                            {item.slug ? (
+                              <Link
+                                href={`/agenda/${item.slug}`}
+                                onClick={e => e.stopPropagation()}
+                                className="hover:text-white/70 transition-colors"
+                              >
+                                {item.titulo}
+                              </Link>
+                            ) : (
+                              item.titulo
+                            )}
                           </h4>
                         </div>
                       </div>

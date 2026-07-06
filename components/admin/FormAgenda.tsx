@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase';
 interface AgendaEvent {
   id: string;
   titulo: string;
+  slug?: string;
   descripcion: string;
   categoria: string;
   duracion: string;
@@ -19,6 +20,7 @@ interface AgendaEvent {
 
 const INITIAL = {
   titulo: '',
+  slug: '',
   descripcion: '',
   categoria: 'Taller',
   duracion: '2 horas',
@@ -30,11 +32,32 @@ const INITIAL = {
   visibilidad: 'publico' as 'publico' | 'registrado' | 'miembro',
 };
 
+function slugify(titulo: string) {
+  return titulo
+    .toLowerCase()
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/(^-|-$)/g, '');
+}
+
+/** Genera un slug único contra la tabla agenda, agregando -2, -3... si ya existe otro taller con el mismo slug. */
+async function getUniqueSlug(base: string, excludeId: string | null): Promise<string> {
+  const { data } = await supabase.from('agenda').select('id, slug').like('slug', `${base}%`);
+  const existentes = new Set((data || []).filter(r => r.id !== excludeId).map(r => r.slug));
+
+  if (!existentes.has(base)) return base;
+
+  let i = 2;
+  while (existentes.has(`${base}-${i}`)) i++;
+  return `${base}-${i}`;
+}
+
 const categorias  = ['Taller', 'Curso', 'Sesión', 'Clase', 'Evento'];
 const duraciones  = ['1 hora', '2 horas', '3 horas', '4 horas', 'Medio día', 'Día completo'];
 const frecuencias = ['Semanal', 'Quincenal', 'Mensual', 'Bimensual', 'Trimestral'];
 
 import { VisibilidadToggle } from './VisibilidadToggle';
+import { AgendaFotosList } from './AgendaFotosList';
 
 const inputCls = "w-full p-3 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/40 text-sm";
 const labelCls = "block text-[10px] font-black uppercase tracking-widest text-manso-cream/50 mb-1";
@@ -50,6 +73,7 @@ export function FormAgenda() {
       setEditingId(ev.id);
       setFormData({
         titulo:            ev.titulo,
+        slug:              ev.slug || '',
         descripcion:       ev.descripcion,
         categoria:         ev.categoria,
         duracion:          ev.duracion,
@@ -74,8 +98,16 @@ export function FormAgenda() {
     e.preventDefault();
     setLoading(true);
 
+    // El slug es el "permalink" del taller: una vez creado no se toca aunque
+    // se corrija el titulo despues, para no romper links ya compartidos.
+    // Solo se genera (y se desambigua contra duplicados) al crear un taller nuevo.
+    const slug = editingId && formData.slug
+      ? formData.slug
+      : await getUniqueSlug(slugify(formData.titulo), editingId);
+
     const payload = {
       titulo:            formData.titulo,
+      slug,
       descripcion:       formData.descripcion,
       categoria:         formData.categoria,
       duracion:          formData.duracion,
@@ -142,7 +174,7 @@ export function FormAgenda() {
         <div>
           <label className={labelCls}>Descripción</label>
           <textarea
-            placeholder="Describí el evento, qué se aprende, quién puede participar..."
+            placeholder="Describí el evento, qué se aprende, quién puede participar... (se muestra completa en la página de detalle del taller)"
             rows={3}
             className={`${inputCls} resize-none`}
             value={formData.descripcion}
@@ -245,6 +277,12 @@ export function FormAgenda() {
           </button>
         </div>
       </form>
+
+      {editingId && (
+        <div className="mt-8">
+          <AgendaFotosList agendaId={editingId} tallerTitulo={formData.titulo} />
+        </div>
+      )}
     </div>
   );
 }
