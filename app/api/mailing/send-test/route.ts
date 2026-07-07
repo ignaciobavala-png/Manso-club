@@ -57,17 +57,18 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: message }, { status: 400 });
   }
 
-  const template = CampaniaGenerica({
-    asunto: `[PRUEBA] ${campania.asunto}`,
-    bloques,
-  });
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://manso.club";
 
   const { data, error } = await resend.batch.send(
     destinatarios.map((email: string) => ({
       from: EMAIL_FROM,
       to: email,
       subject: `[PRUEBA] ${campania.asunto}`,
-      react: template,
+      react: CampaniaGenerica({
+        asunto: `[PRUEBA] ${campania.asunto}`,
+        bloques,
+        unsubscribeUrl: `${siteUrl}/api/mailing/unsubscribe?email=${encodeURIComponent(email)}`,
+      }),
     }))
   );
 

@@ -58,7 +58,9 @@ export async function enviarCampania(
   }
 
   const bloques = await procesarBloquesCanvas(supabase, campania.id, campania.bloques);
-  const template = CampaniaGenerica({ asunto: campania.asunto, bloques });
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://manso.club";
+  const unsubscribeUrl = (email: string) =>
+    `${siteUrl}/api/mailing/unsubscribe?email=${encodeURIComponent(email)}`;
 
   const envios: { destinatario: string; estado: string; resend_id: string | null }[] = [];
 
@@ -72,7 +74,7 @@ export async function enviarCampania(
         from: EMAIL_FROM,
         to: email,
         subject: campania.asunto,
-        react: template,
+        react: CampaniaGenerica({ asunto: campania.asunto, bloques, unsubscribeUrl: unsubscribeUrl(email) }),
       })),
       { idempotencyKey: `mailing-${campania.id}-batch-${i}` }
     );

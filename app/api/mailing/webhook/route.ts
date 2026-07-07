@@ -51,10 +51,26 @@ export async function POST(request: Request) {
   // 1) Estado de entrega
   const nuevoEstado = ESTADO_POR_EVENTO[event.type];
   if (nuevoEstado) {
-    await supabase
+    const { data: envio } = await supabase
       .from("mailing_envios")
       .update({ estado: nuevoEstado })
-      .eq("resend_id", resendId);
+      .eq("resend_id", resendId)
+      .select("destinatario")
+      .maybeSingle();
+
+    // Rebote o queja de spam: excluir de futuros envíos. Reintentar a una
+    // dirección que ya rebotó degrada la reputación del dominio ante
+    // Gmail/Outlook y puede llevar a que Resend suspenda el dominio.
+    if ((event.type === "email.bounced" || event.type === "email.complained") && envio?.destinatario) {
+      await supabase.from("mailing_exclusiones").upsert(
+        {
+          email: envio.destinatario,
+          motivo: event.type === "email.complained" ? "Marcado como spam" : "Rebote de entrega",
+        },
+        { onConflict: "email", ignoreDuplicates: true }
+      );
+    }
+
     return NextResponse.json({ received: true });
   }
 

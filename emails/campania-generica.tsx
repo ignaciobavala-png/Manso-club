@@ -36,6 +36,7 @@ export type BloqueMailing =
 interface CampaniaGenericaProps {
   asunto: string;
   bloques: BloqueMailing[];
+  unsubscribeUrl: string;
 }
 
 const imgSliceStyle: React.CSSProperties = {
@@ -45,7 +46,7 @@ const imgSliceStyle: React.CSSProperties = {
   border: 0,
 };
 
-export default function CampaniaGenerica({ asunto, bloques }: CampaniaGenericaProps) {
+export default function CampaniaGenerica({ asunto, bloques, unsubscribeUrl }: CampaniaGenericaProps) {
   return (
     <Html>
       <Head />
@@ -151,6 +152,14 @@ export default function CampaniaGenerica({ asunto, bloques }: CampaniaGenericaPr
               </Section>
             );
           })}
+          <Section style={{ padding: "20px", textAlign: "center" }}>
+            <Text style={{ color: "#1D1D1B", fontSize: "11px", opacity: 0.6 }}>
+              Recibiste este mail porque estás suscripto a Manso Club.{" "}
+              <a href={unsubscribeUrl} style={{ color: "#1D1D1B", textDecoration: "underline" }}>
+                Darme de baja
+              </a>
+            </Text>
+          </Section>
         </Container>
       </Body>
     </Html>
