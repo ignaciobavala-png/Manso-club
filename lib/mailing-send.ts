@@ -64,13 +64,17 @@ export async function enviarCampania(
 
   for (let i = 0; i < destinatarios.length; i += BATCH_SIZE) {
     const lote = destinatarios.slice(i, i + BATCH_SIZE);
+    // Segunda capa de seguridad además del reclamo atómico: si por lo que
+    // sea este lote se reintentara (timeout de red, bug futuro), Resend
+    // reconoce la misma idempotencyKey dentro de 24hs y no reenvía.
     const { data, error } = await resend.batch.send(
       lote.map((email) => ({
         from: EMAIL_FROM,
         to: email,
         subject: campania.asunto,
         react: template,
-      }))
+      })),
+      { idempotencyKey: `mailing-${campania.id}-batch-${i}` }
     );
 
     if (error) {
