@@ -219,7 +219,7 @@ export default function AgendaPage() {
                         </h2>
                         {item.descripcion && (
                           <p className="text-sm text-manso-cream/40 mt-2 font-light leading-relaxed max-w-xl">
-                            {item.descripcion}
+                            {item.descripcion.split('\n').map(p => p.trim()).find(p => p.length > 0)}
                           </p>
                         )}
                       </div>
