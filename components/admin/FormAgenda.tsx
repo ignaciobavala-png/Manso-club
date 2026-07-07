@@ -8,6 +8,7 @@ interface AgendaEvent {
   titulo: string;
   slug?: string;
   descripcion: string;
+  contenido_detalle?: string;
   categoria: string;
   duracion: string;
   frecuencia: string;
@@ -22,6 +23,7 @@ const INITIAL = {
   titulo: '',
   slug: '',
   descripcion: '',
+  contenido_detalle: '',
   categoria: 'Taller',
   duracion: '2 horas',
   frecuencia: 'Mensual',
@@ -75,6 +77,7 @@ export function FormAgenda() {
         titulo:            ev.titulo,
         slug:              ev.slug || '',
         descripcion:       ev.descripcion,
+        contenido_detalle: ev.contenido_detalle || '',
         categoria:         ev.categoria,
         duracion:          ev.duracion,
         frecuencia:        ev.frecuencia,
@@ -109,6 +112,7 @@ export function FormAgenda() {
       titulo:            formData.titulo,
       slug,
       descripcion:       formData.descripcion,
+      contenido_detalle: formData.contenido_detalle || null,
       categoria:         formData.categoria,
       duracion:          formData.duracion,
       frecuencia:        formData.frecuencia,
@@ -172,15 +176,30 @@ export function FormAgenda() {
 
         {/* Descripción */}
         <div>
-          <label className={labelCls}>Descripción</label>
+          <label className={labelCls}>Descripción corta</label>
           <textarea
-            placeholder="Describí el evento, qué se aprende, quién puede participar... (se muestra completa en la página de detalle del taller)"
+            placeholder="Bajada corta: se muestra en el listado de agenda y como resumen al compartir"
             rows={3}
             className={`${inputCls} resize-none`}
             value={formData.descripcion}
             onChange={e => set('descripcion', e.target.value)}
             required
           />
+        </div>
+
+        {/* Contenido detallado */}
+        <div>
+          <label className={labelCls}>Contenido de la página del taller</label>
+          <textarea
+            placeholder={'Texto completo que se ve en la página de detalle (columna derecha).\n\nDejá una línea en blanco para separar párrafos.\nUna línea EN MAYÚSCULAS se muestra como subtítulo (ej: ENCUENTRO I: IDEAS Y FORMA).\nUna línea que empieza con "." o "-" se muestra como ítem de lista.'}
+            rows={10}
+            className={`${inputCls} resize-none font-mono text-xs`}
+            value={formData.contenido_detalle}
+            onChange={e => set('contenido_detalle', e.target.value)}
+          />
+          <p className="text-[9px] text-manso-cream/30 mt-1 font-light">
+            Línea en blanco = nuevo párrafo · línea EN MAYÚSCULAS = subtítulo · línea con &quot;.&quot; o &quot;-&quot; adelante = ítem de lista
+          </p>
         </div>
 
         {/* Categoría + Frecuencia */}

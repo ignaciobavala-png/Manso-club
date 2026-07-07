@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { createSupabaseAnon, createSupabaseServer } from '@/lib/supabase';
 import { ArrowLeft } from 'lucide-react';
 import { TallerCarousel } from '@/components/Home/TallerCarousel';
+import { ContenidoDetalle } from '@/components/Home/ContenidoDetalle';
 import { ShareButton } from '@/components/ShareButton';
 
 export const dynamic = 'force-dynamic';
@@ -20,6 +21,7 @@ interface AgendaItem {
   id: string;
   titulo: string;
   descripcion?: string;
+  contenido_detalle?: string;
   slug: string;
   categoria?: string;
   duracion?: string;
@@ -44,7 +46,7 @@ async function getTaller(slug: string): Promise<AgendaItem | null> {
   const supabase = createSupabaseAnon();
   const { data } = await supabase
     .from('agenda')
-    .select('id, titulo, descripcion, slug, categoria, duracion, frecuencia, precio, cupos_maximos, luma_url, visibilidad')
+    .select('id, titulo, descripcion, contenido_detalle, slug, categoria, duracion, frecuencia, precio, cupos_maximos, luma_url, visibilidad')
     .eq('slug', slug)
     .eq('activo', true)
     .single();
@@ -137,68 +139,79 @@ export default async function TallerPage({ params }: Props) {
 
       {/* Carrusel */}
       {fotos.length > 0 && (
-        <div className="max-w-5xl mx-auto px-6 md:px-12">
+        <div className="max-w-6xl mx-auto px-6 md:px-12">
           <TallerCarousel fotos={fotos} />
         </div>
       )}
 
-      <section className="max-w-5xl mx-auto px-6 md:px-12 py-10 md:py-14">
-        {taller.categoria && (
-          <p className="text-[10px] font-black uppercase tracking-[0.5em] text-manso-terra mb-3">
-            {taller.categoria}
-          </p>
-        )}
+      <section className="max-w-6xl mx-auto px-6 md:px-12 py-10 md:py-14">
+        <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,380px)_1fr] gap-10 lg:gap-16">
+          {/* Columna izquierda: fixed/sticky con la info clave */}
+          <div className="lg:sticky lg:top-28 lg:self-start">
+            {taller.categoria && (
+              <p className="text-[10px] font-black uppercase tracking-[0.5em] text-manso-terra mb-3">
+                {taller.categoria}
+              </p>
+            )}
 
-        <h1 className="text-3xl md:text-5xl lg:text-6xl font-black uppercase italic tracking-tighter leading-none text-manso-cream mb-8">
-          {taller.titulo}
-        </h1>
+            <h1 className="text-3xl md:text-5xl lg:text-5xl font-black uppercase italic tracking-tighter leading-none text-manso-cream mb-6">
+              {taller.titulo}
+            </h1>
 
-        {/* Metadata */}
-        <div className="flex flex-wrap items-center gap-x-10 gap-y-4 mb-8 pb-8 border-b border-manso-cream/10">
-          {taller.frecuencia && (
-            <div>
-              <p className="text-[9px] uppercase tracking-widest text-manso-cream/25 font-black mb-0.5">Frecuencia</p>
-              <p className="text-sm font-black uppercase tracking-wide text-manso-cream/70">{taller.frecuencia}</p>
+            {taller.descripcion && (
+              <p className="text-sm md:text-base text-manso-cream/60 leading-relaxed font-light mb-8">
+                {taller.descripcion}
+              </p>
+            )}
+
+            {/* Metadata */}
+            <div className="flex flex-col gap-4 mb-8 pb-8 border-b border-manso-cream/10">
+              {taller.frecuencia && (
+                <div>
+                  <p className="text-[9px] uppercase tracking-widest text-manso-cream/25 font-black mb-0.5">Frecuencia</p>
+                  <p className="text-sm font-black uppercase tracking-wide text-manso-cream/70">{taller.frecuencia}</p>
+                </div>
+              )}
+              {taller.duracion && (
+                <div>
+                  <p className="text-[9px] uppercase tracking-widest text-manso-cream/25 font-black mb-0.5">Duración</p>
+                  <p className="text-sm font-black uppercase tracking-wide text-manso-cream/70">{taller.duracion}</p>
+                </div>
+              )}
+              {taller.cupos_maximos ? (
+                <div>
+                  <p className="text-[9px] uppercase tracking-widest text-manso-cream/25 font-black mb-0.5">Cupos</p>
+                  <p className="text-sm font-black uppercase tracking-wide text-manso-cream/70">{taller.cupos_maximos}</p>
+                </div>
+              ) : null}
+              <div>
+                <p className="text-[9px] uppercase tracking-widest text-manso-cream/25 font-black mb-0.5">Precio</p>
+                <p className="text-base font-black text-manso-cream">{precioLabel}</p>
+              </div>
             </div>
-          )}
-          {taller.duracion && (
-            <div>
-              <p className="text-[9px] uppercase tracking-widest text-manso-cream/25 font-black mb-0.5">Duración</p>
-              <p className="text-sm font-black uppercase tracking-wide text-manso-cream/70">{taller.duracion}</p>
+
+            {/* CTAs */}
+            <div className="flex flex-wrap items-center gap-3">
+              <a
+                href={`/agenda/pagar?titulo=${encodeURIComponent(taller.titulo)}&precio=${taller.precio || 0}&frecuencia=${encodeURIComponent(taller.frecuencia || '')}&categoria=${encodeURIComponent(taller.categoria || '')}`}
+                className="bg-manso-cream text-manso-black hover:bg-white px-6 py-3.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all"
+              >
+                Inscribirme
+              </a>
+              <ShareButton
+                title={`${taller.titulo} | Manso Club`}
+                text={taller.descripcion || `${taller.titulo} en Manso Club.`}
+                url={`/agenda/${taller.slug}`}
+              />
             </div>
-          )}
-          {taller.cupos_maximos ? (
-            <div>
-              <p className="text-[9px] uppercase tracking-widest text-manso-cream/25 font-black mb-0.5">Cupos</p>
-              <p className="text-sm font-black uppercase tracking-wide text-manso-cream/70">{taller.cupos_maximos}</p>
-            </div>
-          ) : null}
-          <div>
-            <p className="text-[9px] uppercase tracking-widest text-manso-cream/25 font-black mb-0.5">Precio</p>
-            <p className="text-base font-black text-manso-cream">{precioLabel}</p>
           </div>
-        </div>
 
-        {/* Descripción */}
-        {taller.descripcion && (
-          <p className="text-base md:text-lg text-manso-cream/70 leading-relaxed font-light max-w-2xl whitespace-pre-line mb-10">
-            {taller.descripcion}
-          </p>
-        )}
-
-        {/* CTAs */}
-        <div className="flex flex-wrap items-center gap-3">
-          <a
-            href={`/agenda/pagar?titulo=${encodeURIComponent(taller.titulo)}&precio=${taller.precio || 0}&frecuencia=${encodeURIComponent(taller.frecuencia || '')}&categoria=${encodeURIComponent(taller.categoria || '')}`}
-            className="bg-manso-cream text-manso-black hover:bg-white px-6 py-3.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all"
-          >
-            Inscribirme
-          </a>
-          <ShareButton
-            title={`${taller.titulo} | Manso Club`}
-            text={taller.descripcion || `${taller.titulo} en Manso Club.`}
-            url={`/agenda/${taller.slug}`}
-          />
+          {/* Columna derecha: contenido largo, se desplaza con el scroll de la página */}
+          <div>
+            {taller.contenido_detalle && (
+              <ContenidoDetalle texto={taller.contenido_detalle} />
+            )}
+          </div>
         </div>
       </section>
     </main>
