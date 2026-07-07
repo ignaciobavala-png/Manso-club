@@ -15,6 +15,7 @@ interface AgendaEvent {
   precio: number | string;
   activo: boolean;
   cupos_maximos?: number | string;
+  clases?: number | string;
   whatsapp_contacto?: string;
   luma_url?: string;
 }
@@ -29,6 +30,7 @@ const INITIAL = {
   frecuencia: 'Mensual',
   precio: '0',
   cupos_maximos: '0',
+  clases: '0',
   whatsapp_contacto: '',
   luma_url: '',
   visibilidad: 'publico' as 'publico' | 'registrado' | 'miembro',
@@ -83,6 +85,7 @@ export function FormAgenda() {
         frecuencia:        ev.frecuencia,
         precio:            ev.precio.toString(),
         cupos_maximos:     (ev.cupos_maximos || 0).toString(),
+        clases:            (ev.clases || 0).toString(),
         whatsapp_contacto: ev.whatsapp_contacto || '',
         luma_url:          ev.luma_url || '',
         visibilidad:       (ev as any).visibilidad ?? 'publico',
@@ -118,6 +121,7 @@ export function FormAgenda() {
       frecuencia:        formData.frecuencia,
       precio:            parseInt(formData.precio) || 0,
       cupos_maximos:     parseInt(formData.cupos_maximos) || 0,
+      clases:            parseInt(formData.clases) || 0,
       whatsapp_contacto: formData.whatsapp_contacto,
       luma_url:          formData.luma_url || null,
       activo:            true,
@@ -240,17 +244,30 @@ export function FormAgenda() {
           </div>
         </div>
 
-        {/* Cupos */}
-        <div>
-          <label className={labelCls}>Cupos máximos (0 = ilimitado)</label>
-          <input
-            type="number"
-            placeholder="0"
-            className={inputCls}
-            value={formData.cupos_maximos}
-            onChange={e => set('cupos_maximos', e.target.value)}
-            min="0"
-          />
+        {/* Cupos + Clases */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className={labelCls}>Cupos máximos (0 = ilimitado)</label>
+            <input
+              type="number"
+              placeholder="0"
+              className={inputCls}
+              value={formData.cupos_maximos}
+              onChange={e => set('cupos_maximos', e.target.value)}
+              min="0"
+            />
+          </div>
+          <div>
+            <label className={labelCls}>Clases que incluye (0 = no aplica)</label>
+            <input
+              type="number"
+              placeholder="0"
+              className={inputCls}
+              value={formData.clases}
+              onChange={e => set('clases', e.target.value)}
+              min="0"
+            />
+          </div>
         </div>
 
         {/* Link de Luma */}
