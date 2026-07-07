@@ -79,24 +79,26 @@ export async function enviarCampania(
       { idempotencyKey: `mailing-${campania.id}-batch-${i}` }
     );
 
-    if (error) {
-      lote.forEach((email) => envios.push({ destinatario: email, estado: "failed", resend_id: null }));
-      continue;
-    }
+    const loteEnvios = error
+      ? lote.map((email) => ({ destinatario: email, estado: "failed", resend_id: null }))
+      : (data?.data ?? []).map((r, idx) => ({ destinatario: lote[idx], estado: "enviado", resend_id: r.id }));
 
-    (data?.data ?? []).forEach((r, idx) => {
-      envios.push({ destinatario: lote[idx], estado: "enviado", resend_id: r.id });
-    });
+    // Insertar cada lote apenas se manda, no acumular hasta el final: el
+    // webhook de Resend puede llegar (delivered/bounced) mientras todavía
+    // se están mandando los lotes siguientes, y si la fila de mailing_envios
+    // no existe todavía, el update por resend_id no encuentra nada y la
+    // auto-exclusión de rebotados se pierde en silencio.
+    await supabase.from("mailing_envios").insert(
+      loteEnvios.map((e) => ({
+        campania_id: campania.id,
+        destinatario: e.destinatario,
+        estado: e.estado,
+        resend_id: e.resend_id,
+      }))
+    );
+
+    envios.push(...loteEnvios);
   }
-
-  await supabase.from("mailing_envios").insert(
-    envios.map((e) => ({
-      campania_id: campania.id,
-      destinatario: e.destinatario,
-      estado: e.estado,
-      resend_id: e.resend_id,
-    }))
-  );
 
   await supabase
     .from("mailing_campanias")
