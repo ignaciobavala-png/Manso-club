@@ -39,6 +39,7 @@ interface AgendaItem {
   frecuencia?: string;
   precio?: number;
   cupos_maximos?: number;
+  clases?: number;
   luma_url?: string;
   whatsapp_contacto?: string;
   activo: boolean;
@@ -242,6 +243,12 @@ export default function AgendaPage() {
                           <div className="text-right">
                             <p className="text-[9px] uppercase tracking-widest text-manso-cream/25 font-black mb-0.5">Cupos</p>
                             <p className="text-sm font-black uppercase tracking-wide text-manso-cream/70">{item.cupos_maximos}</p>
+                          </div>
+                        ) : null}
+                        {item.clases ? (
+                          <div className="text-right">
+                            <p className="text-[9px] uppercase tracking-widest text-manso-cream/25 font-black mb-0.5">Clases</p>
+                            <p className="text-sm font-black uppercase tracking-wide text-manso-cream/70">{item.clases}</p>
                           </div>
                         ) : null}
                         <div className="text-right min-w-[70px]">

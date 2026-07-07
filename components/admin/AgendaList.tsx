@@ -14,6 +14,7 @@ interface AgendaEvent {
   precio: number;
   activo: boolean;
   cupos_maximos?: number;
+  clases?: number;
   whatsapp_contacto?: string;
   created_at: string;
 }
@@ -166,6 +167,9 @@ export function AgendaList({ refreshTrigger }: AgendaListProps) {
                 <div className="flex items-center gap-4 text-[10px] text-manso-cream/60">
                   {evento.cupos_maximos && evento.cupos_maximos > 0 && (
                     <span>Cupos: {evento.cupos_maximos}</span>
+                  )}
+                  {evento.clases && evento.clases > 0 && (
+                    <span>Clases: {evento.clases}</span>
                   )}
                   {evento.whatsapp_contacto && (
                     <span>WhatsApp: {evento.whatsapp_contacto}</span>

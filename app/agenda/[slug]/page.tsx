@@ -28,6 +28,7 @@ interface AgendaItem {
   frecuencia?: string;
   precio?: number;
   cupos_maximos?: number;
+  clases?: number;
   luma_url?: string;
   visibilidad: Nivel;
 }
@@ -46,7 +47,7 @@ async function getTaller(slug: string): Promise<AgendaItem | null> {
   const supabase = createSupabaseAnon();
   const { data } = await supabase
     .from('agenda')
-    .select('id, titulo, descripcion, contenido_detalle, slug, categoria, duracion, frecuencia, precio, cupos_maximos, luma_url, visibilidad')
+    .select('id, titulo, descripcion, contenido_detalle, slug, categoria, duracion, frecuencia, precio, cupos_maximos, clases, luma_url, visibilidad')
     .eq('slug', slug)
     .eq('activo', true)
     .single();
@@ -182,6 +183,12 @@ export default async function TallerPage({ params }: Props) {
                 <div>
                   <p className="text-[9px] uppercase tracking-widest text-manso-cream/25 font-black mb-0.5">Cupos</p>
                   <p className="text-sm font-black uppercase tracking-wide text-manso-cream/70">{taller.cupos_maximos}</p>
+                </div>
+              ) : null}
+              {taller.clases ? (
+                <div>
+                  <p className="text-[9px] uppercase tracking-widest text-manso-cream/25 font-black mb-0.5">Clases</p>
+                  <p className="text-sm font-black uppercase tracking-wide text-manso-cream/70">{taller.clases}</p>
                 </div>
               ) : null}
               <div>
