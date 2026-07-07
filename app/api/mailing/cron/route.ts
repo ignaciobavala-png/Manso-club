@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { enviarCampania } from "@/lib/mailing-send";
+import { enviarCampania, reclamarCampania } from "@/lib/mailing-send";
 
 export const maxDuration = 300;
 
@@ -34,19 +34,13 @@ export async function GET(request: Request) {
   const resultados: { id: string; asunto: string; ok: boolean; detalle: string }[] = [];
 
   for (const campania of vencidas ?? []) {
-    // Reclamo atómico: solo una corrida se queda con la campaña
-    const { data: reclamada } = await supabase
-      .from("mailing_campanias")
-      .update({ estado: "enviada" })
-      .eq("id", campania.id)
-      .eq("estado", "programada")
-      .select("id")
-      .maybeSingle();
-
-    if (!reclamada) continue; // otra corrida ya la tomó
+    // Reclamo atómico compartido con el envío manual: solo un disparador
+    // (cron o botón "Enviar ya") se queda con la campaña
+    const reclamada = await reclamarCampania(supabase, campania.id);
+    if (!reclamada) continue; // otra corrida (o un envío manual) ya la tomó
 
     try {
-      const { enviados, fallidos } = await enviarCampania(supabase, campania);
+      const { enviados, fallidos } = await enviarCampania(supabase, reclamada);
       resultados.push({
         id: campania.id,
         asunto: campania.asunto,

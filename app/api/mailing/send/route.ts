@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { createClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
-import { enviarCampania } from "@/lib/mailing-send";
+import { enviarCampania, reclamarCampania } from "@/lib/mailing-send";
 
 export async function POST(request: Request) {
   const cookieStore = await cookies();
@@ -39,24 +39,31 @@ export async function POST(request: Request) {
     process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 
-  const { data: campania, error: campaniaError } = await admin
+  const { data: existe } = await admin
     .from("mailing_campanias")
-    .select("*")
+    .select("id")
     .eq("id", campaniaId)
-    .single();
+    .maybeSingle();
 
-  if (campaniaError || !campania) {
+  if (!existe) {
     return NextResponse.json({ error: "Campaña no encontrada" }, { status: 404 });
   }
 
-  if (campania.estado === "enviada") {
-    return NextResponse.json({ error: "Esta campaña ya fue enviada" }, { status: 400 });
+  // Reclamo atómico: si el cron (u otro click) ya la tomó, no se envía dos veces
+  const campania = await reclamarCampania(admin, campaniaId);
+  if (!campania) {
+    return NextResponse.json({ error: "Esta campaña ya fue enviada o está enviándose" }, { status: 400 });
   }
 
   try {
     const resultado = await enviarCampania(admin, campania);
     return NextResponse.json(resultado);
   } catch (err) {
+    // Devolver a borrador para que el admin pueda revisar y reintentar
+    await admin
+      .from("mailing_campanias")
+      .update({ estado: "borrador", scheduled_at: null })
+      .eq("id", campaniaId);
     const message = err instanceof Error ? err.message : "Error al enviar la campaña";
     return NextResponse.json({ error: message }, { status: 400 });
   }

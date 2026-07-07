@@ -79,11 +79,14 @@ export async function POST(request: Request) {
       .eq("resend_id", resendId)
       .is("opened_at", null);
 
-    await supabase.from("mailing_interacciones").insert({
-      envio_id: envioId,
-      resend_id: resendId,
-      tipo: "open",
-    });
+    // svix_id (único por entrega) evita duplicar el registro si Resend
+    // reintenta el mismo evento (webhooks son "at-least-once")
+    await supabase
+      .from("mailing_interacciones")
+      .upsert(
+        { envio_id: envioId, resend_id: resendId, tipo: "open", svix_id: id },
+        { onConflict: "svix_id", ignoreDuplicates: true }
+      );
 
     return NextResponse.json({ received: true });
   }
@@ -95,14 +98,20 @@ export async function POST(request: Request) {
     .eq("resend_id", resendId)
     .is("clicked_at", null);
 
-  await supabase.from("mailing_interacciones").insert({
-    envio_id: envioId,
-    resend_id: resendId,
-    tipo: "click",
-    link: data.click?.link ?? null,
-    ip: data.click?.ipAddress ?? null,
-    user_agent: data.click?.userAgent ?? null,
-  });
+  await supabase
+    .from("mailing_interacciones")
+    .upsert(
+      {
+        envio_id: envioId,
+        resend_id: resendId,
+        tipo: "click",
+        link: data.click?.link ?? null,
+        ip: data.click?.ipAddress ?? null,
+        user_agent: data.click?.userAgent ?? null,
+        svix_id: id,
+      },
+      { onConflict: "svix_id", ignoreDuplicates: true }
+    );
 
   return NextResponse.json({ received: true });
 }
