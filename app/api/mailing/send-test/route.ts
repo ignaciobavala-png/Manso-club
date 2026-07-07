@@ -1,7 +1,9 @@
 import { NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
+import { createClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import { resend, EMAIL_FROM } from "@/lib/resend";
+import { procesarBloquesCanvas } from "@/lib/email-canvas";
 import CampaniaGenerica, { type BloqueMailing } from "@/emails/campania-generica";
 
 export async function POST(request: Request) {
@@ -42,9 +44,22 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Campaña no encontrada" }, { status: 404 });
   }
 
+  // Procesar bloques canvas (corta la imagen y sube rebanadas al storage)
+  const admin = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
+  let bloques: BloqueMailing[];
+  try {
+    bloques = await procesarBloquesCanvas(admin, campania.id, campania.bloques as BloqueMailing[]);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Error procesando el canvas";
+    return NextResponse.json({ error: message }, { status: 400 });
+  }
+
   const template = CampaniaGenerica({
     asunto: `[PRUEBA] ${campania.asunto}`,
-    bloques: campania.bloques as BloqueMailing[],
+    bloques,
   });
 
   const { data, error } = await resend.batch.send(
