@@ -340,10 +340,16 @@ export const EventosHome = () => {
       {/* ============================================ */}
       <div className="pb-12 sm:pb-16 md:pb-20 pt-8 sm:pt-10 px-0 sm:px-8 md:px-[96px]">
         <div className="mx-auto">
-          <div className="text-left mb-6 sm:mb-8 px-4 sm:px-0">
+          <div className="flex items-end justify-between mb-6 sm:mb-8 px-4 sm:px-0">
             <h2 id="eventos-titulo" className="text-3xl sm:text-4xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-white">
               Eventos
             </h2>
+            <Link
+              href="/calendario"
+              className="shrink-0 text-[10px] sm:text-xs font-black uppercase tracking-widest border border-white/40 text-white px-4 py-2 rounded-full hover:bg-white hover:text-black transition-colors whitespace-nowrap"
+            >
+              Ver calendario
+            </Link>
           </div>
 
           {eventosFecha.length === 0 ? (
