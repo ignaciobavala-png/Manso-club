@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { ParticleBackground } from '@/components/Home/ParticleBackground';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Users, Lock } from 'lucide-react';
+import { Users, Lock, CalendarDays } from 'lucide-react';
 import { ShareButton } from '@/components/ShareButton';
 
 type Nivel = 'publico' | 'registrado' | 'miembro';
@@ -37,6 +37,8 @@ interface AgendaItem {
   categoria?: string;
   duracion?: string;
   frecuencia?: string;
+  dia_semana?: number | null;
+  horario?: string | null;
   precio?: number;
   cupos_maximos?: number;
   clases?: number;
@@ -47,6 +49,8 @@ interface AgendaItem {
 }
 
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+// 0 = lunes ... 6 = domingo (convención de agenda.dia_semana)
+const DIAS = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
 
 export default function AgendaPage() {
   const [items, setItems] = useState<AgendaItem[]>([]);
@@ -146,8 +150,40 @@ export default function AgendaPage() {
           </div>
         </div>
 
-        {/* Línea divisora */}
-        <div className="w-full h-px bg-manso-cream/10 mb-16" />
+        {/* CTA principal al calendario */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+          className="mb-16"
+        >
+          <Link
+            href="/calendario"
+            className="group flex items-center justify-between gap-5 border border-manso-cream/15 rounded-3xl p-5 md:p-7 hover:border-manso-cream/40 hover:bg-manso-cream/5 transition-all duration-500"
+          >
+            <div className="flex items-center gap-4 md:gap-6">
+              <CalendarDays
+                size={30}
+                strokeWidth={1.4}
+                className="shrink-0 text-manso-terra"
+              />
+              <div>
+                <p className="text-[9px] font-black uppercase tracking-[0.6em] text-manso-terra mb-1.5">
+                  Talleres + Eventos
+                </p>
+                <h2 className="text-xl md:text-3xl font-black uppercase italic tracking-tighter leading-none text-manso-cream">
+                  Ver calendario
+                </h2>
+                <p className="hidden md:block text-sm text-manso-cream/40 font-light mt-2 max-w-md leading-relaxed">
+                  Toda la programación del mes en una sola vista, día por día y con horarios.
+                </p>
+              </div>
+            </div>
+            <span className="shrink-0 w-11 h-11 flex items-center justify-center rounded-full border border-manso-cream/20 text-manso-cream group-hover:bg-manso-cream group-hover:text-manso-black group-hover:border-manso-cream transition-all duration-500 text-lg">
+              →
+            </span>
+          </Link>
+        </motion.div>
 
         {loading ? (
           <div className="flex items-center gap-3 text-manso-cream/30">
@@ -227,6 +263,15 @@ export default function AgendaPage() {
 
                       {/* Metadata */}
                       <div className="flex flex-wrap md:flex-nowrap items-center gap-6 md:gap-10 flex-shrink-0">
+                        {typeof item.dia_semana === 'number' && DIAS[item.dia_semana] && (
+                          <div className="text-right">
+                            <p className="text-[9px] uppercase tracking-widest text-manso-cream/25 font-black mb-0.5">Día</p>
+                            <p className="text-sm font-black uppercase tracking-wide text-manso-cream/70">
+                              {DIAS[item.dia_semana]}
+                              {item.horario && <span className="text-manso-cream/40"> · {item.horario.slice(0, 5)} hs</span>}
+                            </p>
+                          </div>
+                        )}
                         {item.frecuencia && (
                           <div className="text-right">
                             <p className="text-[9px] uppercase tracking-widest text-manso-cream/25 font-black mb-0.5">Frecuencia</p>

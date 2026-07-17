@@ -150,6 +150,9 @@
   html {
     color-scheme: dark;
     scroll-behavior: smooth;
+    /* Fondo del overscroll (rebote en mobile): sin esto Safari/Chrome muestran blanco
+       al scrollear más allá del footer. */
+    background-color: #1D1D1B;
   }
 
   body {
