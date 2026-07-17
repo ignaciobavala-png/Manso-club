@@ -13,6 +13,7 @@ interface AgendaEvent {
   duracion: string;
   frecuencia: string;
   horario?: string;
+  dia_semana?: number | null;
   precio: number | string;
   activo: boolean;
   cupos_maximos?: number | string;
@@ -30,6 +31,7 @@ const INITIAL = {
   duracion: '2 horas',
   frecuencia: 'Mensual',
   horario: '',
+  dia_semana: '',
   precio: '0',
   cupos_maximos: '0',
   clases: '0',
@@ -59,6 +61,8 @@ async function getUniqueSlug(base: string, excludeId: string | null): Promise<st
 }
 
 const categorias  = ['Taller', 'Curso', 'Sesión', 'Clase', 'Evento'];
+// 0 = lunes ... 6 = domingo (misma convención que agenda.dia_semana en la DB)
+const diasSemana  = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 const duraciones  = ['1 hora', '2 horas', '3 horas', '4 horas', 'Medio día', 'Día completo'];
 const frecuencias = ['Semanal', 'Quincenal', 'Mensual', 'Bimensual', 'Trimestral'];
 
@@ -86,6 +90,7 @@ export function FormAgenda() {
         duracion:          ev.duracion,
         frecuencia:        ev.frecuencia,
         horario:           ev.horario ? ev.horario.slice(0, 5) : '',
+        dia_semana:        typeof ev.dia_semana === 'number' ? String(ev.dia_semana) : '',
         precio:            ev.precio.toString(),
         cupos_maximos:     (ev.cupos_maximos || 0).toString(),
         clases:            (ev.clases || 0).toString(),
@@ -123,6 +128,7 @@ export function FormAgenda() {
       duracion:          formData.duracion,
       frecuencia:        formData.frecuencia,
       horario:           formData.horario || null,
+      dia_semana:        formData.dia_semana === '' ? null : parseInt(formData.dia_semana),
       precio:            parseInt(formData.precio) || 0,
       cupos_maximos:     parseInt(formData.cupos_maximos) || 0,
       clases:            parseInt(formData.clases) || 0,
@@ -226,20 +232,33 @@ export function FormAgenda() {
           </div>
         </div>
 
-        {/* Horario */}
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className={labelCls}>Horario (opcional)</label>
-            <input
-              type="time"
-              className={inputCls}
-              value={formData.horario}
-              onChange={e => set('horario', e.target.value)}
-            />
-            <p className="text-[9px] text-manso-cream/30 mt-1 font-light">
-              Hora de inicio: se muestra junto al taller en el calendario.
-            </p>
+        {/* Día de cursada + Horario */}
+        <div>
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className={labelCls}>Día de la semana</label>
+              <select
+                className={inputCls}
+                value={formData.dia_semana}
+                onChange={e => set('dia_semana', e.target.value)}
+              >
+                <option value="">Sin día fijo</option>
+                {diasSemana.map((d, i) => <option key={d} value={i}>{d}</option>)}
+              </select>
+            </div>
+            <div>
+              <label className={labelCls}>Horario (opcional)</label>
+              <input
+                type="time"
+                className={inputCls}
+                value={formData.horario}
+                onChange={e => set('horario', e.target.value)}
+              />
+            </div>
           </div>
+          <p className="text-[9px] text-manso-cream/30 mt-1 font-light">
+            Día y hora de cursada: el calendario los usa para ubicar el taller en el día correcto.
+          </p>
         </div>
 
         {/* Duración + Precio */}

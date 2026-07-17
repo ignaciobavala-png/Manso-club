@@ -37,6 +37,8 @@ interface AgendaItem {
   categoria?: string;
   duracion?: string;
   frecuencia?: string;
+  dia_semana?: number | null;
+  horario?: string | null;
   precio?: number;
   cupos_maximos?: number;
   clases?: number;
@@ -47,6 +49,8 @@ interface AgendaItem {
 }
 
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+// 0 = lunes ... 6 = domingo (convención de agenda.dia_semana)
+const DIAS = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
 
 export default function AgendaPage() {
   const [items, setItems] = useState<AgendaItem[]>([]);
@@ -259,6 +263,15 @@ export default function AgendaPage() {
 
                       {/* Metadata */}
                       <div className="flex flex-wrap md:flex-nowrap items-center gap-6 md:gap-10 flex-shrink-0">
+                        {typeof item.dia_semana === 'number' && DIAS[item.dia_semana] && (
+                          <div className="text-right">
+                            <p className="text-[9px] uppercase tracking-widest text-manso-cream/25 font-black mb-0.5">Día</p>
+                            <p className="text-sm font-black uppercase tracking-wide text-manso-cream/70">
+                              {DIAS[item.dia_semana]}
+                              {item.horario && <span className="text-manso-cream/40"> · {item.horario.slice(0, 5)} hs</span>}
+                            </p>
+                          </div>
+                        )}
                         {item.frecuencia && (
                           <div className="text-right">
                             <p className="text-[9px] uppercase tracking-widest text-manso-cream/25 font-black mb-0.5">Frecuencia</p>

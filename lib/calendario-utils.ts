@@ -9,6 +9,8 @@ interface AgendaRow {
   frecuencia?: string;
   /** Hora de inicio en formato Postgres time ("18:00:00"). */
   horario?: string | null;
+  /** Día de cursada: 0 = lunes ... 6 = domingo. Si falta, se ancla al día del alta. */
+  dia_semana?: number | null;
   activo: boolean;
   created_at: string;
 }
@@ -38,6 +40,14 @@ const MESES_POR_FRECUENCIA: Record<string, number> = {
   Trimestral: 3,
 };
 
+/** Avanza la fecha hasta el próximo día de la semana pedido (0 = lunes ... 6 = domingo), sin retroceder. */
+function ajustarADiaSemana(fecha: Date, diaSemana: number): Date {
+  const objetivoJs = (diaSemana + 1) % 7; // convención de getDay(): 0 = domingo
+  const f = new Date(fecha);
+  f.setDate(f.getDate() + ((objetivoJs - f.getDay() + 7) % 7));
+  return f;
+}
+
 /** Devuelve una copia de la fecha con la hora del horario ("18:00:00") aplicada, para ordenar dentro del día. */
 function conHorario(fecha: Date, horario?: string | null): Date {
   const f = new Date(fecha);
@@ -59,8 +69,13 @@ function horaDeFecha(fecha: Date): string | undefined {
  * una fecha de inicio explícita ni día de la semana.
  */
 function expandirAgenda(item: AgendaRow, desde: Date, hasta: Date): CalendarioOcurrencia[] {
-  const anchor = new Date(item.created_at);
+  let anchor = new Date(item.created_at);
   if (isNaN(anchor.getTime())) return [];
+
+  // Si el taller tiene día de cursada, correr el ancla al primer día que coincida.
+  // Los intervalos semanales/quincenales (múltiplos de 7 días) preservan el día de ahí en más.
+  const tieneDia = typeof item.dia_semana === 'number' && item.dia_semana >= 0 && item.dia_semana <= 6;
+  if (tieneDia) anchor = ajustarADiaSemana(anchor, item.dia_semana!);
 
   const ocurrencias: CalendarioOcurrencia[] = [];
   const base: Omit<CalendarioOcurrencia, 'fecha'> = {
@@ -95,7 +110,11 @@ function expandirAgenda(item: AgendaRow, desde: Date, hasta: Date): CalendarioOc
       cursor.setMonth(cursor.getMonth() + mesesIntervalo);
     }
     while (cursor <= hasta) {
-      ocurrencias.push({ ...base, id: `${item.id}-${cursor.toISOString().slice(0, 10)}`, fecha: conHorario(cursor, item.horario) });
+      // Sumar meses corre el día de la semana: si hay día de cursada, ajustar cada ocurrencia.
+      const fechaOcurrencia = tieneDia ? ajustarADiaSemana(cursor, item.dia_semana!) : new Date(cursor);
+      if (fechaOcurrencia >= desde && fechaOcurrencia <= hasta) {
+        ocurrencias.push({ ...base, id: `${item.id}-${fechaOcurrencia.toISOString().slice(0, 10)}`, fecha: conHorario(fechaOcurrencia, item.horario) });
+      }
       cursor = new Date(cursor);
       cursor.setMonth(cursor.getMonth() + mesesIntervalo);
     }
