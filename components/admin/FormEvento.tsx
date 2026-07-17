@@ -18,6 +18,17 @@ interface Evento {
   orden: number;
 }
 
+/**
+ * Convierte un timestamp ISO (UTC) al formato local que espera un input datetime-local.
+ * Usar toISOString() acá mostraría la hora en UTC (+3hs para Argentina).
+ */
+function toLocalInputValue(iso: string): string {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return '';
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
+
 export function FormEvento() {
   const [loading, setLoading] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -42,8 +53,8 @@ export function FormEvento() {
       setEditingId(evento.id);
       setFormData({
         titulo: evento.titulo,
-        fecha: evento.fecha ? new Date(evento.fecha).toISOString().slice(0, 16) : '',
-        fecha_fin: evento.fecha_fin ? new Date(evento.fecha_fin).toISOString().slice(0, 16) : '',
+        fecha: evento.fecha ? toLocalInputValue(evento.fecha) : '',
+        fecha_fin: evento.fecha_fin ? toLocalInputValue(evento.fecha_fin) : '',
         descripcion: evento.descripcion || '',
         imagen_url: evento.imagen_url || '',
         categoria: evento.categoria || '',
@@ -87,7 +98,7 @@ export function FormEvento() {
       const submitData = {
         ...formData,
         fecha: new Date(formData.fecha).toISOString(),
-        fecha_fin: formData.fecha_fin || null,
+        fecha_fin: formData.fecha_fin ? new Date(formData.fecha_fin).toISOString() : null,
         orden: parseInt(String(formData.orden)) || 0
       };
 

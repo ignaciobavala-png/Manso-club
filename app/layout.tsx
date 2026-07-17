@@ -5,6 +5,7 @@ import "./globals.css";
 import { Navbar } from "@/components/Layout/Navbar";
 import { Footer } from "@/components/Layout/Footer";
 import { GlobalMusicPlayer } from "@/components/Layout/GlobalMusicPlayer";
+import { CalendarioFab } from "@/components/Layout/CalendarioFab";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { CursorTrail } from "@/components/ui/CursorTrail";
 import { OrganizationSchema } from "@/components/SEO/OrganizationSchema";
@@ -64,7 +65,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="es" className="scroll-smooth">
-      <body className="antialiased text-manso-cream selection:bg-manso-terra selection:text-manso-white min-h-screen flex flex-col bg-white">
+      <body className="antialiased text-manso-cream selection:bg-manso-terra selection:text-manso-white min-h-screen flex flex-col bg-manso-black">
         {/* GTM — noscript fallback (must be right after <body>) */}
         <noscript>
           <iframe
@@ -87,6 +88,7 @@ export default function RootLayout({
         <Footer /> 
         <GlobalMusicPlayer />
         <WhatsAppButton />
+        <CalendarioFab />
         <CursorTrail />
 
         {/* ── Google Tag Manager ── */}

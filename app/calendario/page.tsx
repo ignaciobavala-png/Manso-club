@@ -7,6 +7,15 @@ import { CalendarioMensual } from '@/components/Calendario/CalendarioMensual';
 import { construirOcurrencias, rangoDelMes } from '@/lib/calendario-utils';
 import { CalendarioOcurrencia } from '@/lib/types/calendario';
 
+// Misma lógica de visibilidad por nivel que /agenda (ver app/agenda/page.tsx).
+type Nivel = 'publico' | 'registrado' | 'miembro';
+
+const NIVELES_VISIBLES: Record<Nivel, string[]> = {
+  publico:    ['publico'],
+  registrado: ['publico', 'registrado'],
+  miembro:    ['publico', 'registrado', 'miembro'],
+};
+
 export default function CalendarioPage() {
   const [mesVisible, setMesVisible] = useState(() => {
     const now = new Date();
@@ -23,8 +32,19 @@ export default function CalendarioPage() {
 
     const fetchData = async () => {
       try {
+        let nivel: Nivel = 'publico';
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          const { data: profile } = await supabase
+            .from('user_profiles')
+            .select('permisos_totales')
+            .eq('id', user.id)
+            .single();
+          nivel = profile?.permisos_totales ? 'miembro' : 'registrado';
+        }
+
         const [agendaRes, eventosRes] = await Promise.all([
-          supabase.from('agenda').select('*').eq('activo', true),
+          supabase.from('agenda').select('*').eq('activo', true).in('visibilidad', NIVELES_VISIBLES[nivel]),
           supabase.from('eventos').select('*').eq('activo', true),
         ]);
 

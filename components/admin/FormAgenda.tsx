@@ -12,6 +12,7 @@ interface AgendaEvent {
   categoria: string;
   duracion: string;
   frecuencia: string;
+  horario?: string;
   precio: number | string;
   activo: boolean;
   cupos_maximos?: number | string;
@@ -28,6 +29,7 @@ const INITIAL = {
   categoria: 'Taller',
   duracion: '2 horas',
   frecuencia: 'Mensual',
+  horario: '',
   precio: '0',
   cupos_maximos: '0',
   clases: '0',
@@ -83,6 +85,7 @@ export function FormAgenda() {
         categoria:         ev.categoria,
         duracion:          ev.duracion,
         frecuencia:        ev.frecuencia,
+        horario:           ev.horario ? ev.horario.slice(0, 5) : '',
         precio:            ev.precio.toString(),
         cupos_maximos:     (ev.cupos_maximos || 0).toString(),
         clases:            (ev.clases || 0).toString(),
@@ -119,6 +122,7 @@ export function FormAgenda() {
       categoria:         formData.categoria,
       duracion:          formData.duracion,
       frecuencia:        formData.frecuencia,
+      horario:           formData.horario || null,
       precio:            parseInt(formData.precio) || 0,
       cupos_maximos:     parseInt(formData.cupos_maximos) || 0,
       clases:            parseInt(formData.clases) || 0,
@@ -219,6 +223,22 @@ export function FormAgenda() {
             <select className={inputCls} value={formData.frecuencia} onChange={e => set('frecuencia', e.target.value)}>
               {frecuencias.map(f => <option key={f} value={f}>{f}</option>)}
             </select>
+          </div>
+        </div>
+
+        {/* Horario */}
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <label className={labelCls}>Horario (opcional)</label>
+            <input
+              type="time"
+              className={inputCls}
+              value={formData.horario}
+              onChange={e => set('horario', e.target.value)}
+            />
+            <p className="text-[9px] text-manso-cream/30 mt-1 font-light">
+              Hora de inicio: se muestra junto al taller en el calendario.
+            </p>
           </div>
         </div>
 

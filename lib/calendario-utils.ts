@@ -7,6 +7,8 @@ interface AgendaRow {
   slug?: string;
   categoria?: string;
   frecuencia?: string;
+  /** Hora de inicio en formato Postgres time ("18:00:00"). */
+  horario?: string | null;
   activo: boolean;
   created_at: string;
 }
@@ -36,6 +38,21 @@ const MESES_POR_FRECUENCIA: Record<string, number> = {
   Trimestral: 3,
 };
 
+/** Devuelve una copia de la fecha con la hora del horario ("18:00:00") aplicada, para ordenar dentro del día. */
+function conHorario(fecha: Date, horario?: string | null): Date {
+  const f = new Date(fecha);
+  if (!horario) return f;
+  const [h, m] = horario.split(':').map(Number);
+  f.setHours(h || 0, m || 0, 0, 0);
+  return f;
+}
+
+/** Hora para mostrar ("18:00") a partir de la fecha de un evento; oculta la medianoche (hora sin cargar). */
+function horaDeFecha(fecha: Date): string | undefined {
+  if (fecha.getHours() === 0 && fecha.getMinutes() === 0) return undefined;
+  return `${String(fecha.getHours()).padStart(2, '0')}:${String(fecha.getMinutes()).padStart(2, '0')}`;
+}
+
 /**
  * Genera las ocurrencias de un taller/actividad recurrente dentro de [desde, hasta],
  * anclando la repetición a su fecha de alta (created_at) ya que "agenda" no guarda
@@ -53,6 +70,7 @@ function expandirAgenda(item: AgendaRow, desde: Date, hasta: Date): CalendarioOc
     categoria: item.categoria,
     descripcion: item.descripcion,
     href: item.slug ? `/agenda/${item.slug}` : undefined,
+    hora: item.horario ? item.horario.slice(0, 5) : undefined,
   };
 
   const diasIntervalo = item.frecuencia ? DIAS_POR_FRECUENCIA[item.frecuencia] : undefined;
@@ -67,7 +85,7 @@ function expandirAgenda(item: AgendaRow, desde: Date, hasta: Date): CalendarioOc
     }
     while (cursor <= hasta) {
       if (cursor >= desde) {
-        ocurrencias.push({ ...base, id: `${item.id}-${cursor.toISOString().slice(0, 10)}`, fecha: new Date(cursor) });
+        ocurrencias.push({ ...base, id: `${item.id}-${cursor.toISOString().slice(0, 10)}`, fecha: conHorario(cursor, item.horario) });
       }
       cursor = new Date(cursor.getTime() + msIntervalo);
     }
@@ -77,14 +95,14 @@ function expandirAgenda(item: AgendaRow, desde: Date, hasta: Date): CalendarioOc
       cursor.setMonth(cursor.getMonth() + mesesIntervalo);
     }
     while (cursor <= hasta) {
-      ocurrencias.push({ ...base, id: `${item.id}-${cursor.toISOString().slice(0, 10)}`, fecha: new Date(cursor) });
+      ocurrencias.push({ ...base, id: `${item.id}-${cursor.toISOString().slice(0, 10)}`, fecha: conHorario(cursor, item.horario) });
       cursor = new Date(cursor);
       cursor.setMonth(cursor.getMonth() + mesesIntervalo);
     }
   } else {
     // Frecuencia desconocida o ausente: mostramos solo la ocurrencia ancla si cae en el rango.
     if (anchor >= desde && anchor <= hasta) {
-      ocurrencias.push({ ...base, fecha: anchor });
+      ocurrencias.push({ ...base, fecha: conHorario(anchor, item.horario) });
     }
   }
 
@@ -101,6 +119,7 @@ function mapearEvento(item: EventoRow): CalendarioOcurrencia | null {
     categoria: item.categoria,
     descripcion: item.descripcion,
     fecha,
+    hora: horaDeFecha(fecha),
     linkExterno: item.link_tickets || undefined,
     imagen_url: item.imagen_url,
     disponible: item.disponible,

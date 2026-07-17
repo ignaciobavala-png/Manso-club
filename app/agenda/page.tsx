@@ -6,7 +6,7 @@ import { motion } from 'framer-motion';
 import { ParticleBackground } from '@/components/Home/ParticleBackground';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Users, Lock } from 'lucide-react';
+import { Users, Lock, CalendarDays } from 'lucide-react';
 import { ShareButton } from '@/components/ShareButton';
 
 type Nivel = 'publico' | 'registrado' | 'miembro';
@@ -146,8 +146,40 @@ export default function AgendaPage() {
           </div>
         </div>
 
-        {/* Línea divisora */}
-        <div className="w-full h-px bg-manso-cream/10 mb-16" />
+        {/* CTA principal al calendario */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
+          className="mb-16"
+        >
+          <Link
+            href="/calendario"
+            className="group flex items-center justify-between gap-5 border border-manso-cream/15 rounded-3xl p-5 md:p-7 hover:border-manso-cream/40 hover:bg-manso-cream/5 transition-all duration-500"
+          >
+            <div className="flex items-center gap-4 md:gap-6">
+              <CalendarDays
+                size={30}
+                strokeWidth={1.4}
+                className="shrink-0 text-manso-terra"
+              />
+              <div>
+                <p className="text-[9px] font-black uppercase tracking-[0.6em] text-manso-terra mb-1.5">
+                  Talleres + Eventos
+                </p>
+                <h2 className="text-xl md:text-3xl font-black uppercase italic tracking-tighter leading-none text-manso-cream">
+                  Ver calendario
+                </h2>
+                <p className="hidden md:block text-sm text-manso-cream/40 font-light mt-2 max-w-md leading-relaxed">
+                  Toda la programación del mes en una sola vista, día por día y con horarios.
+                </p>
+              </div>
+            </div>
+            <span className="shrink-0 w-11 h-11 flex items-center justify-center rounded-full border border-manso-cream/20 text-manso-cream group-hover:bg-manso-cream group-hover:text-manso-black group-hover:border-manso-cream transition-all duration-500 text-lg">
+              →
+            </span>
+          </Link>
+        </motion.div>
 
         {loading ? (
           <div className="flex items-center gap-3 text-manso-cream/30">

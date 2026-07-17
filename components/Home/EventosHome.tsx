@@ -344,12 +344,6 @@ export const EventosHome = () => {
             <h2 id="eventos-titulo" className="text-3xl sm:text-4xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-white">
               Eventos
             </h2>
-            <Link
-              href="/calendario"
-              className="shrink-0 text-[10px] sm:text-xs font-black uppercase tracking-widest border border-white/40 text-white px-4 py-2 rounded-full hover:bg-white hover:text-black transition-colors whitespace-nowrap"
-            >
-              Ver calendario
-            </Link>
           </div>
 
           {eventosFecha.length === 0 ? (
