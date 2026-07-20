@@ -241,10 +241,10 @@ export default function AgendaPage() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       transition={{ delay: gi * 0.1 + i * 0.06 }}
-                      className="group border-b border-manso-cream/8 py-8 md:py-10 flex flex-col md:flex-row md:items-center gap-6 md:gap-10 hover:bg-manso-cream/[0.03] transition-colors -mx-4 px-4 cursor-default"
+                      className="group border-b border-manso-cream/8 py-8 md:py-10 flex flex-col gap-6 hover:bg-manso-cream/[0.03] transition-colors -mx-4 px-4 cursor-default"
                     >
                       {/* Título + descripción */}
-                      <div className="flex-1 min-w-0">
+                      <div className="min-w-0">
                         <h2 className="text-xl md:text-2xl font-black uppercase italic tracking-tighter text-manso-cream leading-tight">
                           {item.slug ? (
                             <Link href={`/agenda/${item.slug}`} className="hover:text-manso-terra transition-colors">
@@ -261,8 +261,9 @@ export default function AgendaPage() {
                         )}
                       </div>
 
-                      {/* Metadata */}
-                      <div className="flex flex-wrap md:flex-nowrap items-center gap-6 md:gap-10 flex-shrink-0">
+                      {/* Metadata + CTA */}
+                      <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+                        <div className="flex flex-wrap items-center gap-6 md:gap-10">
                         {typeof item.dia_semana === 'number' && DIAS[item.dia_semana] && (
                           <div className="text-right">
                             <p className="text-[9px] uppercase tracking-widest text-manso-cream/25 font-black mb-0.5">Día</p>
@@ -301,11 +302,11 @@ export default function AgendaPage() {
                           <p className="text-base font-black text-manso-cream">
                             {!item.precio || item.precio === 0 ? 'Gratis' : `$${item.precio.toLocaleString('es-AR')}`}
                           </p>
+                          </div>
                         </div>
-                      </div>
 
-                      {/* CTA Inscripción + Compartir */}
-                      <div className="flex-shrink-0 ml-0 md:ml-6 flex items-center gap-3">
+                        {/* CTA Inscripción + Compartir */}
+                      <div className="flex-shrink-0 flex items-center gap-3">
                         <ShareButton
                           title={`${item.titulo} | Manso Club`}
                           text={item.descripcion || `${item.titulo} en Manso Club.`}
@@ -319,6 +320,7 @@ export default function AgendaPage() {
                         >
                           Inscribirme
                         </a>
+                      </div>
                       </div>
                     </motion.div>
                   ))}
