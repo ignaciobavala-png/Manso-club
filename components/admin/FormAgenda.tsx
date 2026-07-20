@@ -14,6 +14,7 @@ interface AgendaEvent {
   frecuencia: string;
   horario?: string;
   dia_semana?: number | null;
+  fecha_fin?: string | null;
   precio: number | string;
   activo: boolean;
   cupos_maximos?: number | string;
@@ -32,6 +33,7 @@ const INITIAL = {
   frecuencia: 'Mensual',
   horario: '',
   dia_semana: '',
+  fecha_fin: '',
   precio: '0',
   cupos_maximos: '0',
   clases: '0',
@@ -91,6 +93,7 @@ export function FormAgenda() {
         frecuencia:        ev.frecuencia,
         horario:           ev.horario ? ev.horario.slice(0, 5) : '',
         dia_semana:        typeof ev.dia_semana === 'number' ? String(ev.dia_semana) : '',
+        fecha_fin:         ev.fecha_fin || '',
         precio:            ev.precio.toString(),
         cupos_maximos:     (ev.cupos_maximos || 0).toString(),
         clases:            (ev.clases || 0).toString(),
@@ -129,6 +132,7 @@ export function FormAgenda() {
       frecuencia:        formData.frecuencia,
       horario:           formData.horario || null,
       dia_semana:        formData.dia_semana === '' ? null : parseInt(formData.dia_semana),
+      fecha_fin:         formData.fecha_fin || null,
       precio:            parseInt(formData.precio) || 0,
       cupos_maximos:     parseInt(formData.cupos_maximos) || 0,
       clases:            parseInt(formData.clases) || 0,
@@ -258,6 +262,20 @@ export function FormAgenda() {
           </div>
           <p className="text-[9px] text-manso-cream/30 mt-1 font-light">
             Día y hora de cursada: el calendario los usa para ubicar el taller en el día correcto.
+          </p>
+        </div>
+
+        {/* Fecha de finalización */}
+        <div>
+          <label className={labelCls}>Fecha de finalización (opcional)</label>
+          <input
+            type="date"
+            className={inputCls}
+            value={formData.fecha_fin}
+            onChange={e => set('fecha_fin', e.target.value)}
+          />
+          <p className="text-[9px] text-manso-cream/30 mt-1 font-light">
+            Si el taller/curso tiene un ciclo con fin, el calendario deja de repetirlo después de esta fecha. Vacío = se repite indefinidamente.
           </p>
         </div>
 

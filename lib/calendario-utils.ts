@@ -11,6 +11,8 @@ interface AgendaRow {
   horario?: string | null;
   /** Día de cursada: 0 = lunes ... 6 = domingo. Si falta, se ancla al día del alta. */
   dia_semana?: number | null;
+  /** Fecha límite de la recurrencia (inclusive). Sin ella, el taller se repite indefinidamente. */
+  fecha_fin?: string | null;
   activo: boolean;
   created_at: string;
 }
@@ -76,6 +78,13 @@ function expandirAgenda(item: AgendaRow, desde: Date, hasta: Date): CalendarioOc
   // Los intervalos semanales/quincenales (múltiplos de 7 días) preservan el día de ahí en más.
   const tieneDia = typeof item.dia_semana === 'number' && item.dia_semana >= 0 && item.dia_semana <= 6;
   if (tieneDia) anchor = ajustarADiaSemana(anchor, item.dia_semana!);
+
+  // La recurrencia no debe extenderse más allá de su fecha de finalización, si tiene una cargada.
+  if (item.fecha_fin) {
+    const limite = new Date(`${item.fecha_fin}T23:59:59`);
+    if (!isNaN(limite.getTime()) && limite < hasta) hasta = limite;
+    if (limite < desde) return [];
+  }
 
   const ocurrencias: CalendarioOcurrencia[] = [];
   const base: Omit<CalendarioOcurrencia, 'fecha'> = {
