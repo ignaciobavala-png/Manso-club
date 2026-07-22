@@ -9,6 +9,11 @@ import { CalendarioOcurrencia } from '@/lib/types/calendario';
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const DIAS_SEMANA = ['LUN','MAR','MIÉ','JUE','VIE','SÁB','DOM'];
 
+// Patrones fijos (no aleatorios en cada render) para romper la uniformidad del grid: líneas de grosor
+// desparejo entre celdas y chips de evento con una leve rotación tipo recorte pegado.
+const GROSORES_BORDE = [1, 1, 2, 1, 3, 1, 2];
+const ROTACIONES_CHIP = [-2, 1, -1, 2, -3];
+
 function mismodia(a: Date, b: Date) {
   return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 }
@@ -93,21 +98,22 @@ export function CalendarioMensual({ ocurrencias, mesVisible, onCambiarMes }: Pro
       </div>
 
       {/* Encabezado días de la semana */}
-      <div className="grid grid-cols-7 gap-px mb-1">
+      <div className="grid grid-cols-7 gap-px mb-2 border-b-2 border-manso-cream/25">
         {DIAS_SEMANA.map(d => (
-          <div key={d} className="text-center text-[9px] font-black uppercase tracking-widest text-manso-cream/30 py-2">
+          <div key={d} className="text-center text-[11px] md:text-xs font-black uppercase tracking-widest text-manso-cream py-2.5">
             {d}
           </div>
         ))}
       </div>
 
-      {/* Grilla del mes */}
-      <div className="grid grid-cols-7 gap-px bg-manso-cream/8 border border-manso-cream/8">
+      {/* Grilla del mes: cada celda es un día real; alto según contenido y bordes desparejos rompen la uniformidad sin perder la alineación por columna */}
+      <div className="grid grid-cols-7 items-start border-l border-t border-manso-cream/20">
         {celdas.map((dia, i) => {
           const esDelMes = dia.getMonth() === mesVisible.getMonth();
           const esHoy = mismodia(dia, hoy);
           const esSeleccionado = diaSeleccionado !== null && mismodia(dia, diaSeleccionado);
           const items = ocurrencias.filter(o => mismodia(o.fecha, dia));
+          const grosorBorde = GROSORES_BORDE[i % GROSORES_BORDE.length];
 
           return (
             <div
@@ -117,16 +123,39 @@ export function CalendarioMensual({ ocurrencias, mesVisible, onCambiarMes }: Pro
               aria-label={`${dia.getDate()} de ${MESES[dia.getMonth()]}${items.length ? `, ${items.length} ${items.length === 1 ? 'actividad' : 'actividades'}` : ''}`}
               onClick={() => setDiaSeleccionado(new Date(dia))}
               onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setDiaSeleccionado(new Date(dia)); } }}
-              className={`min-h-[56px] md:min-h-[120px] p-1.5 md:p-2 bg-manso-black flex flex-col gap-1 cursor-pointer transition-colors ${
-                !esDelMes ? 'opacity-30' : ''
-              } ${esSeleccionado ? 'ring-1 ring-inset ring-manso-terra bg-manso-terra/5' : 'hover:bg-manso-cream/[0.04]'}`}
+              style={{
+                borderRightWidth: grosorBorde,
+                borderBottomWidth: grosorBorde,
+                transform: esSeleccionado ? 'rotate(-1deg) scale(1.03)' : undefined,
+              }}
+              className={`relative border-manso-cream/20 p-1.5 md:p-2 bg-manso-black flex flex-col gap-1 cursor-pointer transition-all ${
+                items.length > 0
+                  ? 'min-h-[56px] md:min-h-[104px] bg-manso-cream/[0.02]'
+                  : 'min-h-[36px] md:min-h-[52px] justify-center items-center'
+              } ${!esDelMes ? 'opacity-30' : ''} ${
+                esSeleccionado ? 'z-10 !border-manso-terra/70 bg-manso-terra/[0.06]' : 'hover:bg-manso-cream/[0.04]'
+              }`}
             >
-              <span className={`text-xs font-black ${esHoy ? 'w-5 h-5 flex items-center justify-center rounded-full bg-manso-terra text-manso-cream' : 'text-manso-cream/50'}`}>
-                {dia.getDate()}
-              </span>
+              {/* Número de día gigante de fondo, clippeado al tamaño de la celda para que no desborde a la fila de abajo */}
+              <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <span
+                  aria-hidden
+                  className={`select-none absolute left-1 bottom-0 font-black italic leading-none ${
+                    items.length > 0 ? 'text-[40px] md:text-[76px] text-manso-cream/20' : 'text-[24px] md:text-[36px] text-manso-cream/8'
+                  }`}
+                >
+                  {dia.getDate()}
+                </span>
+              </div>
+
+              {esHoy && (
+                <span className="absolute top-1 right-1 z-10 text-[9px] font-black uppercase tracking-widest text-manso-black bg-manso-cream px-1.5 py-0.5 -rotate-2 shadow-[2px_2px_0_rgba(0,0,0,0.35)]">
+                  Hoy
+                </span>
+              )}
 
               {/* Mobile: puntitos que señalan actividad (el detalle se ve abajo) */}
-              <div className="flex md:hidden flex-wrap items-center gap-1 px-0.5">
+              <div className="relative flex md:hidden flex-wrap items-center gap-1 px-0.5">
                 {items.slice(0, 4).map((item, idx) => (
                   <span
                     key={item.id + idx}
@@ -138,23 +167,60 @@ export function CalendarioMensual({ ocurrencias, mesVisible, onCambiarMes }: Pro
                 )}
               </div>
 
-              {/* Desktop: chips clickeables directo */}
-              <div className="hidden md:flex flex-col gap-1 overflow-hidden">
-                {items.slice(0, 3).map((item, idx) => (
-                  <button
-                    key={item.id + idx}
-                    onClick={e => { e.stopPropagation(); setDiaSeleccionado(new Date(dia)); handleClick(item); }}
-                    className={`text-left text-[10px] font-black uppercase tracking-tight leading-tight px-1.5 py-1 rounded truncate transition-colors ${
-                      item.tipo === 'evento'
-                        ? 'bg-manso-terra text-manso-cream hover:bg-manso-terra/80'
-                        : 'bg-manso-cream/10 text-manso-cream/80 hover:bg-manso-cream/20'
-                    }`}
-                    title={item.hora ? `${item.hora} hs · ${item.titulo}` : item.titulo}
-                  >
-                    {item.hora && <span className="opacity-60 mr-1">{item.hora}</span>}
-                    {item.titulo}
-                  </button>
-                ))}
+              {/* Desktop: chips clickeables, como recortes de flyer pegados torcidos */}
+              <div className="relative hidden md:flex flex-col gap-1.5">
+                {items.slice(0, 3).map((item, idx) => {
+                  const rot = ROTACIONES_CHIP[(i + idx) % ROTACIONES_CHIP.length];
+                  return (
+                    <div key={item.id + idx} className="group/chip relative">
+                      <button
+                        onClick={e => { e.stopPropagation(); setDiaSeleccionado(new Date(dia)); handleClick(item); }}
+                        style={{ transform: `rotate(${rot}deg)` }}
+                        className={`w-full text-left text-[10px] font-black uppercase tracking-tight leading-tight px-1.5 py-1 truncate border transition-transform hover:rotate-0 hover:scale-[1.03] hover:z-10 shadow-[2px_2px_0_rgba(0,0,0,0.35)] ${
+                          item.tipo === 'evento'
+                            ? 'bg-manso-terra text-manso-cream border-manso-cream/20'
+                            : 'bg-manso-cream/10 text-manso-cream/80 border-manso-cream/15'
+                        }`}
+                      >
+                        {item.hora && <span className="opacity-60 mr-1">{item.hora}</span>}
+                        {item.titulo}
+                      </button>
+
+                      {/* Adelanto grande al pasar el mouse: le damos protagonismo al evento, no es un detalle chico */}
+                      <div className="pointer-events-none absolute left-0 top-full mt-2 w-80 max-w-[85vw] z-30 rounded-2xl border border-manso-cream/15 bg-manso-black overflow-hidden opacity-0 scale-95 origin-top-left transition-all duration-200 group-hover/chip:opacity-100 group-hover/chip:scale-100 shadow-2xl">
+                        {item.tipo === 'evento' && item.imagen_url && (
+                          <div className="relative w-full h-36 bg-manso-blue/30">
+                            <Image
+                              src={item.imagen_url}
+                              alt={item.titulo}
+                              fill
+                              sizes="320px"
+                              className="object-cover"
+                            />
+                          </div>
+                        )}
+                        <div className="p-4">
+                          <div className="flex items-center gap-2 mb-1.5">
+                            <p className={`text-[9px] font-black uppercase tracking-[0.3em] ${item.tipo === 'evento' ? 'text-manso-terra' : 'text-manso-cream/40'}`}>
+                              {item.categoria || (item.tipo === 'evento' ? 'Evento' : 'Agenda')}
+                            </p>
+                            {item.hora && (
+                              <p className="text-[10px] font-black text-manso-cream/50 tabular-nums">{item.hora} hs</p>
+                            )}
+                          </div>
+                          <p className="text-lg font-black uppercase italic tracking-tighter text-manso-cream leading-tight mb-1.5">
+                            {item.titulo}
+                          </p>
+                          {item.descripcion && (
+                            <p className="text-[13px] text-manso-cream/60 font-light leading-relaxed line-clamp-4">
+                              {item.descripcion}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
                 {items.length > 3 && (
                   <button
                     onClick={e => { e.stopPropagation(); setDiaSeleccionado(new Date(dia)); }}
