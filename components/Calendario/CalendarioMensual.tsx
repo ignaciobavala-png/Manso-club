@@ -17,20 +17,6 @@ function mismodia(a: Date, b: Date) {
   return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
 }
 
-// Idea mínima de la descripción: suma oraciones completas (corta en . ! ?, nunca a mitad de
-// palabra ni con "…") hasta un presupuesto de caracteres pensado para 1-2 líneas de celda.
-function ideaMinima(texto: string, maxChars = 70): string {
-  const limpio = texto.trim();
-  const oraciones = limpio.split(/(?<=[.!?])\s+/);
-  let resultado = '';
-  for (const oracion of oraciones) {
-    const candidato = resultado ? `${resultado} ${oracion}` : oracion;
-    if (resultado && candidato.length > maxChars) break;
-    resultado = candidato;
-  }
-  return resultado || limpio;
-}
-
 interface Props {
   ocurrencias: CalendarioOcurrencia[];
   mesVisible: Date;
@@ -210,18 +196,13 @@ export function CalendarioMensual({ ocurrencias, mesVisible, onCambiarMes }: Pro
                         item.tipo === 'evento' ? 'border-manso-terra' : 'border-manso-cream/25'
                       }`}
                     >
-                      <span className="flex items-baseline gap-1.5 text-sm font-black uppercase leading-tight truncate">
+                      <span className="flex items-baseline flex-wrap gap-x-1.5 gap-y-0.5 text-sm font-black uppercase leading-tight">
                         {item.hora && <span className="shrink-0 text-manso-cream/50 tabular-nums">{item.hora}</span>}
-                        <span className="truncate text-manso-cream">{item.titulo}</span>
+                        <span className="text-manso-cream">{item.titulo}</span>
                         {esRepeticion && (
                           <span className="shrink-0 text-manso-cream/35" title="Se repite semanalmente">↻</span>
                         )}
                       </span>
-                      {item.descripcion && !esRepeticion && (
-                        <p className="text-[11px] font-bold uppercase leading-tight text-manso-cream/75">
-                          {ideaMinima(item.descripcion)}
-                        </p>
-                      )}
                     </button>
                   );
                 })}
