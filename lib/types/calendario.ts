@@ -15,4 +15,6 @@ export interface CalendarioOcurrencia {
   imagen_url?: string;
   descripcion?: string;
   disponible?: boolean;
+  /** Id de la actividad de agenda que origina esta ocurrencia. Compartido entre todas las fechas de una misma recurrencia. */
+  serieId?: string;
 }

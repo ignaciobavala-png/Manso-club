@@ -9,13 +9,26 @@ import { CalendarioOcurrencia } from '@/lib/types/calendario';
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 const DIAS_SEMANA = ['LUN','MAR','MIÉ','JUE','VIE','SÁB','DOM'];
 
-// Patrones fijos (no aleatorios en cada render) para romper la uniformidad del grid: líneas de grosor
-// desparejo entre celdas y chips de evento con una leve rotación tipo recorte pegado.
+// Patrón fijo (no aleatorio en cada render) de grosor de borde desparejo entre celdas,
+// para romper la uniformidad del grid sin perder la alineación por columna.
 const GROSORES_BORDE = [1, 1, 2, 1, 3, 1, 2];
-const ROTACIONES_CHIP = [-2, 1, -1, 2, -3];
 
 function mismodia(a: Date, b: Date) {
   return a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+}
+
+// Idea mínima de la descripción: suma oraciones completas (corta en . ! ?, nunca a mitad de
+// palabra ni con "…") hasta un presupuesto de caracteres pensado para 1-2 líneas de celda.
+function ideaMinima(texto: string, maxChars = 70): string {
+  const limpio = texto.trim();
+  const oraciones = limpio.split(/(?<=[.!?])\s+/);
+  let resultado = '';
+  for (const oracion of oraciones) {
+    const candidato = resultado ? `${resultado} ${oracion}` : oracion;
+    if (resultado && candidato.length > maxChars) break;
+    resultado = candidato;
+  }
+  return resultado || limpio;
 }
 
 interface Props {
@@ -50,6 +63,20 @@ export function CalendarioMensual({ ocurrencias, mesVisible, onCambiarMes }: Pro
     }
     return dias;
   }, [mesVisible]);
+
+  // Primera ocurrencia visible de cada serie recurrente (por fecha, ya que `ocurrencias` viene ordenada):
+  // las siguientes fechas de la misma serie se muestran de forma compacta, sin repetir la descripción.
+  const primeraOcurrenciaDeSerie = useMemo(() => {
+    const vistas = new Set<string>();
+    const primeras = new Set<string>();
+    for (const o of ocurrencias) {
+      if (!o.serieId || !vistas.has(o.serieId)) {
+        if (o.serieId) vistas.add(o.serieId);
+        primeras.add(o.id);
+      }
+    }
+    return primeras;
+  }, [ocurrencias]);
 
   const hoy = new Date();
 
@@ -130,23 +157,25 @@ export function CalendarioMensual({ ocurrencias, mesVisible, onCambiarMes }: Pro
               }}
               className={`relative border-manso-cream/20 p-1.5 md:p-2 bg-manso-black flex flex-col gap-1 cursor-pointer transition-all ${
                 items.length > 0
-                  ? 'min-h-[56px] md:min-h-[104px] bg-manso-cream/[0.02]'
+                  ? 'min-h-[56px] bg-manso-cream/[0.02]'
                   : 'min-h-[36px] md:min-h-[52px] justify-center items-center'
               } ${!esDelMes ? 'opacity-30' : ''} ${
                 esSeleccionado ? 'z-10 !border-manso-terra/70 bg-manso-terra/[0.06]' : 'hover:bg-manso-cream/[0.04]'
               }`}
             >
-              {/* Número de día gigante de fondo, clippeado al tamaño de la celda para que no desborde a la fila de abajo */}
-              <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <span
-                  aria-hidden
-                  className={`select-none absolute left-1 bottom-0 font-black italic leading-none ${
-                    items.length > 0 ? 'text-[40px] md:text-[76px] text-manso-cream/20' : 'text-[24px] md:text-[36px] text-manso-cream/8'
-                  }`}
-                >
+              {items.length > 0 ? (
+                /* Con actividad: número chico y fijo arriba, sin pisar el texto de los eventos */
+                <span className="block select-none text-[10px] md:text-[11px] font-black text-manso-cream/35 leading-none mb-1">
                   {dia.getDate()}
                 </span>
-              </div>
+              ) : (
+                /* Sin actividad: número grande centrado que llena la celda (aunque la fila se estire por vecinas con eventos) */
+                <div className="absolute inset-0 overflow-hidden pointer-events-none flex items-center justify-center">
+                  <span aria-hidden className="select-none font-black italic leading-none text-[24px] md:text-5xl text-manso-cream/10">
+                    {dia.getDate()}
+                  </span>
+                </div>
+              )}
 
               {esHoy && (
                 <span className="absolute top-1 right-1 z-10 text-[9px] font-black uppercase tracking-widest text-manso-black bg-manso-cream px-1.5 py-0.5 -rotate-2 shadow-[2px_2px_0_rgba(0,0,0,0.35)]">
@@ -167,66 +196,41 @@ export function CalendarioMensual({ ocurrencias, mesVisible, onCambiarMes }: Pro
                 )}
               </div>
 
-              {/* Desktop: chips clickeables, como recortes de flyer pegados torcidos */}
-              <div className="relative hidden md:flex flex-col gap-1.5">
-                {items.slice(0, 3).map((item, idx) => {
-                  const rot = ROTACIONES_CHIP[(i + idx) % ROTACIONES_CHIP.length];
+              {/* Desktop: estilo grilla de radio — una línea horizontal por evento, sin wrap; el detalle completo se ve al tocar el día */}
+              <div className="relative hidden md:flex flex-col divide-y divide-manso-cream/10">
+                {items.slice(0, 2).map((item, idx) => {
+                  // Ocurrencia repetida de una serie ya mostrada antes en el mes: se marca con ↻
+                  // y no repite la descripción, para no llenar la columna con el mismo párrafo.
+                  const esRepeticion = Boolean(item.serieId) && !primeraOcurrenciaDeSerie.has(item.id);
                   return (
-                    <div key={item.id + idx} className="group/chip relative">
-                      <button
-                        onClick={e => { e.stopPropagation(); setDiaSeleccionado(new Date(dia)); handleClick(item); }}
-                        style={{ transform: `rotate(${rot}deg)` }}
-                        className={`w-full text-left text-[10px] font-black uppercase tracking-tight leading-tight px-1.5 py-1 truncate border transition-transform hover:rotate-0 hover:scale-[1.03] hover:z-10 shadow-[2px_2px_0_rgba(0,0,0,0.35)] ${
-                          item.tipo === 'evento'
-                            ? 'bg-manso-terra text-manso-cream border-manso-cream/20'
-                            : 'bg-manso-cream/10 text-manso-cream/80 border-manso-cream/15'
-                        }`}
-                      >
-                        {item.hora && <span className="opacity-60 mr-1">{item.hora}</span>}
-                        {item.titulo}
-                      </button>
-
-                      {/* Adelanto grande al pasar el mouse: le damos protagonismo al evento, no es un detalle chico */}
-                      <div className="pointer-events-none absolute left-0 top-full mt-2 w-80 max-w-[85vw] z-30 rounded-2xl border border-manso-cream/15 bg-manso-black overflow-hidden opacity-0 scale-95 origin-top-left transition-all duration-200 group-hover/chip:opacity-100 group-hover/chip:scale-100 shadow-2xl">
-                        {item.tipo === 'evento' && item.imagen_url && (
-                          <div className="relative w-full h-36 bg-manso-blue/30">
-                            <Image
-                              src={item.imagen_url}
-                              alt={item.titulo}
-                              fill
-                              sizes="320px"
-                              className="object-cover"
-                            />
-                          </div>
+                    <button
+                      key={item.id + idx}
+                      onClick={e => { e.stopPropagation(); setDiaSeleccionado(new Date(dia)); handleClick(item); }}
+                      className={`w-full text-left py-1 first:pt-0 last:pb-0 border-l-2 pl-2 hover:bg-manso-cream/[0.04] transition-colors ${
+                        item.tipo === 'evento' ? 'border-manso-terra' : 'border-manso-cream/25'
+                      }`}
+                    >
+                      <span className="flex items-baseline gap-1.5 text-sm font-black uppercase leading-tight truncate">
+                        {item.hora && <span className="shrink-0 text-manso-cream/50 tabular-nums">{item.hora}</span>}
+                        <span className="truncate text-manso-cream">{item.titulo}</span>
+                        {esRepeticion && (
+                          <span className="shrink-0 text-manso-cream/35" title="Se repite semanalmente">↻</span>
                         )}
-                        <div className="p-4">
-                          <div className="flex items-center gap-2 mb-1.5">
-                            <p className={`text-[9px] font-black uppercase tracking-[0.3em] ${item.tipo === 'evento' ? 'text-manso-terra' : 'text-manso-cream/40'}`}>
-                              {item.categoria || (item.tipo === 'evento' ? 'Evento' : 'Agenda')}
-                            </p>
-                            {item.hora && (
-                              <p className="text-[10px] font-black text-manso-cream/50 tabular-nums">{item.hora} hs</p>
-                            )}
-                          </div>
-                          <p className="text-lg font-black uppercase italic tracking-tighter text-manso-cream leading-tight mb-1.5">
-                            {item.titulo}
-                          </p>
-                          {item.descripcion && (
-                            <p className="text-[13px] text-manso-cream/60 font-light leading-relaxed line-clamp-4">
-                              {item.descripcion}
-                            </p>
-                          )}
-                        </div>
-                      </div>
-                    </div>
+                      </span>
+                      {item.descripcion && !esRepeticion && (
+                        <p className="text-[11px] font-bold uppercase leading-tight text-manso-cream/75">
+                          {ideaMinima(item.descripcion)}
+                        </p>
+                      )}
+                    </button>
                   );
                 })}
-                {items.length > 3 && (
+                {items.length > 2 && (
                   <button
                     onClick={e => { e.stopPropagation(); setDiaSeleccionado(new Date(dia)); }}
-                    className="text-left text-[9px] text-manso-cream/40 hover:text-manso-cream/70 font-black px-1.5 transition-colors"
+                    className="text-left text-[9px] text-manso-cream/40 hover:text-manso-cream/70 font-black uppercase pt-1.5 transition-colors"
                   >
-                    +{items.length - 3} más
+                    +{items.length - 2} más
                   </button>
                 )}
               </div>
@@ -296,7 +300,7 @@ export function CalendarioMensual({ ocurrencias, mesVisible, onCambiarMes }: Pro
                           </p>
                         )}
                       </div>
-                      <h3 className={`text-base md:text-lg font-black uppercase italic tracking-tighter leading-tight text-manso-cream ${
+                      <h3 className={`text-lg md:text-xl font-black uppercase italic tracking-tighter leading-tight text-manso-cream ${
                         tieneDestino ? 'group-hover:text-manso-terra transition-colors' : ''
                       }`}>
                         {item.titulo}

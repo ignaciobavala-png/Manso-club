@@ -95,6 +95,7 @@ function expandirAgenda(item: AgendaRow, desde: Date, hasta: Date): CalendarioOc
     descripcion: item.descripcion,
     href: item.slug ? `/agenda/${item.slug}` : undefined,
     hora: item.horario ? item.horario.slice(0, 5) : undefined,
+    serieId: item.id,
   };
 
   const diasIntervalo = item.frecuencia ? DIAS_POR_FRECUENCIA[item.frecuencia] : undefined;

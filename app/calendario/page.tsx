@@ -67,8 +67,9 @@ export default function CalendarioPage() {
     <div className="relative min-h-screen bg-manso-black">
       <ParticleBackground />
 
-      <div className="relative z-10 max-w-5xl mx-auto px-6 md:px-12 pt-32 pb-24">
-        <div className="mb-12">
+      <div className="relative z-10 px-4 md:px-8 pt-32 pb-24">
+        {/* El texto de intro se mantiene a ancho de lectura, angosto, alineado al mismo borde que la grilla */}
+        <div className="max-w-3xl mx-auto md:mx-0 mb-12">
           <p className="text-[9px] font-black uppercase tracking-[0.6em] text-manso-terra mb-3">
             Manso Club
           </p>
@@ -80,18 +81,21 @@ export default function CalendarioPage() {
           </p>
         </div>
 
-        {loading ? (
-          <div className="flex items-center gap-3 text-manso-cream/30 py-20">
-            <div className="w-4 h-4 border border-manso-cream/20 border-t-manso-cream/60 rounded-full animate-spin" />
-            <span className="text-[10px] uppercase tracking-widest font-black">Cargando calendario...</span>
-          </div>
-        ) : (
-          <CalendarioMensual
-            ocurrencias={ocurrencias}
-            mesVisible={mesVisible}
-            onCambiarMes={setMesVisible}
-          />
-        )}
+        {/* La grilla en sí rompe el ancho de lectura y ocupa casi todo el viewport, para que cada celda tenga espacio real */}
+        <div className="max-w-[2200px] mx-auto">
+          {loading ? (
+            <div className="flex items-center gap-3 text-manso-cream/30 py-20">
+              <div className="w-4 h-4 border border-manso-cream/20 border-t-manso-cream/60 rounded-full animate-spin" />
+              <span className="text-[10px] uppercase tracking-widest font-black">Cargando calendario...</span>
+            </div>
+          ) : (
+            <CalendarioMensual
+              ocurrencias={ocurrencias}
+              mesVisible={mesVisible}
+              onCambiarMes={setMesVisible}
+            />
+          )}
+        </div>
       </div>
     </div>
   );
