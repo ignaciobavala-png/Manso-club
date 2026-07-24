@@ -1,0 +1,231 @@
+MANUAL DE USO — SECCIÓN MAILING (PANEL DE ADMINISTRACIÓN)
+Manso Club
+===========================================================
+
+Este documento explica cómo usar la sección "Mailing" del panel de
+administración (mansoclub.com.ar/mansoadm) para armar y mandar
+campañas de mail a la base de contactos de Manso Club. Está escrito
+para el equipo, sin lenguaje técnico.
+
+
+¿DÓNDE ESTÁ?
+-----------------------------------------------------------
+Entrás a mansoclub.com.ar/mansoadm con tu usuario de administrador,
+y en el menú del panel buscás la sección "Mailing". Adentro hay dos
+partes: "Campañas" y "Audiencias".
+
+
+PARTE 1: CAMPAÑAS
+===========================================================
+
+Acá se arman y se mandan los mails. Tiene dos columnas: a la
+izquierda el formulario para crear una campaña nueva, a la derecha
+la lista de campañas ya creadas (borradores, programadas y
+enviadas).
+
+
+CÓMO ARMAR UNA CAMPAÑA NUEVA
+-----------------------------------------------------------
+
+1. ASUNTO
+   Es el título que la gente ve en su bandeja de entrada antes de
+   abrir el mail. Escribilo claro y directo (ej: "Nuevo evento este
+   viernes").
+
+2. AUDIENCIA — a quién le llega
+   Elegís uno de estos grupos:
+
+   - "Newsletter + registrados (todos los mails)"
+     Manda a todos los que se anotaron al newsletter Y a todos los
+     que tienen cuenta en la web. Es la opción más amplia.
+
+   - "Membresías activas"
+     Solo a los socios que tienen la membresía vigente hoy.
+
+   - "Membresías vencidas"
+     Solo a los que tuvieron membresía pero ya se les venció.
+     Útil para mandar una campaña de renovación.
+
+   - "Solo registrados en la página"
+     Solo a los que tienen cuenta creada en la web (sin importar si
+     están anotados al newsletter).
+
+   - "Elegir mails específicos"
+     Para mandar a una lista puntual de personas, no a un grupo
+     completo. Al elegir esta opción aparece un cuadro de texto
+     donde pegás los emails, separados por coma o cada uno en un
+     renglón. Sirve para, por ejemplo, mandarle algo solo a un
+     grupo de artistas, a la prensa, o a un puñado de gente
+     puntual que no está en ningún segmento armado.
+
+   IMPORTANTE: el sistema automáticamente NO le manda mail a nadie
+   que se haya dado de baja o que hayan excluido manualmente desde
+   "Audiencias" — no hace falta que vos los saques a mano de la
+   lista de "mails específicos".
+
+3. IMÁGENES DEL MAIL — el diseño
+   Acá subís el arte que armó la diseñadora. Importante entender
+   cómo funciona esto:
+
+   - El mail se arma con IMÁGENES, no con texto suelto. La
+     diseñadora te manda una imagen (JPG, PNG, lo que sea — el
+     sistema la convierte solo a un formato liviano) con todo el
+     diseño ya armado: textos, colores, y el o los botones ya
+     DIBUJADOS adentro de la imagen.
+
+   - Subís la imagen con el botón de subir.
+
+   - Una vez subida, aparece la imagen en pantalla y podés
+     dibujar un rectángulo arriba de cada botón que la diseñadora
+     puso en el diseño (clickeando y arrastrando el mouse sobre la
+     zona del botón). Ese rectángulo es lo que hace que esa parte
+     de la imagen sea clickeable de verdad.
+
+   - A cada rectángulo que dibujás le tenés que poner un LINK
+     (tiene que empezar con "https://") — es la página adonde va
+     a ir la gente cuando haga click en ese botón.
+
+   - Podés marcar varios botones distintos en la misma imagen, cada
+     uno con su propio link. También podés mover o cambiar el
+     tamaño del rectángulo después de dibujarlo.
+
+   - Si la imagen no tiene ningún botón (por ejemplo, es solo una
+     imagen decorativa o de portada), no hace falta marcar nada:
+     se manda tal cual, sin zonas clickeables.
+
+   - Podés agregar más de una imagen a la misma campaña (por
+     ejemplo: cabecera + cuerpo + pie) y reordenarlas con las
+     flechas.
+
+   - "Texto alternativo": es una descripción corta de la imagen
+     para accesibilidad (la lee un lector de pantalla si alguien
+     no puede ver la imagen). No es obligatorio pero es buena
+     práctica completarlo.
+
+4. PROGRAMAR ENVÍO (opcional)
+   Si querés que el mail salga solo en una fecha y hora futura (por
+   ejemplo, programar el jueves a las 10am), lo cargás acá. Si lo
+   dejás vacío, la campaña queda guardada como borrador y hay que
+   mandarla a mano después.
+
+5. GUARDAR
+   - "Guardar borrador": guarda la campaña sin mandar nada todavía.
+     Queda en la lista de la derecha para revisarla, probarla o
+     mandarla cuando quieras.
+   - "Programar campaña": la deja lista para salir sola en la
+     fecha/hora que elegiste (necesita que hayas puesto fecha).
+
+
+ANTES DE MANDAR: LA PRUEBA
+-----------------------------------------------------------
+Una vez que guardaste la campaña, aparece en la lista de la
+derecha. Ahí, al lado del botón "Enviar", hay un ícono de tubo de
+ensayo. Al clickearlo se abre un campo para escribir uno o varios
+emails de prueba (los tuyos, los de un compañero, etc).
+
+SIEMPRE conviene mandar una prueba antes de mandarlo en serio, para
+ver cómo queda el diseño, si los botones funcionan, si el asunto
+está bien escrito, etc. Mandar una prueba NO cuenta como el envío
+real — la campaña sigue en borrador/programada después de probarla.
+
+
+MANDAR LA CAMPAÑA DE VERDAD
+-----------------------------------------------------------
+Cuando estás conforme, clickeás "Enviar" (o "Enviar ya" si estaba
+programada y la querés mandar antes de tiempo). El sistema te pide
+confirmación porque esta acción NO se puede deshacer una vez que
+salió. Ahí manda el mail a todos los que corresponden según la
+audiencia elegida.
+
+Si programaste una campaña y te arrepentís antes de que salga, hay
+un botón para cancelar la programación (vuelve a quedar como
+borrador).
+
+
+DESPUÉS DE ENVIADA: LAS MÉTRICAS
+-----------------------------------------------------------
+Una vez que una campaña ya se mandó, en la lista aparecen números
+que te dicen cómo le fue:
+
+- Entregados: a cuántos les llegó efectivamente el mail.
+- Abiertos: cuántos lo abrieron.
+- Clicks: cuántos clickearon algún botón/link adentro del mail.
+- Rebotados: direcciones que no existen o rechazaron el mail.
+- Fallidos: errores de envío.
+
+Estos números se van actualizando solos con el tiempo (no hace
+falta refrescar nada a mano), a medida que la gente va abriendo o
+clickeando el mail en los días siguientes.
+
+
+BORRAR UNA CAMPAÑA
+-----------------------------------------------------------
+Podés borrar un borrador sin problema (no se mandó nada todavía).
+También podés borrar una campaña que ya se mandó, pero OJO: al
+borrarla perdés el historial y las métricas de ese envío para
+siempre. No afecta a la gente que ya recibió el mail (eso ya salió
+y no se puede retirar), solo borra el registro interno.
+
+
+PARTE 2: AUDIENCIAS
+===========================================================
+
+Acá ves el listado completo de contactos: la unión de todos los
+suscriptos al newsletter + todos los usuarios registrados en la
+web, sin duplicados.
+
+QUÉ PODÉS HACER:
+
+- Buscar un email puntual con el buscador de arriba.
+
+- Ver de dónde viene cada contacto: si es "Newsletter" (se anotó
+  solo al newsletter), "Registrado" (tiene cuenta en la web) o
+  "Ambos".
+
+- Descargar el listado completo en un archivo Excel/CSV con el
+  botón "CSV" arriba a la derecha.
+
+- Excluir a alguien de futuros mailings (el botón con el ícono de
+  "X"). Esto NO borra su cuenta ni su suscripción, solo hace que
+  no le vuelva a llegar ningún mailing de acá en adelante. Se puede
+  revertir con "Reincluir".
+
+- Dar de baja del newsletter directamente (solo aplica a los que
+  se anotaron por newsletter) — esto sí borra su suscripción.
+
+- Seleccionar uno o varios contactos con los checkboxes de la
+  izquierda y mandarles una prueba de un borrador puntual, eligiendo
+  la campaña del desplegable que aparece. (Esto solo funciona con
+  campañas que todavía están en borrador, no con las ya enviadas.)
+
+
+COSAS A TENER EN CUENTA
+===========================================================
+
+- LA GENTE QUE REBOTA O MARCA COMO SPAM SE EXCLUYE SOLA: si un mail
+  rebota (la dirección no existe) o alguien lo marca como spam, el
+  sistema lo excluye automáticamente de futuros envíos. No hace
+  falta hacer nada manual para eso.
+
+- TODOS LOS MAILS TIENEN UN LINK DE BAJA: al pie de cada mail que
+  se manda hay un link para que la persona se dé de baja sola, sin
+  intervención nuestra. Es obligatorio por ley y además cuida la
+  reputación del dominio.
+
+- LOS PRIMEROS ENVÍOS PUEDEN CAER EN SPAM O EN "PROMOCIONES": como
+  el dominio de mail (mansoclub.com.ar) es relativamente nuevo,
+  Gmail/Outlook todavía no tienen mucha "confianza" en él. Es
+  normal que en las primeras campañas algunos mails caigan en la
+  carpeta de Spam o en la pestaña de "Promociones" de Gmail en vez
+  de la bandeja principal. Esto mejora solo con el tiempo, a medida
+  que la gente abre los mails y no los marca como spam. Si a
+  alguien no le aparece un mail que sabemos que se mandó, antes de
+  asumir que hubo un error, pedirle que revise Spam y la pestaña
+  Promociones, y que busque por "Manso" en el buscador de su
+  correo.
+
+- LAS IMÁGENES NO SIEMPRE SE MUESTRAN AUTOMÁTICAMENTE: algunos
+  correos (sobre todo Gmail) bloquean las imágenes por default en
+  el primer mail de un remitente nuevo, y muestran un cartelito de
+  "Mostrar imágenes" arriba del mail. No es un error nuestro, es
+  una configuración de seguridad del cliente de correo.
