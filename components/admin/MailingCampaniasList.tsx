@@ -16,6 +16,7 @@ import {
   MailOpen,
   MousePointerClick,
   XCircle,
+  FlaskConical,
 } from 'lucide-react';
 
 interface Campania {
@@ -47,6 +48,9 @@ export function MailingCampaniasList({ refreshTrigger }: Props) {
   const [loading, setLoading] = useState(true);
   const [enviandoId, setEnviandoId] = useState<string | null>(null);
   const [feedback, setFeedback] = useState<string | null>(null);
+  const [pruebaAbiertaId, setPruebaAbiertaId] = useState<string | null>(null);
+  const [pruebaEmails, setPruebaEmails] = useState<Record<string, string>>({});
+  const [enviandoPruebaId, setEnviandoPruebaId] = useState<string | null>(null);
 
   const fetchCampanias = useCallback(async () => {
     setLoading(true);
@@ -110,6 +114,35 @@ export function MailingCampaniasList({ refreshTrigger }: Props) {
     setEnviandoId(null);
   };
 
+  const enviarPrueba = async (campania: Campania) => {
+    const destinatarios = (pruebaEmails[campania.id] ?? '')
+      .split(/[,\s]+/)
+      .map((e) => e.trim())
+      .filter(Boolean);
+
+    if (destinatarios.length === 0) {
+      setFeedback('Ingresá al menos un email para la prueba');
+      return;
+    }
+
+    setEnviandoPruebaId(campania.id);
+    setFeedback(null);
+    try {
+      const res = await fetch('/api/mailing/send-test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ campaniaId: campania.id, destinatarios }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Error al enviar la prueba');
+      setFeedback(`Prueba enviada a ${data.enviados} destinatario${data.enviados === 1 ? '' : 's'}`);
+      setPruebaAbiertaId(null);
+    } catch (err: any) {
+      setFeedback(`Error: ${err.message}`);
+    }
+    setEnviandoPruebaId(null);
+  };
+
   const cancelarProgramacion = async (campania: Campania) => {
     if (!confirm(`¿Cancelar la programación de "${campania.asunto}"? Volverá a borrador.`)) return;
     await supabase
@@ -119,9 +152,13 @@ export function MailingCampaniasList({ refreshTrigger }: Props) {
     fetchCampanias();
   };
 
-  const eliminar = async (id: string) => {
-    if (!confirm('¿Eliminar este borrador?')) return;
-    await supabase.from('mailing_campanias').delete().eq('id', id);
+  const eliminar = async (campania: Campania) => {
+    const mensaje =
+      campania.estado === 'enviada'
+        ? `¿Eliminar "${campania.asunto}"? Ya fue enviada — se pierde el historial y las métricas de este envío.`
+        : '¿Eliminar este borrador?';
+    if (!confirm(mensaje)) return;
+    await supabase.from('mailing_campanias').delete().eq('id', campania.id);
     fetchCampanias();
   };
 
@@ -164,6 +201,13 @@ export function MailingCampaniasList({ refreshTrigger }: Props) {
                   {c.estado !== 'enviada' ? (
                     <div className="flex items-center gap-2 shrink-0">
                       <button
+                        onClick={() => setPruebaAbiertaId(pruebaAbiertaId === c.id ? null : c.id)}
+                        className="p-1.5 text-manso-cream/30 hover:text-manso-cream"
+                        title="Enviar prueba a un email"
+                      >
+                        <FlaskConical size={12} />
+                      </button>
+                      <button
                         onClick={() => enviar(c)}
                         disabled={enviandoId === c.id}
                         className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-manso-terra hover:bg-manso-terra/90 text-manso-cream text-[9px] font-black uppercase tracking-widest transition-colors disabled:opacity-50"
@@ -180,17 +224,41 @@ export function MailingCampaniasList({ refreshTrigger }: Props) {
                           <XCircle size={12} />
                         </button>
                       ) : (
-                        <button onClick={() => eliminar(c.id)} className="p-1.5 text-manso-cream/30 hover:text-red-400">
+                        <button onClick={() => eliminar(c)} className="p-1.5 text-manso-cream/30 hover:text-red-400">
                           <Trash2 size={12} />
                         </button>
                       )}
                     </div>
                   ) : (
-                    <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/30 shrink-0">
-                      {c.sent_at && new Date(c.sent_at).toLocaleDateString('es-AR')}
-                    </span>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/30">
+                        {c.sent_at && new Date(c.sent_at).toLocaleDateString('es-AR')}
+                      </span>
+                      <button onClick={() => eliminar(c)} className="p-1.5 text-manso-cream/30 hover:text-red-400" title="Eliminar (borra el historial de este envío)">
+                        <Trash2 size={12} />
+                      </button>
+                    </div>
                   )}
                 </div>
+
+                {pruebaAbiertaId === c.id && (
+                  <div className="flex items-center gap-2 mt-2 pt-2 border-t border-manso-cream/5">
+                    <input
+                      value={pruebaEmails[c.id] ?? ''}
+                      onChange={(e) => setPruebaEmails({ ...pruebaEmails, [c.id]: e.target.value })}
+                      placeholder="email@ejemplo.com, otro@ejemplo.com"
+                      className="flex-1 bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-1.5 text-xs text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra"
+                    />
+                    <button
+                      onClick={() => enviarPrueba(c)}
+                      disabled={enviandoPruebaId === c.id}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-manso-cream/10 hover:bg-manso-cream/20 text-manso-cream text-[9px] font-black uppercase tracking-widest transition-colors disabled:opacity-50 shrink-0"
+                    >
+                      {enviandoPruebaId === c.id ? <Loader2 size={12} className="animate-spin" /> : <FlaskConical size={12} />}
+                      Mandar prueba
+                    </button>
+                  </div>
+                )}
 
                 {c.estado === 'enviada' && m && (
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 pt-2 border-t border-manso-cream/5">
