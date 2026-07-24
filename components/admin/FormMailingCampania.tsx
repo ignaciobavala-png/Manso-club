@@ -208,6 +208,7 @@ function CanvasHotspots({
 export function FormMailingCampania({ onSaved }: Props) {
   const [asunto, setAsunto] = useState('');
   const [audiencia, setAudiencia] = useState<Audiencia>('newsletter');
+  const [mailsEspecificos, setMailsEspecificos] = useState('');
   const [canvases, setCanvases] = useState<CanvasBloque[]>([]);
   const [scheduledAt, setScheduledAt] = useState('');
   const [loading, setLoading] = useState(false);
@@ -233,9 +234,16 @@ export function FormMailingCampania({ onSaved }: Props) {
   const resetForm = () => {
     setAsunto('');
     setAudiencia('newsletter');
+    setMailsEspecificos('');
     setCanvases([]);
     setScheduledAt('');
   };
+
+  const parsearMailsEspecificos = (): string[] =>
+    mailsEspecificos
+      .split(/[,\s]+/)
+      .map((e) => e.trim())
+      .filter(Boolean);
 
   const validar = (): string | null => {
     if (!asunto.trim()) return 'El asunto es obligatorio';
@@ -247,6 +255,12 @@ export function FormMailingCampania({ onSaved }: Props) {
           return 'Todas las zonas marcadas necesitan un link válido (https://...)';
         }
       }
+    }
+    if (audiencia === 'especifico') {
+      const emails = parsearMailsEspecificos();
+      if (emails.length === 0) return 'Ingresá al menos un email';
+      const invalido = emails.find((e) => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e));
+      if (invalido) return `"${invalido}" no es un email válido`;
     }
     return null;
   };
@@ -288,6 +302,7 @@ export function FormMailingCampania({ onSaved }: Props) {
         bloques,
         estado: programar ? 'programada' : 'borrador',
         scheduled_at: scheduledIso,
+        destinatarios_especificos: audiencia === 'especifico' ? parsearMailsEspecificos() : null,
       },
     ]);
     setLoading(false);
@@ -356,6 +371,16 @@ export function FormMailingCampania({ onSaved }: Props) {
             </option>
           ))}
         </select>
+
+        {audiencia === 'especifico' && (
+          <textarea
+            value={mailsEspecificos}
+            onChange={(e) => setMailsEspecificos(e.target.value)}
+            placeholder="Un email por línea o separados por coma: fulano@mail.com, mengano@mail.com"
+            rows={3}
+            className="w-full mt-2 bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-2.5 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra resize-none"
+          />
+        )}
       </div>
 
       <div className="space-y-3">

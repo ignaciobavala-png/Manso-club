@@ -10,6 +10,7 @@ export interface CampaniaRow {
   audiencia: string;
   bloques: BloqueMailing[];
   estado: string;
+  destinatarios_especificos?: string[] | null;
 }
 
 const BATCH_SIZE = 100;
@@ -52,7 +53,11 @@ export async function enviarCampania(
   supabase: SupabaseClient,
   campania: CampaniaRow
 ): Promise<{ enviados: number; fallidos: number }> {
-  const destinatarios = await resolverAudiencia(supabase, campania.audiencia as Audiencia);
+  const destinatarios = await resolverAudiencia(
+    supabase,
+    campania.audiencia as Audiencia,
+    campania.destinatarios_especificos
+  );
   if (destinatarios.length === 0) {
     throw new Error("La audiencia seleccionada no tiene destinatarios");
   }

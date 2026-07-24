@@ -1,12 +1,13 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 
-export type Audiencia = "newsletter" | "activos" | "vencidos" | "todos";
+export type Audiencia = "newsletter" | "activos" | "vencidos" | "todos" | "especifico";
 
 export const AUDIENCIAS: { id: Audiencia; label: string }[] = [
   { id: "newsletter", label: "Newsletter + registrados (todos los mails)" },
   { id: "activos", label: "Membresías activas" },
   { id: "vencidos", label: "Membresías vencidas" },
   { id: "todos", label: "Solo registrados en la página" },
+  { id: "especifico", label: "Elegir mails específicos" },
 ];
 
 async function emailsExcluidos(supabase: SupabaseClient): Promise<Set<string>> {
@@ -20,9 +21,15 @@ function sinExcluidos(emails: string[], excluidos: Set<string>): string[] {
 
 export async function resolverAudiencia(
   supabase: SupabaseClient,
-  audiencia: Audiencia
+  audiencia: Audiencia,
+  destinatariosEspecificos?: string[] | null
 ): Promise<string[]> {
   const excluidos = await emailsExcluidos(supabase);
+
+  if (audiencia === "especifico") {
+    const emails = (destinatariosEspecificos ?? []).map((e) => e.toLowerCase().trim());
+    return sinExcluidos(Array.from(new Set(emails)), excluidos);
+  }
 
   if (audiencia === "newsletter") {
     const [{ data: suscriptores }, { data: registrados }] = await Promise.all([

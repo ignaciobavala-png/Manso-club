@@ -152,9 +152,13 @@ export function MailingCampaniasList({ refreshTrigger }: Props) {
     fetchCampanias();
   };
 
-  const eliminar = async (id: string) => {
-    if (!confirm('¿Eliminar este borrador?')) return;
-    await supabase.from('mailing_campanias').delete().eq('id', id);
+  const eliminar = async (campania: Campania) => {
+    const mensaje =
+      campania.estado === 'enviada'
+        ? `¿Eliminar "${campania.asunto}"? Ya fue enviada — se pierde el historial y las métricas de este envío.`
+        : '¿Eliminar este borrador?';
+    if (!confirm(mensaje)) return;
+    await supabase.from('mailing_campanias').delete().eq('id', campania.id);
     fetchCampanias();
   };
 
@@ -220,15 +224,20 @@ export function MailingCampaniasList({ refreshTrigger }: Props) {
                           <XCircle size={12} />
                         </button>
                       ) : (
-                        <button onClick={() => eliminar(c.id)} className="p-1.5 text-manso-cream/30 hover:text-red-400">
+                        <button onClick={() => eliminar(c)} className="p-1.5 text-manso-cream/30 hover:text-red-400">
                           <Trash2 size={12} />
                         </button>
                       )}
                     </div>
                   ) : (
-                    <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/30 shrink-0">
-                      {c.sent_at && new Date(c.sent_at).toLocaleDateString('es-AR')}
-                    </span>
+                    <div className="flex items-center gap-2 shrink-0">
+                      <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/30">
+                        {c.sent_at && new Date(c.sent_at).toLocaleDateString('es-AR')}
+                      </span>
+                      <button onClick={() => eliminar(c)} className="p-1.5 text-manso-cream/30 hover:text-red-400" title="Eliminar (borra el historial de este envío)">
+                        <Trash2 size={12} />
+                      </button>
+                    </div>
                   )}
                 </div>
 
