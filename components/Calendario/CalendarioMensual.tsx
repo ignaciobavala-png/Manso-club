@@ -50,20 +50,6 @@ export function CalendarioMensual({ ocurrencias, mesVisible, onCambiarMes }: Pro
     return dias;
   }, [mesVisible]);
 
-  // Primera ocurrencia visible de cada serie recurrente (por fecha, ya que `ocurrencias` viene ordenada):
-  // las siguientes fechas de la misma serie se muestran de forma compacta, sin repetir la descripción.
-  const primeraOcurrenciaDeSerie = useMemo(() => {
-    const vistas = new Set<string>();
-    const primeras = new Set<string>();
-    for (const o of ocurrencias) {
-      if (!o.serieId || !vistas.has(o.serieId)) {
-        if (o.serieId) vistas.add(o.serieId);
-        primeras.add(o.id);
-      }
-    }
-    return primeras;
-  }, [ocurrencias]);
-
   const hoy = new Date();
 
   // Al cambiar de mes: si el mes visible es el actual, arrancar con hoy seleccionado.
@@ -141,27 +127,16 @@ export function CalendarioMensual({ ocurrencias, mesVisible, onCambiarMes }: Pro
                 borderBottomWidth: grosorBorde,
                 transform: esSeleccionado ? 'rotate(-1deg) scale(1.03)' : undefined,
               }}
-              className={`relative border-manso-cream/20 p-1.5 md:p-2 bg-manso-black flex flex-col gap-1 cursor-pointer transition-all ${
-                items.length > 0
-                  ? 'min-h-[56px] bg-manso-cream/[0.02]'
-                  : 'min-h-[36px] md:min-h-[52px] justify-center items-center'
+              className={`relative border-manso-cream/20 p-1.5 md:p-2 bg-manso-black flex flex-col gap-1 cursor-pointer transition-all min-h-[56px] md:min-h-[72px] ${
+                items.length > 0 ? 'bg-manso-cream/[0.02]' : ''
               } ${!esDelMes ? 'opacity-30' : ''} ${
                 esSeleccionado ? 'z-10 !border-manso-terra/70 bg-manso-terra/[0.06]' : 'hover:bg-manso-cream/[0.04]'
               }`}
             >
-              {items.length > 0 ? (
-                /* Con actividad: número chico y fijo arriba, sin pisar el texto de los eventos */
-                <span className="block select-none text-[10px] md:text-[11px] font-black text-manso-cream/35 leading-none mb-1">
-                  {dia.getDate()}
-                </span>
-              ) : (
-                /* Sin actividad: número grande centrado que llena la celda (aunque la fila se estire por vecinas con eventos) */
-                <div className="absolute inset-0 overflow-hidden pointer-events-none flex items-center justify-center">
-                  <span aria-hidden className="select-none font-black italic leading-none text-[24px] md:text-5xl text-manso-cream/10">
-                    {dia.getDate()}
-                  </span>
-                </div>
-              )}
+              {/* Número chico y fijo arriba, igual para todos los días, sin pisar el texto de los eventos */}
+              <span className="block select-none text-[10px] md:text-[11px] font-black text-manso-cream/35 leading-none mb-1">
+                {dia.getDate()}
+              </span>
 
               {esHoy && (
                 <span className="absolute top-1 right-1 z-10 text-[9px] font-black uppercase tracking-widest text-manso-black bg-manso-cream px-1.5 py-0.5 -rotate-2 shadow-[2px_2px_0_rgba(0,0,0,0.35)]">
@@ -184,28 +159,20 @@ export function CalendarioMensual({ ocurrencias, mesVisible, onCambiarMes }: Pro
 
               {/* Desktop: estilo grilla de radio — una línea horizontal por evento, sin wrap; el detalle completo se ve al tocar el día */}
               <div className="relative hidden md:flex flex-col divide-y divide-manso-cream/10">
-                {items.slice(0, 2).map((item, idx) => {
-                  // Ocurrencia repetida de una serie ya mostrada antes en el mes: se marca con ↻
-                  // y no repite la descripción, para no llenar la columna con el mismo párrafo.
-                  const esRepeticion = Boolean(item.serieId) && !primeraOcurrenciaDeSerie.has(item.id);
-                  return (
-                    <button
-                      key={item.id + idx}
-                      onClick={e => { e.stopPropagation(); setDiaSeleccionado(new Date(dia)); handleClick(item); }}
-                      className={`w-full text-left py-1 first:pt-0 last:pb-0 border-l-2 pl-2 hover:bg-manso-cream/[0.04] transition-colors ${
-                        item.tipo === 'evento' ? 'border-manso-terra' : 'border-manso-cream/25'
-                      }`}
-                    >
-                      <span className="flex items-baseline flex-wrap gap-x-1.5 gap-y-0.5 text-sm font-black uppercase leading-tight">
-                        {item.hora && <span className="shrink-0 text-manso-cream/50 tabular-nums">{item.hora}</span>}
-                        <span className="text-manso-cream">{item.titulo}</span>
-                        {esRepeticion && (
-                          <span className="shrink-0 text-manso-cream/35" title="Se repite semanalmente">↻</span>
-                        )}
-                      </span>
-                    </button>
-                  );
-                })}
+                {items.slice(0, 2).map((item, idx) => (
+                  <button
+                    key={item.id + idx}
+                    onClick={e => { e.stopPropagation(); setDiaSeleccionado(new Date(dia)); handleClick(item); }}
+                    className={`w-full text-left py-1 first:pt-0 last:pb-0 border-l-2 pl-2 hover:bg-manso-cream/[0.04] transition-colors ${
+                      item.tipo === 'evento' ? 'border-manso-terra' : 'border-manso-cream/25'
+                    }`}
+                  >
+                    <span className="flex items-baseline flex-wrap gap-x-1.5 gap-y-0.5 text-sm font-black uppercase leading-tight">
+                      {item.hora && <span className="shrink-0 text-manso-cream/50 tabular-nums">{item.hora}</span>}
+                      <span className="text-manso-cream">{item.titulo}</span>
+                    </span>
+                  </button>
+                ))}
                 {items.length > 2 && (
                   <button
                     onClick={e => { e.stopPropagation(); setDiaSeleccionado(new Date(dia)); }}
