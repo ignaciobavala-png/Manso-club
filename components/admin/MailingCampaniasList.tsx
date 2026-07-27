@@ -42,6 +42,21 @@ interface Props {
   refreshTrigger?: number;
 }
 
+/**
+ * Lee el cuerpo como texto y recién ahí intenta parsear JSON. Si la función
+ * serverless crashea o da timeout, Vercel responde texto plano (no JSON) y el
+ * res.json() directo moría con "JSON.parse: unexpected character" ocultando
+ * el error real; acá el status y el cuerpo crudo llegan al feedback.
+ */
+async function leerJson(res: Response): Promise<Record<string, unknown> & { error?: string; enviados?: number; fallidos?: number }> {
+  const texto = await res.text();
+  try {
+    return JSON.parse(texto);
+  } catch {
+    throw new Error(`El servidor respondió ${res.status}: ${texto.slice(0, 200) || 'sin cuerpo'}`);
+  }
+}
+
 export function MailingCampaniasList({ refreshTrigger }: Props) {
   const [campanias, setCampanias] = useState<Campania[]>([]);
   const [metricas, setMetricas] = useState<Record<string, Metricas>>({});
@@ -104,7 +119,7 @@ export function MailingCampaniasList({ refreshTrigger }: Props) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ campaniaId: campania.id }),
       });
-      const data = await res.json();
+      const data = await leerJson(res);
       if (!res.ok) throw new Error(data.error || 'Error al enviar');
       setFeedback(`Enviado a ${data.enviados} destinatarios${data.fallidos ? ` (${data.fallidos} fallidos)` : ''}`);
       fetchCampanias();
@@ -133,7 +148,7 @@ export function MailingCampaniasList({ refreshTrigger }: Props) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ campaniaId: campania.id, destinatarios }),
       });
-      const data = await res.json();
+      const data = await leerJson(res);
       if (!res.ok) throw new Error(data.error || 'Error al enviar la prueba');
       setFeedback(`Prueba enviada a ${data.enviados} destinatario${data.enviados === 1 ? '' : 's'}`);
       setPruebaAbiertaId(null);
