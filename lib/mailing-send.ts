@@ -11,6 +11,7 @@ export interface CampaniaRow {
   bloques: BloqueMailing[];
   estado: string;
   destinatarios_especificos?: string[] | null;
+  color_fondo?: string | null;
 }
 
 const BATCH_SIZE = 100;
@@ -79,7 +80,12 @@ export async function enviarCampania(
         from: EMAIL_FROM,
         to: email,
         subject: campania.asunto,
-        react: CampaniaGenerica({ asunto: campania.asunto, bloques, unsubscribeUrl: unsubscribeUrl(email) }),
+        react: CampaniaGenerica({
+          asunto: campania.asunto,
+          bloques,
+          unsubscribeUrl: unsubscribeUrl(email),
+          colorFondo: campania.color_fondo ?? undefined,
+        }),
       })),
       { idempotencyKey: `mailing-${campania.id}-batch-${i}` }
     );

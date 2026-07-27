@@ -20,6 +20,18 @@ import {
 
 type CanvasBloque = { url: string; alt: string; hotspots: Hotspot[] };
 
+const FONDO_DEFAULT = '#FFFCDC';
+
+// Paleta manso como accesos rápidos; el picker permite cualquier color
+const FONDOS_SUGERIDOS = [
+  { hex: '#FFFCDC', nombre: 'Crema' },
+  { hex: '#1D1D1B', nombre: 'Negro' },
+  { hex: '#030044', nombre: 'Azul' },
+  { hex: '#BC2915', nombre: 'Terra' },
+  { hex: '#868229', nombre: 'Oliva' },
+  { hex: '#542C1B', nombre: 'Marrón' },
+];
+
 interface Props {
   onSaved?: () => void;
 }
@@ -210,6 +222,7 @@ export function FormMailingCampania({ onSaved }: Props) {
   const [audiencia, setAudiencia] = useState<Audiencia>('newsletter');
   const [mailsEspecificos, setMailsEspecificos] = useState('');
   const [canvases, setCanvases] = useState<CanvasBloque[]>([]);
+  const [colorFondo, setColorFondo] = useState(FONDO_DEFAULT);
   const [scheduledAt, setScheduledAt] = useState('');
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
@@ -236,6 +249,7 @@ export function FormMailingCampania({ onSaved }: Props) {
     setAudiencia('newsletter');
     setMailsEspecificos('');
     setCanvases([]);
+    setColorFondo(FONDO_DEFAULT);
     setScheduledAt('');
   };
 
@@ -301,6 +315,7 @@ export function FormMailingCampania({ onSaved }: Props) {
         audiencia,
         bloques,
         estado: programar ? 'programada' : 'borrador',
+        color_fondo: colorFondo,
         scheduled_at: scheduledIso,
         destinatarios_especificos: audiencia === 'especifico' ? parsearMailsEspecificos() : null,
       },
@@ -438,6 +453,44 @@ export function FormMailingCampania({ onSaved }: Props) {
         >
           <Plus size={12} /> Agregar imagen
         </button>
+      </div>
+
+      <div>
+        <label className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40 mb-1 block">
+          Color de fondo del mail
+        </label>
+        <p className="text-[9px] text-manso-cream/40 mb-2">
+          El marco alrededor del arte. Elegí el mismo color que el fondo de la imagen para que se
+          vea continuo.
+        </p>
+        <div className="flex items-center gap-2 flex-wrap">
+          {FONDOS_SUGERIDOS.map((f) => (
+            <button
+              key={f.hex}
+              type="button"
+              onClick={() => setColorFondo(f.hex)}
+              title={f.nombre}
+              className={`w-7 h-7 rounded-full border-2 transition-transform hover:scale-110 ${
+                colorFondo.toLowerCase() === f.hex.toLowerCase()
+                  ? 'border-manso-terra scale-110'
+                  : 'border-manso-cream/20'
+              }`}
+              style={{ backgroundColor: f.hex }}
+            />
+          ))}
+          <label
+            className="flex items-center gap-2 ml-1 px-3 py-1.5 rounded-lg bg-manso-cream/5 border border-manso-cream/10 cursor-pointer hover:border-manso-terra transition-colors"
+            title="Color personalizado"
+          >
+            <input
+              type="color"
+              value={/^#[0-9a-fA-F]{6}$/.test(colorFondo) ? colorFondo : FONDO_DEFAULT}
+              onChange={(e) => setColorFondo(e.target.value)}
+              className="w-5 h-5 bg-transparent border-0 p-0 cursor-pointer"
+            />
+            <span className="text-[10px] font-mono text-manso-cream/60 uppercase">{colorFondo}</span>
+          </label>
+        </div>
       </div>
 
       <div>

@@ -79,6 +79,7 @@ export async function POST(request: Request) {
           asunto: `[PRUEBA] ${campania.asunto}`,
           bloques,
           unsubscribeUrl: `${siteUrl}/api/mailing/unsubscribe?email=${encodeURIComponent(email)}`,
+          colorFondo: campania.color_fondo ?? undefined,
         }),
       }))
     );
