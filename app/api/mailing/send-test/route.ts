@@ -59,22 +59,27 @@ export async function POST(request: Request) {
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://manso.club";
 
-  const { data, error } = await resend.batch.send(
-    destinatarios.map((email: string) => ({
-      from: EMAIL_FROM,
-      to: email,
-      subject: `[PRUEBA] ${campania.asunto}`,
-      react: CampaniaGenerica({
-        asunto: `[PRUEBA] ${campania.asunto}`,
-        bloques,
-        unsubscribeUrl: `${siteUrl}/api/mailing/unsubscribe?email=${encodeURIComponent(email)}`,
-      }),
-    }))
-  );
+  try {
+    const { data, error } = await resend.batch.send(
+      destinatarios.map((email: string) => ({
+        from: EMAIL_FROM,
+        to: email,
+        subject: `[PRUEBA] ${campania.asunto}`,
+        react: CampaniaGenerica({
+          asunto: `[PRUEBA] ${campania.asunto}`,
+          bloques,
+          unsubscribeUrl: `${siteUrl}/api/mailing/unsubscribe?email=${encodeURIComponent(email)}`,
+        }),
+      }))
+    );
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 502 });
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 502 });
+    }
+
+    return NextResponse.json({ enviados: data?.data.length ?? 0 });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Error al enviar la prueba";
+    return NextResponse.json({ error: message }, { status: 502 });
   }
-
-  return NextResponse.json({ enviados: data?.data.length ?? 0 });
 }
