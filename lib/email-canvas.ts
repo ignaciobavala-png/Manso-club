@@ -56,17 +56,40 @@ export async function cortarImagenConHotspots(
   const contentType = esPng ? "image/png" : "image/jpeg";
 
   const filasY = cortes(hotspots.flatMap((hs) => [hs.y, hs.y + hs.h]));
-  const rows: SliceRow[] = [];
 
+  // Primera pasada: cortes de columnas de cada franja. Se calculan todos
+  // antes de rebanar para armar la grilla maestra (unión de cortes): el
+  // template renderiza UNA sola tabla y cada celda usa colspan contra esa
+  // grilla — tablas separadas por franja generaban líneas finas al escalar
+  // en el celular.
+  const bandas = [] as { y0: number; y1: number; enBanda: Hotspot[]; columnasX: number[] }[];
   for (let r = 0; r < filasY.length - 1; r++) {
     const y0 = filasY[r];
     const y1 = filasY[r + 1];
     const enBanda = hotspotEnBanda(hotspots, y0, y1);
-
     const columnasX = enBanda.length
       ? cortes(enBanda.flatMap((hs) => [hs.x, hs.x + hs.w]))
       : [0, 100];
+    bandas.push({ y0, y1, enBanda, columnasX });
+  }
 
+  const masterX = cortes(bandas.flatMap((b) => b.columnasX));
+  const idxMaster = (v: number) => {
+    let mejor = 0;
+    let dist = Infinity;
+    for (let i = 0; i < masterX.length; i++) {
+      const d = Math.abs(masterX[i] - v);
+      if (d < dist) {
+        dist = d;
+        mejor = i;
+      }
+    }
+    return mejor;
+  };
+
+  const rows: SliceRow[] = [];
+
+  for (const { y0, y1, enBanda, columnasX } of bandas) {
     const cells: SliceCell[] = [];
 
     for (let c = 0; c < columnasX.length - 1; c++) {
@@ -86,10 +109,13 @@ export async function cortarImagenConHotspots(
         width: right - left,
         height: bottom - top,
       });
-      pipeline = esPng ? pipeline.png() : pipeline.jpeg({ quality: 88 });
+      // Sin submuestreo de croma y calidad alta: cada rebanada se comprime
+      // por separado, y con menos calidad los bordes cambiaban de color
+      // entre pedazos vecinos — se veía la línea de corte en el mail.
+      pipeline = esPng ? pipeline.png() : pipeline.jpeg({ quality: 95, chromaSubsampling: "4:4:4" });
       const slice = await pipeline.toBuffer();
 
-      const path = `slices/${campaniaId}/${bloqueIdx}-${r}-${c}.${ext}`;
+      const path = `slices/${campaniaId}/${bloqueIdx}-${rows.length}-${c}.${ext}`;
       const { error: uploadError } = await supabase.storage
         .from("emails")
         .upload(path, slice, { contentType, upsert: true });
@@ -109,6 +135,7 @@ export async function cortarImagenConHotspots(
         url: data.publicUrl,
         width: cellRight - cellLeft,
         link: dueno?.link ?? null,
+        colspan: Math.max(1, idxMaster(x1) - idxMaster(x0)),
       });
     }
 

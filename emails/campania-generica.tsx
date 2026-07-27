@@ -22,8 +22,9 @@ const PX_POR_SEPARACION: Record<Separacion, number> = {
 // Zona clickeable dibujada por la diseñadora sobre la imagen (coords en %)
 export type Hotspot = { x: number; y: number; w: number; h: number; link: string };
 
-// Rebanadas generadas al enviar (ver lib/email-canvas.ts)
-export type SliceCell = { url: string; width: number; link: string | null };
+// Rebanadas generadas al enviar (ver lib/email-canvas.ts). `colspan` ubica la
+// celda dentro de la grilla maestra de columnas compartida por todas las filas.
+export type SliceCell = { url: string; width: number; link: string | null; colspan?: number };
 export type SliceRow = { cells: SliceCell[] };
 
 export type BloqueMailing =
@@ -39,6 +40,8 @@ interface CampaniaGenericaProps {
   unsubscribeUrl: string;
   /** Fondo del mail (marco alrededor del arte). Default: manso-cream. */
   colorFondo?: string;
+  /** Texto de vista previa que la casilla muestra al lado del asunto. Fallback: asunto. */
+  preheader?: string;
 }
 
 const FONDO_DEFAULT = "#FFFCDC";
@@ -61,15 +64,30 @@ const imgSliceStyle: React.CSSProperties = {
   border: 0,
 };
 
-export default function CampaniaGenerica({ asunto, bloques, unsubscribeUrl, colorFondo }: CampaniaGenericaProps) {
+export default function CampaniaGenerica({ asunto, bloques, unsubscribeUrl, colorFondo, preheader }: CampaniaGenericaProps) {
   const fondo = colorFondo?.trim() || FONDO_DEFAULT;
   const colorPie = esFondoOscuro(fondo) ? "#FFFCDC" : "#1D1D1B";
   return (
     <Html>
       <Head />
-      <Preview>{asunto}</Preview>
-      <Body style={{ backgroundColor: fondo, fontFamily: "sans-serif", margin: 0 }}>
-        <Container style={{ maxWidth: "600px", padding: "0" }}>
+      <Preview>{preheader?.trim() || asunto}</Preview>
+      {/* El fondo va también en una tabla al 100% (bgcolor + style): varios
+          clientes móviles (Gmail app entre ellos) ignoran el background del
+          <body>, y sin esto el marco y el pie quedaban blancos en celular. */}
+      <Body style={{ backgroundColor: fondo, fontFamily: "sans-serif", margin: 0, padding: 0 }}>
+        <table
+          role="presentation"
+          width="100%"
+          cellPadding={0}
+          cellSpacing={0}
+          border={0}
+          bgcolor={fondo}
+          style={{ backgroundColor: fondo, width: "100%" }}
+        >
+          <tbody>
+            <tr>
+              <td align="center" style={{ padding: 0 }}>
+        <Container style={{ maxWidth: "600px", padding: "0", backgroundColor: fondo }}>
           {bloques.map((bloque, i) => {
             if (bloque.tipo === "imagen") {
               return (
@@ -94,54 +112,55 @@ export default function CampaniaGenerica({ asunto, bloques, unsubscribeUrl, colo
                 />
               );
             }
-            // Canvas procesado: la imagen rebanada en tablas, con las zonas
-            // marcadas envueltas en <a>. Una tabla por franja evita desalinear
-            // columnas entre filas con distinta cantidad de celdas.
+            // Canvas procesado: la imagen rebanada, con las zonas marcadas
+            // envueltas en <a>. Una ÚNICA tabla con grilla de columnas
+            // compartida (colspan): si cada franja fuera su propia tabla, el
+            // cliente las escala y redondea por separado en el celular y
+            // aparecen líneas finas entre filas.
             if (bloque.tipo === "canvas-procesado") {
               return (
-                <Section key={i} style={{ padding: 0 }}>
-                  {bloque.rows.map((row, r) => (
-                    <table
-                      key={r}
-                      width="600"
-                      cellPadding={0}
-                      cellSpacing={0}
-                      border={0}
-                      role="presentation"
-                      style={{ borderCollapse: "collapse", width: "100%", maxWidth: "600px" }}
-                    >
-                      <tbody>
-                        <tr>
-                          {row.cells.map((cell, c) => (
-                            <td
-                              key={c}
-                              width={cell.width}
-                              style={{ padding: 0, lineHeight: 0, fontSize: 0 }}
-                            >
-                              {cell.link ? (
-                                <a href={cell.link} target="_blank" style={{ display: "block" }}>
-                                  <img
-                                    src={cell.url}
-                                    width={cell.width}
-                                    alt={bloque.alt ?? ""}
-                                    style={imgSliceStyle}
-                                  />
-                                </a>
-                              ) : (
+                <table
+                  key={i}
+                  width="600"
+                  cellPadding={0}
+                  cellSpacing={0}
+                  border={0}
+                  role="presentation"
+                  style={{ borderCollapse: "collapse", width: "100%", maxWidth: "600px" }}
+                >
+                  <tbody>
+                    {bloque.rows.map((row, r) => (
+                      <tr key={r}>
+                        {row.cells.map((cell, c) => (
+                          <td
+                            key={c}
+                            width={cell.width}
+                            colSpan={cell.colspan ?? 1}
+                            style={{ padding: 0, lineHeight: 0, fontSize: 0, verticalAlign: "top" }}
+                          >
+                            {cell.link ? (
+                              <a href={cell.link} target="_blank" style={{ display: "block" }}>
                                 <img
                                   src={cell.url}
                                   width={cell.width}
-                                  alt=""
+                                  alt={bloque.alt ?? ""}
                                   style={imgSliceStyle}
                                 />
-                              )}
-                            </td>
-                          ))}
-                        </tr>
-                      </tbody>
-                    </table>
-                  ))}
-                </Section>
+                              </a>
+                            ) : (
+                              <img
+                                src={cell.url}
+                                width={cell.width}
+                                alt=""
+                                style={imgSliceStyle}
+                              />
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               );
             }
             if (bloque.tipo === "boton") {
@@ -178,6 +197,10 @@ export default function CampaniaGenerica({ asunto, bloques, unsubscribeUrl, colo
             </Text>
           </Section>
         </Container>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </Body>
     </Html>
   );

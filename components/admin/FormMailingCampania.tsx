@@ -219,6 +219,7 @@ function CanvasHotspots({
 
 export function FormMailingCampania({ onSaved }: Props) {
   const [asunto, setAsunto] = useState('');
+  const [preheader, setPreheader] = useState('');
   const [audiencia, setAudiencia] = useState<Audiencia>('newsletter');
   const [mailsEspecificos, setMailsEspecificos] = useState('');
   const [canvases, setCanvases] = useState<CanvasBloque[]>([]);
@@ -246,6 +247,7 @@ export function FormMailingCampania({ onSaved }: Props) {
 
   const resetForm = () => {
     setAsunto('');
+    setPreheader('');
     setAudiencia('newsletter');
     setMailsEspecificos('');
     setCanvases([]);
@@ -261,6 +263,10 @@ export function FormMailingCampania({ onSaved }: Props) {
 
   const validar = (): string | null => {
     if (!asunto.trim()) return 'El asunto es obligatorio';
+    if (!preheader.trim()) return 'El pre-header es obligatorio: es el texto que la casilla muestra al lado del asunto';
+    if (preheader.trim().toLowerCase() === asunto.trim().toLowerCase()) {
+      return 'El pre-header no puede repetir el asunto — escribí un texto que lo complemente';
+    }
     if (canvases.length === 0) return 'Agregá al menos una imagen';
     if (canvases.some((c) => !c.url)) return 'Hay una imagen sin subir';
     for (const c of canvases) {
@@ -312,6 +318,7 @@ export function FormMailingCampania({ onSaved }: Props) {
     const { error: insertError } = await supabase.from('mailing_campanias').insert([
       {
         asunto,
+        preheader: preheader.trim(),
         audiencia,
         bloques,
         estado: programar ? 'programada' : 'borrador',
@@ -369,6 +376,40 @@ export function FormMailingCampania({ onSaved }: Props) {
           placeholder="Ej: Nuevo evento este viernes"
           className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-2.5 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra"
         />
+      </div>
+
+      <div>
+        <label className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40 mb-1 block">
+          Pre-header
+        </label>
+        <p className="text-[9px] text-manso-cream/40 mb-1.5">
+          Es el texto gris que la casilla muestra al lado del asunto. No repitas el asunto:
+          usalo para completar la idea y dar una razón más para abrir el mail.
+        </p>
+        <input
+          value={preheader}
+          onChange={(e) => setPreheader(e.target.value)}
+          maxLength={140}
+          placeholder="Ej: Entradas anticipadas hasta el jueves"
+          className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-2.5 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra"
+        />
+        {/* Así se va a ver en la bandeja de entrada */}
+        <div className="mt-2 rounded-lg bg-manso-cream/10 border border-manso-cream/10 px-3 py-2 text-xs truncate">
+          <span className="text-[8px] font-black uppercase tracking-widest text-manso-cream/30 block mb-0.5">
+            Así se ve en la casilla
+          </span>
+          <span className="font-bold text-manso-cream">{asunto.trim() || 'Asunto'}</span>
+          <span className="text-manso-cream/50">
+            {' '}
+            - {preheader.trim() || 'Pre-header (texto de vista previa)'}
+          </span>
+        </div>
+        {preheader.trim() &&
+          preheader.trim().toLowerCase() === asunto.trim().toLowerCase() && (
+            <p className="flex items-center gap-1 text-[10px] text-red-400 mt-1.5">
+              <AlertCircle size={11} /> El pre-header está repitiendo el asunto
+            </p>
+          )}
       </div>
 
       <div>

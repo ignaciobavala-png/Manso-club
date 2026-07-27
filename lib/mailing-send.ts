@@ -12,6 +12,7 @@ export interface CampaniaRow {
   estado: string;
   destinatarios_especificos?: string[] | null;
   color_fondo?: string | null;
+  preheader?: string | null;
 }
 
 const BATCH_SIZE = 100;
@@ -85,6 +86,7 @@ export async function enviarCampania(
           bloques,
           unsubscribeUrl: unsubscribeUrl(email),
           colorFondo: campania.color_fondo ?? undefined,
+          preheader: campania.preheader ?? undefined,
         }),
       })),
       { idempotencyKey: `mailing-${campania.id}-batch-${i}` }
