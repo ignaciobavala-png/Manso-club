@@ -11,6 +11,8 @@ interface AgendaRow {
   horario?: string | null;
   /** Día de cursada: 0 = lunes ... 6 = domingo. Si falta, se ancla al día del alta. */
   dia_semana?: number | null;
+  /** Fecha desde la que arranca el ciclo. Sin ella, se usa created_at (menos preciso). */
+  fecha_inicio?: string | null;
   /** Fecha límite de la recurrencia (inclusive). Sin ella, el taller se repite indefinidamente. */
   fecha_fin?: string | null;
   activo: boolean;
@@ -67,11 +69,11 @@ function horaDeFecha(fecha: Date): string | undefined {
 
 /**
  * Genera las ocurrencias de un taller/actividad recurrente dentro de [desde, hasta],
- * anclando la repetición a su fecha de alta (created_at) ya que "agenda" no guarda
- * una fecha de inicio explícita ni día de la semana.
+ * anclando la repetición a su fecha_inicio. Los talleres viejos que no la tengan cargada
+ * caen al fallback de created_at (fecha de alta del registro), menos preciso.
  */
 function expandirAgenda(item: AgendaRow, desde: Date, hasta: Date): CalendarioOcurrencia[] {
-  let anchor = new Date(item.created_at);
+  let anchor = item.fecha_inicio ? new Date(`${item.fecha_inicio}T00:00:00`) : new Date(item.created_at);
   if (isNaN(anchor.getTime())) return [];
 
   // Si el taller tiene día de cursada, correr el ancla al primer día que coincida.

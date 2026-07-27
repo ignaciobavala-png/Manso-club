@@ -14,6 +14,7 @@ interface AgendaEvent {
   frecuencia: string;
   horario?: string;
   dia_semana?: number | null;
+  fecha_inicio?: string | null;
   fecha_fin?: string | null;
   precio: number | string;
   activo: boolean;
@@ -33,6 +34,7 @@ const INITIAL = {
   frecuencia: 'Mensual',
   horario: '',
   dia_semana: '',
+  fecha_inicio: '',
   fecha_fin: '',
   precio: '0',
   cupos_maximos: '0',
@@ -93,6 +95,7 @@ export function FormAgenda() {
         frecuencia:        ev.frecuencia,
         horario:           ev.horario ? ev.horario.slice(0, 5) : '',
         dia_semana:        typeof ev.dia_semana === 'number' ? String(ev.dia_semana) : '',
+        fecha_inicio:      ev.fecha_inicio || '',
         fecha_fin:         ev.fecha_fin || '',
         precio:            ev.precio.toString(),
         cupos_maximos:     (ev.cupos_maximos || 0).toString(),
@@ -132,6 +135,7 @@ export function FormAgenda() {
       frecuencia:        formData.frecuencia,
       horario:           formData.horario || null,
       dia_semana:        formData.dia_semana === '' ? null : parseInt(formData.dia_semana),
+      fecha_inicio:      formData.fecha_inicio || null,
       fecha_fin:         formData.fecha_fin || null,
       precio:            parseInt(formData.precio) || 0,
       cupos_maximos:     parseInt(formData.cupos_maximos) || 0,
@@ -262,6 +266,20 @@ export function FormAgenda() {
           </div>
           <p className="text-[9px] text-manso-cream/30 mt-1 font-light">
             Día y hora de cursada: el calendario los usa para ubicar el taller en el día correcto.
+          </p>
+        </div>
+
+        {/* Fecha de inicio */}
+        <div>
+          <label className={labelCls}>Fecha de inicio</label>
+          <input
+            type="date"
+            className={inputCls}
+            value={formData.fecha_inicio}
+            onChange={e => set('fecha_inicio', e.target.value)}
+          />
+          <p className="text-[9px] text-manso-cream/30 mt-1 font-light">
+            Desde cuándo arranca el ciclo. El calendario recién muestra ocurrencias a partir de esta fecha. Vacío = usa la fecha de alta del taller (menos preciso).
           </p>
         </div>
 
