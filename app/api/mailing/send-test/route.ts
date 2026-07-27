@@ -6,6 +6,10 @@ import { resend, EMAIL_FROM } from "@/lib/resend";
 import { procesarBloquesCanvas } from "@/lib/email-canvas";
 import CampaniaGenerica, { type BloqueMailing } from "@/emails/campania-generica";
 
+// El procesamiento del canvas (sharp + subida de rebanadas) puede superar el
+// timeout por defecto; ver el mismo techo en send y cron.
+export const maxDuration = 300;
+
 export async function POST(request: Request) {
   const cookieStore = await cookies();
   const supabase = createServerClient(
@@ -29,7 +33,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const { campaniaId, destinatarios } = await request.json();
+  let campaniaId: string | undefined;
+  let destinatarios: string[] | undefined;
+  try {
+    ({ campaniaId, destinatarios } = await request.json());
+  } catch {
+    return NextResponse.json({ error: "Body inválido" }, { status: 400 });
+  }
   if (!campaniaId || !Array.isArray(destinatarios) || destinatarios.length === 0) {
     return NextResponse.json({ error: "Faltan campaniaId o destinatarios" }, { status: 400 });
   }

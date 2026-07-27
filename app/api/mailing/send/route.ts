@@ -4,6 +4,11 @@ import { createClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import { enviarCampania, reclamarCampania } from "@/lib/mailing-send";
 
+// Mismo techo que el cron: cortar imágenes con sharp, subir rebanadas y
+// mandar lotes a Resend supera con facilidad el timeout por defecto, y un
+// timeout devuelve texto plano que rompe el res.json() del admin.
+export const maxDuration = 300;
+
 export async function POST(request: Request) {
   const cookieStore = await cookies();
   const supabase = createServerClient(
@@ -27,7 +32,12 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  const { campaniaId } = await request.json();
+  let campaniaId: string | undefined;
+  try {
+    ({ campaniaId } = await request.json());
+  } catch {
+    return NextResponse.json({ error: "Body inválido" }, { status: 400 });
+  }
   if (!campaniaId) {
     return NextResponse.json({ error: "Falta campaniaId" }, { status: 400 });
   }
