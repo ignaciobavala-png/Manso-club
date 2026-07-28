@@ -1,8 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getCotizacionDolar, usdToArs } from '@/lib/dolar';
 
 interface NotifyRequest {
-  mensaje: string;
   cliente: {
     nombre: string;
     mail: string;
@@ -10,91 +10,126 @@ interface NotifyRequest {
     dni: string;
     direccion: string;
   };
-  productos: Array<{
-    id: string;
-    nombre: string;
-    precio: number;
-    quantity: number;
-  }>;
-  total: number;
-  config: any;
+  items: Array<{ id: string; quantity: number }>;
 }
 
 export async function POST(request: NextRequest) {
   try {
     const body: NotifyRequest = await request.json();
-    
-    // Validar datos
-    if (!body.mensaje || !body.cliente || !body.productos) {
-      return NextResponse.json(
-        { error: 'Datos incompletos' },
-        { status: 400 }
-      );
+    const { cliente, items } = body;
+
+    if (!cliente?.nombre || !cliente?.mail || !cliente?.telefono || !items?.length) {
+      return NextResponse.json({ error: 'Datos incompletos' }, { status: 400 });
     }
 
-    // Crear cliente Supabase
     const supabase = createClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
 
-    // 1. Guardar pedido en base de datos
-    const pedidoData = {
-      cliente_nombre: body.cliente.nombre,
-      cliente_email: body.cliente.mail,
-      cliente_telefono: body.cliente.telefono,
-      cliente_dni: body.cliente.dni,
-      cliente_direccion: body.cliente.direccion,
-      productos: body.productos,
-      total: body.total,
-      estado: 'pendiente_pago',
-      mensaje_whatsapp: body.mensaje,
-      created_at: new Date().toISOString()
-    };
+    // Precios y totales se recalculan acá: lo que manda el navegador no es confiable.
+    const ids = items.map((i) => i.id);
+    const { data: productos, error: productosError } = await supabase
+      .from('productos')
+      .select('id, nombre, precio, stock')
+      .in('id', ids);
+
+    if (productosError || !productos || productos.length !== ids.length) {
+      return NextResponse.json({ error: 'Uno o más productos no existen' }, { status: 400 });
+    }
+
+    let cotizacion;
+    try {
+      cotizacion = await getCotizacionDolar();
+    } catch {
+      return NextResponse.json(
+        { error: 'No pudimos obtener la cotización del dólar. Probá de nuevo en unos minutos.' },
+        { status: 503 }
+      );
+    }
+
+    const pedidoProductos = items.map((item) => {
+      const producto = productos.find((p) => p.id === item.id)!;
+      const precioUsd = Number(producto.precio);
+      return {
+        id: producto.id,
+        nombre: producto.nombre,
+        precio_usd: precioUsd,
+        precio: usdToArs(precioUsd, cotizacion.venta),
+        quantity: item.quantity,
+      };
+    });
+
+    const total = pedidoProductos.reduce((acc, p) => acc + p.precio * p.quantity, 0);
+    const totalUsd = pedidoProductos.reduce((acc, p) => acc + p.precio_usd * p.quantity, 0);
+
+    const formatArs = (n: number) =>
+      new Intl.NumberFormat('es-AR', {
+        style: 'currency',
+        currency: 'ARS',
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0,
+      }).format(n);
+
+    const productosTexto = pedidoProductos
+      .map((p) => `• ${p.nombre} x${p.quantity} — ${formatArs(p.precio * p.quantity)}`)
+      .join('\n');
+
+    const mensaje =
+      `*🛒 NUEVO PEDIDO MANSO CLUB*\n\n` +
+      `*DATOS DEL CLIENTE:*\n` +
+      `👤 Nombre: ${cliente.nombre}\n` +
+      `📧 Email: ${cliente.mail}\n` +
+      `📱 Teléfono: ${cliente.telefono}\n` +
+      `🆔 DNI: ${cliente.dni}\n` +
+      `🏠 Dirección: ${cliente.direccion}\n\n` +
+      `*PRODUCTOS SOLICITADOS:*\n${productosTexto}\n\n` +
+      `*TOTAL: ${formatArs(total)}*\n` +
+      `_(USD ${totalUsd} — cotización $${cotizacion.venta})_\n\n` +
+      `*📋 PRÓXIMOS PASOS:*\n` +
+      `1. Contactar al cliente para confirmar el pedido\n` +
+      `2. Enviar datos bancarios para el pago\n` +
+      `3. Cotizar y coordinar el envío`;
 
     const { data: pedido, error: dbError } = await supabase
       .from('pedidos')
-      .insert(pedidoData)
+      .insert({
+        cliente_nombre: cliente.nombre,
+        cliente_email: cliente.mail,
+        cliente_telefono: cliente.telefono,
+        cliente_dni: cliente.dni,
+        cliente_direccion: cliente.direccion,
+        productos: pedidoProductos,
+        total,
+        total_usd: totalUsd,
+        cotizacion_dolar: cotizacion.venta,
+        moneda_origen: 'USD',
+        estado: 'pendiente_pago',
+        metodo_pago: 'transferencia',
+        mensaje_whatsapp: mensaje,
+      })
       .select()
       .single();
 
     if (dbError) {
       console.error('Error guardando pedido:', dbError);
+      return NextResponse.json({ error: 'No se pudo registrar el pedido' }, { status: 500 });
     }
 
-    // 2. Log del pedido
-    console.log('🛒 Nuevo pedido recibido:', {
-      cliente: body.cliente.nombre,
-      email: body.cliente.mail,
-      telefono: body.cliente.telefono,
-      dni: body.cliente.dni,
-      direccion: body.cliente.direccion,
-      total: body.total,
-      cantidadProductos: body.productos.length,
-      pedido_id: pedido?.id,
-      timestamp: new Date().toISOString()
-    });
-    
     return NextResponse.json({
       success: true,
       pedido_id: pedido?.id,
+      total_ars: total,
+      cotizacion: cotizacion.venta,
       message: 'Pedido recibido exitosamente',
-      db_guardado: !!pedido
     });
-
   } catch (error) {
     console.error('Error en endpoint de notificación:', error);
-    
-    return NextResponse.json(
-      { error: 'Error interno del servidor' },
-      { status: 500 }
-    );
+
+    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 });
   }
 }
 
 export async function GET() {
-  return NextResponse.json(
-    { error: 'Método no permitido' },
-    { status: 405 }
-  );
+  return NextResponse.json({ error: 'Método no permitido' }, { status: 405 });
 }

@@ -2,6 +2,7 @@
 
 import { X, Plus, Minus, Trash2, ShoppingBag, MessageCircle, ArrowRight } from 'lucide-react';
 import { useCart } from '@/store/useCart';
+import { useCurrency } from '@/store/useCurrency';
 import { useState, useEffect } from 'react';
 
 interface CartSidebarProps {
@@ -11,7 +12,12 @@ interface CartSidebarProps {
 
 export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
   const { items, removeItem, addItem, clearCart, total, checkout } = useCart();
+  const { rate, fetchRate } = useCurrency();
   const [footerPlayerHeight, setFooterPlayerHeight] = useState(0);
+
+  useEffect(() => {
+    fetchRate();
+  }, [fetchRate]);
 
   // Detectar si el reproductor del footer está visible
   useEffect(() => {
@@ -91,13 +97,18 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
     checkout();
   };
 
-  const formatPrice = (price: number) => {
+  // Los precios de los productos están en USD; el cobro se hace en pesos según
+  // la cotización del blue. Hasta tenerla, se muestra el precio en dólares para
+  // no exhibir un monto en pesos que no es el que se va a cobrar.
+  const formatPrice = (priceUsd: number) => {
+    if (!rate) return `USD $${priceUsd.toLocaleString('es-AR')}`;
+
     return new Intl.NumberFormat('es-AR', {
       style: 'currency',
       currency: 'ARS',
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
-    }).format(price);
+    }).format(Math.round(priceUsd * rate));
   };
 
   return (
@@ -244,11 +255,26 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
               </button>
 
               {/* Total */}
-              <div className="flex justify-between items-center py-3 border-t border-zinc-200">
-                <span className="text-lg font-bold uppercase tracking-tight text-black">Total</span>
-                <span className="text-2xl font-black text-black">
-                  {formatPrice(total())}
-                </span>
+              <div className="pt-3 border-t border-zinc-200">
+                <div className="flex justify-between items-center">
+                  <span className="text-lg font-bold uppercase tracking-tight text-black">Total</span>
+                  <div className="text-right">
+                    <span className="text-2xl font-black text-black block leading-none">
+                      {formatPrice(total())}
+                    </span>
+                    {rate && (
+                      <span className="text-[11px] text-zinc-400">
+                        USD ${total().toLocaleString('es-AR')}
+                      </span>
+                    )}
+                  </div>
+                </div>
+                {rate && (
+                  <p className="text-[11px] text-zinc-400 mt-2 leading-relaxed">
+                    Precios en pesos según cotización del dólar blue ($
+                    {rate.toLocaleString('es-AR')} por USD).
+                  </p>
+                )}
               </div>
 
               {/* Checkout Button */}

@@ -28,13 +28,23 @@ no hace falta cargar `RESEND_FROM_EMAIL` todavía.
 
 ### Variables Críticas de Mercado Pago
 ```
-MP_WEBHOOK_SECRET=your_webhook_secret_from_mercado_pago
+MP_ACCESS_TOKEN=APP_USR-xxxxxxxxx     # credencial de producción (obligatoria)
+MP_PUBLIC_KEY=APP_USR-xxxxxxxxx       # solo si se usa Checkout Bricks en el front
+MP_WEBHOOK_SECRET=xxxxxxxxx           # obligatoria para acreditar pagos
 ```
 
-**Cómo obtener MP_WEBHOOK_SECRET:**
-1. Ir a Dashboard de Mercado Pago > Integrations > Webhooks
-2. Copiar el "Webhook Secret" que se muestra allí
-3. Agregarlo como variable de entorno en Vercel
+Las credenciales viven **en variables de entorno de Vercel**, no en la tabla `configuracion`.
+Después de cargarlas hace falta un redeploy: Vercel no las inyecta en un deployment ya corriendo.
+
+**Cómo obtener las credenciales:**
+1. mercadopago.com.ar/developers/panel/app → aplicación de Manso Club
+2. "Credenciales de producción" → copiar el *Access Token* (`APP_USR-...`)
+3. Sección "Webhooks" → registrar `https://manso.club/api/mp/webhook`, evento `payment`
+4. Copiar el *Webhook Secret* que devuelve al crear el webhook
+
+**Sin `MP_WEBHOOK_SECRET` el webhook rechaza todas las notificaciones** (`app/api/mp/webhook/route.ts`
+falla cerrado a propósito: sin secreto no se puede verificar la firma). El checkout funciona y el
+cliente puede pagar, pero el pedido queda en `pendiente_pago` hasta confirmarlo a mano.
 
 ### Variables Existentes (sin cambios)
 ```
@@ -44,16 +54,18 @@ SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 NEXT_PUBLIC_SITE_URL=https://manso.club
 ```
 
-## 📋 Configuración en Supabase (Base de Datos)
+## 💵 Moneda: precios en USD, cobro en ARS
 
-### Valores requeridos en tabla `configuracion`:
-```sql
-INSERT INTO configuracion (clave, valor, descripcion) VALUES
-('mp_access_token', 'TEST-xxxxxxxxx', 'Access Token de Mercado Pago'),
-('mp_modo_sandbox', 'true', 'Usar sandbox de Mercado Pago'),
-('mp_webhook_secret', 'your_webhook_secret', 'Webhook Secret de Mercado Pago'),
-('precio_membresia', '1500', 'Precio de la membresía en ARS');
-```
+Los precios de `productos.precio` están cargados **en dólares**. Mercado Pago cobra en ARS, así que
+la conversión se hace con el dólar blue (`https://dolarapi.com/v1/dolares/blue`, vía `lib/dolar.ts`).
+
+La cotización se resuelve **siempre en el servidor** (`create-preference` y `checkout/notify`).
+Nunca se acepta un precio ni una cotización enviados por el navegador: si vinieran del cliente,
+cualquiera podría editarlos para pagar menos. Si la API del dólar no responde, el pago se bloquea
+en lugar de cobrar un monto incorrecto.
+
+Cada pedido guarda `total_usd`, `cotizacion_dolar` y `moneda_origen` para poder auditar después
+con qué cotización se cobró.
 
 ## 🔐 Implementaciones de Seguridad Realizadas
 
