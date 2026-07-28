@@ -28,7 +28,8 @@ export function SectionsGrid() {
     async function fetchCategorias() {
       const { data } = await supabase
         .from('productos')
-        .select('categoria');
+        .select('categoria')
+        .eq('active', true);
 
       if (data) {
         const dbCats = [...new Set(data.map(p => p.categoria).filter(Boolean))] as string[];
@@ -51,6 +52,7 @@ export function SectionsGrid() {
         const { data, error } = await supabase
           .from('productos')
           .select('*')
+          .eq('active', true)
           .eq('categoria', categoriaActiva)
           .order('created_at', { ascending: false });
 

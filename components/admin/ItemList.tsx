@@ -11,6 +11,8 @@ interface Props {
   onEdit?: (item: any) => void;
 }
 
+const SOFT_DELETE_TABLES: Props['table'][] = ['productos', 'artistas'];
+
 export function ItemList({ table, title, refreshTrigger, onEdit }: Props) {
   const [items, setItems] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -18,10 +20,10 @@ export function ItemList({ table, title, refreshTrigger, onEdit }: Props) {
 
   const fetchItems = async () => {
     setLoading(true);
-    const { data } = await supabase
-      .from(table)
-      .select('*')
-      .order('created_at', { ascending: false });
+    let query = supabase.from(table).select('*');
+    // eventos no tiene columna `active`; el resto usa soft delete
+    if (SOFT_DELETE_TABLES.includes(table)) query = query.eq('active', true);
+    const { data } = await query.order('created_at', { ascending: false });
     setItems(data || []);
     setLoading(false);
   };
@@ -30,29 +32,25 @@ export function ItemList({ table, title, refreshTrigger, onEdit }: Props) {
     fetchItems();
   }, [table, refreshTrigger]);
 
-  const handleDelete = async (id: string, imageUrl: string) => {
+  const handleDelete = async (id: string) => {
     if (!confirm('¿Estás segura de desactivar este producto? Ya no será visible en la tienda.')) return;
-    
+
     setDeletingId(id);
-    
-    // 1. Desactivar en la tabla (soft delete)
-    const { error: dbError } = await supabase
+
+    // Soft delete: se marca inactivo y se deja de listar (acá y en la tienda pública).
+    // No se borra la imagen del storage para que la desactivación sea reversible.
+    const { data, error: dbError } = await supabase
       .from(table)
       .update({ active: false })
-      .eq('id', id);
-    
-    if (!dbError) {
-      // 2. Opcional: Borrar imagen del storage si es una URL de Supabase
-      if (imageUrl.includes('storage/v1/object/public/')) {
-        const bucketMatch = imageUrl.match(/\/storage\/v1\/object\/public\/([^/]+)\/(.+)/);
-        if (bucketMatch) {
-          const [, bucketName, filePath] = bucketMatch;
-          await supabase.storage.from(bucketName).remove([filePath]);
-        }
-      }
-      setItems(items.filter(item => item.id !== id));
+      .eq('id', id)
+      .select('id');
+
+    if (dbError) {
+      alert(`Error al eliminar: ${dbError.message}`);
+    } else if (!data || data.length === 0) {
+      alert('No se pudo eliminar: la fila no se actualizó (revisá permisos/RLS).');
     } else {
-      alert('Error al eliminar');
+      setItems(items.filter(item => item.id !== id));
     }
     setDeletingId(null);
   };
@@ -97,7 +95,7 @@ export function ItemList({ table, title, refreshTrigger, onEdit }: Props) {
               )}
               
               <button
-                onClick={() => handleDelete(item.id, item.imagen_url || (item.imagenes_urls && item.imagenes_urls[0]))}
+                onClick={() => handleDelete(item.id)}
                 disabled={deletingId === item.id}
                 className="p-2 sm:p-3 text-manso-cream/60 hover:text-manso-terra hover:bg-manso-cream/10 rounded-full transition-all flex-shrink-0"
               >

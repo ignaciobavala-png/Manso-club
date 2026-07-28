@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { CheckCircle, Clock, AlertCircle, MessageCircle } from 'lucide-react';
 import { useCart } from '@/store/useCart';
+import { ParticleBackground } from '@/components/Home/ParticleBackground';
 import { WHATSAPP_NUMBER } from '@/lib/constants';
 
 type Resultado = 'verificando' | 'aprobado' | 'confirmando' | 'no_aprobado' | 'desconocido';
@@ -82,34 +83,36 @@ function SuccessContent() {
 
   const contenido = {
     verificando: {
-      icono: <div className="w-10 h-10 border-2 border-zinc-300 border-t-manso-terra rounded-full animate-spin" />,
-      fondo: 'bg-zinc-100',
+      icono: (
+        <div className="w-10 h-10 border-2 border-manso-cream/20 border-t-manso-terra rounded-full animate-spin" />
+      ),
+      fondo: 'bg-manso-cream/5',
       titulo: 'Confirmando tu pago',
       texto: 'Estamos verificando el pago con Mercado Pago. Esto puede tardar unos segundos.',
     },
     aprobado: {
       icono: <CheckCircle className="w-10 h-10 text-manso-olive" />,
-      fondo: 'bg-manso-olive/15',
+      fondo: 'bg-manso-olive/20',
       titulo: '¡Pago confirmado!',
       texto: 'Recibimos tu pago. Te vamos a escribir para coordinar el envío de tu pedido.',
     },
     confirmando: {
       icono: <Clock className="w-10 h-10 text-manso-olive" />,
-      fondo: 'bg-manso-olive/15',
+      fondo: 'bg-manso-olive/20',
       titulo: 'Pago recibido',
       texto:
         'Mercado Pago nos informó que el pago salió bien y estamos terminando de acreditarlo. Te confirmamos por WhatsApp en breve.',
     },
     no_aprobado: {
       icono: <AlertCircle className="w-10 h-10 text-manso-terra" />,
-      fondo: 'bg-manso-terra/10',
+      fondo: 'bg-manso-terra/15',
       titulo: 'Todavía no pudimos confirmar el pago',
       texto:
         'No nos figura el pago acreditado. Si creés que ya pagaste, escribinos por WhatsApp y lo verificamos con vos.',
     },
     desconocido: {
-      icono: <AlertCircle className="w-10 h-10 text-zinc-400" />,
-      fondo: 'bg-zinc-100',
+      icono: <AlertCircle className="w-10 h-10 text-manso-cream/40" />,
+      fondo: 'bg-manso-cream/5',
       titulo: 'No encontramos el pedido',
       texto:
         'No pudimos identificar a qué compra corresponde esta página. Si hiciste un pago, escribinos y lo revisamos.',
@@ -117,45 +120,51 @@ function SuccessContent() {
   }[resultado];
 
   return (
-    <div className="min-h-screen bg-white py-12 px-6 sm:px-8 md:px-20 flex items-center">
-      <div className="max-w-xl mx-auto text-center">
-        <div className={`w-20 h-20 ${contenido.fondo} rounded-full flex items-center justify-center mx-auto mb-8`}>
-          {contenido.icono}
-        </div>
+    <div className="relative min-h-screen bg-manso-black">
+      <ParticleBackground />
 
-        <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tighter text-manso-black mb-4">
-          {contenido.titulo}
-        </h1>
-
-        <p className="text-base text-zinc-600 mb-6 leading-relaxed">{contenido.texto}</p>
-
-        {total !== null && resultado !== 'desconocido' && (
-          <div className="inline-flex items-center gap-3 bg-zinc-50 border border-zinc-200 rounded-xl px-6 py-3 mb-8">
-            <span className="text-xs uppercase tracking-wider text-zinc-500 font-bold">Total</span>
-            <span className="text-lg font-black text-manso-black">{formatArs(total)}</span>
+      <div className="relative z-10 min-h-screen flex items-center px-6 sm:px-8 md:px-16 py-32">
+        <div className="max-w-xl mx-auto text-center">
+          <div className={`w-20 h-20 ${contenido.fondo} rounded-full flex items-center justify-center mx-auto mb-8`}>
+            {contenido.icono}
           </div>
-        )}
 
-        {pedidoId && (
-          <p className="text-xs text-zinc-400 mb-8 font-mono">Pedido #{pedidoId.slice(0, 8)}</p>
-        )}
+          <h1 className="text-3xl sm:text-4xl font-black uppercase tracking-tighter text-manso-cream mb-4">
+            {contenido.titulo}
+          </h1>
 
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link
-            href="/tienda"
-            className="inline-flex items-center justify-center gap-3 bg-manso-black text-manso-cream px-10 py-5 text-xs font-black uppercase tracking-widest hover:bg-manso-brown transition-all rounded-full"
-          >
-            Volver a la Tienda
-          </Link>
-          <a
-            href={`https://wa.me/${WHATSAPP_NUMBER}`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center justify-center gap-2 border-2 border-zinc-200 text-zinc-600 px-10 py-5 text-xs font-black uppercase tracking-widest hover:border-manso-olive hover:text-manso-olive transition-all rounded-full"
-          >
-            <MessageCircle size={16} />
-            Escribinos
-          </a>
+          <p className="text-base text-manso-cream/60 mb-6 leading-relaxed">{contenido.texto}</p>
+
+          {total !== null && resultado !== 'desconocido' && (
+            <div className="inline-flex items-center gap-3 bg-manso-cream/5 border border-manso-cream/15 rounded-2xl px-6 py-3 mb-8">
+              <span className="text-[10px] uppercase tracking-widest text-manso-cream/40 font-black">
+                Total
+              </span>
+              <span className="text-lg font-black text-manso-cream">{formatArs(total)}</span>
+            </div>
+          )}
+
+          {pedidoId && (
+            <p className="text-xs text-manso-cream/30 mb-8 font-mono">Pedido #{pedidoId.slice(0, 8)}</p>
+          )}
+
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link
+              href="/tienda"
+              className="inline-flex items-center justify-center gap-3 bg-manso-terra text-manso-cream px-10 py-5 text-xs font-black uppercase tracking-widest hover:bg-manso-terra/80 transition-all rounded-full"
+            >
+              Volver a la Tienda
+            </Link>
+            <a
+              href={`https://wa.me/${WHATSAPP_NUMBER}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 border border-manso-cream/20 text-manso-cream px-10 py-5 text-xs font-black uppercase tracking-widest hover:bg-manso-cream/10 transition-all rounded-full"
+            >
+              <MessageCircle size={16} />
+              Escribinos
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -166,8 +175,8 @@ export default function CheckoutSuccessPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-white flex items-center justify-center">
-          <div className="w-10 h-10 border-2 border-zinc-300 border-t-manso-terra rounded-full animate-spin" />
+        <div className="min-h-screen bg-manso-black flex items-center justify-center">
+          <div className="w-10 h-10 border-2 border-manso-cream/20 border-t-manso-terra rounded-full animate-spin" />
         </div>
       }
     >

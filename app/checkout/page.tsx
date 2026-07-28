@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useCart } from '@/store/useCart';
 import { useCurrency } from '@/store/useCurrency';
+import { ParticleBackground } from '@/components/Home/ParticleBackground';
 import {
   ArrowLeft,
   CreditCard,
@@ -80,6 +81,16 @@ function validarCampo(campo: CampoForm, valor: string): string {
   }
 }
 
+/** Envuelve el contenido con el fondo de partículas del resto del sitio. */
+function CheckoutShell({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="relative min-h-screen bg-manso-black">
+      <ParticleBackground />
+      <div className="relative z-10 px-6 sm:px-8 md:px-16 pt-32 pb-24">{children}</div>
+    </div>
+  );
+}
+
 export default function CheckoutPage() {
   const { items, total, clearCart } = useCart();
   const { rate, fetchRate } = useCurrency();
@@ -143,12 +154,8 @@ export default function CheckoutPage() {
       maximumFractionDigits: 0,
     }).format(monto);
 
-  const precioArs = (precioUsd: number) => (rate ? Math.round(precioUsd * rate) : null);
-
-  const mostrarPrecio = (precioUsd: number) => {
-    const ars = precioArs(precioUsd);
-    return ars !== null ? formatArs(ars) : `USD $${precioUsd.toLocaleString('es-AR')}`;
-  };
+  const mostrarPrecio = (precioUsd: number) =>
+    rate ? formatArs(Math.round(precioUsd * rate)) : `USD $${precioUsd.toLocaleString('es-AR')}`;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -265,28 +272,28 @@ export default function CheckoutPage() {
 
   if (loadingConfig) {
     return (
-      <div className="min-h-screen bg-white py-12 px-8 md:px-20">
+      <CheckoutShell>
         <div className="max-w-2xl mx-auto text-center">
-          <div className="w-20 h-20 bg-zinc-100 rounded-full flex items-center justify-center mx-auto mb-8">
-            <div className="w-10 h-10 border-2 border-zinc-300 border-t-manso-terra rounded-full animate-spin" />
+          <div className="w-20 h-20 bg-manso-cream/5 rounded-full flex items-center justify-center mx-auto mb-8">
+            <div className="w-10 h-10 border-2 border-manso-cream/20 border-t-manso-terra rounded-full animate-spin" />
           </div>
-          <p className="text-lg text-zinc-600">Preparando tu checkout...</p>
+          <p className="text-lg text-manso-cream/60">Preparando tu checkout...</p>
         </div>
-      </div>
+      </CheckoutShell>
     );
   }
 
   if (pedidoConfirmado) {
     return (
-      <div className="min-h-screen bg-white py-12 px-8 md:px-20">
+      <CheckoutShell>
         <div className="max-w-2xl mx-auto text-center">
-          <div className="w-20 h-20 bg-manso-olive/15 rounded-full flex items-center justify-center mx-auto mb-8">
+          <div className="w-20 h-20 bg-manso-olive/20 rounded-full flex items-center justify-center mx-auto mb-8">
             <CheckCircle className="w-10 h-10 text-manso-olive" />
           </div>
-          <h1 className="text-4xl font-black uppercase tracking-tighter text-manso-black mb-4">
+          <h1 className="text-4xl font-black uppercase tracking-tighter text-manso-cream mb-4">
             ¡Pedido Recibido!
           </h1>
-          <p className="text-lg text-zinc-600 mb-8">
+          <p className="text-lg text-manso-cream/60 mb-8">
             Registramos tu pedido. Escribinos por WhatsApp para recibir los datos bancarios y
             coordinar el envío.
           </p>
@@ -295,52 +302,52 @@ export default function CheckoutPage() {
               href={pedidoConfirmado.mensajeWhatsapp}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-3 bg-manso-olive text-manso-cream px-10 py-5 text-xs font-black uppercase tracking-widest hover:opacity-90 transition-all rounded-full"
+              className="inline-flex items-center justify-center gap-3 bg-manso-olive text-manso-black px-10 py-5 text-xs font-black uppercase tracking-widest hover:opacity-90 transition-all rounded-full"
             >
               <MessageCircle size={18} />
               Continuar por WhatsApp
             </a>
             <Link
               href="/tienda"
-              className="inline-flex items-center justify-center gap-3 border-2 border-manso-black text-manso-black px-10 py-5 text-xs font-black uppercase tracking-widest hover:bg-manso-black hover:text-manso-cream transition-all rounded-full"
+              className="inline-flex items-center justify-center gap-3 border border-manso-cream/20 text-manso-cream px-10 py-5 text-xs font-black uppercase tracking-widest hover:bg-manso-cream/10 transition-all rounded-full"
             >
               Volver a la Tienda
             </Link>
           </div>
         </div>
-      </div>
+      </CheckoutShell>
     );
   }
 
   if (items.length === 0) {
     return (
-      <div className="min-h-screen bg-white py-12 px-8 md:px-20">
+      <CheckoutShell>
         <div className="max-w-2xl mx-auto text-center">
-          <div className="w-20 h-20 bg-zinc-100 rounded-full flex items-center justify-center mx-auto mb-8">
-            <ShoppingBag className="w-10 h-10 text-zinc-400" />
+          <div className="w-20 h-20 bg-manso-cream/5 rounded-full flex items-center justify-center mx-auto mb-8">
+            <ShoppingBag className="w-10 h-10 text-manso-cream/40" />
           </div>
-          <h1 className="text-4xl font-black uppercase tracking-tighter text-manso-black mb-4">
+          <h1 className="text-4xl font-black uppercase tracking-tighter text-manso-cream mb-4">
             Tu carrito está vacío
           </h1>
-          <p className="text-lg text-zinc-600 mb-8">
+          <p className="text-lg text-manso-cream/60 mb-8">
             Agregá productos desde la tienda para completar tu compra.
           </p>
           <Link
             href="/tienda"
-            className="inline-flex items-center gap-3 bg-manso-black text-manso-cream px-12 py-6 text-[10px] font-black uppercase tracking-widest hover:bg-manso-brown transition-all rounded-full"
+            className="inline-flex items-center gap-3 bg-manso-terra text-manso-cream px-12 py-6 text-[10px] font-black uppercase tracking-widest hover:bg-manso-terra/80 transition-all rounded-full"
           >
             Ir a la Tienda
           </Link>
         </div>
-      </div>
+      </CheckoutShell>
     );
   }
 
   const inputClass = (campo: CampoForm, conIcono = false) =>
-    `w-full ${conIcono ? 'pl-12' : 'pl-4'} pr-4 py-4 border rounded-xl focus:outline-none focus:ring-2 transition-all text-manso-black ${
+    `w-full ${conIcono ? 'pl-12' : 'pl-4'} pr-4 py-4 bg-manso-cream/10 border rounded-2xl outline-none transition-all text-manso-cream placeholder:text-manso-cream/30 focus:ring-2 ${
       errores[campo]
-        ? 'border-manso-terra focus:ring-manso-terra/40'
-        : 'border-zinc-300 focus:ring-manso-black/30 focus:border-transparent'
+        ? 'border-manso-terra focus:ring-manso-terra'
+        : 'border-manso-cream/20 focus:ring-manso-terra'
     }`;
 
   const MensajeError = ({ campo }: { campo: CampoForm }) =>
@@ -351,45 +358,49 @@ export default function CheckoutPage() {
       </p>
     ) : null;
 
+  const labelClass = 'block text-[10px] font-black uppercase tracking-widest text-manso-cream/50 mb-2';
+  const cardClass = 'bg-manso-cream/5 rounded-[32px] p-6 border border-manso-cream/10';
+
   return (
-    <div className="min-h-screen bg-white py-12 px-6 sm:px-8 md:px-20">
+    <CheckoutShell>
       <div className="max-w-5xl mx-auto">
         <div className="mb-10">
           <Link
             href="/tienda"
-            className="inline-flex items-center gap-2 text-zinc-500 hover:text-manso-black transition-colors mb-6 text-sm"
+            className="inline-flex items-center gap-2 text-manso-cream/50 hover:text-manso-cream transition-colors mb-6 text-sm"
           >
             <ArrowLeft size={18} />
             Seguir comprando
           </Link>
 
-          <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter text-manso-black mb-3">
+          <h1 className="text-4xl md:text-5xl font-black uppercase tracking-tighter text-manso-cream mb-3">
             Finalizar Compra
+            <span className="text-manso-cream/30 cursor-blink">_</span>
           </h1>
-          <p className="text-base text-zinc-500">
-            Completá tus datos y elegí cómo querés pagar.
+          <p className="text-sm text-manso-cream/50 italic">
+            completá tus datos y elegí cómo pagar
           </p>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_1fr] gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_1fr] gap-6 lg:gap-8">
           {/* Formulario */}
           <div>
             <form onSubmit={handleFormSubmit} className="space-y-6" noValidate>
-              <div className="bg-white rounded-2xl p-6 border border-zinc-200 shadow-sm">
+              <div className={cardClass}>
                 <div className="flex items-center gap-3 mb-6">
                   <User className="w-5 h-5 text-manso-terra" />
-                  <h2 className="text-xl font-black uppercase tracking-tighter text-manso-black">
+                  <h2 className="text-xl font-black uppercase tracking-tighter text-manso-cream">
                     Tus Datos
                   </h2>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
                   <div className="sm:col-span-2">
-                    <label htmlFor="nombre" className="block text-xs font-bold uppercase tracking-wider text-zinc-500 mb-2">
+                    <label htmlFor="nombre" className={labelClass}>
                       Nombre completo
                     </label>
                     <div className="relative">
-                      <User className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 w-5 h-5" />
+                      <User className="absolute left-4 top-1/2 -translate-y-1/2 text-manso-cream/30 w-5 h-5" />
                       <input
                         type="text"
                         id="nombre"
@@ -407,11 +418,11 @@ export default function CheckoutPage() {
                   </div>
 
                   <div>
-                    <label htmlFor="mail" className="block text-xs font-bold uppercase tracking-wider text-zinc-500 mb-2">
+                    <label htmlFor="mail" className={labelClass}>
                       Email
                     </label>
                     <div className="relative">
-                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 w-5 h-5" />
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-manso-cream/30 w-5 h-5" />
                       <input
                         type="email"
                         id="mail"
@@ -429,11 +440,11 @@ export default function CheckoutPage() {
                   </div>
 
                   <div>
-                    <label htmlFor="telefono" className="block text-xs font-bold uppercase tracking-wider text-zinc-500 mb-2">
+                    <label htmlFor="telefono" className={labelClass}>
                       Teléfono
                     </label>
                     <div className="relative">
-                      <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-400 w-5 h-5" />
+                      <Phone className="absolute left-4 top-1/2 -translate-y-1/2 text-manso-cream/30 w-5 h-5" />
                       <input
                         type="tel"
                         id="telefono"
@@ -451,7 +462,7 @@ export default function CheckoutPage() {
                   </div>
 
                   <div>
-                    <label htmlFor="dni" className="block text-xs font-bold uppercase tracking-wider text-zinc-500 mb-2">
+                    <label htmlFor="dni" className={labelClass}>
                       DNI
                     </label>
                     <input
@@ -471,7 +482,7 @@ export default function CheckoutPage() {
                   </div>
 
                   <div className="sm:col-span-2">
-                    <label htmlFor="direccion" className="block text-xs font-bold uppercase tracking-wider text-zinc-500 mb-2">
+                    <label htmlFor="direccion" className={labelClass}>
                       Dirección de entrega
                     </label>
                     <input
@@ -492,10 +503,10 @@ export default function CheckoutPage() {
               </div>
 
               {/* Método de pago */}
-              <div className="bg-white rounded-2xl p-6 border border-zinc-200 shadow-sm">
+              <div className={cardClass}>
                 <div className="flex items-center gap-3 mb-5">
                   <CreditCard className="w-5 h-5 text-manso-terra" />
-                  <h2 className="text-xl font-black uppercase tracking-tighter text-manso-black">
+                  <h2 className="text-xl font-black uppercase tracking-tighter text-manso-cream">
                     Método de Pago
                   </h2>
                 </div>
@@ -505,24 +516,24 @@ export default function CheckoutPage() {
                     type="button"
                     onClick={() => setMetodoPago('mercadopago')}
                     aria-pressed={metodoPago === 'mercadopago'}
-                    className={`w-full flex items-center gap-4 p-4 rounded-xl border-2 transition-all text-left ${
+                    className={`w-full flex items-center gap-4 p-4 rounded-2xl border transition-all text-left ${
                       metodoPago === 'mercadopago'
-                        ? 'border-[#009ee3] bg-[#009ee3]/5'
-                        : 'border-zinc-200 hover:border-zinc-300'
+                        ? 'border-[#009ee3] bg-[#009ee3]/10'
+                        : 'border-manso-cream/15 hover:border-manso-cream/30'
                     }`}
                   >
                     <div className="w-11 h-11 rounded-full bg-[#009ee3] flex items-center justify-center flex-shrink-0">
                       <CreditCard className="w-5 h-5 text-white" />
                     </div>
                     <div className="flex-1">
-                      <p className="font-bold text-manso-black text-sm">Mercado Pago</p>
-                      <p className="text-xs text-zinc-500">
+                      <p className="font-bold text-manso-cream text-sm">Mercado Pago</p>
+                      <p className="text-xs text-manso-cream/40">
                         Tarjeta de crédito, débito o dinero en cuenta
                       </p>
                     </div>
                     <div
                       className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                        metodoPago === 'mercadopago' ? 'border-[#009ee3]' : 'border-zinc-300'
+                        metodoPago === 'mercadopago' ? 'border-[#009ee3]' : 'border-manso-cream/30'
                       }`}
                     >
                       {metodoPago === 'mercadopago' && (
@@ -536,26 +547,26 @@ export default function CheckoutPage() {
                       type="button"
                       onClick={() => setMetodoPago('transferencia')}
                       aria-pressed={metodoPago === 'transferencia'}
-                      className={`w-full flex items-center gap-4 p-4 rounded-xl border-2 transition-all text-left ${
+                      className={`w-full flex items-center gap-4 p-4 rounded-2xl border transition-all text-left ${
                         metodoPago === 'transferencia'
-                          ? 'border-manso-black bg-zinc-50'
-                          : 'border-zinc-200 hover:border-zinc-300'
+                          ? 'border-manso-olive bg-manso-olive/10'
+                          : 'border-manso-cream/15 hover:border-manso-cream/30'
                       }`}
                     >
-                      <div className="w-11 h-11 rounded-full bg-manso-black flex items-center justify-center flex-shrink-0">
-                        <Landmark className="w-5 h-5 text-manso-cream" />
+                      <div className="w-11 h-11 rounded-full bg-manso-olive flex items-center justify-center flex-shrink-0">
+                        <Landmark className="w-5 h-5 text-manso-black" />
                       </div>
                       <div className="flex-1">
-                        <p className="font-bold text-manso-black text-sm">Transferencia bancaria</p>
-                        <p className="text-xs text-zinc-500">Coordinás el pago por WhatsApp</p>
+                        <p className="font-bold text-manso-cream text-sm">Transferencia bancaria</p>
+                        <p className="text-xs text-manso-cream/40">Coordinás el pago por WhatsApp</p>
                       </div>
                       <div
                         className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 ${
-                          metodoPago === 'transferencia' ? 'border-manso-black' : 'border-zinc-300'
+                          metodoPago === 'transferencia' ? 'border-manso-olive' : 'border-manso-cream/30'
                         }`}
                       >
                         {metodoPago === 'transferencia' && (
-                          <div className="w-2.5 h-2.5 rounded-full bg-manso-black" />
+                          <div className="w-2.5 h-2.5 rounded-full bg-manso-olive" />
                         )}
                       </div>
                     </button>
@@ -563,37 +574,37 @@ export default function CheckoutPage() {
                 </div>
 
                 {metodoPago === 'transferencia' && transferenciaDisponible && (
-                  <div className="mt-5 pt-5 border-t border-zinc-200 space-y-3 text-sm">
-                    <p className="text-xs text-zinc-500 uppercase tracking-wider font-bold mb-3">
+                  <div className="mt-5 pt-5 border-t border-manso-cream/10 space-y-3 text-sm">
+                    <p className="text-[10px] text-manso-cream/40 uppercase tracking-widest font-black mb-3">
                       Datos para transferir
                     </p>
                     <div className="flex justify-between gap-4">
-                      <span className="text-zinc-500">Banco</span>
-                      <span className="text-manso-black font-medium text-right">{config?.banco_nombre}</span>
+                      <span className="text-manso-cream/50">Banco</span>
+                      <span className="text-manso-cream font-medium text-right">{config?.banco_nombre}</span>
                     </div>
                     <div className="flex justify-between gap-4">
-                      <span className="text-zinc-500">CBU</span>
-                      <span className="text-manso-black font-mono text-xs text-right break-all">
+                      <span className="text-manso-cream/50">CBU</span>
+                      <span className="text-manso-cream font-mono text-xs text-right break-all">
                         {config?.banco_cbu}
                       </span>
                     </div>
                     {config?.banco_alias && (
                       <div className="flex justify-between gap-4">
-                        <span className="text-zinc-500">Alias</span>
-                        <span className="text-manso-black font-medium text-right">{config.banco_alias}</span>
+                        <span className="text-manso-cream/50">Alias</span>
+                        <span className="text-manso-cream font-medium text-right">{config.banco_alias}</span>
                       </div>
                     )}
                     <div className="flex justify-between gap-4">
-                      <span className="text-zinc-500">Titular</span>
-                      <span className="text-manso-black font-medium text-right">{config?.banco_titular}</span>
+                      <span className="text-manso-cream/50">Titular</span>
+                      <span className="text-manso-cream font-medium text-right">{config?.banco_titular}</span>
                     </div>
                     {config?.banco_cuit && (
                       <div className="flex justify-between gap-4">
-                        <span className="text-zinc-500">CUIT</span>
-                        <span className="text-manso-black font-medium text-right">{config.banco_cuit}</span>
+                        <span className="text-manso-cream/50">CUIT</span>
+                        <span className="text-manso-cream font-medium text-right">{config.banco_cuit}</span>
                       </div>
                     )}
-                    <p className="text-xs text-zinc-500 pt-3 border-t border-zinc-100">
+                    <p className="text-xs text-manso-cream/40 pt-3 border-t border-manso-cream/10">
                       Al confirmar te pasamos estos datos por WhatsApp junto con la cotización del envío.
                     </p>
                   </div>
@@ -601,16 +612,16 @@ export default function CheckoutPage() {
               </div>
 
               {error && (
-                <div className="bg-manso-terra/5 border border-manso-terra/30 rounded-xl p-4 flex items-start gap-3">
+                <div className="bg-manso-terra/10 border border-manso-terra/40 rounded-2xl p-4 flex items-start gap-3">
                   <AlertCircle className="w-5 h-5 text-manso-terra flex-shrink-0 mt-0.5" />
                   <p className="text-manso-terra text-sm font-medium">{error}</p>
                 </div>
               )}
 
               {metodoPago === 'mercadopago' && !rate && (
-                <div className="bg-manso-olive/10 border border-manso-olive/30 rounded-xl p-4 flex items-start gap-3">
+                <div className="bg-manso-olive/10 border border-manso-olive/40 rounded-2xl p-4 flex items-start gap-3">
                   <AlertCircle className="w-5 h-5 text-manso-olive flex-shrink-0 mt-0.5" />
-                  <p className="text-manso-brown text-sm">
+                  <p className="text-manso-cream/70 text-sm">
                     No pudimos obtener la cotización del dólar. Esperá unos segundos o escribinos por
                     WhatsApp para coordinar el pago.
                   </p>
@@ -620,15 +631,15 @@ export default function CheckoutPage() {
               <button
                 type="submit"
                 disabled={procesando || (metodoPago === 'mercadopago' && !rate)}
-                className={`w-full text-white py-5 rounded-2xl font-black uppercase tracking-wider transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3 ${
+                className={`w-full py-5 rounded-2xl font-black uppercase tracking-wider transition-all duration-300 disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-3 ${
                   metodoPago === 'mercadopago'
-                    ? 'bg-[#009ee3] hover:bg-[#0087c7]'
-                    : 'bg-manso-black hover:bg-manso-brown'
+                    ? 'bg-[#009ee3] text-white hover:bg-[#0087c7]'
+                    : 'bg-manso-terra text-manso-cream hover:bg-manso-terra/80'
                 }`}
               >
                 {procesando ? (
                   <>
-                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <div className="w-5 h-5 border-2 border-current border-t-transparent rounded-full animate-spin" />
                     {metodoPago === 'mercadopago' ? 'Redirigiendo...' : 'Procesando...'}
                   </>
                 ) : metodoPago === 'mercadopago' ? (
@@ -641,7 +652,7 @@ export default function CheckoutPage() {
                 )}
               </button>
 
-              <p className="text-center text-xs text-zinc-400">
+              <p className="text-center text-xs text-manso-cream/30">
                 Al confirmar aceptás que te contactemos para coordinar la entrega.
               </p>
             </form>
@@ -649,13 +660,13 @@ export default function CheckoutPage() {
 
           {/* Resumen */}
           <div className="lg:sticky lg:top-8 lg:self-start space-y-4">
-            <div className="bg-white rounded-2xl border border-zinc-200 shadow-sm overflow-hidden">
+            <div className="bg-manso-cream/5 rounded-[32px] border border-manso-cream/10 overflow-hidden">
               <div className="flex items-center gap-3 p-6 pb-4">
                 <ShoppingBag size={18} className="text-manso-terra" />
-                <h2 className="text-lg font-black uppercase tracking-tighter text-manso-black">
+                <h2 className="text-lg font-black uppercase tracking-tighter text-manso-cream">
                   Tu pedido
                 </h2>
-                <span className="ml-auto text-xs text-zinc-400 font-medium">
+                <span className="ml-auto text-[10px] text-manso-cream/40 uppercase tracking-widest font-bold">
                   {items.length} {items.length === 1 ? 'producto' : 'productos'}
                 </span>
               </div>
@@ -663,7 +674,7 @@ export default function CheckoutPage() {
               <div className="px-6 space-y-4">
                 {items.map((item) => (
                   <div key={item.id} className="flex gap-4 items-center">
-                    <div className="relative w-16 h-16 rounded-xl overflow-hidden bg-zinc-100 flex-shrink-0">
+                    <div className="relative w-16 h-16 rounded-2xl overflow-hidden bg-manso-cream/10 flex-shrink-0">
                       <img
                         src={item.imagenes_urls?.[0] || '/manso.png'}
                         alt={item.nombre}
@@ -672,53 +683,53 @@ export default function CheckoutPage() {
                           e.currentTarget.src = '/manso.png';
                         }}
                       />
-                      <span className="absolute -top-1 -right-1 w-5 h-5 bg-manso-black text-manso-cream text-[10px] font-bold rounded-full flex items-center justify-center">
+                      <span className="absolute -top-1 -right-1 w-5 h-5 bg-manso-terra text-manso-cream text-[10px] font-bold rounded-full flex items-center justify-center">
                         {item.quantity}
                       </span>
                     </div>
                     <div className="flex-1 min-w-0">
-                      <p className="font-bold text-manso-black text-sm leading-tight truncate">
+                      <p className="font-bold text-manso-cream text-sm leading-tight truncate">
                         {item.nombre}
                       </p>
-                      <p className="text-xs text-zinc-400 mt-0.5">
+                      <p className="text-xs text-manso-cream/40 mt-0.5">
                         {mostrarPrecio(item.precio)} c/u
                       </p>
                     </div>
-                    <p className="font-bold text-manso-black text-sm whitespace-nowrap">
+                    <p className="font-bold text-manso-cream text-sm whitespace-nowrap">
                       {mostrarPrecio(item.precio * item.quantity)}
                     </p>
                   </div>
                 ))}
               </div>
 
-              <div className="mt-6 p-6 bg-zinc-50 border-t border-zinc-100 space-y-3">
+              <div className="mt-6 p-6 bg-manso-black/40 border-t border-manso-cream/10 space-y-3">
                 <div className="flex justify-between text-sm">
-                  <span className="text-zinc-500">Subtotal</span>
-                  <span className="text-manso-black font-medium">
+                  <span className="text-manso-cream/50">Subtotal</span>
+                  <span className="text-manso-cream font-medium">
                     {totalArs !== null ? formatArs(totalArs) : '—'}
                   </span>
                 </div>
                 <div className="flex justify-between text-sm">
-                  <span className="text-zinc-500">Envío</span>
-                  <span className="text-zinc-500 text-right text-xs">Se cotiza por WhatsApp</span>
+                  <span className="text-manso-cream/50">Envío</span>
+                  <span className="text-manso-cream/40 text-right text-xs">Se cotiza por WhatsApp</span>
                 </div>
 
-                <div className="flex justify-between items-end pt-3 border-t border-zinc-200">
-                  <span className="text-sm font-black uppercase tracking-wider text-manso-black">
+                <div className="flex justify-between items-end pt-3 border-t border-manso-cream/10">
+                  <span className="text-sm font-black uppercase tracking-wider text-manso-cream">
                     Total
                   </span>
                   <div className="text-right">
-                    <p className="text-2xl font-black text-manso-black leading-none">
+                    <p className="text-2xl font-black text-manso-cream leading-none">
                       {totalArs !== null ? formatArs(totalArs) : '—'}
                     </p>
-                    <p className="text-xs text-zinc-400 mt-1">
+                    <p className="text-xs text-manso-cream/40 mt-1">
                       USD ${totalUsd.toLocaleString('es-AR')}
                     </p>
                   </div>
                 </div>
 
                 {rate && (
-                  <p className="text-[11px] text-zinc-400 leading-relaxed pt-2">
+                  <p className="text-[11px] text-manso-cream/30 leading-relaxed pt-2">
                     Los precios se publican en dólares y se cobran en pesos según la cotización del
                     dólar blue ({formatArs(rate)} por USD) al momento del pago.
                   </p>
@@ -726,16 +737,16 @@ export default function CheckoutPage() {
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl p-5 border border-zinc-200 space-y-3">
-              <div className="flex items-center gap-3 text-xs text-zinc-600">
+            <div className="bg-manso-cream/5 rounded-[32px] p-5 border border-manso-cream/10 space-y-3">
+              <div className="flex items-center gap-3 text-xs text-manso-cream/60">
                 <ShieldCheck size={15} className="text-manso-olive flex-shrink-0" />
                 <span>Pago procesado por Mercado Pago</span>
               </div>
-              <div className="flex items-center gap-3 text-xs text-zinc-600">
+              <div className="flex items-center gap-3 text-xs text-manso-cream/60">
                 <Truck size={15} className="text-manso-olive flex-shrink-0" />
                 <span>Envíos a todo el país{config?.tiempo_entrega ? ` · ${config.tiempo_entrega}` : ''}</span>
               </div>
-              <div className="flex items-center gap-3 text-xs text-zinc-600">
+              <div className="flex items-center gap-3 text-xs text-manso-cream/60">
                 <MessageCircle size={15} className="text-manso-olive flex-shrink-0" />
                 <span>Te acompañamos por WhatsApp hasta la entrega</span>
               </div>
@@ -745,7 +756,7 @@ export default function CheckoutPage() {
               href={`https://wa.me/${WHATSAPP_NUMBER}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full border border-zinc-200 text-zinc-600 py-3 rounded-xl text-xs font-bold uppercase tracking-wider hover:border-manso-olive hover:text-manso-olive transition-all flex items-center justify-center gap-2"
+              className="w-full border border-manso-cream/15 text-manso-cream/60 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:border-manso-olive hover:text-manso-olive transition-all flex items-center justify-center gap-2"
             >
               <MessageCircle size={15} />
               ¿Dudas? Escribinos
@@ -753,6 +764,6 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
-    </div>
+    </CheckoutShell>
   );
 }

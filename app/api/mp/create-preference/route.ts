@@ -40,10 +40,11 @@ export async function POST(request: NextRequest) {
     const { data: productos, error: productosError } = await supabase
       .from('productos')
       .select('id, nombre, precio, stock')
+      .eq('active', true)
       .in('id', ids);
 
     if (productosError || !productos || productos.length !== ids.length) {
-      return NextResponse.json({ error: 'Uno o más productos no existen' }, { status: 400 });
+      return NextResponse.json({ error: 'Uno o más productos ya no están disponibles' }, { status: 400 });
     }
 
     // Los precios de `productos` están en USD y Mercado Pago cobra en ARS.
