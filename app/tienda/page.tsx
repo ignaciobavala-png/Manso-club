@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 export const dynamic = 'force-dynamic';
 
 import { AdaptiveSectionLayout } from '@/components/ui/AdaptiveSectionLayout';
+import { ParticleBackground } from '@/components/Home/ParticleBackground';
 import { createSupabaseAnon, createSupabaseServer } from '@/lib/supabase';
 import { ProductCard } from '@/components/shop/ProductCard';
 import { CurrencyToggle } from '@/components/ui/CurrencyToggle';
@@ -57,10 +58,11 @@ export default async function TiendaPage() {
     supabase
       .from('productos')
       .select('*')
+      .eq('active', true)
       .in('visibilidad', nivelesVisibles)
       .order('created_at', { ascending: false }),
     nivel !== 'miembro'
-      ? supabase.from('productos').select('visibilidad')
+      ? supabase.from('productos').select('visibilidad').eq('active', true)
       : Promise.resolve({ data: [] }),
   ]);
 
@@ -70,7 +72,14 @@ export default async function TiendaPage() {
   );
 
   return (
-    <AdaptiveSectionLayout title="Tienda" subtitle="objetos curados / emprendedores locales">
+    <div className="relative min-h-screen bg-manso-black">
+      <ParticleBackground />
+
+      <AdaptiveSectionLayout
+        title="Tienda"
+        subtitle="objetos curados / emprendedores locales"
+        customBg="bg-transparent"
+      >
       <div className="flex justify-start mb-6">
         <CurrencyToggle />
       </div>
@@ -114,6 +123,7 @@ export default async function TiendaPage() {
           </Link>
         </div>
       )}
-    </AdaptiveSectionLayout>
+      </AdaptiveSectionLayout>
+    </div>
   );
 }

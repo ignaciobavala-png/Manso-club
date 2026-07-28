@@ -3,9 +3,11 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { ArrowLeft, ArrowRight, Plus, ShoppingBag, Check, Minus, Truck, Shield, RotateCcw, ArrowRight as CheckoutIcon } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Plus, ShoppingBag, Check, Minus, Truck, Shield, MessageCircle, ArrowRight as CheckoutIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useCart } from '@/store/useCart';
+import { useCurrency } from '@/store/useCurrency';
+import { ParticleBackground } from '@/components/Home/ParticleBackground';
 
 interface Producto {
   id: string;
@@ -26,12 +28,28 @@ export default function ProductoDetalle() {
   const [cantidad, setCantidad] = useState(1);
   const addItem = useCart((state) => state.addItem);
   const items = useCart((state) => state.items);
+  const { rate, fetchRate } = useCurrency();
+
+  useEffect(() => {
+    fetchRate();
+  }, [fetchRate]);
 
   useEffect(() => {
     if (params.id) {
       fetchProducto(params.id as string);
     }
   }, [params.id]);
+
+  // Los precios están cargados en USD; se muestran en pesos según el blue.
+  const mostrarPrecio = (precioUsd: number) =>
+    rate
+      ? new Intl.NumberFormat('es-AR', {
+          style: 'currency',
+          currency: 'ARS',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+        }).format(Math.round(precioUsd * rate))
+      : `USD $${precioUsd.toLocaleString('es-AR')}`;
 
   const fetchProducto = async (id: string) => {
     const { data, error } = await supabase
@@ -138,10 +156,10 @@ export default function ProductoDetalle() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-manso-black flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4"></div>
-          <p className="text-black/60">Cargando producto...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-manso-terra mx-auto mb-4"></div>
+          <p className="text-manso-cream/60">Cargando producto...</p>
         </div>
       </div>
     );
@@ -149,12 +167,14 @@ export default function ProductoDetalle() {
 
   if (!producto) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center">
+      <div className="min-h-screen bg-manso-black flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-black uppercase tracking-wider mb-4">Producto no encontrado</h1>
-          <Link 
+          <h1 className="text-2xl font-black uppercase tracking-wider mb-4 text-manso-cream">
+            Producto no encontrado
+          </h1>
+          <Link
             href="/tienda"
-            className="inline-flex items-center gap-2 bg-black text-white px-6 py-3 text-xs font-black uppercase tracking-widest hover:bg-gray-800 transition-all rounded-full"
+            className="inline-flex items-center gap-2 bg-manso-terra text-manso-cream px-6 py-3 text-xs font-black uppercase tracking-widest hover:bg-manso-terra/80 transition-all rounded-full"
           >
             <ArrowLeft size={16} />
             Volver a la tienda
@@ -175,22 +195,24 @@ export default function ProductoDetalle() {
         }
       `}</style>
       
-      <div className="min-h-screen bg-white">
+      <div className="relative min-h-screen bg-manso-black">
+        <ParticleBackground />
+
         {/* Navbar especial de producto - ÚNICO NAVBAR VISIBLE */}
-        <div className="sticky top-0 bg-white/95 backdrop-blur-sm border-b border-zinc-100 z-50">
+        <div className="sticky top-0 bg-manso-black/90 backdrop-blur-sm border-b border-manso-cream/10 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-8 md:px-20 py-3">
             <div className="flex items-center justify-between">
-              <Link 
+              <Link
                 href="/tienda"
-                className="inline-flex items-center gap-2 text-black hover:text-gray-600 transition-colors"
+                className="inline-flex items-center gap-2 text-manso-cream hover:text-manso-terra transition-colors"
               >
                 <ArrowLeft size={20} />
                 <span className="text-sm font-black uppercase tracking-wider">Volver</span>
               </Link>
-              
-              <Link 
+
+              <Link
                 href="/tienda"
-                className="inline-flex items-center gap-2 text-black hover:text-gray-600 transition-colors"
+                className="inline-flex items-center gap-2 text-manso-cream hover:text-manso-terra transition-colors"
               >
                 <span className="text-sm font-black uppercase tracking-wider">Ver tienda</span>
                 <ArrowRight size={20} />
@@ -200,13 +222,13 @@ export default function ProductoDetalle() {
         </div>
 
         {/* Contenido principal - Layout Compacto */}
-        <div className="max-w-7xl mx-auto px-4 sm:px-8 md:px-20 py-6">
+        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-8 md:px-20 py-6">
           <div className="grid lg:grid-cols-2 gap-6 lg:gap-12 min-h-[calc(100vh-6rem)] items-center">
           
           {/* Galería de imágenes - Compacta */}
           <div className="flex flex-col justify-center">
             <div className="max-w-md mx-auto w-full space-y-3">
-              <div className="aspect-square bg-zinc-50 rounded-[20px] overflow-hidden relative">
+              <div className="aspect-square bg-manso-cream/5 border border-manso-cream/10 rounded-[20px] overflow-hidden relative">
               <img 
                 src={currentImage}
                 alt={producto.nombre}
@@ -258,7 +280,7 @@ export default function ProductoDetalle() {
                     key={index}
                     onClick={() => setCurrentImageIndex(index)}
                     className={`flex-shrink-0 w-14 h-14 rounded-lg overflow-hidden border-2 transition-all ${
-                      index === currentImageIndex ? 'border-black' : 'border-transparent'
+                      index === currentImageIndex ? 'border-manso-terra' : 'border-transparent'
                     }`}
                   >
                     <img 
@@ -280,17 +302,23 @@ export default function ProductoDetalle() {
           <div className="flex flex-col justify-center space-y-6">
             {/* Título y precio - Compacto */}
             <div>
-              <h2 className="text-2xl md:text-3xl font-black italic uppercase tracking-tighter text-black leading-none mb-3">
+              <h2 className="text-2xl md:text-3xl font-black italic uppercase tracking-tighter text-manso-cream leading-none mb-3">
                 {producto.nombre}
               </h2>
-              <div className="flex items-baseline gap-3 mb-4">
-                <span className="text-2xl md:text-3xl font-black text-black">
-                  ${producto.precio}
+              <div className="flex items-baseline gap-3 mb-2">
+                <span className="text-2xl md:text-3xl font-black text-manso-cream">
+                  {mostrarPrecio(producto.precio)}
                 </span>
-                <span className="text-xs text-zinc-500 uppercase tracking-wider font-medium">
+                <span className="text-xs text-manso-cream/40 uppercase tracking-wider font-medium">
                   + envío
                 </span>
               </div>
+              {rate && (
+                <p className="text-[11px] text-manso-cream/30">
+                  USD ${producto.precio.toLocaleString('es-AR')} · cotización dólar blue $
+                  {rate.toLocaleString('es-AR')}
+                </p>
+              )}
             </div>
 
             {/* Stock y cantidad - Combinados */}
@@ -298,14 +326,14 @@ export default function ProductoDetalle() {
               {/* Stock indicator */}
               <div className="flex items-center gap-2">
                 <div className={`w-2 h-2 rounded-full ${producto.stock > 0 ? 'bg-green-500' : 'bg-red-500'}`}></div>
-                <span className="text-sm text-zinc-600">
+                <span className="text-sm text-manso-cream/60">
                   {producto.stock > 0 ? `${producto.stock} unidades disponibles` : 'Consultar disponibilidad'}
                 </span>
               </div>
 
               {/* Selector de cantidad */}
               <div className="flex items-center gap-3">
-                <span className="text-sm font-black uppercase tracking-wider text-zinc-400 min-w-[60px]">
+                <span className="text-sm font-black uppercase tracking-wider text-manso-cream/40 min-w-[60px]">
                   Cantidad
                 </span>
                 <button
@@ -313,14 +341,14 @@ export default function ProductoDetalle() {
                   disabled={producto.stock === 0 || cantidad <= 1}
                   className={`w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all ${
                     producto.stock === 0 || cantidad <= 1
-                      ? 'border-zinc-200 text-zinc-300 cursor-not-allowed'
-                      : 'border-black text-black hover:bg-black hover:text-white'
+                      ? 'border-manso-cream/15 text-manso-cream/25 cursor-not-allowed'
+                      : 'border-manso-cream/40 text-manso-cream hover:bg-manso-cream hover:text-manso-black'
                   }`}
                 >
                   <Minus size={18} />
                 </button>
                 
-                <span className="text-xl font-black text-black w-12 text-center">
+                <span className="text-xl font-black text-manso-cream w-12 text-center">
                   {cantidad}
                 </span>
                 
@@ -329,15 +357,15 @@ export default function ProductoDetalle() {
                   disabled={producto.stock === 0 || cantidad >= producto.stock}
                   className={`w-10 h-10 rounded-full border-2 flex items-center justify-center transition-all ${
                     producto.stock === 0 || cantidad >= producto.stock
-                      ? 'border-zinc-200 text-zinc-300 cursor-not-allowed'
-                      : 'border-black text-black hover:bg-black hover:text-white'
+                      ? 'border-manso-cream/15 text-manso-cream/25 cursor-not-allowed'
+                      : 'border-manso-cream/40 text-manso-cream hover:bg-manso-cream hover:text-manso-black'
                   }`}
                 >
                   <Plus size={18} />
                 </button>
                 
                 {producto.stock > 0 && (
-                  <span className="text-xs text-zinc-500">
+                  <span className="text-xs text-manso-cream/40">
                     ({producto.stock} disp.)
                   </span>
                 )}
@@ -346,7 +374,7 @@ export default function ProductoDetalle() {
 
             {/* Descripción resumida */}
             <div className="space-y-2">
-              <div className="line-clamp-2 text-sm leading-relaxed text-black/70">
+              <div className="line-clamp-2 text-sm leading-relaxed text-manso-cream/70">
                 {producto.descripcion || 'Edición limitada Manso_Club. Producto exclusivo con la calidad y diseño que nos caracteriza.'}
               </div>
             </div>
@@ -387,25 +415,25 @@ export default function ProductoDetalle() {
             </div>
 
             {/* Trust Signals - Discretos */}
-            <div className="pt-4 border-t border-zinc-100">
+            <div className="pt-4 border-t border-manso-cream/10">
               <div className="grid grid-cols-3 gap-4">
                 <div className="flex flex-col items-center gap-1">
-                  <div className="w-6 h-6 bg-zinc-100 rounded-full flex items-center justify-center">
-                    <Truck className="w-3 h-3 text-black" />
+                  <div className="w-6 h-6 bg-manso-cream/10 rounded-full flex items-center justify-center">
+                    <Truck className="w-3 h-3 text-manso-olive" />
                   </div>
-                  <span className="text-xs text-zinc-500 text-center">Envío todo país</span>
+                  <span className="text-xs text-manso-cream/50 text-center">Envío todo país</span>
                 </div>
                 <div className="flex flex-col items-center gap-1">
-                  <div className="w-6 h-6 bg-zinc-100 rounded-full flex items-center justify-center">
-                    <Shield className="w-3 h-3 text-black" />
+                  <div className="w-6 h-6 bg-manso-cream/10 rounded-full flex items-center justify-center">
+                    <Shield className="w-3 h-3 text-manso-olive" />
                   </div>
-                  <span className="text-xs text-zinc-500 text-center">Pago seguro</span>
+                  <span className="text-xs text-manso-cream/50 text-center">Pago seguro</span>
                 </div>
                 <div className="flex flex-col items-center gap-1">
-                  <div className="w-6 h-6 bg-zinc-100 rounded-full flex items-center justify-center">
-                    <RotateCcw className="w-3 h-3 text-black" />
+                  <div className="w-6 h-6 bg-manso-cream/10 rounded-full flex items-center justify-center">
+                    <MessageCircle className="w-3 h-3 text-manso-olive" />
                   </div>
-                  <span className="text-xs text-zinc-500 text-center">30 días devolución</span>
+                  <span className="text-xs text-manso-cream/50 text-center">Soporte WhatsApp</span>
                 </div>
               </div>
             </div>
