@@ -40,7 +40,17 @@ export type BloqueMailing =
   | { tipo: "boton"; texto: string; link: string; color?: string; separacion?: Separacion }
   | { tipo: "texto"; contenido: string }
   | { tipo: "canvas"; url: string; alt?: string; hotspots: Hotspot[] }
-  | { tipo: "canvas-procesado"; rows: SliceRow[]; alt?: string };
+  | { tipo: "canvas-procesado"; rows: SliceRow[]; alt?: string }
+  | {
+      tipo: "redes";
+      items: ItemRed[];
+      /** "iconos" dibuja la imagen de cada ítem; "texto" dibuja su etiqueta. */
+      modo?: "iconos" | "texto";
+      separacion?: Separacion;
+    };
+
+/** Un link del pie: red social, web o contacto. */
+export type ItemRed = { etiqueta: string; link: string; icono?: string };
 
 interface CampaniaGenericaProps {
   asunto: string;
@@ -179,6 +189,62 @@ export default function CampaniaGenerica({ asunto, bloques, unsubscribeUrl, colo
                     ))}
                   </tbody>
                 </table>
+              );
+            }
+            // Fila de links (redes, web, contacto). Cada ítem es su propia
+            // imagen con su propio <a>, así que NO hace falta recortar nada:
+            // el recorte solo es necesario cuando varios links viven dentro de
+            // una misma pieza gráfica. Sin recorte no hay costuras posibles.
+            //
+            // Va como tabla y no como flex/inline-block: Outlook ignora ambos y
+            // apilaría los iconos uno debajo del otro.
+            if (bloque.tipo === "redes") {
+              const items = bloque.items.filter((it) => it.link.trim());
+              if (items.length === 0) return null;
+              const px = PX_POR_SEPARACION[bloque.separacion ?? "normal"];
+              const porIconos = (bloque.modo ?? "iconos") === "iconos";
+
+              return (
+                <Section key={i} style={{ padding: `${px}px 20px` }}>
+                  <table
+                    role="presentation"
+                    cellPadding={0}
+                    cellSpacing={0}
+                    border={0}
+                    align="center"
+                    style={{ margin: "0 auto", borderCollapse: "collapse" }}
+                  >
+                    <tbody>
+                      <tr>
+                        {items.map((it, n) => (
+                          <td key={n} style={{ padding: "0 8px", verticalAlign: "middle" }}>
+                            <a
+                              href={it.link.trim()}
+                              target="_blank"
+                              style={{
+                                color: colorPie,
+                                textDecoration: porIconos ? "none" : "underline",
+                                fontSize: "13px",
+                              }}
+                            >
+                              {porIconos && it.icono ? (
+                                <img
+                                  src={it.icono}
+                                  alt={it.etiqueta}
+                                  width="28"
+                                  height="28"
+                                  style={{ display: "block", border: 0, width: "28px", height: "28px" }}
+                                />
+                              ) : (
+                                it.etiqueta
+                              )}
+                            </a>
+                          </td>
+                        ))}
+                      </tr>
+                    </tbody>
+                  </table>
+                </Section>
               );
             }
             if (bloque.tipo === "boton") {

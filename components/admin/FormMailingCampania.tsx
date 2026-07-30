@@ -20,6 +20,7 @@ import {
   Eye,
   Monitor,
   Smartphone,
+  Share2,
 } from 'lucide-react';
 
 type Separacion = 'pegado' | 'poco' | 'normal' | 'mucho';
@@ -33,10 +34,13 @@ type Separacion = 'pegado' | 'poco' | 'normal' | 'mucho';
  * (Gmail lo hace por defecto con remitentes nuevos), son seleccionables y
  * bajan la puntuación de spam de un mail que si no sería 100% imagen.
  */
+type ItemRed = { etiqueta: string; link: string; icono: string };
+
 type BloqueEditor =
   | { tipo: 'canvas'; url: string; alt: string; hotspots: Hotspot[] }
   | { tipo: 'boton'; texto: string; link: string; color: string; separacion: Separacion }
-  | { tipo: 'texto'; contenido: string };
+  | { tipo: 'texto'; contenido: string }
+  | { tipo: 'redes'; items: ItemRed[]; modo: 'iconos' | 'texto'; separacion: Separacion };
 
 const SEPARACIONES: { id: Separacion; label: string }[] = [
   { id: 'pegado', label: 'Pegado al bloque anterior' },
@@ -50,8 +54,22 @@ const bloqueNuevo = (tipo: BloqueEditor['tipo']): BloqueEditor => {
     return { tipo: 'boton', texto: '', link: '', color: '#BC2915', separacion: 'normal' };
   }
   if (tipo === 'texto') return { tipo: 'texto', contenido: '' };
+  if (tipo === 'redes') {
+    return {
+      tipo: 'redes',
+      items: [{ etiqueta: '', link: '', icono: '' }],
+      modo: 'iconos',
+      separacion: 'normal',
+    };
+  }
   return { tipo: 'canvas', url: '', alt: '', hotspots: [] };
 };
+
+/**
+ * Acepta http(s), mailto: y tel:. Los dos últimos importan en el pie: en el
+ * celular, tocar un `tel:` abre el teléfono y un `mailto:` el cliente de correo.
+ */
+const LINK_VALIDO = /^(https?:\/\/.+|mailto:[^\s@]+@[^\s@]+\.[^\s@]+|tel:\+?[\d\s()-]{6,})$/i;
 
 const FONDO_DEFAULT = '#FFFCDC';
 
@@ -275,6 +293,37 @@ export function FormMailingCampania({ onSaved }: Props) {
 
   const eliminarBloque = (i: number) => setBloques(bloques.filter((_, idx) => idx !== i));
 
+  /** Edita un ítem dentro de un bloque de redes (índice de bloque + de ítem). */
+  const actualizarItemRed = (i: number, k: number, patch: Partial<ItemRed>) => {
+    setBloques(
+      bloques.map((b, idx) =>
+        idx === i && b.tipo === 'redes'
+          ? { ...b, items: b.items.map((it, j) => (j === k ? { ...it, ...patch } : it)) }
+          : b
+      )
+    );
+  };
+
+  const agregarItemRed = (i: number) => {
+    setBloques(
+      bloques.map((b, idx) =>
+        idx === i && b.tipo === 'redes'
+          ? { ...b, items: [...b.items, { etiqueta: '', link: '', icono: '' }] }
+          : b
+      )
+    );
+  };
+
+  const eliminarItemRed = (i: number, k: number) => {
+    setBloques(
+      bloques.map((b, idx) =>
+        idx === i && b.tipo === 'redes'
+          ? { ...b, items: b.items.filter((_, j) => j !== k) }
+          : b
+      )
+    );
+  };
+
   const moverBloque = (i: number, dir: -1 | 1) => {
     const j = i + dir;
     if (j < 0 || j >= bloques.length) return;
@@ -310,6 +359,20 @@ export function FormMailingCampania({ onSaved }: Props) {
         };
       }
       if (b.tipo === 'texto') return { tipo: 'texto', contenido: b.contenido.trim() };
+      if (b.tipo === 'redes') {
+        return {
+          tipo: 'redes',
+          modo: b.modo,
+          separacion: b.separacion,
+          items: b.items
+            .filter((it) => it.link.trim())
+            .map((it) => ({
+              etiqueta: it.etiqueta.trim(),
+              link: it.link.trim(),
+              icono: it.icono || undefined,
+            })),
+        };
+      }
       return {
         tipo: 'canvas',
         url: b.url,
@@ -366,19 +429,34 @@ export function FormMailingCampania({ onSaved }: Props) {
       if (b.tipo === 'canvas') {
         if (!b.url) return `El bloque ${n} es una imagen sin subir`;
         for (const hs of b.hotspots) {
-          if (!/^https?:\/\/.+/.test(hs.link.trim())) {
-            return `Hay una zona sin link válido en el bloque ${n} (tiene que empezar con https://)`;
+          if (!LINK_VALIDO.test(hs.link.trim())) {
+            return `Hay una zona sin link válido en el bloque ${n} (https://..., mailto: o tel:)`;
           }
         }
       }
       if (b.tipo === 'boton') {
         if (!b.texto.trim()) return `El botón del bloque ${n} no tiene texto`;
-        if (!/^https?:\/\/.+/.test(b.link.trim())) {
-          return `El botón del bloque ${n} necesita un link válido (https://...)`;
+        if (!LINK_VALIDO.test(b.link.trim())) {
+          return `El botón del bloque ${n} necesita un link válido (https://..., mailto: o tel:)`;
         }
       }
       if (b.tipo === 'texto' && !b.contenido.trim()) {
         return `El texto del bloque ${n} está vacío`;
+      }
+      if (b.tipo === 'redes') {
+        const conLink = b.items.filter((it) => it.link.trim());
+        if (conLink.length === 0) return `El bloque ${n} (redes) no tiene ningún link cargado`;
+        for (const it of conLink) {
+          if (!LINK_VALIDO.test(it.link.trim())) {
+            return `"${it.link.trim()}" del bloque ${n} no es válido (https://..., mailto: o tel:)`;
+          }
+          if (!it.etiqueta.trim()) {
+            return `Falta el nombre de un ítem del bloque ${n} — se usa como texto alternativo`;
+          }
+          if (b.modo === 'iconos' && !it.icono) {
+            return `Falta subir el ícono de "${it.etiqueta.trim()}" en el bloque ${n}`;
+          }
+        }
       }
     }
     if (audiencia === 'especifico') {
@@ -556,6 +634,7 @@ export function FormMailingCampania({ onSaved }: Props) {
                 {bloque.tipo === 'canvas' && <><ImageIcon size={12} /> Imagen</>}
                 {bloque.tipo === 'boton' && <><MousePointerClick size={12} /> Botón</>}
                 {bloque.tipo === 'texto' && <><TypeIcon size={12} /> Texto</>}
+                {bloque.tipo === 'redes' && <><Share2 size={12} /> Redes / Contacto</>}
                 <span className="text-manso-cream/25">bloque {i + 1}</span>
                 {bloque.tipo === 'canvas' && bloque.hotspots.length > 0 && (
                   <span className="flex items-center gap-1 text-manso-terra">
@@ -643,6 +722,91 @@ export function FormMailingCampania({ onSaved }: Props) {
               </div>
             )}
 
+            {bloque.tipo === 'redes' && (
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <select
+                    value={bloque.modo}
+                    onChange={(e) => actualizarBloque(i, { modo: e.target.value })}
+                    className="flex-1 bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-2 text-xs text-manso-cream focus:outline-none focus:border-manso-terra"
+                  >
+                    <option value="iconos" className="bg-manso-black">Mostrar iconos</option>
+                    <option value="texto" className="bg-manso-black">Mostrar nombres (se ven sin imágenes)</option>
+                  </select>
+                  <select
+                    value={bloque.separacion}
+                    onChange={(e) => actualizarBloque(i, { separacion: e.target.value })}
+                    className="flex-1 bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-2 text-xs text-manso-cream focus:outline-none focus:border-manso-terra"
+                  >
+                    {SEPARACIONES.map((s) => (
+                      <option key={s.id} value={s.id} className="bg-manso-black">{s.label}</option>
+                    ))}
+                  </select>
+                </div>
+
+                {bloque.items.map((item, k) => (
+                  <div key={k} className="flex items-start gap-2 bg-manso-cream/5 rounded-lg p-2">
+                    {bloque.modo === 'iconos' && (
+                      <div className="w-16 shrink-0">
+                        {item.icono ? (
+                          <div className="relative">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <img src={item.icono} alt="" className="w-14 h-14 object-contain rounded bg-manso-cream/10" />
+                            <button
+                              onClick={() => actualizarItemRed(i, k, { icono: '' })}
+                              className="absolute -top-1 -right-1 bg-manso-black rounded-full p-0.5 text-manso-cream/60 hover:text-red-400"
+                            >
+                              <X size={11} />
+                            </button>
+                          </div>
+                        ) : (
+                          <CompactImageUploader
+                            bucket="emails"
+                            onUpload={(url) => actualizarItemRed(i, k, { icono: url })}
+                            height="h-14"
+                          />
+                        )}
+                      </div>
+                    )}
+                    <div className="flex-1 space-y-1.5 min-w-0">
+                      <input
+                        value={item.etiqueta}
+                        onChange={(e) => actualizarItemRed(i, k, { etiqueta: e.target.value })}
+                        placeholder="Nombre. Ej: Instagram"
+                        className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-1.5 text-xs text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra"
+                      />
+                      <input
+                        value={item.link}
+                        onChange={(e) => actualizarItemRed(i, k, { link: e.target.value })}
+                        placeholder="https://instagram.com/... · mailto:hola@... · tel:+5411..."
+                        className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-1.5 text-xs text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra"
+                      />
+                    </div>
+                    <button
+                      onClick={() => eliminarItemRed(i, k)}
+                      disabled={bloque.items.length === 1}
+                      className="p-1 text-manso-cream/40 hover:text-red-400 disabled:opacity-20 shrink-0"
+                    >
+                      <Trash2 size={12} />
+                    </button>
+                  </div>
+                ))}
+
+                <button
+                  onClick={() => agregarItemRed(i)}
+                  className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-manso-cream/5 hover:bg-manso-cream/10 text-manso-cream/60 text-[9px] font-black uppercase tracking-widest transition-colors"
+                >
+                  <Plus size={11} /> Agregar link
+                </button>
+
+                <p className="text-[9px] text-manso-cream/40">
+                  Se dibujan en fila, centrados. Cada uno es su propia imagen con su propio
+                  link, así que no hace falta recortar nada. Los iconos van en PNG con fondo
+                  transparente, de unos 120px.
+                </p>
+              </div>
+            )}
+
             {bloque.tipo === 'texto' && (
               <textarea
                 value={bloque.contenido}
@@ -655,7 +819,7 @@ export function FormMailingCampania({ onSaved }: Props) {
           </div>
         ))}
 
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
           <button
             onClick={() => agregarBloque('canvas')}
             className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-manso-cream/5 hover:bg-manso-cream/10 text-manso-cream/70 text-[9px] font-black uppercase tracking-widest transition-colors"
@@ -673,6 +837,12 @@ export function FormMailingCampania({ onSaved }: Props) {
             className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-manso-cream/5 hover:bg-manso-cream/10 text-manso-cream/70 text-[9px] font-black uppercase tracking-widest transition-colors"
           >
             <Plus size={12} /> Texto
+          </button>
+          <button
+            onClick={() => agregarBloque('redes')}
+            className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-manso-cream/5 hover:bg-manso-cream/10 text-manso-cream/70 text-[9px] font-black uppercase tracking-widest transition-colors"
+          >
+            <Plus size={12} /> Redes
           </button>
         </div>
       </div>
