@@ -17,6 +17,16 @@ export interface CampaniaRow {
 
 const BATCH_SIZE = 100;
 
+// Resend limita a 10 req/s por equipo, pero en la campaña del 2026-07-29
+// (920 destinatarios, 10 lotes disparados sin pausa) 7 de los 10 lotes
+// volvieron con error y 620 personas nunca recibieron el mail. Mandar los
+// lotes espaciados cuesta ~3s extra en una campaña de mil y saca al envío
+// del borde del límite.
+const DELAY_ENTRE_LOTES_MS = 350;
+const MAX_INTENTOS = 3;
+
+const dormir = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 /**
  * Reclamo atómico: pasa la campaña a 'enviada' solo si sigue en
  * 'borrador' o 'programada'. Si dos disparadores compiten por la misma
@@ -54,7 +64,7 @@ export async function reclamarCampania(
 export async function enviarCampania(
   supabase: SupabaseClient,
   campania: CampaniaRow
-): Promise<{ enviados: number; fallidos: number }> {
+): Promise<{ enviados: number; fallidos: number; errorDetalle: string | null }> {
   const destinatarios = await resolverAudiencia(
     supabase,
     campania.audiencia as Audiencia,
@@ -69,32 +79,65 @@ export async function enviarCampania(
   const unsubscribeUrl = (email: string) =>
     `${siteUrl}/api/mailing/unsubscribe?email=${encodeURIComponent(email)}`;
 
-  const envios: { destinatario: string; estado: string; resend_id: string | null }[] = [];
+  const envios: {
+    destinatario: string;
+    estado: string;
+    resend_id: string | null;
+    error_detalle: string | null;
+  }[] = [];
 
   for (let i = 0; i < destinatarios.length; i += BATCH_SIZE) {
+    if (i > 0) await dormir(DELAY_ENTRE_LOTES_MS);
+
     const lote = destinatarios.slice(i, i + BATCH_SIZE);
+    const payload = lote.map((email) => ({
+      from: EMAIL_FROM,
+      to: email,
+      subject: campania.asunto,
+      react: CampaniaGenerica({
+        asunto: campania.asunto,
+        bloques,
+        unsubscribeUrl: unsubscribeUrl(email),
+        colorFondo: campania.color_fondo ?? undefined,
+        preheader: campania.preheader ?? undefined,
+      }),
+    }));
+
     // Segunda capa de seguridad además del reclamo atómico: si por lo que
-    // sea este lote se reintentara (timeout de red, bug futuro), Resend
-    // reconoce la misma idempotencyKey dentro de 24hs y no reenvía.
-    const { data, error } = await resend.batch.send(
-      lote.map((email) => ({
-        from: EMAIL_FROM,
-        to: email,
-        subject: campania.asunto,
-        react: CampaniaGenerica({
-          asunto: campania.asunto,
-          bloques,
-          unsubscribeUrl: unsubscribeUrl(email),
-          colorFondo: campania.color_fondo ?? undefined,
-          preheader: campania.preheader ?? undefined,
-        }),
-      })),
-      { idempotencyKey: `mailing-${campania.id}-batch-${i}` }
-    );
+    // sea este lote se reintentara (timeout de red, rate limit, bug futuro),
+    // Resend reconoce la misma idempotencyKey dentro de 24hs y no reenvía.
+    // Por eso reintentar el mismo lote es seguro: nadie recibe dos veces.
+    const idempotencyKey = `mailing-${campania.id}-batch-${i}`;
+
+    let data: { data: { id: string }[] } | null = null;
+    let error: { name: string; message: string } | null = null;
+
+    for (let intento = 1; intento <= MAX_INTENTOS; intento++) {
+      ({ data, error } = await resend.batch.send(payload, { idempotencyKey }));
+      if (!error) break;
+      console.error(
+        `[mailing] campaña ${campania.id} lote ${i} intento ${intento}/${MAX_INTENTOS}: ${error.name} — ${error.message}`
+      );
+      // Backoff exponencial: 0.5s, 1s. Suficiente para atravesar una ráfaga
+      // de rate limit sin estirar el envío más allá del maxDuration de 300s.
+      if (intento < MAX_INTENTOS) await dormir(500 * 2 ** (intento - 1));
+    }
 
     const loteEnvios = error
-      ? lote.map((email) => ({ destinatario: email, estado: "failed", resend_id: null }))
-      : (data?.data ?? []).map((r, idx) => ({ destinatario: lote[idx], estado: "enviado", resend_id: r.id }));
+      ? lote.map((email) => ({
+          // 'no_enviado', no 'failed': Resend nunca aceptó este mail, así que
+          // esta persona no recibió nada y se le puede reenviar sin duplicar.
+          destinatario: email,
+          estado: "no_enviado",
+          resend_id: null,
+          error_detalle: `${error.name}: ${error.message}`,
+        }))
+      : (data?.data ?? []).map((r, idx) => ({
+          destinatario: lote[idx],
+          estado: "enviado",
+          resend_id: r.id,
+          error_detalle: null,
+        }));
 
     // Insertar cada lote apenas se manda, no acumular hasta el final: el
     // webhook de Resend puede llegar (delivered/bounced) mientras todavía
@@ -107,6 +150,7 @@ export async function enviarCampania(
         destinatario: e.destinatario,
         estado: e.estado,
         resend_id: e.resend_id,
+        error_detalle: e.error_detalle,
       }))
     );
 
@@ -118,8 +162,14 @@ export async function enviarCampania(
     .update({ sent_at: new Date().toISOString() })
     .eq("id", campania.id);
 
+  const noEnviados = envios.filter((e) => e.estado === "no_enviado");
+
   return {
     enviados: envios.filter((e) => e.estado === "enviado").length,
-    fallidos: envios.filter((e) => e.estado === "failed").length,
+    fallidos: noEnviados.length,
+    // El motivo del primer lote caído, para que el admin vea qué pasó sin
+    // tener que abrir los logs de Vercel. Antes el error se descartaba y una
+    // campaña podía perder 620 destinatarios sin dejar rastro.
+    errorDetalle: noEnviados[0]?.error_detalle ?? null,
   };
 }
