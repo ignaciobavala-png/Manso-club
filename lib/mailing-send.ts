@@ -17,11 +17,19 @@ export interface CampaniaRow {
 
 const BATCH_SIZE = 100;
 
-// Resend limita a 10 req/s por equipo, pero en la campaña del 2026-07-29
-// (920 destinatarios, 10 lotes disparados sin pausa) 7 de los 10 lotes
-// volvieron con error y 620 personas nunca recibieron el mail. Mandar los
-// lotes espaciados cuesta ~3s extra en una campaña de mil y saca al envío
-// del borde del límite.
+// Higiene contra el rate limit de Resend (10 req/s por equipo): espaciar los
+// lotes cuesta ~3s extra en una campaña de mil y saca al envío del borde.
+//
+// OJO — esto NO fue lo que rompió la campaña del 2026-07-29 (920 destinatarios,
+// 620 sin recibir). Esa falló por la CUOTA DIARIA del plan free de Resend:
+// 100 mails/día. Confirmado por el header `x-resend-daily-quota`, que la API
+// solo devuelve a cuentas free. Ningún throttle arregla una cuota — se arregla
+// pasando la cuenta a un plan pago. Si vuelven a perderse envíos en masa,
+// chequear la cuota ANTES de tocar este código:
+//   curl -s -D - -X POST https://api.resend.com/emails/batch -H "Authorization: Bearer $KEY" \
+//     -H "Content-Type: application/json" \
+//     -d '[{"from":"...","to":["delivered@resend.dev"],"subject":"t","html":"<p>t</p>"}]' \
+//     | grep -i 'quota\|ratelimit'
 const DELAY_ENTRE_LOTES_MS = 350;
 const MAX_INTENTOS = 3;
 
