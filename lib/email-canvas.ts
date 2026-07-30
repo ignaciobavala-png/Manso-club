@@ -7,6 +7,40 @@ const ANCHO_MAIL = 600;
 // Cortes más finos que esto (en %) se fusionan para evitar rebanadas de 1px.
 const EPSILON = 0.5;
 
+/**
+ * Ancho mínimo de una columna, en píxeles del mail. Por debajo de esto la
+ * columna se fusiona con su vecina.
+ *
+ * Por qué existe: cada celda se renderiza con `width:100%; height:auto`, así que
+ * el cliente de correo calcula su altura con SU propia escala. Una columna
+ * angosta redondea mucho peor que una ancha y las alturas dejan de coincidir.
+ *
+ * Caso real (campaña 2026-07-29): una zona clickeable dibujada desde x=1.31% en
+ * vez de 0 dejó una columna residual de 25px. Renderizada daba 8px (escala
+ * 0.3200) contra 592px de la columna ancha (escala 0.3124): 162px de alto
+ * contra 158px. La fila toma la altura de la más alta y debajo de la otra
+ * quedaba un hueco de 4px por el que se veía el fondo crema del mail,
+ * atravesando el arte negro de lado a lado.
+ */
+const MIN_COL_PX = 12;
+const MIN_COL_PCT = (MIN_COL_PX / ANCHO_MAIL) * 100; // 2%
+
+/**
+ * Zonas dibujadas casi pegadas al borde se pegan al borde. Nadie marca a mano
+ * un rectángulo exacto de 0% a 100%, y ese margen involuntario es justo lo que
+ * genera la columna residual. Ampliar el área clickeable unos píxeles no tiene
+ * ningún costo: el link ya cubría prácticamente todo el ancho.
+ */
+function pegarABordes(hotspots: Hotspot[]): Hotspot[] {
+  return hotspots.map((hs) => {
+    const x0 = clamp(hs.x);
+    const x1 = clamp(hs.x + hs.w);
+    const izq = x0 < MIN_COL_PCT ? 0 : x0;
+    const der = x1 > 100 - MIN_COL_PCT ? 100 : x1;
+    return { ...hs, x: izq, w: der - izq };
+  });
+}
+
 export type { Hotspot };
 
 const clamp = (v: number) => Math.min(100, Math.max(0, v));
@@ -47,6 +81,24 @@ function cortes(valores: number[]): number[] {
   return resultado;
 }
 
+/**
+ * Cortes de columna, descartando los que dejarían una columna más angosta que
+ * MIN_COL_PCT. Una columna finita escala con un factor muy distinto al de sus
+ * vecinas y rompe la alineación de alturas de toda la fila (ver MIN_COL_PX).
+ * Perder el corte solo agranda o achica unos píxeles el área clickeable.
+ */
+function cortesColumnas(valores: number[]): number[] {
+  const base = cortes(valores);
+  const out: number[] = [base[0]];
+  for (let i = 1; i < base.length - 1; i++) {
+    const anchoIzq = base[i] - out[out.length - 1];
+    const anchoDer = 100 - base[i];
+    if (anchoIzq >= MIN_COL_PCT && anchoDer >= MIN_COL_PCT) out.push(base[i]);
+  }
+  out.push(base[base.length - 1]);
+  return out;
+}
+
 /** Hotspot que cubre por completo la banda [y0, y1). */
 function hotspotEnBanda(hotspots: Hotspot[], y0: number, y1: number): Hotspot[] {
   return hotspots.filter((hs) => clamp(hs.y) <= y0 + EPSILON && clamp(hs.y + hs.h) >= y1 - EPSILON);
@@ -63,8 +115,9 @@ export async function cortarImagenConHotspots(
   campaniaId: string,
   bloqueIdx: number,
   url: string,
-  hotspots: Hotspot[]
+  hotspotsCrudos: Hotspot[]
 ): Promise<SliceRow[]> {
+  const hotspots = pegarABordes(hotspotsCrudos);
   const res = await fetch(url);
   if (!res.ok) throw new Error(`No se pudo descargar la imagen del canvas (${res.status})`);
   const original = Buffer.from(await res.arrayBuffer());
@@ -92,12 +145,12 @@ export async function cortarImagenConHotspots(
     const y1 = filasY[r + 1];
     const enBanda = hotspotEnBanda(hotspots, y0, y1);
     const columnasX = enBanda.length
-      ? cortes(enBanda.flatMap((hs) => [hs.x, hs.x + hs.w]))
+      ? cortesColumnas(enBanda.flatMap((hs) => [hs.x, hs.x + hs.w]))
       : [0, 100];
     bandas.push({ y0, y1, enBanda, columnasX });
   }
 
-  const masterX = cortes(bandas.flatMap((b) => b.columnasX));
+  const masterX = cortesColumnas(bandas.flatMap((b) => b.columnasX));
   const idxMaster = (v: number) => {
     let mejor = 0;
     let dist = Infinity;
@@ -155,7 +208,19 @@ export async function cortarImagenConHotspots(
         (hs) => clamp(hs.x) <= x0 + EPSILON && clamp(hs.x + hs.w) >= x1 - EPSILON
       );
 
+      // Color promedio de la rebanada, para pintar el <td> que la contiene.
+      // Es la segunda línea de defensa: aunque el cliente de correo redondee
+      // las alturas y quede un hueco de 1px, ahí se ve este color en vez del
+      // fondo del mail, así que la costura no se nota.
+      const [r, g, b] = await sharp(slice)
+        .resize(1, 1, { fit: "fill" })
+        .removeAlpha()
+        .raw()
+        .toBuffer();
+      const bg = `#${[r, g, b].map((v) => v.toString(16).padStart(2, "0")).join("")}`;
+
       cells.push({
+        bg,
         url: urlDominioPropio(data.publicUrl),
         width: cellRight - cellLeft,
         link: dueno?.link ?? null,

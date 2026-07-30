@@ -24,7 +24,14 @@ export type Hotspot = { x: number; y: number; w: number; h: number; link: string
 
 // Rebanadas generadas al enviar (ver lib/email-canvas.ts). `colspan` ubica la
 // celda dentro de la grilla maestra de columnas compartida por todas las filas.
-export type SliceCell = { url: string; width: number; link: string | null; colspan?: number };
+export type SliceCell = {
+  url: string;
+  width: number;
+  link: string | null;
+  colspan?: number;
+  /** Color promedio de la rebanada; pinta el <td> para tapar costuras de 1px. */
+  bg?: string;
+};
 export type SliceRow = { cells: SliceCell[] };
 
 export type BloqueMailing =
@@ -136,7 +143,17 @@ export default function CampaniaGenerica({ asunto, bloques, unsubscribeUrl, colo
                             key={c}
                             width={cell.width}
                             colSpan={cell.colspan ?? 1}
-                            style={{ padding: 0, lineHeight: 0, fontSize: 0, verticalAlign: "top" }}
+                            // bgcolor (atributo legacy) además del style: Outlook
+                            // ignora backgroundColor en <td> en varios modos.
+                            // Va por spread porque no está en los tipos de React.
+                            {...{ bgcolor: cell.bg }}
+                            style={{
+                              padding: 0,
+                              lineHeight: 0,
+                              fontSize: 0,
+                              verticalAlign: "top",
+                              backgroundColor: cell.bg,
+                            }}
                           >
                             {cell.link ? (
                               <a href={cell.link} target="_blank" style={{ display: "block" }}>
