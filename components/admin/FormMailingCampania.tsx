@@ -16,9 +16,39 @@ import {
   CheckCircle,
   CalendarClock,
   X,
+  Type as TypeIcon,
 } from 'lucide-react';
 
-type CanvasBloque = { url: string; alt: string; hotspots: Hotspot[] };
+type Separacion = 'pegado' | 'poco' | 'normal' | 'mucho';
+
+/**
+ * Bloques que se pueden apilar en el mail. `canvas` es una pieza gráfica con
+ * zonas clickeables dibujadas encima; `boton` y `texto` son HTML real.
+ *
+ * Preferir botón y texto HTML sobre dibujarlos dentro de la imagen: no se
+ * pueden romper al recortar, se leen aunque el cliente bloquee las imágenes
+ * (Gmail lo hace por defecto con remitentes nuevos), son seleccionables y
+ * bajan la puntuación de spam de un mail que si no sería 100% imagen.
+ */
+type BloqueEditor =
+  | { tipo: 'canvas'; url: string; alt: string; hotspots: Hotspot[] }
+  | { tipo: 'boton'; texto: string; link: string; color: string; separacion: Separacion }
+  | { tipo: 'texto'; contenido: string };
+
+const SEPARACIONES: { id: Separacion; label: string }[] = [
+  { id: 'pegado', label: 'Pegado al bloque anterior' },
+  { id: 'poco', label: 'Poco aire' },
+  { id: 'normal', label: 'Aire normal' },
+  { id: 'mucho', label: 'Mucho aire' },
+];
+
+const bloqueNuevo = (tipo: BloqueEditor['tipo']): BloqueEditor => {
+  if (tipo === 'boton') {
+    return { tipo: 'boton', texto: '', link: '', color: '#BC2915', separacion: 'normal' };
+  }
+  if (tipo === 'texto') return { tipo: 'texto', contenido: '' };
+  return { tipo: 'canvas', url: '', alt: '', hotspots: [] };
+};
 
 const FONDO_DEFAULT = '#FFFCDC';
 
@@ -222,27 +252,28 @@ export function FormMailingCampania({ onSaved }: Props) {
   const [preheader, setPreheader] = useState('');
   const [audiencia, setAudiencia] = useState<Audiencia>('newsletter');
   const [mailsEspecificos, setMailsEspecificos] = useState('');
-  const [canvases, setCanvases] = useState<CanvasBloque[]>([]);
+  const [bloques, setBloques] = useState<BloqueEditor[]>([]);
   const [colorFondo, setColorFondo] = useState(FONDO_DEFAULT);
   const [scheduledAt, setScheduledAt] = useState('');
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const agregarImagen = () => setCanvases([...canvases, { url: '', alt: '', hotspots: [] }]);
+  const agregarBloque = (tipo: BloqueEditor['tipo']) =>
+    setBloques([...bloques, bloqueNuevo(tipo)]);
 
-  const actualizarCanvas = (i: number, patch: Partial<CanvasBloque>) => {
-    setCanvases(canvases.map((c, idx) => (idx === i ? { ...c, ...patch } : c)));
+  const actualizarBloque = (i: number, patch: Record<string, unknown>) => {
+    setBloques(bloques.map((b, idx) => (idx === i ? ({ ...b, ...patch } as BloqueEditor) : b)));
   };
 
-  const eliminarCanvas = (i: number) => setCanvases(canvases.filter((_, idx) => idx !== i));
+  const eliminarBloque = (i: number) => setBloques(bloques.filter((_, idx) => idx !== i));
 
-  const moverCanvas = (i: number, dir: -1 | 1) => {
+  const moverBloque = (i: number, dir: -1 | 1) => {
     const j = i + dir;
-    if (j < 0 || j >= canvases.length) return;
-    const copia = [...canvases];
+    if (j < 0 || j >= bloques.length) return;
+    const copia = [...bloques];
     [copia[i], copia[j]] = [copia[j], copia[i]];
-    setCanvases(copia);
+    setBloques(copia);
   };
 
   const resetForm = () => {
@@ -250,7 +281,7 @@ export function FormMailingCampania({ onSaved }: Props) {
     setPreheader('');
     setAudiencia('newsletter');
     setMailsEspecificos('');
-    setCanvases([]);
+    setBloques([]);
     setColorFondo(FONDO_DEFAULT);
     setScheduledAt('');
   };
@@ -267,13 +298,25 @@ export function FormMailingCampania({ onSaved }: Props) {
     if (preheader.trim().toLowerCase() === asunto.trim().toLowerCase()) {
       return 'El pre-header no puede repetir el asunto — escribí un texto que lo complemente';
     }
-    if (canvases.length === 0) return 'Agregá al menos una imagen';
-    if (canvases.some((c) => !c.url)) return 'Hay una imagen sin subir';
-    for (const c of canvases) {
-      for (const hs of c.hotspots) {
-        if (!/^https?:\/\/.+/.test(hs.link.trim())) {
-          return 'Todas las zonas marcadas necesitan un link válido (https://...)';
+    if (bloques.length === 0) return 'Agregá al menos un bloque';
+    for (const [i, b] of bloques.entries()) {
+      const n = i + 1;
+      if (b.tipo === 'canvas') {
+        if (!b.url) return `El bloque ${n} es una imagen sin subir`;
+        for (const hs of b.hotspots) {
+          if (!/^https?:\/\/.+/.test(hs.link.trim())) {
+            return `Hay una zona sin link válido en el bloque ${n} (tiene que empezar con https://)`;
+          }
         }
+      }
+      if (b.tipo === 'boton') {
+        if (!b.texto.trim()) return `El botón del bloque ${n} no tiene texto`;
+        if (!/^https?:\/\/.+/.test(b.link.trim())) {
+          return `El botón del bloque ${n} necesita un link válido (https://...)`;
+        }
+      }
+      if (b.tipo === 'texto' && !b.contenido.trim()) {
+        return `El texto del bloque ${n} está vacío`;
       }
     }
     if (audiencia === 'especifico') {
@@ -306,12 +349,25 @@ export function FormMailingCampania({ onSaved }: Props) {
       scheduledIso = fecha.toISOString();
     }
 
-    const bloques = canvases.map((c) => ({
-      tipo: 'canvas',
-      url: c.url,
-      alt: c.alt,
-      hotspots: c.hotspots.map((hs) => ({ ...hs, link: hs.link.trim() })),
-    }));
+    // Los tipos coinciden con los que renderiza emails/campania-generica.tsx
+    const bloquesDb = bloques.map((b) => {
+      if (b.tipo === 'boton') {
+        return {
+          tipo: 'boton',
+          texto: b.texto.trim(),
+          link: b.link.trim(),
+          color: b.color,
+          separacion: b.separacion,
+        };
+      }
+      if (b.tipo === 'texto') return { tipo: 'texto', contenido: b.contenido.trim() };
+      return {
+        tipo: 'canvas',
+        url: b.url,
+        alt: b.alt,
+        hotspots: b.hotspots.map((hs) => ({ ...hs, link: hs.link.trim() })),
+      };
+    });
 
     setLoading(true);
     setErrorMsg(null);
@@ -320,7 +376,7 @@ export function FormMailingCampania({ onSaved }: Props) {
         asunto,
         preheader: preheader.trim(),
         audiencia,
-        bloques,
+        bloques: bloquesDb,
         estado: programar ? 'programada' : 'borrador',
         color_fondo: colorFondo,
         scheduled_at: scheduledIso,
@@ -351,7 +407,7 @@ export function FormMailingCampania({ onSaved }: Props) {
           Nueva Campaña
         </h2>
         <p className="text-xs text-manso-cream/60">
-          Subí el arte del mail y marcá dónde se clickea — el botón va dibujado en la imagen.
+          Armá el mail apilando bloques: imágenes, botones y textos.
         </p>
       </div>
 
@@ -441,59 +497,140 @@ export function FormMailingCampania({ onSaved }: Props) {
 
       <div className="space-y-3">
         <label className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40 block">
-          Imágenes del mail
+          Contenido del mail
         </label>
+        <p className="text-[9px] text-manso-cream/40 -mt-2">
+          Apilá bloques en el orden en que van a aparecer. Para los botones principales usá
+          el bloque <strong className="text-manso-cream/70">Botón</strong> en vez de dibujarlos
+          dentro de la imagen: se ven aunque Gmail bloquee las imágenes y nunca se cortan.
+        </p>
 
-        {canvases.map((canvas, i) => (
+        {bloques.map((bloque, i) => (
           <div key={i} className="bg-manso-cream/5 border border-manso-cream/10 rounded-xl p-3 space-y-2">
             <div className="flex items-center justify-between">
               <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/50 flex items-center gap-1.5">
-                <ImageIcon size={12} /> Imagen {i + 1}
-                {canvas.hotspots.length > 0 && (
+                {bloque.tipo === 'canvas' && <><ImageIcon size={12} /> Imagen</>}
+                {bloque.tipo === 'boton' && <><MousePointerClick size={12} /> Botón</>}
+                {bloque.tipo === 'texto' && <><TypeIcon size={12} /> Texto</>}
+                <span className="text-manso-cream/25">bloque {i + 1}</span>
+                {bloque.tipo === 'canvas' && bloque.hotspots.length > 0 && (
                   <span className="flex items-center gap-1 text-manso-terra">
-                    <MousePointerClick size={12} /> {canvas.hotspots.length}{' '}
-                    {canvas.hotspots.length === 1 ? 'zona' : 'zonas'}
+                    <MousePointerClick size={12} /> {bloque.hotspots.length}{' '}
+                    {bloque.hotspots.length === 1 ? 'zona' : 'zonas'}
                   </span>
                 )}
               </span>
               <div className="flex items-center gap-1">
-                <button onClick={() => moverCanvas(i, -1)} disabled={i === 0} className="p-1 text-manso-cream/40 hover:text-manso-cream disabled:opacity-20">
+                <button onClick={() => moverBloque(i, -1)} disabled={i === 0} className="p-1 text-manso-cream/40 hover:text-manso-cream disabled:opacity-20">
                   <ArrowUp size={12} />
                 </button>
-                <button onClick={() => moverCanvas(i, 1)} disabled={i === canvases.length - 1} className="p-1 text-manso-cream/40 hover:text-manso-cream disabled:opacity-20">
+                <button onClick={() => moverBloque(i, 1)} disabled={i === bloques.length - 1} className="p-1 text-manso-cream/40 hover:text-manso-cream disabled:opacity-20">
                   <ArrowDown size={12} />
                 </button>
-                <button onClick={() => eliminarCanvas(i)} className="p-1 text-manso-cream/40 hover:text-red-400">
+                <button onClick={() => eliminarBloque(i)} className="p-1 text-manso-cream/40 hover:text-red-400">
                   <Trash2 size={12} />
                 </button>
               </div>
             </div>
 
-            {!canvas.url ? (
-              <CompactImageUploader bucket="emails" onUpload={(url) => actualizarCanvas(i, { url })} height="h-24" />
-            ) : (
-              <CanvasHotspots
-                url={canvas.url}
-                hotspots={canvas.hotspots}
-                onChange={(hotspots) => actualizarCanvas(i, { hotspots })}
-              />
+            {bloque.tipo === 'canvas' && (
+              <>
+                {!bloque.url ? (
+                  <CompactImageUploader bucket="emails" onUpload={(url) => actualizarBloque(i, { url })} height="h-24" />
+                ) : (
+                  <CanvasHotspots
+                    url={bloque.url}
+                    hotspots={bloque.hotspots}
+                    onChange={(hotspots) => actualizarBloque(i, { hotspots })}
+                  />
+                )}
+                <input
+                  value={bloque.alt}
+                  onChange={(e) => actualizarBloque(i, { alt: e.target.value })}
+                  placeholder="Texto alternativo (accesibilidad)"
+                  className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-1.5 text-xs text-manso-cream placeholder:text-manso-cream/30 focus:outline-none"
+                />
+              </>
             )}
 
-            <input
-              value={canvas.alt}
-              onChange={(e) => actualizarCanvas(i, { alt: e.target.value })}
-              placeholder="Texto alternativo (accesibilidad)"
-              className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-1.5 text-xs text-manso-cream placeholder:text-manso-cream/30 focus:outline-none"
-            />
+            {bloque.tipo === 'boton' && (
+              <div className="space-y-2">
+                <input
+                  value={bloque.texto}
+                  onChange={(e) => actualizarBloque(i, { texto: e.target.value })}
+                  placeholder="Texto del botón. Ej: SUMATE :)"
+                  className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-2 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra"
+                />
+                <input
+                  value={bloque.link}
+                  onChange={(e) => actualizarBloque(i, { link: e.target.value })}
+                  placeholder="https://mansoclub.com.ar/membresias"
+                  className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-2 text-xs text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra"
+                />
+                <div className="flex items-center gap-2">
+                  <input
+                    type="color"
+                    value={bloque.color}
+                    onChange={(e) => actualizarBloque(i, { color: e.target.value })}
+                    className="h-9 w-14 bg-transparent border border-manso-cream/10 rounded-lg cursor-pointer"
+                    title="Color del botón"
+                  />
+                  <select
+                    value={bloque.separacion}
+                    onChange={(e) => actualizarBloque(i, { separacion: e.target.value as Separacion })}
+                    className="flex-1 bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-2 text-xs text-manso-cream focus:outline-none focus:border-manso-terra"
+                  >
+                    {SEPARACIONES.map((s) => (
+                      <option key={s.id} value={s.id} className="bg-manso-black">
+                        {s.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                {/* Vista previa aproximada de cómo lo va a dibujar el mail */}
+                <div className="rounded-lg p-3 flex justify-center" style={{ backgroundColor: colorFondo }}>
+                  <span
+                    className="inline-block rounded-md px-8 py-3 text-sm"
+                    style={{ background: bloque.color, color: '#FFFCDC' }}
+                  >
+                    {bloque.texto.trim() || 'Texto del botón'}
+                  </span>
+                </div>
+              </div>
+            )}
+
+            {bloque.tipo === 'texto' && (
+              <textarea
+                value={bloque.contenido}
+                onChange={(e) => actualizarBloque(i, { contenido: e.target.value })}
+                rows={4}
+                placeholder="Escribí el texto del mail. Se ve aunque las imágenes estén bloqueadas."
+                className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-2 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra resize-y"
+              />
+            )}
           </div>
         ))}
 
-        <button
-          onClick={agregarImagen}
-          className="w-full flex items-center justify-center gap-1.5 py-2 rounded-lg bg-manso-cream/5 hover:bg-manso-cream/10 text-manso-cream/70 text-[9px] font-black uppercase tracking-widest transition-colors"
-        >
-          <Plus size={12} /> Agregar imagen
-        </button>
+        <div className="grid grid-cols-3 gap-2">
+          <button
+            onClick={() => agregarBloque('canvas')}
+            className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-manso-cream/5 hover:bg-manso-cream/10 text-manso-cream/70 text-[9px] font-black uppercase tracking-widest transition-colors"
+          >
+            <Plus size={12} /> Imagen
+          </button>
+          <button
+            onClick={() => agregarBloque('boton')}
+            className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-manso-terra/20 hover:bg-manso-terra/30 text-manso-cream text-[9px] font-black uppercase tracking-widest transition-colors"
+          >
+            <Plus size={12} /> Botón
+          </button>
+          <button
+            onClick={() => agregarBloque('texto')}
+            className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-manso-cream/5 hover:bg-manso-cream/10 text-manso-cream/70 text-[9px] font-black uppercase tracking-widest transition-colors"
+          >
+            <Plus size={12} /> Texto
+          </button>
+        </div>
       </div>
 
       <div>

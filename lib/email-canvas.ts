@@ -7,6 +7,7 @@ const ANCHO_MAIL = 600;
 // Cortes más finos que esto (en %) se fusionan para evitar rebanadas de 1px.
 const EPSILON = 0.5;
 
+
 /**
  * Ancho mínimo de una columna, en píxeles del mail. Por debajo de esto la
  * columna se fusiona con su vecina.
@@ -99,6 +100,82 @@ function cortesColumnas(valores: number[]): number[] {
   return out;
 }
 
+/**
+ * "Ruido" de cada fila de píxeles: max - min sobre una versión angosta y en
+ * grises de la imagen. Una fila de fondo liso da ~0; una fila que cruza un
+ * botón blanco sobre negro da ~255.
+ */
+async function ruidoPorFila(original: Buffer, H: number): Promise<number[]> {
+  const ANCHO_MUESTRA = 120;
+  const { data } = await sharp(original)
+    .removeAlpha()
+    .greyscale()
+    .resize(ANCHO_MUESTRA, H, { fit: "fill" })
+    .raw()
+    .toBuffer({ resolveWithObject: true });
+
+  const ruido = new Array<number>(H);
+  for (let y = 0; y < H; y++) {
+    let min = 255;
+    let max = 0;
+    const base = y * ANCHO_MUESTRA;
+    for (let x = 0; x < ANCHO_MUESTRA; x++) {
+      const v = data[base + x];
+      if (v < min) min = v;
+      if (v > max) max = v;
+    }
+    ruido[y] = max - min;
+  }
+  return ruido;
+}
+
+// Una fila con menos de este contraste se considera "lisa": cortar ahí no parte
+// ningún elemento gráfico.
+const UMBRAL_FILA_LISA = 10;
+
+/**
+ * Corre los bordes verticales de cada zona clickeable hasta la fila lisa más
+ * cercana, para que el corte no pase por el medio de un botón.
+ *
+ * Por qué: arriba y abajo de un corte las columnas de la grilla son distintas
+ * (una banda con hotspots se parte en columnas, la vecina no), así que el
+ * contenido que cruza el corte cae en una grilla de subpíxel distinta y aparece
+ * un escalón de 1px. Sobre la pastilla blanca de un botón se ve como un
+ * mordisco en el borde redondeado.
+ *
+ * Corriendo el corte a una fila lisa (fondo plano), el escalón sigue existiendo
+ * pero ocurre donde no hay nada que dibujar, así que es invisible. Además
+ * agranda ligeramente el área clickeable, que no molesta.
+ */
+function pegarAFilasLisas(hotspots: Hotspot[], ruido: number[], H: number): Hotspot[] {
+  const VENTANA = Math.round(H * 0.025);
+
+  /** Fila lisa más cercana a `y`, o `y` si no hay ninguna en la ventana. */
+  const filaLisa = (y: number, haciaAfuera: -1 | 1): number => {
+    for (let d = 0; d <= VENTANA; d++) {
+      // Preferir moverse hacia afuera del hotspot: agrandar el área nunca
+      // recorta el botón, achicarla sí podría.
+      for (const cand of [y + haciaAfuera * d, y - haciaAfuera * d]) {
+        if (cand < 0 || cand >= H) continue;
+        if (ruido[cand] <= UMBRAL_FILA_LISA) return cand;
+      }
+    }
+    return y;
+  };
+
+  return hotspots.map((hs) => {
+    const yTop = Math.round((clamp(hs.y) / 100) * H);
+    const yBot = Math.round((clamp(hs.y + hs.h) / 100) * H);
+    const top = filaLisa(yTop, -1);
+    // +1 porque el recorte es [top, bot), o sea que la última fila incluida es
+    // bot-1. Sin esto la banda terminaba justo ANTES de la fila lisa y se
+    // llevaba el borde antialiasado del botón, dejando una línea clara colgando.
+    const bot = filaLisa(yBot, 1) + 1;
+    if (bot - top < 1 || bot > H) return hs;
+    return { ...hs, y: (top / H) * 100, h: ((bot - top) / H) * 100 };
+  });
+}
+
 /** Hotspot que cubre por completo la banda [y0, y1). */
 function hotspotEnBanda(hotspots: Hotspot[], y0: number, y1: number): Hotspot[] {
   return hotspots.filter((hs) => clamp(hs.y) <= y0 + EPSILON && clamp(hs.y + hs.h) >= y1 - EPSILON);
@@ -117,7 +194,6 @@ export async function cortarImagenConHotspots(
   url: string,
   hotspotsCrudos: Hotspot[]
 ): Promise<SliceRow[]> {
-  const hotspots = pegarABordes(hotspotsCrudos);
   const res = await fetch(url);
   if (!res.ok) throw new Error(`No se pudo descargar la imagen del canvas (${res.status})`);
   const original = Buffer.from(await res.arrayBuffer());
@@ -126,6 +202,16 @@ export async function cortarImagenConHotspots(
   const W = meta.width ?? 0;
   const H = meta.height ?? 0;
   if (!W || !H) throw new Error("No se pudieron leer las dimensiones de la imagen");
+
+  // Ajustes de geometría, en este orden: primero pegar los bordes laterales
+  // (elimina columnas residuales que desalinean las alturas de la fila) y
+  // después correr los bordes verticales a filas lisas (evita que el corte
+  // parta un botón al medio y deje un escalón en su contorno).
+  const hotspots = pegarAFilasLisas(
+    pegarABordes(hotspotsCrudos),
+    await ruidoPorFila(original, H),
+    H
+  );
 
   // PNG conserva transparencia; el resto va a JPEG.
   const esPng = meta.format === "png";
@@ -208,11 +294,17 @@ export async function cortarImagenConHotspots(
         (hs) => clamp(hs.x) <= x0 + EPSILON && clamp(hs.x + hs.w) >= x1 - EPSILON
       );
 
-      // Color promedio de la rebanada, para pintar el <td> que la contiene.
-      // Es la segunda línea de defensa: aunque el cliente de correo redondee
-      // las alturas y quede un hueco de 1px, ahí se ve este color en vez del
-      // fondo del mail, así que la costura no se nota.
+      // Color del BORDE INFERIOR de la rebanada, para pintar el <td>. Es la
+      // segunda línea de defensa: si el cliente de correo redondea las alturas
+      // y queda un hueco de 1px debajo de la imagen, ahí se ve este color en
+      // vez del fondo del mail.
+      //
+      // Va el borde inferior y no el promedio de la rebanada: el hueco aparece
+      // ABAJO, así que tiene que continuar lo que hay al pie. Con el promedio,
+      // la celda de un botón blanco pintaba el hueco de blanco y dejaba una
+      // línea clara colgando bajo la pastilla.
       const [r, g, b] = await sharp(slice)
+        .extract({ left: 0, top: bottom - top - 1, width: right - left, height: 1 })
         .resize(1, 1, { fit: "fill" })
         .removeAlpha()
         .raw()

@@ -1,3 +1,4 @@
+import React from "react";
 import {
   Body,
   Button,
@@ -199,9 +200,24 @@ export default function CampaniaGenerica({ asunto, bloques, unsubscribeUrl, colo
                 </Section>
               );
             }
+            // Un <Text> por párrafo: en un solo bloque los saltos de línea se
+            // colapsan y el texto queda en un chorizo corrido.
             return (
               <Section key={i} style={{ padding: "10px 20px" }}>
-                <Text style={{ color: colorPie, fontSize: "16px" }}>{bloque.contenido}</Text>
+                {bloque.contenido
+                  .split(/\n{2,}/)
+                  .map((parrafo) => parrafo.trim())
+                  .filter(Boolean)
+                  .map((parrafo, p) => (
+                    <Text key={p} style={{ color: colorPie, fontSize: "16px", lineHeight: "1.5" }}>
+                      {parrafo.split("\n").map((linea, l, todas) => (
+                        <React.Fragment key={l}>
+                          {linea}
+                          {l < todas.length - 1 && <br />}
+                        </React.Fragment>
+                      ))}
+                    </Text>
+                  ))}
               </Section>
             );
           })}
