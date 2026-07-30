@@ -11,6 +11,30 @@ export type { Hotspot };
 
 const clamp = (v: number) => Math.min(100, Math.max(0, v));
 
+/**
+ * Reescribe una URL del bucket público "emails" para que apunte al dominio
+ * propio (ver el rewrite /email-assets en next.config.ts).
+ *
+ * Motivo: los filtros de spam penalizan que un mail cargue imágenes desde un
+ * dominio ajeno al remitente — Resend lo marca como "Host images on the sending
+ * domain". Estas campañas son casi solo imágenes, así que servirlas desde
+ * *.supabase.co era la señal negativa más fuerte que teníamos.
+ *
+ * Se aplica al ENVIAR y no al guardar: así las campañas ya creadas (que tienen
+ * la URL de Supabase persistida en `bloques`) quedan arregladas sin migrar
+ * datos. Cualquier URL que no sea de este bucket pasa intacta.
+ */
+export function urlDominioPropio(url: string): string {
+  const supabase = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const site = process.env.NEXT_PUBLIC_SITE_URL;
+  if (!supabase || !site) return url;
+
+  const prefijo = `${supabase}/storage/v1/object/public/emails/`;
+  if (!url.startsWith(prefijo)) return url;
+
+  return `${site.replace(/\/$/, "")}/email-assets/${url.slice(prefijo.length)}`;
+}
+
 /** Devuelve los cortes únicos ordenados (en %), fusionando los casi iguales. */
 function cortes(valores: number[]): number[] {
   const ordenados = [...new Set([0, 100, ...valores.map(clamp)])].sort((a, b) => a - b);
@@ -132,7 +156,7 @@ export async function cortarImagenConHotspots(
       );
 
       cells.push({
-        url: data.publicUrl,
+        url: urlDominioPropio(data.publicUrl),
         width: cellRight - cellLeft,
         link: dueno?.link ?? null,
         colspan: Math.max(1, idxMaster(x1) - idxMaster(x0)),
@@ -160,13 +184,17 @@ export async function procesarBloquesCanvas(
   for (let i = 0; i < bloques.length; i++) {
     const bloque = bloques[i];
     if (bloque.tipo !== "canvas") {
-      resultado.push(bloque);
+      // Las imágenes sueltas también tienen que salir por el dominio propio,
+      // no solo las rebanadas del canvas.
+      resultado.push(
+        bloque.tipo === "imagen" ? { ...bloque, url: urlDominioPropio(bloque.url) } : bloque
+      );
       continue;
     }
 
     // Sin zonas marcadas: la imagen viaja entera, sin cortar.
     if (!bloque.hotspots?.length) {
-      resultado.push({ tipo: "imagen", url: bloque.url, alt: bloque.alt });
+      resultado.push({ tipo: "imagen", url: urlDominioPropio(bloque.url), alt: bloque.alt });
       continue;
     }
 
