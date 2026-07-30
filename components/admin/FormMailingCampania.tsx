@@ -17,6 +17,9 @@ import {
   CalendarClock,
   X,
   Type as TypeIcon,
+  Eye,
+  Monitor,
+  Smartphone,
 } from 'lucide-react';
 
 type Separacion = 'pegado' | 'poco' | 'normal' | 'mucho';
@@ -258,6 +261,10 @@ export function FormMailingCampania({ onSaved }: Props) {
   const [loading, setLoading] = useState(false);
   const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [previewAbierto, setPreviewAbierto] = useState(false);
+  const [previewHtml, setPreviewHtml] = useState<string | null>(null);
+  const [previewError, setPreviewError] = useState<string | null>(null);
+  const [previewMobile, setPreviewMobile] = useState(false);
 
   const agregarBloque = (tipo: BloqueEditor['tipo']) =>
     setBloques([...bloques, bloqueNuevo(tipo)]);
@@ -284,6 +291,61 @@ export function FormMailingCampania({ onSaved }: Props) {
     setBloques([]);
     setColorFondo(FONDO_DEFAULT);
     setScheduledAt('');
+  };
+
+  /**
+   * Pasa los bloques del editor al formato que renderiza
+   * emails/campania-generica.tsx. Lo usan el guardado y la vista previa, para
+   * que lo que se ve en la previa sea exactamente lo que se va a mandar.
+   */
+  const construirBloques = () =>
+    bloques.map((b) => {
+      if (b.tipo === 'boton') {
+        return {
+          tipo: 'boton',
+          texto: b.texto.trim(),
+          link: b.link.trim(),
+          color: b.color,
+          separacion: b.separacion,
+        };
+      }
+      if (b.tipo === 'texto') return { tipo: 'texto', contenido: b.contenido.trim() };
+      return {
+        tipo: 'canvas',
+        url: b.url,
+        alt: b.alt,
+        hotspots: b.hotspots.map((hs) => ({ ...hs, link: hs.link.trim() })),
+      };
+    });
+
+  const abrirPreview = async () => {
+    setPreviewAbierto(true);
+    setPreviewHtml(null);
+    setPreviewError(null);
+    try {
+      const res = await fetch('/api/mailing/preview', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          asunto,
+          preheader,
+          colorFondo,
+          // Sin imagen subida el <img> queda roto y ensucia la previa
+          bloques: construirBloques().filter((b) => b.tipo !== 'canvas' || b.url),
+        }),
+      });
+      const texto = await res.text();
+      let data: { html?: string; error?: string };
+      try {
+        data = JSON.parse(texto);
+      } catch {
+        throw new Error(`El servidor respondió ${res.status}: ${texto.slice(0, 150)}`);
+      }
+      if (!res.ok) throw new Error(data.error || 'No se pudo generar la vista previa');
+      setPreviewHtml(data.html ?? '');
+    } catch (err) {
+      setPreviewError(err instanceof Error ? err.message : 'Error inesperado');
+    }
   };
 
   const parsearMailsEspecificos = (): string[] =>
@@ -349,25 +411,7 @@ export function FormMailingCampania({ onSaved }: Props) {
       scheduledIso = fecha.toISOString();
     }
 
-    // Los tipos coinciden con los que renderiza emails/campania-generica.tsx
-    const bloquesDb = bloques.map((b) => {
-      if (b.tipo === 'boton') {
-        return {
-          tipo: 'boton',
-          texto: b.texto.trim(),
-          link: b.link.trim(),
-          color: b.color,
-          separacion: b.separacion,
-        };
-      }
-      if (b.tipo === 'texto') return { tipo: 'texto', contenido: b.contenido.trim() };
-      return {
-        tipo: 'canvas',
-        url: b.url,
-        alt: b.alt,
-        hotspots: b.hotspots.map((hs) => ({ ...hs, link: hs.link.trim() })),
-      };
-    });
+    const bloquesDb = construirBloques();
 
     setLoading(true);
     setErrorMsg(null);
@@ -683,6 +727,14 @@ export function FormMailingCampania({ onSaved }: Props) {
         />
       </div>
 
+      <button
+        onClick={abrirPreview}
+        disabled={bloques.length === 0}
+        className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-manso-cream/10 text-manso-cream text-xs font-black uppercase tracking-widest hover:bg-manso-cream/20 transition-colors disabled:opacity-30"
+      >
+        <Eye size={14} /> Vista previa
+      </button>
+
       <div className="flex gap-2">
         <button
           onClick={() => guardar(false)}
@@ -699,6 +751,85 @@ export function FormMailingCampania({ onSaved }: Props) {
           {loading ? 'Guardando...' : 'Programar campaña'}
         </button>
       </div>
+
+      {previewAbierto && (
+        <div
+          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+          onClick={() => setPreviewAbierto(false)}
+        >
+          <div
+            className="bg-manso-black border border-manso-cream/15 rounded-2xl w-full max-w-3xl max-h-[92vh] flex flex-col overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-manso-cream/10">
+              <span className="text-[10px] font-black uppercase tracking-widest text-manso-cream">
+                Vista previa
+              </span>
+              <div className="flex items-center gap-2">
+                <div className="flex rounded-full bg-manso-cream/10 p-0.5">
+                  <button
+                    onClick={() => setPreviewMobile(false)}
+                    className={`flex items-center gap-1 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest transition-colors ${
+                      !previewMobile ? 'bg-manso-cream text-manso-black' : 'text-manso-cream/60'
+                    }`}
+                  >
+                    <Monitor size={11} /> Compu
+                  </button>
+                  <button
+                    onClick={() => setPreviewMobile(true)}
+                    className={`flex items-center gap-1 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest transition-colors ${
+                      previewMobile ? 'bg-manso-cream text-manso-black' : 'text-manso-cream/60'
+                    }`}
+                  >
+                    <Smartphone size={11} /> Celular
+                  </button>
+                </div>
+                <button
+                  onClick={() => setPreviewAbierto(false)}
+                  className="p-1.5 text-manso-cream/50 hover:text-manso-cream"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            </div>
+
+            {/* Así se ve en la bandeja antes de abrirlo */}
+            <div className="px-4 py-2.5 border-b border-manso-cream/10 bg-manso-cream/5">
+              <p className="text-[8px] font-black uppercase tracking-widest text-manso-cream/30 mb-0.5">
+                En la casilla
+              </p>
+              <p className="text-xs truncate">
+                <span className="font-bold text-manso-cream">{asunto.trim() || 'Asunto'}</span>
+                <span className="text-manso-cream/50"> - {preheader.trim() || 'Pre-header'}</span>
+              </p>
+            </div>
+
+            <div className="flex-1 overflow-auto p-4 flex justify-center bg-manso-cream/5">
+              {previewError ? (
+                <p className="text-xs text-red-400 self-center text-center px-6">{previewError}</p>
+              ) : previewHtml === null ? (
+                <p className="text-[10px] uppercase tracking-widest text-manso-cream/30 self-center">
+                  Generando...
+                </p>
+              ) : (
+                <iframe
+                  title="Vista previa del mail"
+                  srcDoc={previewHtml}
+                  sandbox=""
+                  className="bg-white rounded-lg border border-manso-cream/10"
+                  style={{ width: previewMobile ? 375 : 600, height: '70vh', flexShrink: 0 }}
+                />
+              )}
+            </div>
+
+            <p className="px-4 py-2.5 border-t border-manso-cream/10 text-[9px] text-manso-cream/40 leading-relaxed">
+              Las imágenes se muestran enteras: las zonas clickeables se recortan recién al
+              enviar, así que acá no se pueden clickear. Antes de mandar la campaña, revisala
+              igual con el envío de prueba desde la lista.
+            </p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
