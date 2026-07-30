@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="es-AR">
+<head>
+<meta charset="utf-8">
+<title>Manso Club — Cómo preparar y montar una campaña de mail</title>
+<style>
+  @page { size: A4; margin: 16mm 14mm; }
+
+  :root{
+    --negro:#1D1D1B; --terra:#BC2915; --oliva:#868229;
+    --crema:#FFFCDC; --marron:#542C1B; --azul:#030044;
+    --gris:#6b6b66; --linea:#e0ddc9;
+  }
+  *{box-sizing:border-box}
+  body{
+    font-family:"Helvetica Neue","Helvetica",Arial,sans-serif;
+    color:var(--negro); font-size:10.5pt; line-height:1.5; margin:0;
+    -webkit-print-color-adjust:exact; print-color-adjust:exact;
+  }
+  h1{font-size:23pt;line-height:1.05;margin:0 0 4px;letter-spacing:-.6px;font-weight:800}
+  h2{
+    font-size:12pt;margin:0 0 10px;text-transform:uppercase;letter-spacing:1.4px;
+    font-weight:800;color:var(--terra);
+  }
+  h3{font-size:10.5pt;margin:14px 0 5px;font-weight:800}
+  p{margin:0 0 8px}
+  ul,ol{margin:0 0 8px;padding-left:17px}
+  li{margin-bottom:4px}
+  strong{font-weight:700}
+  code{
+    font-family:"DejaVu Sans Mono",monospace;font-size:9pt;
+    background:#f2efdc;padding:1px 5px;border-radius:3px;
+  }
+
+  .tapa{
+    background:var(--negro);color:var(--crema);
+    padding:26px 26px 22px;border-radius:14px;margin-bottom:20px;
+  }
+  .tapa .kicker{
+    font-size:8.5pt;text-transform:uppercase;letter-spacing:2.6px;
+    color:var(--oliva);font-weight:800;margin-bottom:10px;
+  }
+  .tapa p{margin:8px 0 0;color:#d9d5b8;font-size:10.5pt;max-width:62ch}
+
+  section{margin-bottom:20px}
+  .parte{
+    display:flex;align-items:center;gap:9px;margin:0 0 12px;
+    padding-bottom:7px;border-bottom:2.5px solid var(--negro);
+  }
+  .parte .num{
+    background:var(--negro);color:var(--crema);width:24px;height:24px;
+    border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-weight:800;font-size:11pt;flex-shrink:0;
+  }
+  .parte h2{margin:0;color:var(--negro)}
+
+  .caja{border:1px solid var(--linea);border-radius:9px;padding:13px 15px;margin-bottom:11px;background:#fdfcf3}
+  .caja.ok{border-left:4px solid var(--oliva)}
+  .caja.no{border-left:4px solid var(--terra)}
+  .caja.tip{border-left:4px solid var(--azul);background:#f4f4fa}
+  .caja h3{margin-top:0}
+
+  table{width:100%;border-collapse:collapse;margin:9px 0;font-size:9.5pt}
+  th,td{text-align:left;padding:7px 9px;border-bottom:1px solid var(--linea);vertical-align:top}
+  th{
+    background:var(--negro);color:var(--crema);font-size:8pt;
+    text-transform:uppercase;letter-spacing:1.1px;font-weight:800;
+  }
+  td:first-child{font-weight:700;white-space:nowrap;width:34%}
+  tr:last-child td{border-bottom:none}
+
+  .comparativa{display:flex;gap:11px;margin:11px 0}
+  .comparativa>div{flex:1;border-radius:9px;padding:12px 14px}
+  .mal{background:#fdeeeb;border:1px solid #f0c4bb}
+  .bien{background:#f2f4e4;border:1px solid #d3d8ad}
+  .comparativa h3{margin:0 0 7px;font-size:9.5pt;text-transform:uppercase;letter-spacing:.9px}
+  .mal h3{color:var(--terra)} .bien h3{color:#5f5c1c}
+  .comparativa ul{margin:0;padding-left:15px;font-size:9.5pt}
+
+  .pasos{counter-reset:paso;list-style:none;padding:0;margin:0}
+  .pasos>li{
+    counter-increment:paso;position:relative;
+    padding:0 0 11px 33px;margin:0;
+  }
+  .pasos>li::before{
+    content:counter(paso);position:absolute;left:0;top:-1px;
+    background:var(--terra);color:#fff;width:22px;height:22px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    font-size:9.5pt;font-weight:800;
+  }
+  /* Solo el PRIMER strong es el título del paso. Sin :first-child, cualquier
+     negrita dentro del texto se volvía bloque y partía las frases al medio. */
+  .pasos>li>strong:first-child{display:block;margin-bottom:2px;font-size:10.5pt}
+
+  .chip{
+    display:inline-block;background:var(--negro);color:var(--crema);
+    border-radius:20px;padding:2.5px 11px;font-size:8.5pt;font-weight:800;
+    text-transform:uppercase;letter-spacing:1.1px;
+  }
+  .chip.terra{background:var(--terra)}
+  .chip.oliva{background:var(--oliva)}
+
+  .checklist{list-style:none;padding:0;margin:0}
+  .checklist li{padding-left:23px;position:relative;margin-bottom:5px}
+  .checklist li::before{
+    content:"";position:absolute;left:0;top:2px;width:12px;height:12px;
+    border:1.8px solid var(--negro);border-radius:3px;
+  }
+
+  .nota{font-size:9pt;color:var(--gris);font-style:italic}
+  .salto{page-break-before:always}
+  footer{
+    margin-top:22px;padding-top:9px;border-top:1px solid var(--linea);
+    font-size:8.5pt;color:var(--gris);display:flex;justify-content:space-between;
+  }
+  /* Las secciones pueden partirse entre páginas (si no, una sección larga salta
+     entera y deja media hoja en blanco). Los bloques chicos se mantienen unidos. */
+  .caja, .comparativa, .pasos>li, tr { page-break-inside:avoid; }
+  .parte { page-break-after:avoid; }
+  h3 { page-break-after:avoid; }
+</style>
+</head>
+<body>
+
+<div class="tapa">
+  <div class="kicker">Manso Club · Guía de campañas de mail</div>
+  <h1>Cómo preparar y montar<br>una campaña de mail</h1>
+  <p>Esta guía tiene dos partes: cómo entregar el material (para diseño) y cómo cargarlo
+  en el editor de la página (para quien manda la campaña).</p>
+</div>
+
+<section>
+  <div class="caja tip">
+    <h3>Lo más importante en una frase</h3>
+    <p style="margin-bottom:0"><strong>Un mail no es un afiche.</strong> No se entrega
+    como una sola imagen grande con todo adentro, sino <strong>por partes</strong>: las piezas
+    gráficas por un lado, y los textos y botones por otro. El sistema los apila.</p>
+  </div>
+  <p>Cuando el mail viaja como una sola imagen aparecen tres problemas concretos, que ya nos pasaron:</p>
+  <ul>
+    <li><strong>Gmail bloquea las imágenes por defecto</strong> cuando no conoce al remitente.
+    Si todo es imagen, la persona abre el mail y no ve <em>nada</em>.</li>
+    <li>Para que un botón dibujado sea clickeable hay que <strong>recortar la imagen en pedazos</strong>,
+    y al volver a unirlos pueden quedar <strong>líneas finas o bordes cortados</strong>.</li>
+    <li>Un mail sin texto real <strong>puntúa peor en los filtros de spam</strong>.</li>
+  </ul>
+</section>
+
+<section>
+  <div class="parte"><span class="num">1</span><h2>Cómo entregar el material</h2></div>
+
+  <div class="comparativa">
+    <div class="mal">
+      <h3>✕ Así no</h3>
+      <ul>
+        <li>Un solo JPG con todo el mail adentro</li>
+        <li>Botones dibujados dentro de la imagen</li>
+        <li>Párrafos largos escritos dentro de la imagen</li>
+        <li>Capturas de pantalla o imágenes de baja calidad</li>
+      </ul>
+    </div>
+    <div class="bien">
+      <h3>✓ Así sí</h3>
+      <ul>
+        <li>Una imagen por sección visual</li>
+        <li>El arte <strong>sin</strong> los botones, dejando el lugar vacío</li>
+        <li>Los textos aparte, en un documento</li>
+        <li>Los botones como texto + link + color</li>
+      </ul>
+    </div>
+  </div>
+
+  <h3>Especificaciones de las imágenes</h3>
+  <table>
+    <tr><th>Qué</th><th>Cómo</th></tr>
+    <tr>
+      <td>Ancho</td>
+      <td><strong>1200 píxeles exactos.</strong> El mail se ve a 600, y el doble es para que
+      se vea nítido en celulares. Este número no es opcional: con otros anchos aparecen
+      líneas finas al recortar.</td>
+    </tr>
+    <tr>
+      <td>Alto</td>
+      <td>Libre. Mejor varias piezas medianas que una sola larguísima.</td>
+    </tr>
+    <tr>
+      <td>Formato</td>
+      <td><strong>JPG</strong> para fotos y fondos. <strong>PNG</strong> solo si necesita
+      transparencia.</td>
+    </tr>
+    <tr>
+      <td>Peso</td>
+      <td>Menos de <strong>300 KB</strong> por imagen. El mail completo no debería superar 1 MB:
+      arriba de eso Gmail lo corta y muestra “Ver mensaje completo”.</td>
+    </tr>
+    <tr>
+      <td>Color de fondo</td>
+      <td>Pasar el <strong>código exacto</strong> del fondo del arte (ej. <code>#1D1D1B</code>),
+      para que el marco del mail coincida y no se vea un borde de otro color.</td>
+    </tr>
+    <tr>
+      <td>Nombre</td>
+      <td>Numeradas en orden de aparición: <code>01-banner.jpg</code>,
+      <code>02-fotos.jpg</code>, <code>03-cowork.jpg</code>.</td>
+    </tr>
+  </table>
+
+  <div class="caja no">
+    <h3>La regla que evita todos los problemas</h3>
+    <p style="margin-bottom:0">Si algo es <strong>texto</strong> o es un <strong>botón</strong>,
+    no va dibujado dentro de la imagen. Se entrega escrito y el sistema lo dibuja.
+    Todo lo demás —fotos, fondos, logos, collages, texturas— sí va como imagen, con total
+    libertad de diseño.</p>
+  </div>
+
+  <h3>Qué entregar junto con las imágenes</h3>
+  <ul>
+    <li><strong>Los textos</strong>, escritos tal cual van, indicando entre qué imágenes van.</li>
+    <li><strong>Cada botón:</strong> qué dice, a qué página lleva, y de qué color va.</li>
+    <li><strong>El color de fondo</strong> del mail.</li>
+  </ul>
+
+  <div class="caja tip">
+    <h3>Sobre el diseño de los botones</h3>
+    <p style="margin-bottom:0">El botón lo dibuja el programa de correo, así que no va a ser
+    idéntico al de Canva: se le puede dar el color, el redondeo y el tamaño, pero la tipografía
+    es la del sistema. A cambio, nunca se rompe, se puede clickear con precisión y se ve aunque
+    las imágenes estén bloqueadas. <strong>Conviene dejar el hueco del botón en el arte</strong>
+    con el espacio suficiente para que calce.</p>
+  </div>
+</section>
+
+<div class="salto"></div>
+
+<section>
+  <div class="parte"><span class="num">2</span><h2>Cómo montarlo en el editor</h2></div>
+
+  <p>Se entra a <code>mansoclub.com.ar/mansoadm</code> con el usuario de administrador
+  y se va a la pestaña <span class="chip">Mailing</span>.</p>
+
+  <ol class="pasos">
+    <li>
+      <strong>Asunto</strong>
+      Lo que se lee en la bandeja de entrada. Corto y concreto.
+    </li>
+    <li>
+      <strong>Pre-header</strong>
+      El texto gris que aparece al lado del asunto. <strong>No repetir el asunto</strong>
+      — el sistema no deja guardar si se repite. Sirve para dar una razón más para abrir:
+      si el asunto es “Nuevo evento este viernes”, el pre-header puede ser
+      “Entradas anticipadas hasta el jueves”. Justo abajo hay una vista previa de cómo
+      se ve en la casilla.
+    </li>
+    <li>
+      <strong>Audiencia</strong>
+      A quién le llega. Están los suscriptores del newsletter, los registrados, las membresías
+      activas, las vencidas, o una lista de mails escrita a mano.
+    </li>
+    <li>
+      <strong>Contenido: apilar los bloques</strong>
+      Acá se arma el mail. Hay tres botones para agregar bloques, y se acomodan en orden con
+      las flechitas. Cada bloque se puede borrar con el tacho.
+    </li>
+  </ol>
+
+  <table>
+    <tr><th>Bloque</th><th>Para qué sirve y qué pide</th></tr>
+    <tr>
+      <td><span class="chip">Imagen</span></td>
+      <td>Sube una pieza gráfica. Después de subirla se pueden <strong>marcar zonas
+      clickeables</strong> arrastrando el mouse encima, y a cada zona se le pone un link.
+      Usar las zonas solo cuando hacen falta <em>dos links lado a lado a la misma altura</em>
+      (como los iconos de Instagram y web del pie). Para un botón normal, usar el bloque Botón.
+      El campo de texto alternativo es lo que leen los lectores de pantalla.</td>
+    </tr>
+    <tr>
+      <td><span class="chip terra">Botón</span></td>
+      <td>Un botón de verdad. Pide el texto, el link (tiene que empezar con
+      <code>https://</code>), el color, y cuánto aire dejar respecto del bloque de arriba.
+      Muestra una vista previa en vivo sobre el color de fondo elegido.</td>
+    </tr>
+    <tr>
+      <td><span class="chip oliva">Texto</span></td>
+      <td>Un párrafo escrito. Se ve aunque las imágenes estén bloqueadas y se puede copiar.
+      Dejando un renglón en blanco se separan los párrafos.</td>
+    </tr>
+  </table>
+
+  <ol class="pasos" start="5" style="counter-reset:paso 4">
+    <li>
+      <strong>Color de fondo del mail</strong>
+      El marco alrededor del arte. Poner el mismo color que el fondo de las imágenes para
+      que no se note el borde. Están los colores de la marca como acceso rápido.
+    </li>
+    <li>
+      <strong>Vista previa</strong>
+      El botón <span class="chip">Vista previa</span> abre el mail armado, tal como va a
+      llegar. Se puede alternar entre <strong>Compu</strong> y <strong>Celular</strong> para ver
+      cómo se acomoda en cada pantalla, y arriba muestra cómo se lee en la bandeja de entrada.
+      Sirve para revisar sin gastar envíos. <span class="nota">Ojo: en la previa las imágenes se
+      ven enteras y las zonas marcadas todavía no se pueden clickear — eso se arma recién al
+      enviar.</span>
+    </li>
+    <li>
+      <strong>Guardar como borrador</strong>
+      Todavía no se manda nada.
+    </li>
+    <li>
+      <strong>Mandar una prueba</strong>
+      En la lista de campañas, el ícono del <strong>frasquito</strong> permite escribir un mail
+      propio y recibir la campaña. <strong>Este paso no se saltea nunca.</strong>
+    </li>
+    <li>
+      <strong>Revisar la prueba en el celular</strong>
+      La mayoría lo va a abrir desde el teléfono. Ver que no haya líneas raras, que los botones
+      se lean y que los links lleven a donde tienen que llevar.
+    </li>
+    <li>
+      <strong>Enviar o programar</strong>
+      Se puede mandar en el momento o dejarlo agendado con fecha y hora.
+    </li>
+  </ol>
+</section>
+
+<section>
+  <div class="parte"><span class="num">3</span><h2>Antes de apretar enviar</h2></div>
+  <ul class="checklist">
+    <li>Miré la <strong>vista previa</strong> en Compu y en Celular.</li>
+    <li>Mandé una prueba y la abrí <strong>en el celular</strong>.</li>
+    <li>Probé <strong>todos</strong> los links y llevan a la página correcta.</li>
+    <li>El pre-header no repite el asunto.</li>
+    <li>El color de fondo coincide con el de las imágenes.</li>
+    <li>La audiencia seleccionada es la correcta.</li>
+    <li>Miré cómo se ve <strong>con las imágenes bloqueadas</strong> (en Gmail:
+    los tres puntitos → “Mostrar original”). Se tiene que entender igual.</li>
+  </ul>
+
+  <div class="caja ok">
+    <h3>Después de enviar</h3>
+    <p style="margin-bottom:0">En la lista de campañas queda el detalle: cuántos se entregaron,
+    cuántos rebotaron y cuántos se abrieron. Con <strong>“Ver a quién le llegó”</strong> se ve
+    la lista completa persona por persona, y se puede bajar en Excel. Si alguno no salió, el
+    botón <strong>“Reenviar a los que no recibieron”</strong> arma un borrador nuevo solo con
+    esos, sin riesgo de que a alguien le llegue dos veces.</p>
+  </div>
+
+  <div class="caja">
+    <h3>Dos cosas a tener en cuenta</h3>
+    <p><strong>“Entregado” no es lo mismo que “leído”.</strong> Quiere decir que el mail llegó
+    al servidor. Si alguien dice que no le llegó, que revise primero <strong>Spam</strong> y la
+    pestaña <strong>Promociones</strong>.</p>
+    <p style="margin-bottom:0"><strong>La tasa de apertura viene inflada.</strong> Gmail y el
+    iPhone cargan solos la marca de lectura, así que figuran aperturas que no fueron personas.
+    <strong>Los clicks son el número confiable.</strong></p>
+  </div>
+</section>
+
+<footer>
+  <span>Manso Club — Guía de campañas de mail</span>
+  <span>Julio 2026</span>
+</footer>
+
+</body>
+</html>
