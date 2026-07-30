@@ -217,6 +217,9 @@
   <ul>
     <li><strong>Los textos</strong>, escritos tal cual van, indicando entre qué imágenes van.</li>
     <li><strong>Cada botón:</strong> qué dice, a qué página lleva, y de qué color va.</li>
+    <li><strong>Los iconos de redes y contacto por separado</strong>, uno por archivo:
+    PNG con fondo transparente, de unos 120 px. <span class="nota">No van dibujados dentro del
+    arte del pie: sueltos, cada uno puede ser su propio link y quedan siempre nítidos.</span></li>
     <li><strong>El color de fondo</strong> del mail.</li>
   </ul>
 
@@ -269,8 +272,9 @@
       <td><span class="chip">Imagen</span></td>
       <td>Sube una pieza gráfica. Después de subirla se pueden <strong>marcar zonas
       clickeables</strong> arrastrando el mouse encima, y a cada zona se le pone un link.
-      Usar las zonas solo cuando hacen falta <em>dos links lado a lado a la misma altura</em>
-      (como los iconos de Instagram y web del pie). Para un botón normal, usar el bloque Botón.
+      <strong>Las zonas son el último recurso:</strong> para un botón está el bloque Botón, y
+      para los links del pie el bloque Redes. Marcar zonas obliga al sistema a cortar la imagen
+      en pedazos, que es de donde salen las líneas finas.
       El campo de texto alternativo es lo que leen los lectores de pantalla.</td>
     </tr>
     <tr>
@@ -284,7 +288,22 @@
       <td>Un párrafo escrito. Se ve aunque las imágenes estén bloqueadas y se puede copiar.
       Dejando un renglón en blanco se separan los párrafos.</td>
     </tr>
+    <tr>
+      <td><span class="chip">Redes</span></td>
+      <td>Varios links <strong>en fila</strong>: Instagram, la web, el mail, el teléfono.
+      Cada uno con su iconito y su link. Se puede elegir mostrar los iconos o los nombres
+      escritos. Es lo que va en el pie del mail — <strong>no hace falta dibujarlos dentro
+      de una imagen.</strong></td>
+    </tr>
   </table>
+
+  <div class="caja tip">
+    <h3>Links de contacto</h3>
+    <p style="margin-bottom:0">Además de páginas web, los links aceptan mail y teléfono.
+    Se escriben así: <code>mailto:hola@mansoclub.com.ar</code> y
+    <code>tel:+541160000000</code>. Desde el celular, tocar el teléfono abre la llamada
+    directo.</p>
+  </div>
 
   <ol class="pasos" start="5" style="counter-reset:paso 4">
     <li>
