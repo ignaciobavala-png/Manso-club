@@ -30,6 +30,7 @@ import {
 } from 'lucide-react';
 
 type Separacion = 'pegado' | 'poco' | 'normal' | 'mucho';
+type RadioBoton = 'recto' | 'poco' | 'redondeado' | 'pastilla';
 
 /**
  * Bloques que se pueden apilar en el mail. `canvas` es una pieza gráfica con
@@ -56,6 +57,7 @@ type BloqueEditor = { id: string } & (
       link: string;
       color: string;
       colorTexto: string;
+      radio: RadioBoton;
       separacion: Separacion;
     }
   | { tipo: 'texto'; contenido: string }
@@ -69,6 +71,16 @@ const nuevoId = () =>
 
 /** Color del texto de un botón nuevo, y fallback de los guardados sin el campo. */
 const TEXTO_BOTON_DEFAULT = '#FFFCDC';
+
+/** Redondeo del botón. Los px tienen que coincidir con PX_POR_RADIO del template. */
+const RADIO_DEFAULT: RadioBoton = 'poco';
+
+const RADIOS: { id: RadioBoton; label: string; px: number }[] = [
+  { id: 'recto', label: 'Esquinas rectas', px: 0 },
+  { id: 'poco', label: 'Apenas redondeado', px: 6 },
+  { id: 'redondeado', label: 'Redondeado', px: 14 },
+  { id: 'pastilla', label: 'Pastilla', px: 999 },
+];
 
 const SEPARACIONES: { id: Separacion; label: string }[] = [
   { id: 'pegado', label: 'Pegado al bloque anterior' },
@@ -87,6 +99,7 @@ const bloqueNuevo = (tipo: BloqueEditor['tipo']): BloqueEditor => {
       link: '',
       color: '#BC2915',
       colorTexto: TEXTO_BOTON_DEFAULT,
+      radio: RADIO_DEFAULT,
       separacion: 'normal',
     };
   }
@@ -511,8 +524,9 @@ export function FormMailingCampania({ onSaved }: Props) {
           texto: b.texto.trim(),
           link: b.link.trim(),
           color: b.color,
-          // Las plantillas guardadas antes de este campo no lo traen
+          // Las plantillas guardadas antes de estos campos no los traen
           colorTexto: b.colorTexto || TEXTO_BOTON_DEFAULT,
+          radio: b.radio || RADIO_DEFAULT,
           separacion: b.separacion,
         };
       }
@@ -1028,7 +1042,7 @@ export function FormMailingCampania({ onSaved }: Props) {
                   placeholder="https://mansoclub.com.ar/membresias"
                   className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-2 text-xs text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra"
                 />
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 flex-wrap">
                   <label
                     className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg bg-manso-cream/5 border border-manso-cream/10 cursor-pointer shrink-0"
                     title="Color de fondo del botón"
@@ -1058,9 +1072,22 @@ export function FormMailingCampania({ onSaved }: Props) {
                     </span>
                   </label>
                   <select
+                    value={bloque.radio || RADIO_DEFAULT}
+                    onChange={(e) => actualizarBloque(i, { radio: e.target.value as RadioBoton })}
+                    title="Redondeo de las esquinas"
+                    className="flex-1 min-w-[9rem] bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-2 text-xs text-manso-cream focus:outline-none focus:border-manso-terra"
+                  >
+                    {RADIOS.map((r) => (
+                      <option key={r.id} value={r.id} className="bg-manso-black">
+                        {r.label}
+                      </option>
+                    ))}
+                  </select>
+                  <select
                     value={bloque.separacion}
                     onChange={(e) => actualizarBloque(i, { separacion: e.target.value as Separacion })}
-                    className="flex-1 bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-2 text-xs text-manso-cream focus:outline-none focus:border-manso-terra"
+                    title="Aire respecto del bloque de arriba"
+                    className="flex-1 min-w-[9rem] bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-2 text-xs text-manso-cream focus:outline-none focus:border-manso-terra"
                   >
                     {SEPARACIONES.map((s) => (
                       <option key={s.id} value={s.id} className="bg-manso-black">
@@ -1072,8 +1099,14 @@ export function FormMailingCampania({ onSaved }: Props) {
                 {/* Vista previa aproximada de cómo lo va a dibujar el mail */}
                 <div className="rounded-lg p-3 flex justify-center" style={{ backgroundColor: colorFondo }}>
                   <span
-                    className="inline-block rounded-md px-8 py-3 text-sm"
-                    style={{ background: bloque.color, color: bloque.colorTexto || TEXTO_BOTON_DEFAULT }}
+                    className="inline-block px-8 py-3 text-sm"
+                    style={{
+                      background: bloque.color,
+                      color: bloque.colorTexto || TEXTO_BOTON_DEFAULT,
+                      borderRadius: `${
+                        RADIOS.find((r) => r.id === (bloque.radio || RADIO_DEFAULT))?.px ?? 6
+                      }px`,
+                    }}
                   >
                     {bloque.texto.trim() || 'Texto del botón'}
                   </span>

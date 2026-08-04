@@ -20,6 +20,16 @@ const PX_POR_SEPARACION: Record<Separacion, number> = {
   mucho: 40,
 };
 
+/** Redondeo del botón. "pastilla" son los bordes completamente redondos. */
+type RadioBoton = "recto" | "poco" | "redondeado" | "pastilla";
+
+const PX_POR_RADIO: Record<RadioBoton, number> = {
+  recto: 0,
+  poco: 6,
+  redondeado: 14,
+  pastilla: 999,
+};
+
 // Zona clickeable dibujada por la diseñadora sobre la imagen (coords en %)
 export type Hotspot = { x: number; y: number; w: number; h: number; link: string };
 
@@ -44,6 +54,8 @@ export type BloqueMailing =
       color?: string;
       /** Color del texto del botón. Default: manso-cream. */
       colorTexto?: string;
+      /** Redondeo de las esquinas. Default: "poco" (6px). */
+      radio?: RadioBoton;
       separacion?: Separacion;
     }
   | { tipo: "texto"; contenido: string }
@@ -265,7 +277,7 @@ export default function CampaniaGenerica({ asunto, bloques, unsubscribeUrl, colo
                       background: bloque.color ?? "#BC2915",
                       color: bloque.colorTexto ?? "#FFFCDC",
                       padding: "12px 32px",
-                      borderRadius: "6px",
+                      borderRadius: `${PX_POR_RADIO[bloque.radio ?? "poco"]}px`,
                       fontSize: "16px",
                     }}
                   >
