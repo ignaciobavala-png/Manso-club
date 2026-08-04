@@ -1271,6 +1271,10 @@ export function FormMailingCampania({ onSaved }: Props) {
                             bucket="emails"
                             onUpload={(url) => actualizarItemRed(i, k, { icono: url })}
                             height="h-14"
+                            // Los iconos vienen con aire transparente alrededor:
+                            // sin recortarlo, el dibujo ocupa parte de la caja y
+                            // se ve más chico que el tamaño elegido.
+                            recortarAlfa
                           />
                         )}
                       </div>
@@ -1309,7 +1313,9 @@ export function FormMailingCampania({ onSaved }: Props) {
                 <p className="text-[9px] text-manso-cream/40">
                   Se dibujan en fila, centrados. Cada uno es su propia imagen con su propio
                   link, así que no hace falta recortar nada. Los iconos van en PNG con fondo
-                  transparente, de unos 120px.
+                  transparente, de unos 120px; el margen transparente sobrante se recorta
+                  solo al subirlos. Si el dibujo es de línea muy fina, conviene un tamaño
+                  grande: a 28px un trazo delgado queda por debajo del píxel y se ve sucio.
                 </p>
               </div>
             )}
