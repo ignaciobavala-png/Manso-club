@@ -37,7 +37,15 @@ export type SliceRow = { cells: SliceCell[] };
 
 export type BloqueMailing =
   | { tipo: "imagen"; url: string; alt?: string }
-  | { tipo: "boton"; texto: string; link: string; color?: string; separacion?: Separacion }
+  | {
+      tipo: "boton";
+      texto: string;
+      link: string;
+      color?: string;
+      /** Color del texto del botón. Default: manso-cream. */
+      colorTexto?: string;
+      separacion?: Separacion;
+    }
   | { tipo: "texto"; contenido: string }
   | { tipo: "canvas"; url: string; alt?: string; hotspots: Hotspot[] }
   | { tipo: "canvas-procesado"; rows: SliceRow[]; alt?: string }
@@ -255,7 +263,7 @@ export default function CampaniaGenerica({ asunto, bloques, unsubscribeUrl, colo
                     href={bloque.link}
                     style={{
                       background: bloque.color ?? "#BC2915",
-                      color: "#FFFCDC",
+                      color: bloque.colorTexto ?? "#FFFCDC",
                       padding: "12px 32px",
                       borderRadius: "6px",
                       fontSize: "16px",

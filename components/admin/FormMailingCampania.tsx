@@ -50,7 +50,14 @@ type ItemRed = { etiqueta: string; link: string; icono: string };
  */
 type BloqueEditor = { id: string } & (
   | { tipo: 'canvas'; url: string; alt: string; hotspots: Hotspot[] }
-  | { tipo: 'boton'; texto: string; link: string; color: string; separacion: Separacion }
+  | {
+      tipo: 'boton';
+      texto: string;
+      link: string;
+      color: string;
+      colorTexto: string;
+      separacion: Separacion;
+    }
   | { tipo: 'texto'; contenido: string }
   | { tipo: 'redes'; items: ItemRed[]; modo: 'iconos' | 'texto'; separacion: Separacion }
 );
@@ -59,6 +66,9 @@ const nuevoId = () =>
   typeof crypto !== 'undefined' && crypto.randomUUID
     ? crypto.randomUUID()
     : `b${Date.now()}${Math.random().toString(36).slice(2, 8)}`;
+
+/** Color del texto de un botón nuevo, y fallback de los guardados sin el campo. */
+const TEXTO_BOTON_DEFAULT = '#FFFCDC';
 
 const SEPARACIONES: { id: Separacion; label: string }[] = [
   { id: 'pegado', label: 'Pegado al bloque anterior' },
@@ -70,7 +80,15 @@ const SEPARACIONES: { id: Separacion; label: string }[] = [
 const bloqueNuevo = (tipo: BloqueEditor['tipo']): BloqueEditor => {
   const id = nuevoId();
   if (tipo === 'boton') {
-    return { id, tipo: 'boton', texto: '', link: '', color: '#BC2915', separacion: 'normal' };
+    return {
+      id,
+      tipo: 'boton',
+      texto: '',
+      link: '',
+      color: '#BC2915',
+      colorTexto: TEXTO_BOTON_DEFAULT,
+      separacion: 'normal',
+    };
   }
   if (tipo === 'texto') return { id, tipo: 'texto', contenido: '' };
   if (tipo === 'redes') {
@@ -493,6 +511,8 @@ export function FormMailingCampania({ onSaved }: Props) {
           texto: b.texto.trim(),
           link: b.link.trim(),
           color: b.color,
+          // Las plantillas guardadas antes de este campo no lo traen
+          colorTexto: b.colorTexto || TEXTO_BOTON_DEFAULT,
           separacion: b.separacion,
         };
       }
@@ -1009,13 +1029,34 @@ export function FormMailingCampania({ onSaved }: Props) {
                   className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-2 text-xs text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra"
                 />
                 <div className="flex items-center gap-2">
-                  <input
-                    type="color"
-                    value={bloque.color}
-                    onChange={(e) => actualizarBloque(i, { color: e.target.value })}
-                    className="h-9 w-14 bg-transparent border border-manso-cream/10 rounded-lg cursor-pointer"
-                    title="Color del botón"
-                  />
+                  <label
+                    className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg bg-manso-cream/5 border border-manso-cream/10 cursor-pointer shrink-0"
+                    title="Color de fondo del botón"
+                  >
+                    <input
+                      type="color"
+                      value={bloque.color}
+                      onChange={(e) => actualizarBloque(i, { color: e.target.value })}
+                      className="w-5 h-5 bg-transparent border-0 p-0 cursor-pointer"
+                    />
+                    <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/50">
+                      Fondo
+                    </span>
+                  </label>
+                  <label
+                    className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg bg-manso-cream/5 border border-manso-cream/10 cursor-pointer shrink-0"
+                    title="Color del texto del botón"
+                  >
+                    <input
+                      type="color"
+                      value={bloque.colorTexto || TEXTO_BOTON_DEFAULT}
+                      onChange={(e) => actualizarBloque(i, { colorTexto: e.target.value })}
+                      className="w-5 h-5 bg-transparent border-0 p-0 cursor-pointer"
+                    />
+                    <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/50">
+                      Texto
+                    </span>
+                  </label>
                   <select
                     value={bloque.separacion}
                     onChange={(e) => actualizarBloque(i, { separacion: e.target.value as Separacion })}
@@ -1032,7 +1073,7 @@ export function FormMailingCampania({ onSaved }: Props) {
                 <div className="rounded-lg p-3 flex justify-center" style={{ backgroundColor: colorFondo }}>
                   <span
                     className="inline-block rounded-md px-8 py-3 text-sm"
-                    style={{ background: bloque.color, color: '#FFFCDC' }}
+                    style={{ background: bloque.color, color: bloque.colorTexto || TEXTO_BOTON_DEFAULT }}
                   >
                     {bloque.texto.trim() || 'Texto del botón'}
                   </span>
