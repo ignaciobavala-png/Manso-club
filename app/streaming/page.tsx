@@ -69,7 +69,9 @@ export default async function StreamingPage() {
       }}
     >
       <ParticleBackground />
-      <div className="relative z-10 max-w-[1400px] mx-auto px-4 md:px-8 pt-32 pb-20">
+      {/* pt-24 en celular: el navbar mide ~68px ahí, así que 8rem de aire
+          empujaban el player fuera de la primera pantalla sin necesidad. */}
+      <div className="relative z-10 max-w-[1400px] mx-auto px-4 md:px-8 pt-24 md:pt-32 pb-20">
         <StreamingLibrary
           contenido={contenido ?? []}
           categorias={categorias ?? []}

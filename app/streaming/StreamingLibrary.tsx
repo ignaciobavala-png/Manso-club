@@ -63,16 +63,36 @@ function getYouTubeEmbedUrl(url: string): string | null {
   return null;
 }
 
+/**
+ * Ancho máximo del player para que entre entero en la pantalla.
+ *
+ * Se capea el ANCHO y no el alto: sobre un contenedor `aspect-video`, un
+ * `max-height` recorta el alto pero deja el ancho al 100%, así que se rompe la
+ * relación de aspecto y el video queda con bandas negras. Limitando el ancho
+ * contra el alto disponible, el 16:9 se mantiene y la caja entra sola.
+ *
+ * Las 15rem son lo que ocupa todo lo que no es el player en el primer viewport:
+ * el `pt-32` de la página (8rem), el badge de estado con su margen (~4rem) y un
+ * resto para que se asome el contenido de abajo y se note que hay scroll.
+ *
+ * `svh` y no `vh`: en el celular `vh` usa la altura CON la barra de URL
+ * retraída, así que al cargar (barra visible) el player queda más alto que la
+ * pantalla. `svh` toma siempre la medida chica y no salta al scrollear.
+ */
+const ANCHO_MAX_PLAYER = 'calc((100svh - 15rem) * 16 / 9)';
+
 function CanalPlayer({ canal, nivel }: { canal: Canal; nivel: Nivel }) {
   const [playing, setPlaying] = useState(false);
 
-  // El canal siempre es visible si hay transmisión activa
-  // Los no logueados ven el stream pero con un CTA no bloqueante
-  const puedeVer = canal.modo !== 'apagado';
+  // El canal siempre es visible si hay transmisión activa: los no logueados
+  // ven el stream igual, con un CTA no bloqueante.
 
   if (canal.modo === 'apagado') {
     return (
-      <div className="mb-14 mx-auto max-w-4xl w-full rounded-[28px] border border-manso-cream/10 bg-manso-cream/5 flex items-center justify-center aspect-video max-h-[480px]">
+      <div
+        className="mb-10 md:mb-14 mx-auto w-full rounded-[28px] border border-manso-cream/10 bg-manso-cream/5 flex items-center justify-center aspect-video"
+        style={{ maxWidth: ANCHO_MAX_PLAYER }}
+      >
         <div className="text-center px-8">
           <PowerOff size={36} className="text-manso-cream/15 mx-auto mb-4" />
           <p className="text-[10px] font-black uppercase tracking-[0.4em] text-manso-cream/25">
@@ -113,7 +133,7 @@ function CanalPlayer({ canal, nivel }: { canal: Canal; nivel: Nivel }) {
   }
 
   return (
-    <div className="mb-14">
+    <div className="mb-10 md:mb-14 mx-auto w-full relative" style={{ maxWidth: ANCHO_MAX_PLAYER }}>
       {/* Player */}
       <div className="relative aspect-video rounded-[20px] overflow-hidden bg-zinc-900 border border-manso-cream/10">
         {embedSrc ? (
@@ -155,24 +175,29 @@ function CanalPlayer({ canal, nivel }: { canal: Canal; nivel: Nivel }) {
           </div>
         )}
 
-        {/* Banner no bloqueante para usuarios no logueados */}
-        {nivel === 'publico' && (
-          <div className="absolute bottom-0 left-0 right-0 flex items-center justify-between gap-3 px-5 py-3 bg-black/70 backdrop-blur-sm border-t border-manso-cream/10">
-            <div className="flex items-center gap-2">
-              <Users size={13} className="text-blue-400 shrink-0" />
-              <p className="text-[9px] font-black uppercase tracking-widest text-manso-cream/70">
-                Registrate gratis para acceder a más contenido
-              </p>
-            </div>
-            <Link
-              href="/login?from=/streaming"
-              className="shrink-0 px-4 py-1.5 bg-manso-blue text-manso-cream rounded-full text-[8px] font-black uppercase tracking-widest hover:bg-manso-blue/80 transition-all"
-            >
-              Ingresar
-            </Link>
-          </div>
-        )}
       </div>
+
+      {/* Banner no bloqueante para usuarios no logueados.
+          En el celular va DEBAJO del player y no encima: sobre un video de
+          ~190px de alto, una barra de 3 renglones tapa los controles de
+          YouTube (play, barra de tiempo, pantalla completa) y deja el video
+          sin manejar. En desktop, con el player grande, sigue superpuesto. */}
+      {nivel === 'publico' && (
+        <div className="mt-2 flex items-center justify-between gap-3 px-4 py-3 rounded-2xl bg-black/70 border border-manso-cream/10 md:mt-0 md:absolute md:bottom-0 md:inset-x-0 md:rounded-none md:rounded-b-[20px] md:border-0 md:border-t md:px-5 md:backdrop-blur-sm">
+          <div className="flex items-center gap-2">
+            <Users size={13} className="text-blue-400 shrink-0" />
+            <p className="text-[9px] font-black uppercase tracking-widest text-manso-cream/70">
+              Registrate gratis para acceder a más contenido
+            </p>
+          </div>
+          <Link
+            href="/login?from=/streaming"
+            className="shrink-0 px-4 py-1.5 bg-manso-blue text-manso-cream rounded-full text-[8px] font-black uppercase tracking-widest hover:bg-manso-blue/80 transition-all"
+          >
+            Ingresar
+          </Link>
+        </div>
+      )}
     </div>
   );
 }

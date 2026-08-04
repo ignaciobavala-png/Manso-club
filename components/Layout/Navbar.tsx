@@ -63,6 +63,7 @@ export const Navbar = () => {
     { name: 'membresias', href: '/membresias' },
     { name: 'agenda',     href: '/agenda' },
     { name: 'artistas',   href: '/artistas' },
+    { name: 'live',       href: '/streaming' },
     { name: 'comunidad',  href: '/foro' },
     { name: 'tienda',     href: '/tienda' },
   ];

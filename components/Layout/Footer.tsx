@@ -49,6 +49,7 @@ return (
             <span className="text-[10px] font-bold uppercase tracking-widest text-manso-terra">Servicios</span>
             <div className="flex flex-col gap-2 text-[10px] uppercase tracking-widest font-medium text-manso-cream/60">
               <Link href="/membresias" className="hover:text-manso-cream transition-colors">Membresías</Link>
+              <Link href="/streaming" className="hover:text-manso-cream transition-colors">Live</Link>
               <Link href="/tienda" className="hover:text-manso-cream transition-colors">Tienda</Link>
             </div>
           </div>
