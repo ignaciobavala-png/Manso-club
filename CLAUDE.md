@@ -5,11 +5,17 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-pnpm dev          # Start dev server with Turbopack
+pnpm dev          # Start dev server (webpack, port 3000) — NOT Turbopack
 pnpm build        # Production build
 pnpm start        # Start production server
-pnpm lint         # Run ESLint
+pnpm email        # React Email preview server for the templates in emails/
+npx tsc --noEmit  # Type check
+npx eslint .      # Lint — `pnpm lint` is broken (see below)
 ```
+
+`pnpm lint` runs `next lint`, which Next 16 removed: it fails with "Invalid
+project directory provided, no such directory: ./lint". Use `npx eslint .`
+until the script is migrated.
 
 ## Architecture
 
