@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { CompactImageUploader } from './CompactImageUploader';
 import { AUDIENCIAS, type Audiencia } from '@/lib/mailing-audiencias';
@@ -21,6 +21,12 @@ import {
   Monitor,
   Smartphone,
   Share2,
+  GripVertical,
+  Copy,
+  ChevronDown,
+  ChevronRight,
+  Save,
+  FolderOpen,
 } from 'lucide-react';
 
 type Separacion = 'pegado' | 'poco' | 'normal' | 'mucho';
@@ -36,11 +42,23 @@ type Separacion = 'pegado' | 'poco' | 'normal' | 'mucho';
  */
 type ItemRed = { etiqueta: string; link: string; icono: string };
 
-type BloqueEditor =
+/**
+ * `id` es interno del editor y nunca se guarda: sirve como key de React. Con
+ * `key={i}` el estado de un bloque (imagen cargada, zonas dibujadas) se quedaba
+ * pegado al índice, así que al reordenar o duplicar el contenido saltaba de
+ * tarjeta. Se elimina en construirBloques().
+ */
+type BloqueEditor = { id: string } & (
   | { tipo: 'canvas'; url: string; alt: string; hotspots: Hotspot[] }
   | { tipo: 'boton'; texto: string; link: string; color: string; separacion: Separacion }
   | { tipo: 'texto'; contenido: string }
-  | { tipo: 'redes'; items: ItemRed[]; modo: 'iconos' | 'texto'; separacion: Separacion };
+  | { tipo: 'redes'; items: ItemRed[]; modo: 'iconos' | 'texto'; separacion: Separacion }
+);
+
+const nuevoId = () =>
+  typeof crypto !== 'undefined' && crypto.randomUUID
+    ? crypto.randomUUID()
+    : `b${Date.now()}${Math.random().toString(36).slice(2, 8)}`;
 
 const SEPARACIONES: { id: Separacion; label: string }[] = [
   { id: 'pegado', label: 'Pegado al bloque anterior' },
@@ -50,19 +68,37 @@ const SEPARACIONES: { id: Separacion; label: string }[] = [
 ];
 
 const bloqueNuevo = (tipo: BloqueEditor['tipo']): BloqueEditor => {
+  const id = nuevoId();
   if (tipo === 'boton') {
-    return { tipo: 'boton', texto: '', link: '', color: '#BC2915', separacion: 'normal' };
+    return { id, tipo: 'boton', texto: '', link: '', color: '#BC2915', separacion: 'normal' };
   }
-  if (tipo === 'texto') return { tipo: 'texto', contenido: '' };
+  if (tipo === 'texto') return { id, tipo: 'texto', contenido: '' };
   if (tipo === 'redes') {
     return {
+      id,
       tipo: 'redes',
       items: [{ etiqueta: '', link: '', icono: '' }],
       modo: 'iconos',
       separacion: 'normal',
     };
   }
-  return { tipo: 'canvas', url: '', alt: '', hotspots: [] };
+  return { id, tipo: 'canvas', url: '', alt: '', hotspots: [] };
+};
+
+/** Línea que resume el bloque cuando está colapsado. */
+const resumenBloque = (b: BloqueEditor): string => {
+  if (b.tipo === 'canvas') {
+    if (!b.url) return 'sin imagen';
+    const zonas = b.hotspots.length;
+    return zonas ? `${zonas} ${zonas === 1 ? 'zona' : 'zonas'}` : 'sin zonas';
+  }
+  if (b.tipo === 'boton') return b.texto.trim() || 'sin texto';
+  if (b.tipo === 'texto') {
+    const t = b.contenido.trim().replace(/\s+/g, ' ');
+    return t ? (t.length > 60 ? `${t.slice(0, 60)}…` : t) : 'vacío';
+  }
+  const n = b.items.filter((it) => it.link.trim()).length;
+  return n ? `${n} ${n === 1 ? 'link' : 'links'}` : 'sin links';
 };
 
 /**
@@ -82,6 +118,35 @@ const FONDOS_SUGERIDOS = [
   { hex: '#868229', nombre: 'Oliva' },
   { hex: '#542C1B', nombre: 'Marrón' },
 ];
+
+/**
+ * Plantillas: un set de bloques + color de fondo con nombre, para no rearmar
+ * desde cero las campañas que siempre tienen la misma estructura (arte + botón
+ * + pie de redes). Viven en localStorage y no en la base porque son un atajo
+ * del editor, no contenido publicado: no hay nada que compartir entre usuarios
+ * ni que versionar, y así no hace falta migración ni política de RLS.
+ */
+const PLANTILLAS_KEY = 'manso:mailing:plantillas';
+
+type Plantilla = { nombre: string; colorFondo: string; bloques: BloqueEditor[] };
+
+const leerPlantillas = (): Plantilla[] => {
+  try {
+    const raw = localStorage.getItem(PLANTILLAS_KEY);
+    const data = raw ? JSON.parse(raw) : [];
+    return Array.isArray(data) ? (data as Plantilla[]) : [];
+  } catch {
+    return [];
+  }
+};
+
+const escribirPlantillas = (plantillas: Plantilla[]) => {
+  try {
+    localStorage.setItem(PLANTILLAS_KEY, JSON.stringify(plantillas));
+  } catch {
+    /* modo incógnito o storage lleno: la plantilla no se guarda, nada más */
+  }
+};
 
 interface Props {
   onSaved?: () => void;
@@ -283,9 +348,48 @@ export function FormMailingCampania({ onSaved }: Props) {
   const [previewHtml, setPreviewHtml] = useState<string | null>(null);
   const [previewError, setPreviewError] = useState<string | null>(null);
   const [previewMobile, setPreviewMobile] = useState(false);
+  const [colapsados, setColapsados] = useState<Set<string>>(new Set());
+  const [arrastrando, setArrastrando] = useState<number | null>(null);
+  const [sobre, setSobre] = useState<number | null>(null);
+  // Los problemas se muestran recién después del primer intento: con el
+  // formulario vacío, listar todo lo que falta es ruido, no ayuda.
+  const [intentoEnvio, setIntentoEnvio] = useState(false);
+  const [plantillas, setPlantillas] = useState<Plantilla[]>([]);
+  const [nombrePlantilla, setNombrePlantilla] = useState('');
+  const [guardandoPlantilla, setGuardandoPlantilla] = useState(false);
+
+  useEffect(() => setPlantillas(leerPlantillas()), []);
 
   const agregarBloque = (tipo: BloqueEditor['tipo']) =>
     setBloques([...bloques, bloqueNuevo(tipo)]);
+
+  const duplicarBloque = (i: number) => {
+    const copia = structuredClone(bloques[i]);
+    copia.id = nuevoId();
+    setBloques([...bloques.slice(0, i + 1), copia, ...bloques.slice(i + 1)]);
+  };
+
+  const alternarColapso = (id: string) =>
+    setColapsados((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+
+  const todosColapsados = bloques.length > 0 && bloques.every((b) => colapsados.has(b.id));
+
+  const alternarTodos = () =>
+    setColapsados(todosColapsados ? new Set() : new Set(bloques.map((b) => b.id)));
+
+  /** Reordenar arrastrando: mueve el bloque `origen` a la posición `destino`. */
+  const reordenar = (origen: number, destino: number) => {
+    if (origen === destino) return;
+    const copia = [...bloques];
+    const [movido] = copia.splice(origen, 1);
+    copia.splice(destino, 0, movido);
+    setBloques(copia);
+  };
 
   const actualizarBloque = (i: number, patch: Record<string, unknown>) => {
     setBloques(bloques.map((b, idx) => (idx === i ? ({ ...b, ...patch } as BloqueEditor) : b)));
@@ -340,6 +444,40 @@ export function FormMailingCampania({ onSaved }: Props) {
     setBloques([]);
     setColorFondo(FONDO_DEFAULT);
     setScheduledAt('');
+    setColapsados(new Set());
+    setIntentoEnvio(false);
+    setNombrePlantilla('');
+    setGuardandoPlantilla(false);
+  };
+
+  const guardarPlantilla = () => {
+    const nombre = nombrePlantilla.trim();
+    if (!nombre) return;
+    const nueva: Plantilla = { nombre, colorFondo, bloques };
+    // Mismo nombre: se pisa, para poder iterar una plantilla sin acumular copias
+    const next = [...plantillas.filter((p) => p.nombre !== nombre), nueva];
+    setPlantillas(next);
+    escribirPlantillas(next);
+    setNombrePlantilla('');
+    setGuardandoPlantilla(false);
+    setSuccessMsg(`Plantilla "${nombre}" guardada`);
+    setTimeout(() => setSuccessMsg(null), 3000);
+  };
+
+  const cargarPlantilla = (nombre: string) => {
+    const p = plantillas.find((x) => x.nombre === nombre);
+    if (!p) return;
+    // Ids nuevos: los de la plantilla podrían chocar con los bloques en pantalla
+    setBloques(p.bloques.map((b) => ({ ...structuredClone(b), id: nuevoId() })));
+    setColorFondo(p.colorFondo || FONDO_DEFAULT);
+    setColapsados(new Set());
+    setIntentoEnvio(false);
+  };
+
+  const borrarPlantilla = (nombre: string) => {
+    const next = plantillas.filter((p) => p.nombre !== nombre);
+    setPlantillas(next);
+    escribirPlantillas(next);
   };
 
   /**
@@ -417,63 +555,99 @@ export function FormMailingCampania({ onSaved }: Props) {
       .map((e) => e.trim())
       .filter(Boolean);
 
-  const validar = (): string | null => {
-    if (!asunto.trim()) return 'El asunto es obligatorio';
-    if (!preheader.trim()) return 'El pre-header es obligatorio: es el texto que la casilla muestra al lado del asunto';
-    if (preheader.trim().toLowerCase() === asunto.trim().toLowerCase()) {
-      return 'El pre-header no puede repetir el asunto — escribí un texto que lo complemente';
+  /**
+   * Todos los problemas de la campaña, no solo el primero. Antes la validación
+   * cortaba en el primer error: con un mail de ocho bloques eso obligaba a
+   * guardar, leer el cartel, corregir y repetir una vez por cada cosa que
+   * faltaba. `bloqueId` permite marcar la tarjeta que tiene el problema.
+   */
+  const problemas = useMemo((): { bloqueId?: string; mensaje: string }[] => {
+    const out: { bloqueId?: string; mensaje: string }[] = [];
+
+    if (!asunto.trim()) out.push({ mensaje: 'El asunto es obligatorio' });
+    if (!preheader.trim()) {
+      out.push({
+        mensaje: 'El pre-header es obligatorio: es el texto que la casilla muestra al lado del asunto',
+      });
+    } else if (preheader.trim().toLowerCase() === asunto.trim().toLowerCase()) {
+      out.push({ mensaje: 'El pre-header no puede repetir el asunto — escribí un texto que lo complemente' });
     }
-    if (bloques.length === 0) return 'Agregá al menos un bloque';
+    if (bloques.length === 0) out.push({ mensaje: 'Agregá al menos un bloque' });
+
     for (const [i, b] of bloques.entries()) {
       const n = i + 1;
+      const push = (mensaje: string) => out.push({ bloqueId: b.id, mensaje });
+
       if (b.tipo === 'canvas') {
-        if (!b.url) return `El bloque ${n} es una imagen sin subir`;
-        for (const hs of b.hotspots) {
+        if (!b.url) push(`El bloque ${n} es una imagen sin subir`);
+        for (const [k, hs] of b.hotspots.entries()) {
           if (!LINK_VALIDO.test(hs.link.trim())) {
-            return `Hay una zona sin link válido en el bloque ${n} (https://..., mailto: o tel:)`;
+            push(`La zona ${k + 1} del bloque ${n} no tiene un link válido (https://..., mailto: o tel:)`);
           }
         }
       }
       if (b.tipo === 'boton') {
-        if (!b.texto.trim()) return `El botón del bloque ${n} no tiene texto`;
+        if (!b.texto.trim()) push(`El botón del bloque ${n} no tiene texto`);
         if (!LINK_VALIDO.test(b.link.trim())) {
-          return `El botón del bloque ${n} necesita un link válido (https://..., mailto: o tel:)`;
+          push(`El botón del bloque ${n} necesita un link válido (https://..., mailto: o tel:)`);
         }
       }
       if (b.tipo === 'texto' && !b.contenido.trim()) {
-        return `El texto del bloque ${n} está vacío`;
+        push(`El texto del bloque ${n} está vacío`);
       }
       if (b.tipo === 'redes') {
         const conLink = b.items.filter((it) => it.link.trim());
-        if (conLink.length === 0) return `El bloque ${n} (redes) no tiene ningún link cargado`;
+        if (conLink.length === 0) push(`El bloque ${n} (redes) no tiene ningún link cargado`);
         for (const it of conLink) {
           if (!LINK_VALIDO.test(it.link.trim())) {
-            return `"${it.link.trim()}" del bloque ${n} no es válido (https://..., mailto: o tel:)`;
+            push(`"${it.link.trim()}" del bloque ${n} no es válido (https://..., mailto: o tel:)`);
           }
           if (!it.etiqueta.trim()) {
-            return `Falta el nombre de un ítem del bloque ${n} — se usa como texto alternativo`;
+            push(`Falta el nombre de un ítem del bloque ${n} — se usa como texto alternativo`);
           }
           if (b.modo === 'iconos' && !it.icono) {
-            return `Falta subir el ícono de "${it.etiqueta.trim()}" en el bloque ${n}`;
+            push(`Falta subir el ícono de "${it.etiqueta.trim()}" en el bloque ${n}`);
           }
         }
       }
     }
+
     if (audiencia === 'especifico') {
       const emails = parsearMailsEspecificos();
-      if (emails.length === 0) return 'Ingresá al menos un email';
-      const invalido = emails.find((e) => !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e));
-      if (invalido) return `"${invalido}" no es un email válido`;
+      if (emails.length === 0) out.push({ mensaje: 'Ingresá al menos un email' });
+      for (const e of emails) {
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)) out.push({ mensaje: `"${e}" no es un email válido` });
+      }
     }
-    return null;
-  };
+
+    return out;
+    // parsearMailsEspecificos solo depende de mailsEspecificos
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [asunto, preheader, bloques, audiencia, mailsEspecificos]);
+
+  /** Cantidad de problemas por bloque, para el badge de cada tarjeta. */
+  const problemasPorBloque = useMemo(() => {
+    const m = new Map<string, number>();
+    for (const p of problemas) {
+      if (p.bloqueId) m.set(p.bloqueId, (m.get(p.bloqueId) ?? 0) + 1);
+    }
+    return m;
+  }, [problemas]);
 
   const guardar = async (programar: boolean) => {
-    const error = validar();
-    if (error) {
-      setErrorMsg(error);
+    if (problemas.length > 0) {
+      setIntentoEnvio(true);
+      // Un bloque colapsado con problemas se abre solo: si no, el cartel manda
+      // a revisar el bloque 5 y en pantalla el bloque 5 es un renglón cerrado.
+      setColapsados((prev) => new Set([...prev].filter((id) => !problemasPorBloque.has(id))));
+      setErrorMsg(
+        problemas.length === 1
+          ? problemas[0].mensaje
+          : `Hay ${problemas.length} cosas para corregir antes de guardar`
+      );
       return;
     }
+    setIntentoEnvio(false);
 
     let scheduledIso: string | null = null;
     if (programar) {
@@ -627,35 +801,179 @@ export function FormMailingCampania({ onSaved }: Props) {
           dentro de la imagen: se ven aunque Gmail bloquee las imágenes y nunca se cortan.
         </p>
 
-        {bloques.map((bloque, i) => (
-          <div key={i} className="bg-manso-cream/5 border border-manso-cream/10 rounded-xl p-3 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/50 flex items-center gap-1.5">
+        {/* Barra de herramientas del armado: plantillas + colapsar todo */}
+        <div className="flex flex-wrap items-center gap-2">
+          {plantillas.length > 0 && (
+            <div className="flex items-center gap-1">
+              <select
+                value=""
+                onChange={(e) => e.target.value && cargarPlantilla(e.target.value)}
+                className="bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-2.5 py-1.5 text-[10px] text-manso-cream focus:outline-none focus:border-manso-terra"
+                title="Cargar plantilla (reemplaza los bloques actuales)"
+              >
+                <option value="" className="bg-manso-black">
+                  Cargar plantilla…
+                </option>
+                {plantillas.map((p) => (
+                  <option key={p.nombre} value={p.nombre} className="bg-manso-black">
+                    {p.nombre} ({p.bloques.length} bloques)
+                  </option>
+                ))}
+              </select>
+              <select
+                value=""
+                onChange={(e) => e.target.value && borrarPlantilla(e.target.value)}
+                className="bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-2.5 py-1.5 text-[10px] text-manso-cream/50 focus:outline-none"
+                title="Borrar una plantilla guardada"
+              >
+                <option value="" className="bg-manso-black">
+                  Borrar…
+                </option>
+                {plantillas.map((p) => (
+                  <option key={p.nombre} value={p.nombre} className="bg-manso-black">
+                    {p.nombre}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          {guardandoPlantilla ? (
+            <div className="flex items-center gap-1">
+              <input
+                autoFocus
+                value={nombrePlantilla}
+                onChange={(e) => setNombrePlantilla(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') guardarPlantilla();
+                  if (e.key === 'Escape') setGuardandoPlantilla(false);
+                }}
+                placeholder="Nombre de la plantilla"
+                className="bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-2.5 py-1.5 text-[10px] text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra"
+              />
+              <button
+                onClick={guardarPlantilla}
+                disabled={!nombrePlantilla.trim()}
+                className="px-2.5 py-1.5 rounded-lg bg-manso-terra/80 text-manso-cream text-[9px] font-black uppercase tracking-widest disabled:opacity-30"
+              >
+                Guardar
+              </button>
+              <button
+                onClick={() => setGuardandoPlantilla(false)}
+                className="p-1.5 text-manso-cream/40 hover:text-manso-cream"
+              >
+                <X size={12} />
+              </button>
+            </div>
+          ) : (
+            <button
+              onClick={() => setGuardandoPlantilla(true)}
+              disabled={bloques.length === 0}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-manso-cream/5 hover:bg-manso-cream/10 text-manso-cream/60 text-[9px] font-black uppercase tracking-widest transition-colors disabled:opacity-30"
+              title="Guardar estos bloques como plantilla reutilizable"
+            >
+              <Save size={11} /> Guardar como plantilla
+            </button>
+          )}
+
+          {bloques.length > 1 && (
+            <button
+              onClick={alternarTodos}
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-manso-cream/5 hover:bg-manso-cream/10 text-manso-cream/60 text-[9px] font-black uppercase tracking-widest transition-colors ml-auto"
+            >
+              {todosColapsados ? <FolderOpen size={11} /> : <ChevronRight size={11} />}
+              {todosColapsados ? 'Abrir todos' : 'Colapsar todos'}
+            </button>
+          )}
+        </div>
+
+        {bloques.length > 1 && (
+          <p className="text-[9px] text-manso-cream/30">
+            Arrastrá un bloque desde el encabezado para cambiarlo de lugar.
+          </p>
+        )}
+
+        {bloques.map((bloque, i) => {
+          const colapsado = colapsados.has(bloque.id);
+          const errores = intentoEnvio ? problemasPorBloque.get(bloque.id) ?? 0 : 0;
+          return (
+          <div
+            key={bloque.id}
+            onDragOver={(e) => {
+              if (arrastrando === null) return;
+              e.preventDefault();
+              setSobre(i);
+            }}
+            onDrop={(e) => {
+              if (arrastrando === null) return;
+              e.preventDefault();
+              reordenar(arrastrando, i);
+              setArrastrando(null);
+              setSobre(null);
+            }}
+            className={`bg-manso-cream/5 border rounded-xl p-3 space-y-2 transition-colors ${
+              errores ? 'border-red-500/40' : 'border-manso-cream/10'
+            } ${arrastrando === i ? 'opacity-40' : ''} ${
+              sobre === i && arrastrando !== null && arrastrando !== i ? 'border-manso-terra' : ''
+            }`}
+          >
+            <div
+              draggable
+              onDragStart={() => setArrastrando(i)}
+              onDragEnd={() => {
+                setArrastrando(null);
+                setSobre(null);
+              }}
+              className="flex items-center justify-between cursor-grab active:cursor-grabbing"
+            >
+              <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/50 flex items-center gap-1.5 min-w-0">
+                <GripVertical size={12} className="text-manso-cream/30 shrink-0" />
+                <button
+                  onClick={() => alternarColapso(bloque.id)}
+                  className="text-manso-cream/40 hover:text-manso-cream shrink-0"
+                  title={colapsado ? 'Abrir bloque' : 'Colapsar bloque'}
+                >
+                  {colapsado ? <ChevronRight size={12} /> : <ChevronDown size={12} />}
+                </button>
                 {bloque.tipo === 'canvas' && <><ImageIcon size={12} /> Imagen</>}
                 {bloque.tipo === 'boton' && <><MousePointerClick size={12} /> Botón</>}
                 {bloque.tipo === 'texto' && <><TypeIcon size={12} /> Texto</>}
                 {bloque.tipo === 'redes' && <><Share2 size={12} /> Redes / Contacto</>}
-                <span className="text-manso-cream/25">bloque {i + 1}</span>
-                {bloque.tipo === 'canvas' && bloque.hotspots.length > 0 && (
+                <span className="text-manso-cream/25 shrink-0">bloque {i + 1}</span>
+                {bloque.tipo === 'canvas' && bloque.hotspots.length > 0 && !colapsado && (
                   <span className="flex items-center gap-1 text-manso-terra">
                     <MousePointerClick size={12} /> {bloque.hotspots.length}{' '}
                     {bloque.hotspots.length === 1 ? 'zona' : 'zonas'}
                   </span>
                 )}
+                {colapsado && (
+                  <span className="text-manso-cream/35 normal-case tracking-normal font-normal truncate">
+                    {resumenBloque(bloque)}
+                  </span>
+                )}
+                {errores > 0 && (
+                  <span className="flex items-center gap-1 text-red-400 shrink-0">
+                    <AlertCircle size={11} /> {errores}
+                  </span>
+                )}
               </span>
-              <div className="flex items-center gap-1">
-                <button onClick={() => moverBloque(i, -1)} disabled={i === 0} className="p-1 text-manso-cream/40 hover:text-manso-cream disabled:opacity-20">
+              <div className="flex items-center gap-1 shrink-0">
+                <button onClick={() => moverBloque(i, -1)} disabled={i === 0} className="p-1 text-manso-cream/40 hover:text-manso-cream disabled:opacity-20" title="Subir">
                   <ArrowUp size={12} />
                 </button>
-                <button onClick={() => moverBloque(i, 1)} disabled={i === bloques.length - 1} className="p-1 text-manso-cream/40 hover:text-manso-cream disabled:opacity-20">
+                <button onClick={() => moverBloque(i, 1)} disabled={i === bloques.length - 1} className="p-1 text-manso-cream/40 hover:text-manso-cream disabled:opacity-20" title="Bajar">
                   <ArrowDown size={12} />
                 </button>
-                <button onClick={() => eliminarBloque(i)} className="p-1 text-manso-cream/40 hover:text-red-400">
+                <button onClick={() => duplicarBloque(i)} className="p-1 text-manso-cream/40 hover:text-manso-cream" title="Duplicar bloque">
+                  <Copy size={12} />
+                </button>
+                <button onClick={() => eliminarBloque(i)} className="p-1 text-manso-cream/40 hover:text-red-400" title="Eliminar bloque">
                   <Trash2 size={12} />
                 </button>
               </div>
             </div>
 
+            {!colapsado && <>
             {bloque.tipo === 'canvas' && (
               <>
                 {!bloque.url ? (
@@ -816,8 +1134,10 @@ export function FormMailingCampania({ onSaved }: Props) {
                 className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-2 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra resize-y"
               />
             )}
+            </>}
           </div>
-        ))}
+          );
+        })}
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
           <button
@@ -896,6 +1216,28 @@ export function FormMailingCampania({ onSaved }: Props) {
           className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-2.5 text-sm text-manso-cream focus:outline-none focus:border-manso-terra [color-scheme:dark]"
         />
       </div>
+
+      {/* Checklist de lo que falta. Aparece recién tras el primer intento de
+          guardar y se va vaciando sola a medida que se corrige. */}
+      {intentoEnvio && problemas.length > 0 && (
+        <div className="rounded-xl bg-red-500/10 border border-red-500/20 p-3">
+          <p className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-red-400 mb-1.5">
+            <AlertCircle size={11} /> Falta corregir ({problemas.length})
+          </p>
+          <ul className="space-y-1">
+            {problemas.map((p, i) => (
+              <li key={i} className="text-[11px] text-red-300/90 leading-snug">
+                · {p.mensaje}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+      {intentoEnvio && problemas.length === 0 && (
+        <p className="flex items-center gap-1.5 text-[10px] text-green-400">
+          <CheckCircle size={12} /> Todo listo para guardar
+        </p>
+      )}
 
       <button
         onClick={abrirPreview}
