@@ -10,6 +10,7 @@ import {
   Section,
   Text,
 } from "react-email";
+import { esFondoOscuro } from "../lib/email-colores";
 
 type Separacion = "pegado" | "poco" | "normal" | "mucho";
 
@@ -28,6 +29,25 @@ const PX_POR_RADIO: Record<RadioBoton, number> = {
   poco: 6,
   redondeado: 14,
   pastilla: 999,
+};
+
+/**
+ * Tamaño de los ítems del bloque de redes. Escala nombrada y no un número
+ * libre: el ancho útil del mail son 600px y una fila de 5 íconos a mano alzada
+ * se desborda enseguida. `gap` acompaña al ícono para que la fila no quede
+ * apretada al agrandarlo.
+ *
+ * El tope es 56px porque los íconos se suben a ~120px (ver la ayuda del
+ * editor) y hay que dejar margen para que se vean nítidos en pantallas retina,
+ * que los piden al doble.
+ */
+type TamanoRed = "chico" | "normal" | "grande" | "gigante";
+
+const TAMANO_RED: Record<TamanoRed, { icono: number; fuente: number; gap: number }> = {
+  chico:   { icono: 22, fuente: 11, gap: 6 },
+  normal:  { icono: 28, fuente: 13, gap: 8 },
+  grande:  { icono: 40, fuente: 16, gap: 10 },
+  gigante: { icono: 56, fuente: 20, gap: 14 },
 };
 
 // Zona clickeable dibujada por la diseñadora sobre la imagen (coords en %)
@@ -66,6 +86,14 @@ export type BloqueMailing =
       items: ItemRed[];
       /** "iconos" dibuja la imagen de cada ítem; "texto" dibuja su etiqueta. */
       modo?: "iconos" | "texto";
+      /** Tamaño de los íconos y de la letra. Default: "normal" (28px). */
+      tamano?: TamanoRed;
+      /**
+       * Color de la etiqueta en modo "texto". Sin esto se usa el color del pie,
+       * que se deduce de la luminancia del fondo: sirve como default pero deja
+       * sin salida a un mail cuyo arte tiene un color de marca distinto.
+       */
+      colorTexto?: string;
       separacion?: Separacion;
     };
 
@@ -83,17 +111,6 @@ interface CampaniaGenericaProps {
 }
 
 const FONDO_DEFAULT = "#FFFCDC";
-
-/** Luminancia percibida: decide si el texto del pie va claro u oscuro. */
-function esFondoOscuro(hex: string): boolean {
-  const m = /^#?([0-9a-f]{6})$/i.exec(hex.trim());
-  if (!m) return false;
-  const n = parseInt(m[1], 16);
-  const r = (n >> 16) & 255;
-  const g = (n >> 8) & 255;
-  const b = n & 255;
-  return 0.299 * r + 0.587 * g + 0.114 * b < 128;
-}
 
 const imgSliceStyle: React.CSSProperties = {
   display: "block",
@@ -223,6 +240,8 @@ export default function CampaniaGenerica({ asunto, bloques, unsubscribeUrl, colo
               if (items.length === 0) return null;
               const px = PX_POR_SEPARACION[bloque.separacion ?? "normal"];
               const porIconos = (bloque.modo ?? "iconos") === "iconos";
+              const escala = TAMANO_RED[bloque.tamano ?? "normal"];
+              const colorEtiqueta = bloque.colorTexto?.trim() || colorPie;
 
               return (
                 <Section key={i} style={{ padding: `${px}px 20px` }}>
@@ -237,23 +256,28 @@ export default function CampaniaGenerica({ asunto, bloques, unsubscribeUrl, colo
                     <tbody>
                       <tr>
                         {items.map((it, n) => (
-                          <td key={n} style={{ padding: "0 8px", verticalAlign: "middle" }}>
+                          <td key={n} style={{ padding: `0 ${escala.gap}px`, verticalAlign: "middle" }}>
                             <a
                               href={it.link.trim()}
                               target="_blank"
                               style={{
-                                color: colorPie,
+                                color: colorEtiqueta,
                                 textDecoration: porIconos ? "none" : "underline",
-                                fontSize: "13px",
+                                fontSize: `${escala.fuente}px`,
                               }}
                             >
                               {porIconos && it.icono ? (
                                 <img
                                   src={it.icono}
                                   alt={it.etiqueta}
-                                  width="28"
-                                  height="28"
-                                  style={{ display: "block", border: 0, width: "28px", height: "28px" }}
+                                  width={escala.icono}
+                                  height={escala.icono}
+                                  style={{
+                                    display: "block",
+                                    border: 0,
+                                    width: `${escala.icono}px`,
+                                    height: `${escala.icono}px`,
+                                  }}
                                 />
                               ) : (
                                 it.etiqueta

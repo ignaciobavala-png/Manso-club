@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { CompactImageUploader } from './CompactImageUploader';
 import { AUDIENCIAS, type Audiencia } from '@/lib/mailing-audiencias';
+import { colorTextoAuto } from '@/lib/email-colores';
 import type { Hotspot } from '@/emails/campania-generica';
 import {
   Image as ImageIcon,
@@ -31,6 +32,7 @@ import {
 
 type Separacion = 'pegado' | 'poco' | 'normal' | 'mucho';
 type RadioBoton = 'recto' | 'poco' | 'redondeado' | 'pastilla';
+type TamanoRed = 'chico' | 'normal' | 'grande' | 'gigante';
 
 /**
  * Bloques que se pueden apilar en el mail. `canvas` es una pieza gráfica con
@@ -61,7 +63,14 @@ type BloqueEditor = { id: string } & (
       separacion: Separacion;
     }
   | { tipo: 'texto'; contenido: string }
-  | { tipo: 'redes'; items: ItemRed[]; modo: 'iconos' | 'texto'; separacion: Separacion }
+  | {
+      tipo: 'redes';
+      items: ItemRed[];
+      modo: 'iconos' | 'texto';
+      tamano: TamanoRed;
+      colorTexto: string;
+      separacion: Separacion;
+    }
 );
 
 const nuevoId = () =>
@@ -80,6 +89,19 @@ const RADIOS: { id: RadioBoton; label: string; px: number }[] = [
   { id: 'poco', label: 'Apenas redondeado', px: 6 },
   { id: 'redondeado', label: 'Redondeado', px: 14 },
   { id: 'pastilla', label: 'Pastilla', px: 999 },
+];
+
+/**
+ * Tamaño de los ítems de redes. Los px tienen que coincidir con TAMANO_RED del
+ * template (emails/campania-generica.tsx): acá solo se usan para la previa.
+ */
+const TAMANO_RED_DEFAULT: TamanoRed = 'normal';
+
+const TAMANOS_RED: { id: TamanoRed; label: string; icono: number; fuente: number }[] = [
+  { id: 'chico', label: 'Chico', icono: 22, fuente: 11 },
+  { id: 'normal', label: 'Normal', icono: 28, fuente: 13 },
+  { id: 'grande', label: 'Grande', icono: 40, fuente: 16 },
+  { id: 'gigante', label: 'Gigante', icono: 56, fuente: 20 },
 ];
 
 const SEPARACIONES: { id: Separacion; label: string }[] = [
@@ -110,6 +132,9 @@ const bloqueNuevo = (tipo: BloqueEditor['tipo']): BloqueEditor => {
       tipo: 'redes',
       items: [{ etiqueta: '', link: '', icono: '' }],
       modo: 'iconos',
+      tamano: TAMANO_RED_DEFAULT,
+      // Vacío = automático: el template deduce el color del fondo del mail.
+      colorTexto: '',
       separacion: 'normal',
     };
   }
@@ -535,6 +560,10 @@ export function FormMailingCampania({ onSaved }: Props) {
         return {
           tipo: 'redes',
           modo: b.modo,
+          // Las plantillas guardadas antes de estos campos no los traen
+          tamano: b.tamano || TAMANO_RED_DEFAULT,
+          // Vacío = automático: se omite y el template deduce el color del fondo
+          colorTexto: b.colorTexto?.trim() || undefined,
           separacion: b.separacion,
           items: b.items
             .filter((it) => it.link.trim())
@@ -1135,6 +1164,92 @@ export function FormMailingCampania({ onSaved }: Props) {
                     ))}
                   </select>
                 </div>
+
+                <div className="flex items-center gap-2">
+                  <select
+                    value={bloque.tamano || TAMANO_RED_DEFAULT}
+                    onChange={(e) => actualizarBloque(i, { tamano: e.target.value as TamanoRed })}
+                    className="flex-1 bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-2 text-xs text-manso-cream focus:outline-none focus:border-manso-terra"
+                    title="Tamaño de los iconos y de la letra"
+                  >
+                    {TAMANOS_RED.map((t) => (
+                      <option key={t.id} value={t.id} className="bg-manso-black">
+                        Tamaño {t.label} ({bloque.modo === 'iconos' ? `${t.icono}px` : `${t.fuente}px`})
+                      </option>
+                    ))}
+                  </select>
+
+                  {/* El color solo pinta la etiqueta, así que en modo iconos no
+                      hay nada que pintar y el control no se muestra. */}
+                  {bloque.modo === 'texto' && (
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <input
+                        type="color"
+                        value={bloque.colorTexto || colorTextoAuto(colorFondo)}
+                        onChange={(e) => actualizarBloque(i, { colorTexto: e.target.value })}
+                        className="h-9 w-12 bg-transparent border border-manso-cream/10 rounded-lg cursor-pointer"
+                        title="Color de la letra"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => actualizarBloque(i, { colorTexto: '' })}
+                        disabled={!bloque.colorTexto}
+                        className={`px-2 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-colors ${
+                          bloque.colorTexto
+                            ? 'bg-manso-cream/5 hover:bg-manso-cream/10 text-manso-cream/60'
+                            : 'bg-manso-terra/20 text-manso-cream/70'
+                        }`}
+                        title="Deducir el color del fondo del mail"
+                      >
+                        Auto
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                {/* Previa a escala real: es la única forma de ver si los
+                    iconos entran en los 600px de ancho del mail. */}
+                {bloque.items.some((it) => it.link.trim() || it.icono) && (
+                  <div
+                    className="rounded-lg p-3 flex flex-wrap items-center justify-center"
+                    style={{
+                      backgroundColor: colorFondo,
+                      gap: `${(TAMANOS_RED.find((t) => t.id === (bloque.tamano || TAMANO_RED_DEFAULT))?.icono ?? 28) / 3}px`,
+                    }}
+                  >
+                    {bloque.items.map((item, k) => {
+                      const esc =
+                        TAMANOS_RED.find((t) => t.id === (bloque.tamano || TAMANO_RED_DEFAULT)) ??
+                        TAMANOS_RED[1];
+                      if (bloque.modo === 'iconos') {
+                        return item.icono ? (
+                          // eslint-disable-next-line @next/next/no-img-element
+                          <img
+                            key={k}
+                            src={item.icono}
+                            alt=""
+                            style={{ width: esc.icono, height: esc.icono }}
+                            className="object-contain"
+                          />
+                        ) : null;
+                      }
+                      return item.etiqueta.trim() ? (
+                        <span
+                          key={k}
+                          style={{
+                            fontSize: esc.fuente,
+                            color:
+                              bloque.colorTexto ||
+                              colorTextoAuto(colorFondo),
+                            textDecoration: 'underline',
+                          }}
+                        >
+                          {item.etiqueta}
+                        </span>
+                      ) : null;
+                    })}
+                  </div>
+                )}
 
                 {bloque.items.map((item, k) => (
                   <div key={k} className="flex items-start gap-2 bg-manso-cream/5 rounded-lg p-2">
