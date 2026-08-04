@@ -124,7 +124,16 @@ export default function CampaniaGenerica({ asunto, bloques, unsubscribeUrl, colo
   const colorPie = esFondoOscuro(fondo) ? "#FFFCDC" : "#1D1D1B";
   return (
     <Html>
-      <Head />
+      <Head>
+        {/* Sin estas dos metas, iOS Mail, Gmail app y Outlook aplican su
+            transformación AUTOMÁTICA de modo oscuro, que reescribe los colores
+            a criterio del cliente. Declarando que el mail entiende de esquemas
+            de color pasan al modo selectivo y respetan lo que mandamos.
+            Va "light dark" y no "only light" porque el fondo del mail lo elige
+            quien arma la campaña y puede ser oscuro de por sí. */}
+        <meta name="color-scheme" content="light dark" />
+        <meta name="supported-color-schemes" content="light dark" />
+      </Head>
       <Preview>{preheader?.trim() || asunto}</Preview>
       {/* El fondo va también en una tabla al 100% (bgcolor + style): varios
           clientes móviles (Gmail app entre ellos) ignoran el background del
@@ -293,20 +302,56 @@ export default function CampaniaGenerica({ asunto, bloques, unsubscribeUrl, colo
             }
             if (bloque.tipo === "boton") {
               const px = PX_POR_SEPARACION[bloque.separacion ?? "normal"];
+              // `||` y no `??`: un string vacío tiene que caer al default igual
+              // que un undefined, o el botón sale sin fondo.
+              const fondoBoton = bloque.color?.trim() || "#BC2915";
+              const radioBoton = PX_POR_RADIO[bloque.radio ?? "poco"];
               return (
                 <Section key={i} style={{ padding: `${px}px 0`, textAlign: "center" }}>
-                  <Button
-                    href={bloque.link}
+                  {/* El <Button> de react-email es un <a> pelado con style
+                      inline: el color de fondo depende solo de CSS sobre un
+                      elemento inline, y varios clientes móviles lo descartan —
+                      el mismo motivo por el que el fondo del mail necesitó una
+                      tabla con bgcolor más arriba. La <td> con el atributo
+                      bgcolor ancla el color: es HTML viejo que ningún cliente
+                      sanitiza, así que si el CSS del <a> se cae, debajo sigue
+                      estando el color y no el blanco del cliente. */}
+                  <table
+                    role="presentation"
+                    cellPadding={0}
+                    cellSpacing={0}
+                    border={0}
+                    align="center"
+                    bgcolor={fondoBoton}
                     style={{
-                      background: bloque.color ?? "#BC2915",
-                      color: bloque.colorTexto ?? "#FFFCDC",
-                      padding: "12px 32px",
-                      borderRadius: `${PX_POR_RADIO[bloque.radio ?? "poco"]}px`,
-                      fontSize: "16px",
+                      margin: "0 auto",
+                      borderCollapse: "collapse",
+                      backgroundColor: fondoBoton,
+                      borderRadius: `${radioBoton}px`,
                     }}
                   >
-                    {bloque.texto}
-                  </Button>
+                    <tbody>
+                      <tr>
+                        <td style={{ backgroundColor: fondoBoton, borderRadius: `${radioBoton}px` }}>
+                          <Button
+                            href={bloque.link}
+                            style={{
+                              // backgroundColor y no el atajo `background`:
+                              // algunos sanitizadores descartan la forma corta
+                              // y aceptan la propiedad específica.
+                              backgroundColor: fondoBoton,
+                              color: bloque.colorTexto ?? "#FFFCDC",
+                              padding: "12px 32px",
+                              borderRadius: `${radioBoton}px`,
+                              fontSize: "16px",
+                            }}
+                          >
+                            {bloque.texto}
+                          </Button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
                 </Section>
               );
             }
