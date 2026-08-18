@@ -57,7 +57,7 @@ export function ProductCard({ producto }: ProductProps) {
       <Link href={`/producto/${producto.id}`}>
         <div className="relative">
           {/* Contenedor de Imagen */}
-          <div className="aspect-[3/4] w-full bg-zinc-50 relative overflow-hidden">
+          <div className="aspect-square w-full bg-zinc-50 relative overflow-hidden">
             <img 
               src={currentImage} 
               alt={producto.nombre}
