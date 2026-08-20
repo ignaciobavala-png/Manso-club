@@ -102,6 +102,15 @@ export async function enviarCampania(
       from: EMAIL_FROM,
       to: email,
       subject: campania.asunto,
+      // Baja en un click (RFC 8058). Desde 2024 Gmail y Yahoo exigen estos dos
+      // headers a cualquiera que mande en volumen: sin ellos empujan a spam sin
+      // avisar. El link del pie no los reemplaza — es esto lo que hace que Gmail
+      // dibuje su propio botón "Cancelar suscripción" al lado del remitente.
+      // El endpoint responde también por POST, que es como lo llaman ellos.
+      headers: {
+        "List-Unsubscribe": `<${unsubscribeUrl(email)}>`,
+        "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+      },
       react: CampaniaGenerica({
         asunto: campania.asunto,
         bloques,

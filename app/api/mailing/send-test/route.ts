@@ -75,6 +75,12 @@ export async function POST(request: Request) {
         from: EMAIL_FROM,
         to: email,
         subject: `[PRUEBA] ${campania.asunto}`,
+        // Mismos headers de baja que el envío real: la prueba tiene que
+        // llegar igual que la campaña, si no no sirve para verificar nada.
+        headers: {
+          "List-Unsubscribe": `<${siteUrl}/api/mailing/unsubscribe?email=${encodeURIComponent(email)}>`,
+          "List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+        },
         react: CampaniaGenerica({
           asunto: `[PRUEBA] ${campania.asunto}`,
           bloques,

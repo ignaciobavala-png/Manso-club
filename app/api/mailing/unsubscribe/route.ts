@@ -14,16 +14,12 @@ function pagina(mensaje: string) {
 // Baja sin login: es una acción de opt-out (no expone ni modifica datos
 // sensibles), así que no requiere token firmado — el peor caso posible es
 // que alguien excluya un email ajeno del mailing, no una fuga de datos.
-export async function GET(request: Request) {
+function emailDeLaUrl(request: Request): string | null {
   const email = new URL(request.url).searchParams.get("email")?.toLowerCase().trim();
+  return email && email.includes("@") ? email : null;
+}
 
-  if (!email || !email.includes("@")) {
-    return new Response(pagina("Falta un email válido para procesar la baja."), {
-      status: 400,
-      headers: { "Content-Type": "text/html; charset=utf-8" },
-    });
-  }
-
+async function darDeBaja(email: string, motivo: string) {
   const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!
@@ -31,10 +27,45 @@ export async function GET(request: Request) {
 
   await supabase
     .from("mailing_exclusiones")
-    .upsert({ email, motivo: "Baja desde el link del mail" }, { onConflict: "email", ignoreDuplicates: true });
+    .upsert({ email, motivo }, { onConflict: "email", ignoreDuplicates: true });
+}
+
+export async function GET(request: Request) {
+  const email = emailDeLaUrl(request);
+
+  if (!email) {
+    return new Response(pagina("Falta un email válido para procesar la baja."), {
+      status: 400,
+      headers: { "Content-Type": "text/html; charset=utf-8" },
+    });
+  }
+
+  await darDeBaja(email, "Baja desde el link del mail");
 
   return new Response(
     pagina(`${email} fue dado de baja de los mailings de Manso Club. No vas a recibir más campañas.`),
     { status: 200, headers: { "Content-Type": "text/html; charset=utf-8" } }
   );
+}
+
+/**
+ * Baja en un click (RFC 8058). Gmail y Yahoo no abren el link: hacen un POST
+ * a esta misma URL con el cuerpo `List-Unsubscribe=One-Click`, sin cookies ni
+ * sesión, y esperan un 2xx. Si respondiera 405 el botón de "Cancelar
+ * suscripción" que dibuja Gmail fallaría en silencio y contaría en contra de
+ * la reputación del dominio, que es justamente lo que el header viene a evitar.
+ *
+ * No se valida el cuerpo ni se pide confirmación a propósito: el estándar
+ * exige que la baja sea inmediata y sin pantallas intermedias.
+ */
+export async function POST(request: Request) {
+  const email = emailDeLaUrl(request);
+
+  if (!email) {
+    return new Response("Falta un email válido", { status: 400 });
+  }
+
+  await darDeBaja(email, "Baja en un click (List-Unsubscribe)");
+
+  return new Response("OK", { status: 200 });
 }

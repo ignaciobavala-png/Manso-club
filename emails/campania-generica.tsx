@@ -123,7 +123,7 @@ export default function CampaniaGenerica({ asunto, bloques, unsubscribeUrl, colo
   const fondo = colorFondo?.trim() || FONDO_DEFAULT;
   const colorPie = esFondoOscuro(fondo) ? "#FFFCDC" : "#1D1D1B";
   return (
-    <Html>
+    <Html lang="es">
       <Head>
         {/* Sin estas dos metas, iOS Mail, Gmail app y Outlook aplican su
             transformación AUTOMÁTICA de modo oscuro, que reescribe los colores
