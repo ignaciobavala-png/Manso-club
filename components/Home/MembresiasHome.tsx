@@ -2,12 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { ArrowRight, Star } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import Link from 'next/link';
-import { Membresia, MembresiaBeneficio } from '@/lib/types/membresia';
-import { TYPE } from '@/lib/ui-constants';
+import { Membresia } from '@/lib/types/membresia';
 import { CurrencyToggle } from '@/components/ui/CurrencyToggle';
 import { useCurrency } from '@/store/useCurrency';
+import { MembresiaCard } from '@/components/ui/MembresiaCard';
 
 export const MembresiasHome = () => {
   const [membresias, setMembresias] = useState<Membresia[]>([]);
@@ -98,86 +98,16 @@ export const MembresiasHome = () => {
                     <div className="flex-1 h-px bg-manso-cream/10" />
                   </div>
 
-                  <div className="flex flex-wrap justify-center gap-6 sm:gap-8">
+                  <div className="mx-auto max-w-sm sm:max-w-5xl grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 items-stretch">
                     {grupos[categoria].map((membresia) => (
-                      <div
+                      <MembresiaCard
                         key={membresia.id}
-                        className={`group flex flex-col w-full max-w-[360px] rounded-[20px] sm:rounded-[24px] p-5 sm:p-6 transition-all duration-700 ease-out hover:scale-[1.02] cursor-pointer relative ${
-                          membresia.destacado
-                            ? 'bg-black text-white border-black hover:shadow-[0_20px_60px_rgba(0,0,0,0.25)]'
-                            : 'bg-zinc-100 border-2 border-zinc-200 hover:border-manso-black/40 hover:shadow-[0_20px_60px_rgba(0,0,0,0.08)]'
-                        }`}
-                      >
-                        {membresia.destacado && (
-                          <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-                            <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest bg-white text-black">
-                              <Star size={8} />
-                              Más Popular
-                            </span>
-                          </div>
-                        )}
-                        <div className="mb-3">
-                          <h3 className={`text-[10px] font-black uppercase tracking-widest mb-2 ${
-                            membresia.destacado ? 'text-gray-400' : 'text-gray-500'
-                          }`}>
-                            {membresia.nombre}
-                          </h3>
-                          <div className="text-center">
-                            <div className={`flex items-baseline justify-center gap-2 ${
-                              membresia.destacado ? 'text-white' : 'text-gray-900'
-                            }`}>
-                              <span className={`text-[10px] font-bold uppercase ${
-                                membresia.destacado ? 'text-gray-400' : 'text-gray-500'
-                              }`}>{currency}</span>
-                              <span className="text-4xl sm:text-5xl font-black leading-none">
-                                {currency === 'ARS' && rate
-                                  ? Math.round(membresia.precio * rate).toLocaleString('es-AR')
-                                  : membresia.precio.toLocaleString('es-AR')}
-                              </span>
-                              <span className={`text-[10px] font-bold uppercase ${
-                                membresia.destacado ? 'text-gray-400' : 'text-gray-500'
-                              }`}>/{membresia.periodo}</span>
-                            </div>
-                          </div>
-                        </div>
-
-                        <div className="space-y-2 mb-4">
-                          {membresia.membresia_beneficios
-                            ?.filter(b => b.incluido && b.texto?.trim())
-                            .slice(0, 3)
-                            .map((beneficio, index) => (
-                              <div key={index} className="flex items-start gap-2">
-                                <span className={`text-sm shrink-0 mt-0.5 ${
-                                  membresia.destacado ? 'text-green-400' : 'text-green-600'
-                                }`}>✓</span>
-                                <span className={`text-sm leading-snug ${
-                                  membresia.destacado ? 'text-gray-300' : 'text-gray-700'
-                                }`}>
-                                  {beneficio.texto}
-                                </span>
-                              </div>
-                            ))}
-                        </div>
-
-                        {membresia.descripcion && (
-                          <p className={`${TYPE.body} font-medium leading-relaxed mb-4 ${
-                             membresia.destacado ? 'text-gray-400' : 'text-gray-600'
-                           }`}>
-                            {membresia.descripcion}
-                          </p>
-                        )}
-
-                        <Link
-                          href={`/membresias/pagar?nombre=${encodeURIComponent(membresia.nombre)}&precio=${membresia.precio}&periodo=${encodeURIComponent(membresia.periodo)}`}
-                          className={`mt-auto block w-full px-4 py-3 text-[10px] font-black uppercase tracking-widest transition-all duration-500 ease-out active:scale-95 rounded-full text-center ${
-                            membresia.destacado
-                              ? 'bg-white text-black hover:bg-white hover:text-black'
-                              : 'bg-black text-white hover:bg-manso-black/80'
-                          }`}
-                        >
-                          SELECCIONAR
-                        </Link>
-                      </div>
+                        membresia={membresia}
+                        currency={currency}
+                        rate={rate}
+                        soloIncluidos
+                        maxBeneficios={3}
+                      />
                     ))}
                   </div>
                 </div>
