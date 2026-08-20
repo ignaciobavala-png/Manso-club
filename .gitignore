@@ -48,3 +48,6 @@ node_modules/
 .vercel
 manso-club@0.0.0
 vite
+
+# Generado por el hook de brain-data en cada sesion, no va al repo
+AGENTS.md
