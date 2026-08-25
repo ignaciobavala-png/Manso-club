@@ -61,12 +61,12 @@ return (
         <p className="text-[9px] uppercase tracking-widest text-manso-cream/30">
           Sitio desarrollado por{' '}
           <a
-            href="https://petralabs.xyz"
+            href="https://ivavala.com"
             target="_blank"
             rel="noopener noreferrer"
             className="text-manso-cream/50 hover:text-manso-cream transition-colors"
           >
-            Petra-Labs
+            Ivavala
           </a>
         </p>
       </div>
