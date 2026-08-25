@@ -33,8 +33,6 @@ export const Navbar = () => {
 
   useEffect(() => { setHasMounted(true); }, []);
 
-  const isLightBgPage = pathname?.includes('/checkout');
-
   useEffect(() => {
     const onScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', onScroll);
@@ -70,7 +68,15 @@ export const Navbar = () => {
   const getTextColor = (light: boolean) =>
     light ? 'text-manso-black' : 'text-manso-cream';
 
-  const isLight = isCartOpen || isLightBgPage || isScrolled;
+  /**
+   * Una sola condición gobierna el fondo de la barra y el color de su
+   * contenido. Estaban separadas: el color sumaba un `isLightBgPage` para
+   * /checkout que el fondo no miraba, así que en el tope de esa página la
+   * barra quedaba transparente con el texto y el logo en negro — invisibles
+   * sobre el `bg-manso-black` del checkout. El checkout hoy es una página
+   * oscura, así que le corresponde el tratamiento claro de cualquier otra.
+   */
+  const isLight = isCartOpen || isScrolled;
 
   // Iniciales del usuario para el avatar
   const userInitial = profile?.display_name
@@ -82,7 +88,7 @@ export const Navbar = () => {
   return (
     <>
       <nav className={`fixed top-0 w-full z-40 transition-all duration-500 ${
-        isCartOpen || isScrolled
+        isLight
           ? 'bg-white/90 backdrop-blur-md py-4 shadow-sm opacity-90'
           : 'bg-transparent py-6'
       }`}>
