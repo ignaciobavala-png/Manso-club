@@ -98,10 +98,6 @@ export default function MembresiasPage() {
           </div>
         )}
 
-        <div className="flex justify-start mb-8">
-          <CurrencyToggle />
-        </div>
-
         {loading ? (
           <div className="flex items-center justify-center py-20">
             <div className="w-8 h-8 border-2 border-manso-terra/30 border-t-manso-terra rounded-full animate-spin" />
@@ -127,15 +123,22 @@ export default function MembresiasPage() {
 
           return (
             <div className="py-10 space-y-20">
-              {categoriasOrdenadas.map((categoria) => (
+              {categoriasOrdenadas.map((categoria, ci) => (
                 <div key={categoria}>
                   {/* Encabezado de categoría */}
-                  <div className="flex items-center gap-4 mb-10">
+                  <div className={`flex items-center gap-4 ${ci === 0 ? 'mb-6' : 'mb-10'}`}>
                     <span className="text-[9px] font-black uppercase tracking-[0.6em] text-manso-cream/50">
                       {categoria}
                     </span>
                     <div className="flex-1 h-px bg-manso-cream/10" />
                   </div>
+
+                  {/* El toggle de moneda es parte de las cards: va bajo la primera línea */}
+                  {ci === 0 && (
+                    <div className="flex justify-start mb-8">
+                      <CurrencyToggle />
+                    </div>
+                  )}
 
                   <div className="mx-auto max-w-sm sm:max-w-5xl grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 items-stretch">
                     {grupos[categoria].map((membresia) => (
