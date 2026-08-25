@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { WHATSAPP_NUMBER } from '@/lib/constants';
 import { CopyButton } from '@/app/membresias/pagar/CopyButton';
 import { ParticleBackground } from '@/components/Home/ParticleBackground';
-import { getBankConfig } from '@/lib/getBankConfig';
+import { getBankConfig, datosParaTransferencia } from '@/lib/getBankConfig';
 
 export const metadata: Metadata = {
   title: 'Pago de evento | Manso Club',
@@ -19,6 +19,7 @@ interface Props {
 export default async function PagarAgenda({ searchParams }: Props) {
   const { titulo, precio, frecuencia, categoria } = await searchParams;
   const bank = await getBankConfig();
+  const datosBancarios = datosParaTransferencia(bank);
   const esPago = precio && parseInt(precio) > 0;
 
   const mensaje = encodeURIComponent(
@@ -63,24 +64,20 @@ export default async function PagarAgenda({ searchParams }: Props) {
 
         {/* Instrucciones — antes de los datos bancarios */}
         <p className="text-base text-manso-cream/90 mb-6 leading-relaxed font-light">
-          {esPago
-            ? 'Realizá la transferencia y envianos el comprobante por WhatsApp para confirmar tu inscripción.'
-            : 'Contactanos por WhatsApp para confirmar tu inscripción.'}
+          {!esPago
+            ? 'Contactanos por WhatsApp para confirmar tu inscripción.'
+            : datosBancarios.length > 0
+              ? 'Realizá la transferencia y envianos el comprobante por WhatsApp para confirmar tu inscripción.'
+              : 'Escribinos por WhatsApp y te pasamos los datos para transferir.'}
         </p>
 
-        {/* Datos bancarios — solo si es pago */}
-        {esPago && (
+        {/* Datos bancarios — solo si es pago y hay algo que copiar */}
+        {esPago && datosBancarios.length > 0 && (
           <div className="bg-zinc-900 border border-zinc-700 rounded-3xl p-6 space-y-4 mb-6">
             <p className="text-[10px] font-black uppercase tracking-widest text-manso-cream/40 mb-4">
               Datos para transferencia
             </p>
-            {[
-              { label: 'Banco',   value: bank.banco_nombre  },
-              { label: 'Titular', value: bank.banco_titular },
-              { label: 'CUIT',    value: bank.banco_cuit    },
-              { label: 'CBU',     value: bank.banco_cbu     },
-              { label: 'Alias',   value: bank.banco_alias   },
-            ].map(({ label, value }) => value && (
+            {datosBancarios.map(({ label, value }) => (
               <div key={label} className="flex items-center justify-between gap-4">
                 <div className="min-w-0">
                   <p className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40">{label}</p>

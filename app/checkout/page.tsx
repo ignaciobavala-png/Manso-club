@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { WHATSAPP_NUMBER } from '@/lib/constants';
+import { esDatoBancario } from '@/lib/datos-bancarios';
 
 interface CheckoutForm {
   nombre: string;
@@ -135,9 +136,10 @@ export default function CheckoutPage() {
 
   // Los datos bancarios solo se muestran si están realmente cargados: mostrar un
   // CBU de ejemplo haría que alguien transfiera a una cuenta que no existe.
-  const transferenciaDisponible = Boolean(
-    config?.banco_cbu && config?.banco_titular && config?.banco_nombre
-  );
+  // No alcanza con que el campo no esté vacío — los placeholders que quedan en
+  // el panel (`--------`, `0000000000`) también pasaban este chequeo.
+  const transferenciaDisponible = [config?.banco_cbu, config?.banco_titular, config?.banco_nombre]
+    .every(esDatoBancario);
 
   useEffect(() => {
     if (!loadingConfig && !transferenciaDisponible) setMetodoPago('mercadopago');

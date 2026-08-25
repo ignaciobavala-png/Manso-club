@@ -1,10 +1,10 @@
 import type { Metadata } from 'next';
-import { Copy, MessageCircle, ArrowLeft } from 'lucide-react';
+import { MessageCircle, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { WHATSAPP_NUMBER } from '@/lib/constants';
 import { CopyButton } from './CopyButton';
 import { ParticleBackground } from '@/components/Home/ParticleBackground';
-import { getBankConfig } from '@/lib/getBankConfig';
+import { getBankConfig, datosParaTransferencia } from '@/lib/getBankConfig';
 
 export const metadata: Metadata = {
   title: 'Pago de membresía | Manso Club',
@@ -19,6 +19,7 @@ interface Props {
 export default async function PagarMembresia({ searchParams }: Props) {
   const { nombre, precio, periodo } = await searchParams;
   const bank = await getBankConfig();
+  const datosBancarios = datosParaTransferencia(bank);
 
   const mensaje = encodeURIComponent(
     `Hola Manso Club! Quiero suscribirme a la membresía ${nombre || ''} ($${precio || ''}/${periodo || ''}). Adjunto comprobante de transferencia.`
@@ -54,32 +55,30 @@ export default async function PagarMembresia({ searchParams }: Props) {
           )}
         </div>
 
-        {/* Datos bancarios */}
-        <div className="bg-zinc-900 border border-zinc-700 rounded-3xl p-6 space-y-4 mb-6">
-          <p className="text-[10px] font-black uppercase tracking-widest text-manso-cream/40 mb-4">
-            Datos para transferencia
-          </p>
+        {/* Datos bancarios — la tarjeta solo se dibuja si hay algo que copiar */}
+        {datosBancarios.length > 0 && (
+          <div className="bg-zinc-900 border border-zinc-700 rounded-3xl p-6 space-y-4 mb-6">
+            <p className="text-[10px] font-black uppercase tracking-widest text-manso-cream/40 mb-4">
+              Datos para transferencia
+            </p>
 
-          {[
-            { label: 'Banco', value: bank.banco_nombre },
-            { label: 'Titular', value: bank.banco_titular },
-            { label: 'CUIT', value: bank.banco_cuit },
-            { label: 'CBU', value: bank.banco_cbu },
-            { label: 'Alias', value: bank.banco_alias },
-          ].map(({ label, value }) => value && (
-            <div key={label} className="flex items-center justify-between gap-4">
-              <div className="min-w-0">
-                <p className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40">{label}</p>
-                <p className="text-sm font-bold text-manso-cream font-mono truncate">{value}</p>
+            {datosBancarios.map(({ label, value }) => (
+              <div key={label} className="flex items-center justify-between gap-4">
+                <div className="min-w-0">
+                  <p className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40">{label}</p>
+                  <p className="text-sm font-bold text-manso-cream font-mono truncate">{value}</p>
+                </div>
+                <CopyButton value={value} />
               </div>
-              <CopyButton value={value} />
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
         {/* Instrucciones */}
         <p className="text-xs text-manso-cream/50 text-center mb-6 leading-relaxed">
-          Realizá la transferencia y envianos el comprobante por WhatsApp para confirmar tu membresía.
+          {datosBancarios.length > 0
+            ? 'Realizá la transferencia y envianos el comprobante por WhatsApp para confirmar tu membresía.'
+            : 'Escribinos por WhatsApp y te pasamos los datos para transferir.'}
         </p>
 
         {/* CTA WhatsApp */}

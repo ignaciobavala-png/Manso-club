@@ -11,3 +11,5 @@ export async function getBankConfig(): Promise<Record<string, string>> {
   data?.forEach(({ key, value }) => { config[key] = value; });
   return config;
 }
+
+export { datosParaTransferencia, esDatoBancario, type DatoBancario } from '@/lib/datos-bancarios';
