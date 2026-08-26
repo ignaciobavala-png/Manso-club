@@ -104,3 +104,16 @@ alter table public.agenda add column if not exists dias_semana smallint[];
 
 comment on column public.agenda.dias_semana is
   'Días de cursada (0 = lunes ... 6 = domingo). Un rango como "Lunes a Viernes" se guarda como {0,1,2,3,4}. Si está vacío, manda dia_semana.';
+
+-- ── Plan solicitado por id ───────────────────────────────────────────────────
+-- La card mandaba solo el nombre del plan como texto. Guardamos también el id:
+-- el nombre queda como foto del momento (si el plan se renombra, la solicitud
+-- vieja sigue diciendo cómo se llamaba), y el id permite agrupar de verdad.
+alter table public.cowork_solicitudes
+  add column if not exists membresia_id uuid references public.membresias(id) on delete set null;
+
+create index if not exists cowork_solicitudes_membresia_idx
+  on public.cowork_solicitudes (membresia_id);
+
+comment on column public.cowork_solicitudes.membresia_nombre is
+  'Nombre del plan al momento de la solicitud. Snapshot: no sigue los renombres del plan.';

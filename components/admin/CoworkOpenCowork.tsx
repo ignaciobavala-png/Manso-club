@@ -1,0 +1,218 @@
+'use client';
+
+import { useState } from 'react';
+import { supabase } from '@/lib/supabase';
+import { Plus, Trash2, Users } from 'lucide-react';
+import { CoworkSolicitudCard } from './CoworkSolicitudCard';
+import {
+  fechaLarga,
+  esPasada,
+  ocupaCupo,
+  type Estado,
+  type Fecha,
+  type Solicitud,
+} from './CoworkTypes';
+
+interface Props {
+  fechas: Fecha[];
+  solicitudes: Solicitud[];
+  onRefetch: () => void;
+  onEstado: (id: string, estado: Estado) => void;
+  onBorrar: (id: string) => void;
+}
+
+const inputCls =
+  'w-full p-2.5 bg-manso-cream/10 rounded-xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream text-sm';
+
+/**
+ * Open Cowork se organiza por fecha, no por estado: lo que Ana necesita saber
+ * es quiénes vienen el lunes. Cada fecha es un bloque con sus cupos y sus
+ * anotados adentro.
+ */
+export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onBorrar }: Props) {
+  const [nueva, setNueva] = useState({ fecha: '', horario: '', cupos_maximos: '20' });
+  const [verPasadas, setVerPasadas] = useState(false);
+
+  const agregarFecha = async () => {
+    if (!nueva.fecha) return;
+    await supabase.from('cowork_fechas').insert({
+      fecha: nueva.fecha,
+      horario: nueva.horario || null,
+      cupos_maximos: Number(nueva.cupos_maximos) || 20,
+    });
+    setNueva({ fecha: '', horario: '', cupos_maximos: '20' });
+    onRefetch();
+  };
+
+  const toggleFecha = async (f: Fecha) => {
+    await supabase.from('cowork_fechas').update({ activo: !f.activo }).eq('id', f.id);
+    onRefetch();
+  };
+
+  const borrarFecha = async (id: string) => {
+    await supabase.from('cowork_fechas').delete().eq('id', id);
+    onRefetch();
+  };
+
+  const proximas = fechas.filter(f => !esPasada(f.fecha));
+  const pasadas = fechas.filter(f => esPasada(f.fecha));
+  const visibles = verPasadas ? [...proximas, ...pasadas] : proximas;
+
+  // Anotados que quedaron sin fecha (la fecha se borró después de anotarse).
+  const huerfanas = solicitudes.filter(s => !s.fecha_id);
+
+  const anotados = (fechaId: string) => solicitudes.filter(s => s.fecha_id === fechaId);
+
+  return (
+    <div className="space-y-8">
+      {/* Alta de fecha */}
+      <div>
+        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-manso-cream/50 mb-3">
+          Sumar una fecha
+        </p>
+        <div className="flex flex-wrap items-end gap-2">
+          <input
+            type="date"
+            className={`${inputCls} w-auto flex-1 min-w-[140px]`}
+            value={nueva.fecha}
+            onChange={e => setNueva(p => ({ ...p, fecha: e.target.value }))}
+          />
+          <input
+            type="time"
+            className={`${inputCls} w-auto`}
+            value={nueva.horario}
+            onChange={e => setNueva(p => ({ ...p, horario: e.target.value }))}
+          />
+          <input
+            type="number"
+            min="1"
+            title="Cupos"
+            className={`${inputCls} w-20`}
+            value={nueva.cupos_maximos}
+            onChange={e => setNueva(p => ({ ...p, cupos_maximos: e.target.value }))}
+          />
+          <button
+            onClick={agregarFecha}
+            disabled={!nueva.fecha}
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-dashed border-manso-terra/30 text-[9px] font-black uppercase tracking-widest text-manso-terra/60 hover:text-manso-terra hover:border-manso-terra/60 hover:bg-manso-terra/5 transition-all disabled:opacity-25"
+          >
+            <Plus size={12} />
+            Sumar fecha
+          </button>
+        </div>
+      </div>
+
+      {/* Fechas con sus anotados */}
+      {visibles.length === 0 ? (
+        <p className="text-xs text-manso-cream/30 font-light py-6 text-center">
+          Sin fechas cargadas. El acordeón de la web aparece vacío hasta que sumes una.
+        </p>
+      ) : (
+        <div className="space-y-5">
+          {visibles.map(f => {
+            const gente = anotados(f.id);
+            const ocupados = gente.filter(ocupaCupo).length;
+            const lleno = ocupados >= f.cupos_maximos;
+            const pasada = esPasada(f.fecha);
+
+            return (
+              <div
+                key={f.id}
+                className={`border rounded-2xl overflow-hidden ${
+                  pasada || !f.activo
+                    ? 'border-manso-cream/5 opacity-50'
+                    : 'border-manso-cream/15'
+                }`}
+              >
+                {/* Cabecera de la fecha */}
+                <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 bg-manso-cream/5">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <span className="text-sm text-manso-cream font-medium">
+                      {fechaLarga(f.fecha, f.horario)}
+                    </span>
+                    {pasada && (
+                      <span className="text-[9px] uppercase tracking-widest text-manso-cream/30">
+                        Ya pasó
+                      </span>
+                    )}
+                    {!f.activo && !pasada && (
+                      <span className="text-[9px] uppercase tracking-widest text-manso-cream/30">
+                        Oculta en la web
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-3 shrink-0">
+                    <span
+                      className={`flex items-center gap-1.5 text-[11px] font-black uppercase tracking-widest ${
+                        lleno ? 'text-manso-terra' : 'text-manso-cream/50'
+                      }`}
+                    >
+                      <Users size={12} />
+                      {ocupados} / {f.cupos_maximos}
+                    </span>
+                    <button
+                      onClick={() => toggleFecha(f)}
+                      className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40 hover:text-manso-cream transition-colors"
+                    >
+                      {f.activo ? 'Ocultar' : 'Mostrar'}
+                    </button>
+                    <button
+                      onClick={() => borrarFecha(f.id)}
+                      className="text-manso-cream/25 hover:text-red-400 transition-colors"
+                    >
+                      <Trash2 size={13} />
+                    </button>
+                  </div>
+                </div>
+
+                {/* Anotados */}
+                <div className="p-3 space-y-3">
+                  {gente.length === 0 ? (
+                    <p className="text-xs text-manso-cream/25 font-light py-3 text-center">
+                      Nadie anotado todavía.
+                    </p>
+                  ) : (
+                    gente.map(s => (
+                      <CoworkSolicitudCard
+                        key={s.id}
+                        solicitud={s}
+                        onEstado={onEstado}
+                        onBorrar={onBorrar}
+                      />
+                    ))
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
+
+      {pasadas.length > 0 && (
+        <button
+          onClick={() => setVerPasadas(v => !v)}
+          className="text-[9px] font-black uppercase tracking-widest text-manso-cream/35 hover:text-manso-cream transition-colors"
+        >
+          {verPasadas ? 'Ocultar fechas pasadas' : `Ver fechas pasadas (${pasadas.length})`}
+        </button>
+      )}
+
+      {huerfanas.length > 0 && (
+        <div className="border-t border-manso-cream/10 pt-5 space-y-3">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-manso-cream/50">
+            Sin fecha asignada
+          </p>
+          {huerfanas.map(s => (
+            <CoworkSolicitudCard
+              key={s.id}
+              solicitud={s}
+              onEstado={onEstado}
+              onBorrar={onBorrar}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}

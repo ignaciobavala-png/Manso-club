@@ -10,6 +10,7 @@ interface CoworkModalProps {
   open: boolean;
   onClose: () => void;
   origen: 'membresia' | 'open_cowork';
+  membresiaId?: string;
   membresiaNombre?: string;
 }
 
@@ -28,7 +29,7 @@ function formatearFecha(fecha: string, horario: string | null) {
   return horario ? `${capitalizado} · ${horario.slice(0, 5)}` : capitalizado;
 }
 
-export function CoworkModal({ open, onClose, origen, membresiaNombre }: CoworkModalProps) {
+export function CoworkModal({ open, onClose, origen, membresiaId, membresiaNombre }: CoworkModalProps) {
   const [fechas, setFechas] = useState<CoworkFecha[]>([]);
   const [fechaId, setFechaId] = useState<string | null>(null);
   const [acordeonAbierto, setAcordeonAbierto] = useState(true);
@@ -188,6 +189,7 @@ export function CoworkModal({ open, onClose, origen, membresiaNombre }: CoworkMo
         <div className="mt-8">
           <CoworkForm
             origen={origen}
+            membresiaId={membresiaId}
             membresiaNombre={membresiaNombre}
             fechaId={fechaId}
             onSuccess={() => setFechaId(null)}

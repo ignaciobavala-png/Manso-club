@@ -14,7 +14,9 @@ export interface CoworkFecha {
 
 interface CoworkFormProps {
   origen: 'membresia' | 'open_cowork';
-  /** Nombre del plan, cuando la solicitud viene del botón SELECCIONAR de una card. */
+  /** Plan elegido, cuando la solicitud viene del botón SELECCIONAR de una card. */
+  membresiaId?: string;
+  /** Nombre del plan al momento de solicitar: queda como snapshot en la solicitud. */
   membresiaNombre?: string;
   /** Fecha de Open Cowork elegida en el acordeón. */
   fechaId?: string | null;
@@ -36,7 +38,7 @@ const INITIAL = {
   busca: '',
 };
 
-export function CoworkForm({ origen, membresiaNombre, fechaId, onSuccess }: CoworkFormProps) {
+export function CoworkForm({ origen, membresiaId, membresiaNombre, fechaId, onSuccess }: CoworkFormProps) {
   const [form, setForm] = useState(INITIAL);
   const [loading, setLoading] = useState(false);
   const [enviado, setEnviado] = useState(false);
@@ -54,6 +56,7 @@ export function CoworkForm({ origen, membresiaNombre, fechaId, onSuccess }: Cowo
 
     const { error: dbError } = await supabase.from('cowork_solicitudes').insert({
       origen,
+      membresia_id:     origen === 'membresia' ? membresiaId ?? null : null,
       membresia_nombre: origen === 'membresia' ? membresiaNombre ?? null : null,
       fecha_id: origen === 'open_cowork' ? fechaId ?? null : null,
       nombre: form.nombre.trim(),

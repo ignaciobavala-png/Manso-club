@@ -129,6 +129,7 @@ export const MembresiaCard = ({
         open={formAbierto}
         onClose={() => setFormAbierto(false)}
         origen="membresia"
+        membresiaId={membresia.id}
         membresiaNombre={membresia.nombre}
       />
     </div>
