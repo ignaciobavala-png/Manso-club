@@ -239,7 +239,6 @@ export default async function ArtistaPage({ params }: Props) {
                 )}
                 <ShareButton
                   title={`${artista.nombre} | Manso Club`}
-                  text={artista.bio || `${artista.nombre} — ${artista.estilo || 'DJ'} en Manso Club.`}
                   url={`/artistas/${artista.slug}`}
                 />
               </div>
@@ -248,7 +247,6 @@ export default async function ArtistaPage({ params }: Props) {
               <div className="pt-2">
                 <ShareButton
                   title={`${artista.nombre} | Manso Club`}
-                  text={artista.bio || `${artista.nombre} — ${artista.estilo || 'DJ'} en Manso Club.`}
                   url={`/artistas/${artista.slug}`}
                 />
               </div>

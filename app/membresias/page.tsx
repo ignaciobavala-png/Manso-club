@@ -173,9 +173,6 @@ export default function MembresiasPage() {
             className="group w-full flex items-center justify-between gap-5 border border-manso-cream/15 rounded-3xl p-5 md:p-7 hover:border-manso-terra/50 hover:bg-manso-cream/5 transition-all duration-500 text-left"
           >
             <div>
-              <p className="text-[9px] font-black uppercase tracking-[0.6em] text-manso-terra mb-1.5">
-                20 cupos por encuentro
-              </p>
               <h2 className="text-xl md:text-3xl font-black uppercase italic tracking-tighter leading-none text-manso-cream">
                 Open Cowork
               </h2>

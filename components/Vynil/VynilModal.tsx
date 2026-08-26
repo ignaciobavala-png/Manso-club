@@ -238,8 +238,7 @@ export function VynilModal({ open, onClose }: Props) {
                 Que recorran Manso con tu música.
               </p>
               <ShareButton
-                title="Mi lista para recorrer Manso"
-                text={`${temas.length} temas para recorrer Manso Club`}
+                title={`Mi lista para recorrer Manso — ${temas.length} temas`}
                 url={linkDeMix(temas, typeof window !== 'undefined' ? window.location.origin : '')}
                 label="Compartir lista"
                 onShare={publicar}

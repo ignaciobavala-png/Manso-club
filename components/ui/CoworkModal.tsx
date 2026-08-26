@@ -141,7 +141,6 @@ export function CoworkModal({ open, onClose, origen, membresiaId, membresiaNombr
               <p className="mt-5 text-manso-cream/55 text-sm font-light leading-relaxed">
                 {OPEN_COWORK_INFO}
               </p>
-              <p className="mt-3 text-manso-cream text-sm font-bold">20 cupos por encuentro.</p>
 
               {/* Acordeón de fechas */}
               <div className="mt-7 border border-manso-cream/15 rounded-2xl overflow-hidden">
@@ -225,7 +224,6 @@ export function CoworkModal({ open, onClose, origen, membresiaId, membresiaNombr
             </p>
             <ShareButton
               title={esOpenCowork ? 'Open Cowork — Manso Club' : 'Cowork Manso Club'}
-              text={esOpenCowork ? OPEN_COWORK_INFO : COWORK_INFO}
               url={`/membresias?${PARAM_FORM}=${esOpenCowork ? FORM_OPEN_COWORK : membresiaId ?? ''}`}
               label="Invitar"
               className="flex items-center gap-2 px-4 py-2 rounded-full border border-manso-cream/20 text-manso-cream/60 hover:text-manso-cream hover:border-manso-cream/40 transition-colors"
