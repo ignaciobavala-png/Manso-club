@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 import { HomeMusicPlayer } from '@/components/Home/HomeMusicPlayer';
 import { Play, Pause, Music } from 'lucide-react';
+import { useVynil } from '@/store/useVynil';
 
 interface Track {
   id: string;
@@ -20,6 +21,10 @@ interface ArtistOverride {
 
 export function GlobalMusicPlayer() {
   const pathname = usePathname();
+  // Si el visitante tiene su mix de Vynil (propio o recibido por link), ese
+  // manda: dos reproductores sonando a la vez se pisan y en mobile el sistema
+  // mata uno al azar.
+  const vynilActivo = useVynil(s => (s.mixInvitado ?? s.temas).length > 0);
   const [mainTracks, setMainTracks] = useState<Track[]>([]);
   const [artistOverride, setArtistOverride] = useState<ArtistOverride | null>(null);
   const [loaded, setLoaded] = useState(false);
@@ -261,6 +266,9 @@ export function GlobalMusicPlayer() {
   }, [showMobileBar]);
 
   if (!loaded) return null;
+
+  // Vynil tiene prioridad sobre la música de la casa.
+  if (vynilActivo) return null;
 
   // Ocultar reproductor en páginas de artista
   if (pathname && pathname.startsWith('/artistas/')) {
