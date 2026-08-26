@@ -1,8 +1,9 @@
 'use client';
 
-import Link from 'next/link';
+import { useState } from 'react';
 import { Star } from 'lucide-react';
 import { Membresia } from '@/lib/types/membresia';
+import { CoworkModal } from './CoworkModal';
 
 interface MembresiaCardProps {
   membresia: Membresia;
@@ -26,6 +27,7 @@ export const MembresiaCard = ({
   soloIncluidos = false,
   maxBeneficios,
 }: MembresiaCardProps) => {
+  const [formAbierto, setFormAbierto] = useState(false);
   const dark = membresia.destacado;
 
   const cText = dark ? 'text-manso-cream' : 'text-manso-black';
@@ -107,8 +109,11 @@ export const MembresiaCard = ({
         <p className={`text-sm leading-relaxed mt-4 ${cMuted}`}>{membresia.descripcion}</p>
       )}
 
-      <Link
-        href={`/membresias/pagar?nombre=${encodeURIComponent(membresia.nombre)}&precio=${membresia.precio}&periodo=${encodeURIComponent(membresia.periodo)}`}
+      {/* SELECCIONAR abre el formulario de inscripción, no el checkout: el alta
+          al cowork pasa primero por una solicitud que Ana aprueba a mano. */}
+      <button
+        type="button"
+        onClick={() => setFormAbierto(true)}
         className={`mt-auto pt-6 block w-full`}
       >
         <span
@@ -118,7 +123,14 @@ export const MembresiaCard = ({
         >
           SELECCIONAR
         </span>
-      </Link>
+      </button>
+
+      <CoworkModal
+        open={formAbierto}
+        onClose={() => setFormAbierto(false)}
+        origen="membresia"
+        membresiaNombre={membresia.nombre}
+      />
     </div>
   );
 };

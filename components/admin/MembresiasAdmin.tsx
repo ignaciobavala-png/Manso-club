@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ChevronDown, Crown, Users, UserCheck, FileText, Image, Plus, X } from 'lucide-react';
+import { ChevronDown, Crown, Users, UserCheck, FileText, Image, Plus, X, ClipboardList } from 'lucide-react';
 import { MembresiasList } from './MembresiasList';
 import { MembresiaActivasList } from './MembresiaActivasList';
 import { AsignarMembresia } from './AsignarMembresia';
@@ -9,15 +9,17 @@ import { FormMembresiaTexto } from './FormMembresiaTexto';
 import { FormMembresiaGallery } from './FormMembresiaGallery';
 import { MembresiaGalleryList } from './MembresiaGalleryList';
 import { FormMembresia } from './FormMembresia';
+import { CoworkSolicitudesList } from './CoworkSolicitudesList';
 
 interface MembresiasAdminProps {
   refreshTrigger?: number;
 }
 
-type SectionId = 'planes' | 'activos' | 'otorgar' | 'texto' | 'galeria';
+type SectionId = 'planes' | 'solicitudes' | 'activos' | 'otorgar' | 'texto' | 'galeria';
 
 const SECTIONS: { id: SectionId; label: string; icon: React.ReactNode }[] = [
   { id: 'planes',  label: 'Planes de membresía', icon: <Crown size={14} /> },
+  { id: 'solicitudes', label: 'Solicitudes',        icon: <ClipboardList size={14} /> },
   { id: 'activos', label: 'Miembros activos',     icon: <Users size={14} /> },
   { id: 'otorgar', label: 'Otorgar membresía',    icon: <UserCheck size={14} /> },
   { id: 'texto',   label: 'Texto intro',           icon: <FileText size={14} /> },
@@ -100,6 +102,7 @@ export function MembresiasAdmin({ refreshTrigger }: MembresiasAdminProps) {
                     )}
                   </div>
                 )}
+                {section.id === 'solicitudes' && <CoworkSolicitudesList />}
                 {section.id === 'activos' && <MembresiaActivasList />}
                 {section.id === 'otorgar' && <AsignarMembresia />}
                 {section.id === 'texto'   && <FormMembresiaTexto />}

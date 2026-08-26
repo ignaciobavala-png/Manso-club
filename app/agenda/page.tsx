@@ -38,6 +38,7 @@ interface AgendaItem {
   duracion?: string;
   frecuencia?: string;
   dia_semana?: number | null;
+  dias_semana?: number[] | null;
   horario?: string | null;
   precio?: number;
   cupos_maximos?: number;
@@ -51,6 +52,18 @@ interface AgendaItem {
 const MESES = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
 // 0 = lunes ... 6 = domingo (convención de agenda.dia_semana)
 const DIAS = ['Lunes','Martes','Miércoles','Jueves','Viernes','Sábado','Domingo'];
+
+/** Rótulo del día de cursada: un día suelto, o el rango si son varios seguidos. */
+function etiquetaDias(item: { dia_semana?: number | null; dias_semana?: number[] | null }): string | null {
+  const dias = (item.dias_semana ?? []).filter(d => d >= 0 && d <= 6).sort((a, b) => a - b);
+  if (dias.length > 1) {
+    const seguidos = dias.every((d, i) => i === 0 || d === dias[i - 1] + 1);
+    return seguidos
+      ? `${DIAS[dias[0]]} a ${DIAS[dias[dias.length - 1]]}`
+      : dias.map(d => DIAS[d]).join(' · ');
+  }
+  return typeof item.dia_semana === 'number' ? DIAS[item.dia_semana] ?? null : null;
+}
 
 export default function AgendaPage() {
   const [items, setItems] = useState<AgendaItem[]>([]);
@@ -174,9 +187,6 @@ export default function AgendaPage() {
                 <h2 className="text-xl md:text-3xl font-black uppercase italic tracking-tighter leading-none text-manso-cream">
                   Ver calendario
                 </h2>
-                <p className="hidden md:block text-sm text-manso-cream/40 font-light mt-2 max-w-md leading-relaxed">
-                  Toda la programación del mes en una sola vista, día por día y con horarios.
-                </p>
               </div>
             </div>
             <span className="shrink-0 w-11 h-11 flex items-center justify-center rounded-full border border-manso-cream/20 text-manso-cream group-hover:bg-manso-cream group-hover:text-manso-black group-hover:border-manso-cream transition-all duration-500 text-lg">
@@ -264,11 +274,11 @@ export default function AgendaPage() {
                       {/* Metadata + CTA */}
                       <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6">
                         <div className="flex flex-wrap items-center gap-6 md:gap-10">
-                        {typeof item.dia_semana === 'number' && DIAS[item.dia_semana] && (
+                        {etiquetaDias(item) && (
                           <div className="text-right">
                             <p className="text-[9px] uppercase tracking-widest text-manso-cream/25 font-black mb-0.5">Día</p>
                             <p className="text-sm font-black uppercase tracking-wide text-manso-cream/70">
-                              {DIAS[item.dia_semana]}
+                              {etiquetaDias(item)}
                               {item.horario && <span className="text-manso-cream/40"> · {item.horario.slice(0, 5)} hs</span>}
                             </p>
                           </div>

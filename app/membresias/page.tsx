@@ -9,12 +9,14 @@ import { Crown } from 'lucide-react';
 import { CurrencyToggle } from '@/components/ui/CurrencyToggle';
 import { useCurrency } from '@/store/useCurrency';
 import { MembresiaCard } from '@/components/ui/MembresiaCard';
+import { CoworkModal } from '@/components/ui/CoworkModal';
 
 export default function MembresiasPage() {
   const [membresias, setMembresias] = useState<Membresia[]>([]);
   const [galleryImages, setGalleryImages] = useState<{ id: string; src: string }[]>([]);
   const [textoIntro, setTextoIntro] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  const [openCoworkAbierto, setOpenCoworkAbierto] = useState(false);
   const { currency, rate } = useCurrency();
 
   useEffect(() => {
@@ -155,6 +157,36 @@ export default function MembresiasPage() {
             </div>
           );
         })()}
+
+        {/* Open Cowork — va entre las cards y las fotos, solo en esta sección */}
+        <div className="mt-4">
+          <button
+            onClick={() => setOpenCoworkAbierto(true)}
+            className="group w-full flex items-center justify-between gap-5 border border-manso-cream/15 rounded-3xl p-5 md:p-7 hover:border-manso-terra/50 hover:bg-manso-cream/5 transition-all duration-500 text-left"
+          >
+            <div>
+              <p className="text-[9px] font-black uppercase tracking-[0.6em] text-manso-terra mb-1.5">
+                20 cupos por encuentro
+              </p>
+              <h2 className="text-xl md:text-3xl font-black uppercase italic tracking-tighter leading-none text-manso-cream">
+                Open Cowork
+              </h2>
+              <p className="text-sm text-manso-cream/40 font-light mt-2 max-w-md leading-relaxed">
+                Abrimos el cowork para que vengan a conocer a otras personas de la comunidad,
+                compartir ideas, proyectos, charlas.
+              </p>
+            </div>
+            <span className="shrink-0 w-11 h-11 flex items-center justify-center rounded-full border border-manso-cream/20 text-manso-cream group-hover:bg-manso-cream group-hover:text-manso-black group-hover:border-manso-cream transition-all duration-500 text-lg">
+              →
+            </span>
+          </button>
+        </div>
+
+        <CoworkModal
+          open={openCoworkAbierto}
+          onClose={() => setOpenCoworkAbierto(false)}
+          origen="open_cowork"
+        />
 
         {/* Galería mosaico del cowork — cierre visual */}
         {galleryImages.length > 0 && (
