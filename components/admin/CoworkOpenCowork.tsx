@@ -21,6 +21,23 @@ interface Props {
   onBorrar: (id: string) => void;
 }
 
+type Ventana = 'proximas' | 'mes' | 'dos_meses' | 'todas';
+
+/** Corre la fecha de hoy N meses hacia atrás. */
+function haceMeses(meses: number): Date {
+  const d = new Date();
+  d.setHours(0, 0, 0, 0);
+  d.setMonth(d.getMonth() - meses);
+  return d;
+}
+
+const VENTANAS: { id: Ventana; label: string; desde: () => Date | null }[] = [
+  { id: 'proximas',  label: 'Próximas',      desde: () => null },
+  { id: 'mes',       label: 'Último mes',    desde: () => haceMeses(1) },
+  { id: 'dos_meses', label: 'Últimos 2 meses', desde: () => haceMeses(2) },
+  { id: 'todas',     label: 'Todas',         desde: () => null },
+];
+
 const inputCls =
   'w-full p-2.5 bg-manso-cream/10 rounded-xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream text-sm';
 
@@ -31,7 +48,7 @@ const inputCls =
  */
 export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onBorrar }: Props) {
   const [nueva, setNueva] = useState({ fecha: '', horario: '', cupos_maximos: '20' });
-  const [verPasadas, setVerPasadas] = useState(false);
+  const [ventana, setVentana] = useState<Ventana>('proximas');
 
   const agregarFecha = async () => {
     if (!nueva.fecha) return;
@@ -54,9 +71,29 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
     onRefetch();
   };
 
-  const proximas = fechas.filter(f => !esPasada(f.fecha));
-  const pasadas = fechas.filter(f => esPasada(f.fecha));
-  const visibles = verPasadas ? [...proximas, ...pasadas] : proximas;
+  // Con 20 cupos por encuentro la lista de fechas se acumula rápido, así que
+  // por defecto solo se ven las próximas y el archivo se abre por ventanas.
+  const desdeVentana = VENTANAS.find(v => v.id === ventana)!.desde();
+  const visibles = fechas
+    .filter(f => {
+      if (ventana === 'proximas') return !esPasada(f.fecha);
+      if (!desdeVentana) return true;
+      return new Date(`${f.fecha}T00:00:00`) >= desdeVentana;
+    })
+    // Las próximas van de la más cercana en adelante; el archivo, de la más
+    // reciente hacia atrás.
+    .sort((a, b) =>
+      ventana === 'proximas' ? a.fecha.localeCompare(b.fecha) : b.fecha.localeCompare(a.fecha),
+    );
+
+  const contarEn = (v: Ventana) => {
+    const desde = VENTANAS.find(x => x.id === v)!.desde();
+    return fechas.filter(f => {
+      if (v === 'proximas') return !esPasada(f.fecha);
+      if (!desde) return true;
+      return new Date(`${f.fecha}T00:00:00`) >= desde;
+    }).length;
+  };
 
   // Anotados que quedaron sin fecha (la fecha se borró después de anotarse).
   const huerfanas = solicitudes.filter(s => !s.fecha_id);
@@ -102,10 +139,29 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
         </div>
       </div>
 
+      {/* Ventana temporal: el archivo crece rápido y Ana necesita acotarlo */}
+      <div className="flex flex-wrap gap-2">
+        {VENTANAS.map(v => (
+          <button
+            key={v.id}
+            onClick={() => setVentana(v.id)}
+            className={`px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border transition-colors ${
+              ventana === v.id
+                ? 'bg-manso-terra text-manso-cream border-manso-terra'
+                : 'text-manso-cream/40 border-manso-cream/15 hover:text-manso-cream/70 hover:border-manso-cream/30'
+            }`}
+          >
+            {v.label} ({contarEn(v.id)})
+          </button>
+        ))}
+      </div>
+
       {/* Fechas con sus anotados */}
       {visibles.length === 0 ? (
         <p className="text-xs text-manso-cream/30 font-light py-6 text-center">
-          Sin fechas cargadas. El acordeón de la web aparece vacío hasta que sumes una.
+          {fechas.length === 0
+            ? 'Sin fechas cargadas. El acordeón de la web aparece vacío hasta que sumes una.'
+            : 'No hay encuentros en este período.'}
         </p>
       ) : (
         <div className="space-y-5">
@@ -187,15 +243,6 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
             );
           })}
         </div>
-      )}
-
-      {pasadas.length > 0 && (
-        <button
-          onClick={() => setVerPasadas(v => !v)}
-          className="text-[9px] font-black uppercase tracking-widest text-manso-cream/35 hover:text-manso-cream transition-colors"
-        >
-          {verPasadas ? 'Ocultar fechas pasadas' : `Ver fechas pasadas (${pasadas.length})`}
-        </button>
       )}
 
       {huerfanas.length > 0 && (
