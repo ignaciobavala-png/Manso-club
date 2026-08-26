@@ -319,7 +319,6 @@ export default function AgendaPage() {
                       <div className="flex-shrink-0 flex items-center gap-3">
                         <ShareButton
                           title={`${item.titulo} | Manso Club`}
-                          text={item.descripcion || `${item.titulo} en Manso Club.`}
                           url={item.slug ? `/agenda/${item.slug}` : '/agenda'}
                           className="flex items-center justify-center w-11 h-11 bg-manso-cream/5 border border-manso-cream/10 rounded-full text-manso-cream hover:bg-manso-cream/10 hover:border-manso-cream/20 transition-all"
                           label=""

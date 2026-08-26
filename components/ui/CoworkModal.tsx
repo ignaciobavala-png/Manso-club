@@ -224,7 +224,6 @@ export function CoworkModal({ open, onClose, origen, membresiaId, membresiaNombr
             </p>
             <ShareButton
               title={esOpenCowork ? 'Open Cowork — Manso Club' : 'Cowork Manso Club'}
-              text={esOpenCowork ? OPEN_COWORK_INFO : COWORK_INFO}
               url={`/membresias?${PARAM_FORM}=${esOpenCowork ? FORM_OPEN_COWORK : membresiaId ?? ''}`}
               label="Invitar"
               className="flex items-center gap-2 px-4 py-2 rounded-full border border-manso-cream/20 text-manso-cream/60 hover:text-manso-cream hover:border-manso-cream/40 transition-colors"

@@ -207,7 +207,6 @@ export default async function TallerPage({ params }: Props) {
               </a>
               <ShareButton
                 title={`${taller.titulo} | Manso Club`}
-                text={taller.descripcion || `${taller.titulo} en Manso Club.`}
                 url={`/agenda/${taller.slug}`}
               />
             </div>

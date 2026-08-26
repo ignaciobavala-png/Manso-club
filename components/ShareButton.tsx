@@ -5,7 +5,6 @@ import { Share2, Check } from 'lucide-react';
 
 interface ShareButtonProps {
   title: string;
-  text?: string;
   /** Ruta relativa (ej: `/artistas/slug`) o URL absoluta. Por defecto usa la URL actual. */
   url?: string;
   className?: string;
@@ -15,7 +14,7 @@ interface ShareButtonProps {
 const DEFAULT_CLASS =
   'flex items-center gap-2 px-4 py-2.5 bg-manso-cream/5 border border-manso-cream/10 rounded-full text-manso-cream hover:bg-manso-cream/10 hover:border-manso-cream/20 transition-all';
 
-export function ShareButton({ title, text, url, className, label = 'Compartir' }: ShareButtonProps) {
+export function ShareButton({ title, url, className, label = 'Compartir' }: ShareButtonProps) {
   const [copied, setCopied] = useState(false);
 
   const handleShare = async () => {
@@ -23,7 +22,10 @@ export function ShareButton({ title, text, url, className, label = 'Compartir' }
 
     if (navigator.share) {
       try {
-        await navigator.share({ title, text, url: shareUrl });
+        // Solo title + url a propósito: en iOS varios destinos del share sheet
+        // (Mail, Notas, iMessage) se quedan con el `text` y descartan el `url`,
+        // así que mandar una descripción larga hacía que el link no viajara.
+        await navigator.share({ title, url: shareUrl });
       } catch {
         // usuario canceló el share nativo — no hacer nada
       }
