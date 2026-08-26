@@ -13,6 +13,10 @@ interface CoworkModalProps {
   membresiaNombre?: string;
 }
 
+const COWORK_INFO =
+  'Un espacio de trabajo para bajar un cambio sin dejar de hacer, crear vínculos ' +
+  'genuinos y rodearte de gente talentosa, creativa y con ideas.';
+
 const OPEN_COWORK_INFO =
   'Abrimos el cowork para que vengan a conocer a otras personas de la comunidad, ' +
   'compartir ideas, proyectos, charlas.';
@@ -58,7 +62,10 @@ export function CoworkModal({ open, onClose, origen, membresiaNombre }: CoworkMo
       ]);
 
       const ocupadosPorFecha = new Map<string, number>(
-        (cupos ?? []).map((c: { fecha_id: string; ocupados: number }) => [c.fecha_id, Number(c.ocupados)]),
+        (cupos ?? []).map((c: { fecha_id: string; ocupados: number | string }) => [
+          c.fecha_id,
+          Number(c.ocupados),
+        ]),
       );
 
       setFechas(
@@ -104,7 +111,7 @@ export function CoworkModal({ open, onClose, origen, membresiaNombre }: CoworkMo
           {esOpenCowork ? 'Manso Club' : 'Inscripción'}
         </p>
         <h2 className="text-3xl sm:text-4xl font-black uppercase italic tracking-tighter leading-none text-manso-cream">
-          {esOpenCowork ? 'Open Cowork' : 'Sumate al cowork'}
+          {esOpenCowork ? 'Open Cowork' : 'Cowork Manso Club'}
         </h2>
 
         {esOpenCowork ? (
@@ -174,14 +181,7 @@ export function CoworkModal({ open, onClose, origen, membresiaNombre }: CoworkMo
           </>
         ) : (
           <p className="mt-5 text-manso-cream/55 text-sm font-light leading-relaxed">
-            {membresiaNombre ? (
-              <>
-                Querés el plan <span className="text-manso-cream">{membresiaNombre}</span>. Contanos
-                quién sos y te escribimos para coordinar.
-              </>
-            ) : (
-              'Contanos quién sos y te escribimos para coordinar.'
-            )}
+            {COWORK_INFO}
           </p>
         )}
 

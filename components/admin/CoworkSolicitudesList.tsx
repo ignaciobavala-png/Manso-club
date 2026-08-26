@@ -18,6 +18,8 @@ interface Solicitud {
   proyecto: string | null;
   busca: string | null;
   estado: Estado;
+  notas_admin: string | null;
+  user_id: string | null;
   created_at: string;
   cowork_fechas: { fecha: string; horario: string | null } | null;
 }
