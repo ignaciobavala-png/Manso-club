@@ -1,7 +1,9 @@
 # Vynil — juego social de playlists
 
 > Boceto. Nada de esto está implementado todavía.
-> Rama: `vynil-social`. Boceto visual: `docs/vynil-social/boceto.html`.
+> Rama: `vynil-social`.
+> Bocetos: `boceto-widget.html` (la entrada, pedido de Ana) · `boceto.html` (la
+> página completa, a dónde lleva).
 
 ## La idea en una línea
 
@@ -16,6 +18,34 @@ lo abre escucha; para devolver la gentileza tiene que loguearse.
 - El texto de 140 caracteres es lo que se comparte de verdad. La gente no manda
   links de temas, manda *el motivo*.
 - El objeto (el vinilo girando sobre la bandeja) es lo que hace que se screenshotee.
+
+## Dónde vive: el widget del borde derecho
+
+La entrada al juego **no es una página, es una lengüeta** anclada al borde
+derecho de la home: medio vinilo asomando sobre una base plateada, con el
+contador de temas cargados. Se hace clic y entra un panel lateral con la
+bandejita, el input del link y la lista; abajo, el botón que genera el link para
+compartir. Nunca te saca de donde estabas.
+
+La página completa (`/vynil`, el boceto grande) queda como **destino**, no como
+entrada: es a donde se llega desde el link compartido o para editar el crate en
+serio. La conversión pasa por el widget.
+
+Detalles del boceto que importan:
+
+- La miniatura sale de `img.youtube.com/vi/<id>/mqdefault.jpg` — no necesita API
+  key. El título y el canal salen del **oEmbed público de YouTube**, que responde
+  con CORS abierto, así que se puede pedir desde el cliente. En producción
+  conviene igual pasarlo por `/api/vynil/oembed` para cachear y no depender de
+  que YouTube deje el CORS abierto.
+- El último tema cargado queda girando en el plato. Es la recompensa inmediata
+  de pegar un link, y lo que da ganas de pegar otro.
+- El link para compartir se genera **con lo que haya**, no hace falta llenar los
+  12. Si esperás a la lista completa, no comparte nadie.
+
+Pendiente de definir para el widget: si un usuario sin cuenta puede armar la
+lista en `localStorage` y recién registrarse al momento de compartir. Diría que
+sí — el registro adelante mata el juego.
 
 ## Mecánicas
 
