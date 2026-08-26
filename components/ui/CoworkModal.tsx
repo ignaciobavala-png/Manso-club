@@ -141,7 +141,6 @@ export function CoworkModal({ open, onClose, origen, membresiaId, membresiaNombr
               <p className="mt-5 text-manso-cream/55 text-sm font-light leading-relaxed">
                 {OPEN_COWORK_INFO}
               </p>
-              <p className="mt-3 text-manso-cream text-sm font-bold">20 cupos por encuentro.</p>
 
               {/* Acordeón de fechas */}
               <div className="mt-7 border border-manso-cream/15 rounded-2xl overflow-hidden">
