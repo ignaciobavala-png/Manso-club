@@ -42,6 +42,11 @@ until the script is migrated.
 - `hooks/` — `useAdminForm.ts` (generic CRUD with Supabase), `useArtistTrack.ts`
 - `supabase/` — SQL migration files (source of truth for DB schema)
 
+`agenda.dia_semana` es un `smallint` 0-6 (0 = lunes) y no puede representar un
+rango. Para "Lunes a Viernes" está `agenda.dias_semana` (array); el calendario
+expande una ocurrencia por cada día que contenga, y `dia_semana` se mantiene con
+el primer día del rango para no romper lo viejo.
+
 ### Styling
 
 Tailwind CSS v4 via PostCSS. Custom color palette — always use these tokens:
@@ -83,6 +88,46 @@ pieces with sample data into a single HTML file (default
 iframe so the styles can't bleed. Banner and footer point at the public URL, so
 the script inlines them from `public/assets/emails/` as base64 to make the file
 work offline.
+
+### Cowork (solicitudes de inscripción)
+
+El alta al cowork **no cobra nada**: todo entra como solicitud y Ana aprueba a
+mano desde el panel. `/membresias/pagar` y el flujo de Mercado Pago siguen
+existiendo pero ya no los linkea nadie.
+
+Un único formulario (`components/ui/CoworkForm.tsx`) servido en un modal
+(`CoworkModal.tsx`) con dos entradas:
+
+- El botón `SELECCIONAR` de cada `MembresiaCard` — guarda `membresia_id` (para
+  agrupar) y `membresia_nombre` (snapshot: no sigue los renombres del plan).
+- El botón `OPEN COWORK` de `/membresias`, entre las cards y la galería —
+  encuentro gratuito con cupo, la persona elige fecha en un acordeón.
+
+El modal se puede abrir por link: `?form=open-cowork` o `?form=<membresia_id>`.
+El parámetro se lee de `window.location.search` y **no** con `useSearchParams`,
+porque `/membresias` se prerenderiza estática y el hook obligaría a un Suspense.
+
+**Tablas** (`supabase/migration_cowork_solicitudes.sql`): `cowork_fechas` y
+`cowork_solicitudes`. RLS: insertar es público (el formulario no pide login),
+leer es solo admin — ahí hay mail y teléfono de gente real. Como el acordeón
+público necesita mostrar los cupos restantes sin poder leer las solicitudes, el
+conteo sale de `cowork_cupos()`, una función `security definer` que expone solo
+números. Ocupan cupo las pendientes y aprobadas; una rechazada lo libera.
+
+**Panel** (`MembresiasAdmin` → sección *Solicitudes*): dos pestañas porque son
+dos circuitos distintos.
+
+- `CoworkOpenCowork.tsx` — se ordena **por fecha**: cada encuentro es un bloque
+  con sus cupos y sus anotados adentro. Filtro de ventana temporal (próximas /
+  último mes / dos meses / todas) porque el archivo de fechas crece rápido. Las
+  fechas se editan inline y **no se pueden borrar si tienen anotados** (la FK es
+  `SET NULL`: no se perdería a la persona pero sí el dato de para qué día se
+  anotó); para eso está *Ocultar*.
+- `CoworkMembresias.tsx` — se ordena **por card**, con filtro por plan. No hay
+  estado "pagado": para Ana pagado es *tener la membresía activa*, así que cada
+  solicitud cruza el mail contra `user_profiles` y muestra la verdad (sin cuenta
+  / registrado / membresía activa). Otorgar reusa `UsuarioDrawer`; si la persona
+  no tiene cuenta, el botón ofrece copiar el link de registro.
 
 ### Image Uploads
 

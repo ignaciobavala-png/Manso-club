@@ -22,6 +22,19 @@ interface AgendaEvent {
   clases?: number | string;
   whatsapp_contacto?: string;
   luma_url?: string;
+  dias_semana?: number[] | null;
+}
+
+/** Traduce lo guardado en la DB al valor del select ('0'..'6', 'L-J', 'L-V' o ''). */
+function diaSemanaAValor(ev: { dia_semana?: number | null; dias_semana?: number[] | null }): string {
+  const arr = ev.dias_semana;
+  if (Array.isArray(arr) && arr.length > 1) {
+    const clave = Object.keys(RANGOS_DIAS).find(
+      k => RANGOS_DIAS[k].dias.join() === [...arr].sort((a, b) => a - b).join(),
+    );
+    if (clave) return clave;
+  }
+  return typeof ev.dia_semana === 'number' ? String(ev.dia_semana) : '';
 }
 
 const INITIAL = {
@@ -64,7 +77,19 @@ async function getUniqueSlug(base: string, excludeId: string | null): Promise<st
   return `${base}-${i}`;
 }
 
-const categorias  = ['Taller', 'Curso', 'Sesión', 'Clase', 'Evento'];
+const categorias  = ['Taller', 'Curso', 'Sesión', 'Clase', 'Evento', 'Cowork'];
+// Valor centinela del select de categoría: destapa el input para escribir una a mano.
+const CATEGORIA_OTRA = '__otra__';
+
+/**
+ * Días de cursada. Además de los días sueltos (0 = lunes ... 6 = domingo) hay
+ * rangos, que la DB guarda en agenda.dias_semana como array — dia_semana solo
+ * entra un smallint, así que el rango se refleja ahí con su primer día.
+ */
+const RANGOS_DIAS: Record<string, { label: string; dias: number[] }> = {
+  'L-J': { label: 'Lunes a Jueves',  dias: [0, 1, 2, 3] },
+  'L-V': { label: 'Lunes a Viernes', dias: [0, 1, 2, 3, 4] },
+};
 // 0 = lunes ... 6 = domingo (misma convención que agenda.dia_semana en la DB)
 const diasSemana  = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
 const duraciones  = ['1 hora', '2 horas', '3 horas', '4 horas', 'Medio día', 'Día completo'];
@@ -80,6 +105,8 @@ export function FormAgenda() {
   const [loading, setLoading]     = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [formData, setFormData]   = useState(INITIAL);
+  // Categoría escrita a mano: el select no la tiene en la lista fija.
+  const [categoriaLibre, setCategoriaLibre] = useState(false);
 
   useEffect(() => {
     const handle = (e: CustomEvent) => {
@@ -94,7 +121,7 @@ export function FormAgenda() {
         duracion:          ev.duracion,
         frecuencia:        ev.frecuencia,
         horario:           ev.horario ? ev.horario.slice(0, 5) : '',
-        dia_semana:        typeof ev.dia_semana === 'number' ? String(ev.dia_semana) : '',
+        dia_semana:        diaSemanaAValor(ev),
         fecha_inicio:      ev.fecha_inicio || '',
         fecha_fin:         ev.fecha_fin || '',
         precio:            ev.precio.toString(),
@@ -104,12 +131,19 @@ export function FormAgenda() {
         luma_url:          ev.luma_url || '',
         visibilidad:       (ev as any).visibilidad ?? 'publico',
       });
+      setCategoriaLibre(!categorias.includes(ev.categoria));
     };
     window.addEventListener('editAgendaEvent', handle as EventListener);
     return () => window.removeEventListener('editAgendaEvent', handle as EventListener);
   }, []);
 
   const reset = () => { setEditingId(null); setFormData(INITIAL); };
+
+  /** dia_semana en la DB es un smallint 0-6: de un rango guarda su primer día. */
+  const diaSemanaPrincipal = (valor: string): number | null => {
+    if (RANGOS_DIAS[valor]) return RANGOS_DIAS[valor].dias[0];
+    return valor === '' ? null : parseInt(valor);
+  };
 
   const set = (field: keyof typeof INITIAL, value: string) =>
     setFormData(prev => ({ ...prev, [field]: value }));
@@ -134,7 +168,8 @@ export function FormAgenda() {
       duracion:          formData.duracion,
       frecuencia:        formData.frecuencia,
       horario:           formData.horario || null,
-      dia_semana:        formData.dia_semana === '' ? null : parseInt(formData.dia_semana),
+      dia_semana:        diaSemanaPrincipal(formData.dia_semana),
+      dias_semana:        RANGOS_DIAS[formData.dia_semana]?.dias ?? null,
       fecha_inicio:      formData.fecha_inicio || null,
       fecha_fin:         formData.fecha_fin || null,
       precio:            parseInt(formData.precio) || 0,
@@ -228,9 +263,28 @@ export function FormAgenda() {
         <div className="grid grid-cols-2 gap-4">
           <div>
             <label className={labelCls}>Categoría</label>
-            <select className={inputCls} value={formData.categoria} onChange={e => set('categoria', e.target.value)}>
-              {categorias.map(c => <option key={c} value={c}>{c}</option>)}
-            </select>
+            {categoriaLibre ? (
+              <input
+                autoFocus
+                className={inputCls}
+                placeholder="Escribí la categoría"
+                value={formData.categoria}
+                onChange={e => set('categoria', e.target.value)}
+                onBlur={() => { if (!formData.categoria.trim()) { setCategoriaLibre(false); set('categoria', categorias[0]); } }}
+              />
+            ) : (
+              <select
+                className={inputCls}
+                value={formData.categoria}
+                onChange={e => {
+                  if (e.target.value === CATEGORIA_OTRA) { setCategoriaLibre(true); set('categoria', ''); }
+                  else set('categoria', e.target.value);
+                }}
+              >
+                {categorias.map(c => <option key={c} value={c}>{c}</option>)}
+                <option value={CATEGORIA_OTRA}>Otra (escribir)</option>
+              </select>
+            )}
           </div>
           <div>
             <label className={labelCls}>Frecuencia</label>
@@ -252,6 +306,9 @@ export function FormAgenda() {
               >
                 <option value="">Sin día fijo</option>
                 {diasSemana.map((d, i) => <option key={d} value={i}>{d}</option>)}
+                {Object.entries(RANGOS_DIAS).map(([k, r]) => (
+                  <option key={k} value={k}>{r.label}</option>
+                ))}
               </select>
             </div>
             <div>

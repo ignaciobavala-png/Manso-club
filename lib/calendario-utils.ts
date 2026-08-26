@@ -11,6 +11,8 @@ interface AgendaRow {
   horario?: string | null;
   /** Día de cursada: 0 = lunes ... 6 = domingo. Si falta, se ancla al día del alta. */
   dia_semana?: number | null;
+  /** Días de cursada cuando son varios ("Lunes a Viernes" = {0,1,2,3,4}). Manda sobre dia_semana. */
+  dias_semana?: number[] | null;
   /** Fecha desde la que arranca el ciclo. Sin ella, se usa created_at (menos preciso). */
   fecha_inicio?: string | null;
   /** Fecha límite de la recurrencia (inclusive). Sin ella, el taller se repite indefinidamente. */
@@ -180,7 +182,15 @@ export function construirOcurrencias(
 ): CalendarioOcurrencia[] {
   const deAgenda = agendaRows
     .filter(item => item.activo)
-    .flatMap(item => expandirAgenda(item, desde, hasta));
+    // Una actividad de varios días (ej. "Lunes a Viernes") se expande como si
+    // fuera una serie por día: expandirAgenda solo sabe de un día a la vez.
+    .flatMap(item => {
+      const dias = (item.dias_semana ?? []).filter(d => d >= 0 && d <= 6);
+      if (dias.length > 1) {
+        return dias.flatMap(dia => expandirAgenda({ ...item, dia_semana: dia }, desde, hasta));
+      }
+      return expandirAgenda(item, desde, hasta);
+    });
 
   const deEventos = eventoRows
     .filter(item => item.activo)
