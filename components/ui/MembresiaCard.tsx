@@ -1,9 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Star } from 'lucide-react';
 import { Membresia } from '@/lib/types/membresia';
-import { CoworkModal } from './CoworkModal';
+import { CoworkModal, PARAM_FORM } from './CoworkModal';
 
 interface MembresiaCardProps {
   membresia: Membresia;
@@ -29,6 +29,13 @@ export const MembresiaCard = ({
 }: MembresiaCardProps) => {
   const [formAbierto, setFormAbierto] = useState(false);
   const dark = membresia.destacado;
+
+  // Link compartido de este plan (?form=<id>): abre su formulario al entrar.
+  useEffect(() => {
+    const param = new URLSearchParams(window.location.search).get(PARAM_FORM);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    if (param === membresia.id) setFormAbierto(true);
+  }, [membresia.id]);
 
   const cText = dark ? 'text-manso-cream' : 'text-manso-black';
   const cMuted = dark ? 'text-manso-cream/60' : 'text-manso-black/60';

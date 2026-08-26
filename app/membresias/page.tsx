@@ -9,7 +9,7 @@ import { Crown } from 'lucide-react';
 import { CurrencyToggle } from '@/components/ui/CurrencyToggle';
 import { useCurrency } from '@/store/useCurrency';
 import { MembresiaCard } from '@/components/ui/MembresiaCard';
-import { CoworkModal } from '@/components/ui/CoworkModal';
+import { CoworkModal, PARAM_FORM, FORM_OPEN_COWORK } from '@/components/ui/CoworkModal';
 
 export default function MembresiasPage() {
   const [membresias, setMembresias] = useState<Membresia[]>([]);
@@ -18,6 +18,14 @@ export default function MembresiasPage() {
   const [loading, setLoading] = useState(true);
   const [openCoworkAbierto, setOpenCoworkAbierto] = useState(false);
   const { currency, rate } = useCurrency();
+
+  // Un link compartido (?form=open-cowork) cae directo en el formulario.
+  // Se lee de window en vez de useSearchParams para no forzar un Suspense en
+  // una página que se prerenderiza estática.
+  useEffect(() => {
+    const param = new URLSearchParams(window.location.search).get(PARAM_FORM);
+    if (param === FORM_OPEN_COWORK) setOpenCoworkAbierto(true);
+  }, []);
 
   useEffect(() => {
     const fetchMembresias = async () => {

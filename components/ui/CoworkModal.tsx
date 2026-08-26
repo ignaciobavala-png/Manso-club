@@ -5,6 +5,7 @@ import { createPortal } from 'react-dom';
 import { X, ChevronDown, Check } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { CoworkForm, type CoworkFecha } from './CoworkForm';
+import { ShareButton } from '../ShareButton';
 
 interface CoworkModalProps {
   open: boolean;
@@ -17,6 +18,13 @@ interface CoworkModalProps {
 const COWORK_INFO =
   'Un espacio de trabajo para bajar un cambio sin dejar de hacer, crear vínculos ' +
   'genuinos y rodearte de gente talentosa, creativa y con ideas.';
+
+/**
+ * Valor de ?form= que abre este modal desde un link compartido. Open Cowork
+ * tiene su propia palabra; un plan viaja con su id.
+ */
+export const PARAM_FORM = 'form';
+export const FORM_OPEN_COWORK = 'open-cowork';
 
 const OPEN_COWORK_INFO =
   'Abrimos el cowork para que vengan a conocer a otras personas de la comunidad, ' +
@@ -206,6 +214,21 @@ export function CoworkModal({ open, onClose, origen, membresiaId, membresiaNombr
               membresiaNombre={membresiaNombre}
               fechaId={fechaId}
               onSuccess={() => setFechaId(null)}
+            />
+          </div>
+
+          {/* El link lleva de vuelta a este mismo formulario abierto, no a la
+              página: quien lo recibe cae directo donde se anota. */}
+          <div className="mt-7 pt-5 border-t border-manso-cream/10 flex flex-wrap items-center justify-between gap-3">
+            <p className="text-[12px] text-manso-cream/35 font-light">
+              ¿Conocés a alguien que le sirva?
+            </p>
+            <ShareButton
+              title={esOpenCowork ? 'Open Cowork — Manso Club' : 'Cowork Manso Club'}
+              text={esOpenCowork ? OPEN_COWORK_INFO : COWORK_INFO}
+              url={`/membresias?${PARAM_FORM}=${esOpenCowork ? FORM_OPEN_COWORK : membresiaId ?? ''}`}
+              label="Invitar"
+              className="flex items-center gap-2 px-4 py-2 rounded-full border border-manso-cream/20 text-manso-cream/60 hover:text-manso-cream hover:border-manso-cream/40 transition-colors"
             />
           </div>
         </div>
