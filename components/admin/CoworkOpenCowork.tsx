@@ -66,8 +66,17 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
     onRefetch();
   };
 
-  const borrarFecha = async (id: string) => {
-    await supabase.from('cowork_fechas').delete().eq('id', id);
+  const anotados = (fechaId: string) => solicitudes.filter(s => s.fecha_id === fechaId);
+
+  /**
+   * Solo se borran fechas vacías. Con anotados el borrado dejaría sus
+   * solicitudes sin fecha (la FK es SET NULL): no se pierde a la persona, pero
+   * sí el dato de para qué día se había anotado, y eso no se recupera. Para
+   * sacarla de la web está "Ocultar", que no toca a nadie.
+   */
+  const borrarFecha = async (f: Fecha) => {
+    if (anotados(f.id).length > 0) return;
+    await supabase.from('cowork_fechas').delete().eq('id', f.id);
     onRefetch();
   };
 
@@ -98,7 +107,6 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
   // Anotados que quedaron sin fecha (la fecha se borró después de anotarse).
   const huerfanas = solicitudes.filter(s => !s.fecha_id);
 
-  const anotados = (fechaId: string) => solicitudes.filter(s => s.fecha_id === fechaId);
 
   return (
     <div className="space-y-8">
@@ -170,6 +178,9 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
             const ocupados = gente.filter(ocupaCupo).length;
             const lleno = ocupados >= f.cupos_maximos;
             const pasada = esPasada(f.fecha);
+            // Cuenta a todos los atados a la fecha, incluso rechazados: borrarla
+            // les rompería el registro igual.
+            const tieneGente = gente.length > 0;
 
             return (
               <div
@@ -209,13 +220,28 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
                     </span>
                     <button
                       onClick={() => toggleFecha(f)}
-                      className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40 hover:text-manso-cream transition-colors"
+                      className={`text-[9px] font-black uppercase tracking-widest transition-colors ${
+                        tieneGente && f.activo
+                          ? 'text-manso-terra hover:text-manso-cream'
+                          : 'text-manso-cream/40 hover:text-manso-cream'
+                      }`}
+                      title={
+                        tieneGente && f.activo
+                          ? 'Saca la fecha de la web sin tocar a los anotados'
+                          : undefined
+                      }
                     >
                       {f.activo ? 'Ocultar' : 'Mostrar'}
                     </button>
                     <button
-                      onClick={() => borrarFecha(f.id)}
-                      className="text-manso-cream/25 hover:text-red-400 transition-colors"
+                      onClick={() => borrarFecha(f)}
+                      disabled={tieneGente}
+                      title={
+                        tieneGente
+                          ? `No se puede borrar: hay ${gente.length} ${gente.length === 1 ? 'persona anotada' : 'personas anotadas'}. Usá "Ocultar".`
+                          : 'Borrar esta fecha'
+                      }
+                      className="text-manso-cream/25 hover:text-red-400 transition-colors disabled:text-manso-cream/10 disabled:cursor-not-allowed disabled:hover:text-manso-cream/10"
                     >
                       <Trash2 size={13} />
                     </button>
