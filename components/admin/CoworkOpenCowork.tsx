@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Plus, Trash2, Users } from 'lucide-react';
+import { Plus, Trash2, Users, Pencil, Check, X } from 'lucide-react';
 import { CoworkSolicitudCard } from './CoworkSolicitudCard';
 import {
   fechaLarga,
@@ -49,6 +49,8 @@ const inputCls =
 export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onBorrar }: Props) {
   const [nueva, setNueva] = useState({ fecha: '', horario: '', cupos_maximos: '20' });
   const [ventana, setVentana] = useState<Ventana>('proximas');
+  const [editando, setEditando] = useState<string | null>(null);
+  const [edicion, setEdicion] = useState({ fecha: '', horario: '', cupos_maximos: '20' });
 
   const agregarFecha = async () => {
     if (!nueva.fecha) return;
@@ -77,6 +79,36 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
   const borrarFecha = async (f: Fecha) => {
     if (anotados(f.id).length > 0) return;
     await supabase.from('cowork_fechas').delete().eq('id', f.id);
+    onRefetch();
+  };
+
+  const abrirEdicion = (f: Fecha) => {
+    setEditando(f.id);
+    setEdicion({
+      fecha: f.fecha,
+      horario: f.horario ? f.horario.slice(0, 5) : '',
+      cupos_maximos: String(f.cupos_maximos),
+    });
+  };
+
+  /**
+   * El tope no puede quedar por debajo de la gente que ya ocupa lugar: dejaría
+   * la fecha en un imposible tipo "22 de 20".
+   */
+  const guardarEdicion = async (f: Fecha) => {
+    const ocupados = anotados(f.id).filter(ocupaCupo).length;
+    const cupos = Math.max(Number(edicion.cupos_maximos) || 1, ocupados, 1);
+
+    await supabase
+      .from('cowork_fechas')
+      .update({
+        fecha: edicion.fecha,
+        horario: edicion.horario || null,
+        cupos_maximos: cupos,
+      })
+      .eq('id', f.id);
+
+    setEditando(null);
     onRefetch();
   };
 
@@ -193,6 +225,47 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
               >
                 {/* Cabecera de la fecha */}
                 <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 bg-manso-cream/5">
+                  {editando === f.id ? (
+                    <div className="flex flex-wrap items-center gap-2 flex-1">
+                      <input
+                        type="date"
+                        className={`${inputCls} w-auto`}
+                        value={edicion.fecha}
+                        onChange={e => setEdicion(p => ({ ...p, fecha: e.target.value }))}
+                      />
+                      <input
+                        type="time"
+                        className={`${inputCls} w-auto`}
+                        value={edicion.horario}
+                        onChange={e => setEdicion(p => ({ ...p, horario: e.target.value }))}
+                      />
+                      <input
+                        type="number"
+                        min={Math.max(ocupados, 1)}
+                        title={
+                          ocupados > 0
+                            ? `No puede bajar de ${ocupados}: es la gente que ya ocupa lugar`
+                            : 'Cupos'
+                        }
+                        className={`${inputCls} w-20`}
+                        value={edicion.cupos_maximos}
+                        onChange={e => setEdicion(p => ({ ...p, cupos_maximos: e.target.value }))}
+                      />
+                      <button
+                        onClick={() => guardarEdicion(f)}
+                        disabled={!edicion.fecha}
+                        className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border border-green-500/30 text-green-400 hover:bg-green-500/10 transition-colors disabled:opacity-25"
+                      >
+                        <Check size={12} />Guardar
+                      </button>
+                      <button
+                        onClick={() => setEditando(null)}
+                        className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest text-manso-cream/40 hover:text-manso-cream transition-colors"
+                      >
+                        <X size={12} />Cancelar
+                      </button>
+                    </div>
+                  ) : (
                   <div className="flex items-center gap-3 min-w-0">
                     <span className="text-sm text-manso-cream font-medium">
                       {fechaLarga(f.fecha, f.horario)}
@@ -208,6 +281,7 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
                       </span>
                     )}
                   </div>
+                  )}
 
                   <div className="flex items-center gap-3 shrink-0">
                     <span
@@ -218,6 +292,13 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
                       <Users size={12} />
                       {ocupados} / {f.cupos_maximos}
                     </span>
+                    <button
+                      onClick={() => (editando === f.id ? setEditando(null) : abrirEdicion(f))}
+                      title="Editar fecha, horario y cupos"
+                      className="text-manso-cream/30 hover:text-manso-cream transition-colors"
+                    >
+                      <Pencil size={13} />
+                    </button>
                     <button
                       onClick={() => toggleFecha(f)}
                       className={`text-[9px] font-black uppercase tracking-widest transition-colors ${
