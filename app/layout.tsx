@@ -11,6 +11,7 @@ import { CursorTrail } from "@/components/ui/CursorTrail";
 import { OrganizationSchema } from "@/components/SEO/OrganizationSchema";
 import { WebSiteSchema } from "@/components/SEO/WebSiteSchema";
 import { createSupabaseAnon } from "@/lib/supabase";
+import { Analytics } from "@vercel/analytics/next";
 
 export async function generateMetadata(): Promise<Metadata> {
   const supabase = createSupabaseAnon();
@@ -151,6 +152,7 @@ fbq('track', 'PageView');`,
 
         <OrganizationSchema />
         <WebSiteSchema />
+        <Analytics />
       </body>
     </html>
   );
