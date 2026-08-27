@@ -57,6 +57,10 @@
      PALETA DE COLORES
      ======================================== */
   --color-manso-black: #000000;
+  /* El gris que era `manso-black` hasta que los fondos pasaron a negro puro.
+     Sobrevive como color de superficie: una card oscura sobre el fondo negro
+     necesita algo que la despegue. */
+  --color-manso-carbon: #1D1D1B;
   --color-manso-blue: #030044;
   --color-manso-terra: #BC2915;
   --color-manso-olive: #868229;
