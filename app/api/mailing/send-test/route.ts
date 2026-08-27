@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
 import { createClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
-import { resend, EMAIL_FROM } from "@/lib/resend";
+import { getResend, EMAIL_FROM } from "@/lib/resend";
 import { procesarBloquesCanvas } from "@/lib/email-canvas";
 import CampaniaGenerica, { type BloqueMailing } from "@/emails/campania-generica";
 
@@ -70,7 +70,7 @@ export async function POST(request: Request) {
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://manso.club";
 
   try {
-    const { data, error } = await resend.batch.send(
+    const { data, error } = await getResend().batch.send(
       destinatarios.map((email: string) => ({
         from: EMAIL_FROM,
         to: email,

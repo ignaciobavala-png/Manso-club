@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
-import { resend } from "@/lib/resend";
+import { getResend } from "@/lib/resend";
 
 // Eventos que representan estado de entrega (dimensión lineal en mailing_envios.estado)
 const ESTADO_POR_EVENTO: Record<string, "delivered" | "bounced" | "failed"> = {
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
 
   let event;
   try {
-    event = resend.webhooks.verify({
+    event = getResend().webhooks.verify({
       payload,
       headers: { id, timestamp, signature },
       webhookSecret: process.env.RESEND_WEBHOOK_SECRET!,

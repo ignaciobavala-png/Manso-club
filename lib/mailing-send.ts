@@ -1,5 +1,5 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
-import { resend, EMAIL_FROM } from "@/lib/resend";
+import { getResend, EMAIL_FROM } from "@/lib/resend";
 import { resolverAudiencia, type Audiencia } from "@/lib/mailing-audiencias";
 import { procesarBloquesCanvas } from "@/lib/email-canvas";
 import CampaniaGenerica, { type BloqueMailing } from "@/emails/campania-generica";
@@ -130,7 +130,7 @@ export async function enviarCampania(
     let error: { name: string; message: string } | null = null;
 
     for (let intento = 1; intento <= MAX_INTENTOS; intento++) {
-      ({ data, error } = await resend.batch.send(payload, { idempotencyKey }));
+      ({ data, error } = await getResend().batch.send(payload, { idempotencyKey }));
       if (!error) break;
       console.error(
         `[mailing] campaña ${campania.id} lote ${i} intento ${intento}/${MAX_INTENTOS}: ${error.name} — ${error.message}`
