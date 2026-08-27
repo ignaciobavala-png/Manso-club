@@ -55,8 +55,9 @@
   --text-display--font-weight: 900;
 
   /* Título del hero: más chico que `display`, para que entre centrado
-     con los botones sin comerse la imagen de fondo. */
-  --text-hero: clamp(2.25rem, 5vw, 4rem);
+     con los botones sin comerse la imagen de fondo. Un 25% menos que la
+     primera versión, a pedido de Ana. */
+  --text-hero: clamp(1.6875rem, 3.75vw, 3rem);
   --text-hero--line-height: 1.05;
   --text-hero--letter-spacing: -0.03em;
   --text-hero--font-weight: 900;

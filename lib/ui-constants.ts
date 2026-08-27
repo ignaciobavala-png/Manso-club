@@ -63,8 +63,10 @@ export const OPACITY = {
 // TOKENS DE TIPOGRAFÍA
 // ==========================================
 export const TYPE = {
+  // Sin `uppercase` a propósito: el título del hero respeta las mayúsculas y
+  // minúsculas que Ana escribe en el panel. No volver a agregarlo.
   hero:
-    'font-montreal text-hero font-black uppercase italic tracking-[-0.03em] leading-[1.05]',
+    'font-montreal text-hero font-black italic tracking-[-0.03em] leading-[1.05]',
   display:
     'text-display font-black uppercase italic tracking-[-0.04em] leading-[0.85]',
   h1:
