@@ -5,7 +5,7 @@ import { supabase } from '@/lib/supabase';
 import { ImageUploader } from './ImageUploader';
 import { VideoUploader } from './VideoUploader';
 import { HeroSlide } from '@/lib/hero';
-import { Type, Image, Video, Hash, FileText, Monitor, Smartphone, Link2, Film, AlertTriangle } from 'lucide-react';
+import { Type, Image, Video, Hash, FileText, Monitor, Smartphone, Link2, Film, AlertTriangle, CaseSensitive } from 'lucide-react';
 
 const UNSUPPORTED_VIDEO_HOSTS = ['youtube.com', 'youtu.be', 'vimeo.com'];
 
@@ -31,6 +31,7 @@ interface HeroSlideEdit {
   order_index: number;
   active: boolean;
   device_type: 'desktop' | 'mobile' | 'ambos';
+  title_scale: number;
 }
 
 export function FormHero() {
@@ -47,7 +48,8 @@ export function FormHero() {
     media_url_desktop: '',
     media_url_mobile: '',
     order_index: '1',
-    device_type: 'ambos' as 'desktop' | 'mobile' | 'ambos'
+    device_type: 'ambos' as 'desktop' | 'mobile' | 'ambos',
+    title_scale: 100
   });
 
   useEffect(() => {
@@ -64,7 +66,8 @@ export function FormHero() {
         media_url_desktop: slide.media_url_desktop || '',
         media_url_mobile: slide.media_url_mobile || '',
         order_index: slide.order_index.toString(),
-        device_type: slide.device_type || 'ambos'
+        device_type: slide.device_type || 'ambos',
+        title_scale: slide.title_scale ?? 100
       });
       setImageKey(prev => prev + 1);
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -88,7 +91,8 @@ export function FormHero() {
       media_url_desktop: '',
       media_url_mobile: '',
       order_index: '1',
-      device_type: 'ambos'
+      device_type: 'ambos',
+      title_scale: 100
     });
     setImageKey(prev => prev + 1);
   };
@@ -117,7 +121,8 @@ export function FormHero() {
         media_url_mobile: formData.media_url_mobile || null,
         order_index: parseInt(String(formData.order_index)) || 1,
         active: true,
-        device_type: formData.device_type
+        device_type: formData.device_type,
+        title_scale: formData.title_scale
       };
 
       if (editingId) {
@@ -380,6 +385,47 @@ export function FormHero() {
               value={formData.title_line2}
               onChange={e => setFormData({...formData, title_line2: e.target.value})}
             />
+          </div>
+
+          {/* Tamaño del título */}
+          <div className="bg-manso-cream/5 rounded-2xl p-4 border border-manso-cream/10 space-y-3">
+            <div className="flex items-center justify-between gap-2">
+              <label htmlFor="title_scale" className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 flex items-center gap-2">
+                <CaseSensitive size={18} />
+                Tamaño del título
+              </label>
+              <span className="text-sm font-black text-manso-cream tabular-nums">
+                {formData.title_scale}%
+              </span>
+            </div>
+            <input
+              id="title_scale"
+              type="range"
+              min={50}
+              max={150}
+              step={5}
+              value={formData.title_scale}
+              onChange={e => setFormData({...formData, title_scale: parseInt(e.target.value, 10)})}
+              className="w-full accent-manso-terra cursor-pointer"
+            />
+            <div className="flex items-center justify-between">
+              <span className="text-[9px] font-bold uppercase tracking-widest text-manso-cream/30">Más chico</span>
+              <button
+                type="button"
+                onClick={() => setFormData({...formData, title_scale: 100})}
+                className="text-[9px] font-bold uppercase tracking-widest text-manso-cream/50 hover:text-manso-cream transition-colors underline underline-offset-2 disabled:opacity-30 disabled:no-underline"
+                disabled={formData.title_scale === 100}
+              >
+                Volver al normal
+              </button>
+              <span className="text-[9px] font-bold uppercase tracking-widest text-manso-cream/30">Más grande</span>
+            </div>
+            {/* El título se achica y agranda solo según la pantalla; esto mueve
+                esa escala entera, así no se rompe en celular. */}
+            <p className="text-[9px] text-manso-cream/30 font-medium leading-relaxed">
+              100% es el tamaño de diseño. El título se adapta solo a cada pantalla:
+              esto lo hace más chico o más grande en todas por igual.
+            </p>
           </div>
 
           {/* Descripción */}

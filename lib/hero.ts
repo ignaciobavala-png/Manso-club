@@ -13,6 +13,8 @@ export interface HeroSlide {
   order_index: number;
   active: boolean;
   device_type: 'desktop' | 'mobile' | 'ambos';
+  /** Tamaño del título en % sobre el clamp() del diseño. 100 = base, rango 50-150. */
+  title_scale: number;
 }
 
 export async function getHeroSlides(): Promise<HeroSlide[]> {

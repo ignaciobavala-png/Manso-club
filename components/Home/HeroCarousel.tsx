@@ -17,6 +17,8 @@ export interface CarouselSlide {
   title_line2?: string | null;
   /** Forma vieja del fallback hardcodeado: [line1, line2]. */
   title?: string[];
+  /** Tamaño del título en % sobre el clamp() del diseño. 100 = base. */
+  title_scale?: number | null;
 }
 
 const getTitle = (slide: CarouselSlide) => ({
@@ -47,6 +49,9 @@ export const HeroCarousel = ({ slides }: { slides: CarouselSlide[] }) => {
 
   const currentSlide = slides[current];
   const title = getTitle(currentSlide);
+  // El tamaño se guarda como porcentaje y no como px: multiplicando el clamp()
+  // el título sigue adaptándose solo a cada pantalla.
+  const titleScale = (currentSlide.title_scale ?? 100) / 100;
   const hasMedia = Boolean(currentSlide.media_url);
   const isVideo = hasMedia && currentSlide.tipo === 'video';
   const isImage = hasMedia && currentSlide.tipo === 'imagen';
@@ -94,7 +99,10 @@ export const HeroCarousel = ({ slides }: { slides: CarouselSlide[] }) => {
             transition={transitionConfig}
             className="flex flex-col items-center"
           >
-            <h1 className={`${TYPE.hero} text-manso-cream text-balance`}>
+            <h1
+              className={`${TYPE.hero} text-manso-cream text-balance`}
+              style={{ fontSize: `calc(var(--text-hero) * ${titleScale})` }}
+            >
               {title.line1}
               {title.line2 && (
                 <>
