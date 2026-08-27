@@ -12,7 +12,7 @@ export const revalidate = 30;
 
 export default function Home() {
   return (
-    <div id="page-root" className="min-h-screen" style={{ backgroundColor: '#1D1D1B' }}>
+    <div id="page-root" className="min-h-screen" style={{ backgroundColor: '#000000' }}>
       
       {/* Slide 1: Hero */}
       <section id="quienes-somos" className="min-h-screen relative">

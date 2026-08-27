@@ -258,7 +258,7 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
     <div className="fixed inset-0 z-50 flex justify-end">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="relative w-full max-w-md bg-[#1D1D1B] border-l border-manso-cream/10 h-full overflow-y-auto flex flex-col">
+      <div className="relative w-full max-w-md bg-[#000000] border-l border-manso-cream/10 h-full overflow-y-auto flex flex-col">
 
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-manso-cream/10">

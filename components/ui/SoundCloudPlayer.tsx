@@ -279,7 +279,7 @@ export function SoundCloudPlayer({ url, autoPlay = false, showControls = true, c
           background: #D4A574;
           border-radius: 50%;
           cursor: pointer;
-          border: 2px solid #1D1D1B;
+          border: 2px solid #000000;
         }
         
         .slider::-moz-range-thumb {
@@ -288,7 +288,7 @@ export function SoundCloudPlayer({ url, autoPlay = false, showControls = true, c
           background: #D4A574;
           border-radius: 50%;
           cursor: pointer;
-          border: 2px solid #1D1D1B;
+          border: 2px solid #000000;
         }
       `}</style>
     </div>

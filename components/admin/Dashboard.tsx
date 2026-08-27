@@ -89,7 +89,7 @@ export function Dashboard() {
   }, []);
 
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#1D1D1B' }}>
+    <div className="min-h-screen" style={{ backgroundColor: '#000000' }}>
       <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto min-h-screen pt-16 sm:pt-20 lg:pt-20">
         {/* Header Superior */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 sm:mb-12">

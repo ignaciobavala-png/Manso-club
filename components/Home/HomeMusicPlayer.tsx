@@ -303,7 +303,7 @@ export function HomeMusicPlayer({ tracks, autoPlay = false, isArtistMode = false
           background: #d4a574;
           border-radius: 50%;
           cursor: pointer;
-          border: 1px solid #1d1d1b;
+          border: 1px solid #000000;
         }
         input[type='range']::-moz-range-thumb {
           width: 8px;
@@ -311,7 +311,7 @@ export function HomeMusicPlayer({ tracks, autoPlay = false, isArtistMode = false
           background: #d4a574;
           border-radius: 50%;
           cursor: pointer;
-          border: 1px solid #1d1d1b;
+          border: 1px solid #000000;
         }
       `}</style>
     </div>

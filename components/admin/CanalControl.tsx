@@ -131,7 +131,7 @@ export function CanalControl() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setAyuda(false)}>
           <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
           <div
-            className="relative bg-[#1D1D1B] border border-manso-cream/15 rounded-[2rem] p-8 max-w-md w-full shadow-2xl"
+            className="relative bg-[#000000] border border-manso-cream/15 rounded-[2rem] p-8 max-w-md w-full shadow-2xl"
             onClick={e => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">
