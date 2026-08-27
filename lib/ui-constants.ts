@@ -14,7 +14,7 @@
  *   badge      → Badges, contadores
  *
  * CONTRASTE:
- *   Fondo oscuro (#1D1D1B) → body = text-manso-cream/85
+ *   Fondo oscuro (#000000) → body = text-manso-cream/85
  *   Fondo claro (#FFFCDC)  → body = text-manso-black/85
  */
 

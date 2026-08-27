@@ -44,7 +44,7 @@ export const MembresiasHome = () => {
 
   if (loading) {
     return (
-      <section className="py-8 sm:py-12 px-4 sm:px-8 md:px-[96px]" style={{ backgroundColor: '#1D1D1B' }}>
+      <section className="py-8 sm:py-12 px-4 sm:px-8 md:px-[96px]" style={{ backgroundColor: '#000000' }}>
         <div className="mx-auto">
           <div className="text-left mb-12">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-manso-cream">
@@ -60,7 +60,7 @@ export const MembresiasHome = () => {
   }
 
   return (
-    <section className="relative py-12 sm:py-16 px-4 sm:px-8 md:px-[96px]" style={{ backgroundColor: '#1D1D1B', backgroundImage: 'linear-gradient(rgba(255,255,220,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,220,0.07) 1px, transparent 1px)', backgroundSize: '48px 48px' }}>
+    <section className="relative py-12 sm:py-16 px-4 sm:px-8 md:px-[96px]" style={{ backgroundColor: '#000000', backgroundImage: 'linear-gradient(rgba(255,255,220,0.07) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,220,0.07) 1px, transparent 1px)', backgroundSize: '48px 48px' }}>
       <div className="relative z-10 mx-auto">
         <div className="text-left mb-12">
           <h2 className="text-3xl sm:text-4xl md:text-5xl font-medium leading-tight uppercase tracking-tighter italic text-manso-cream">

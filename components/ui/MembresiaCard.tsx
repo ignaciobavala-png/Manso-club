@@ -18,7 +18,9 @@ interface MembresiaCardProps {
  * Card de membresía — estructura y efecto de hover tomados de las cards de
  * tickets de Labitconf (elevación + escala leve, sombra profunda, lista con
  * bullets en color de acento), pero con la paleta de Manso: card destacada en
- * manso-black, el resto en manso-cream, acento manso-terra.
+ * manso-carbon —el gris—, el resto en manso-cream, acento manso-terra. La
+ * destacada no va en manso-black porque ese es el fondo de la página: quedaría
+ * un rectángulo invisible con un borde.
  */
 export const MembresiaCard = ({
   membresia,
@@ -54,7 +56,7 @@ export const MembresiaCard = ({
     <div
       className={`group relative flex flex-col w-full h-full rounded-2xl p-5 sm:p-6 shadow-lg sm:shadow-[0_20px_50px_rgba(0,0,0,0.5)] sm:will-change-transform sm:transition-transform sm:duration-300 sm:ease-out sm:hover:-translate-y-1.5 sm:hover:scale-[1.035] sm:hover:z-10 ${
         dark
-          ? 'bg-manso-black border border-manso-cream/15'
+          ? 'bg-manso-carbon border border-manso-cream/15'
           : 'bg-manso-cream border border-manso-black/10'
       }`}
     >

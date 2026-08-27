@@ -163,5 +163,5 @@ fbq('track', 'PageView');`,
 export const viewport = {
   width: 'device-width',
   initialScale: 1,
-  themeColor: '#1D1D1B',
+  themeColor: '#000000',
 };

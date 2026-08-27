@@ -29,7 +29,7 @@ export const HeroCarousel = ({ slides }: { slides: any[] }) => {
   const title = getTitle(currentSlide);
 
   return (
-    <section id="hero" className="relative h-screen flex flex-col justify-end md:justify-center px-8 md:px-[96px] pt-24 pb-10 md:pt-28 md:pb-16 overflow-hidden" style={{ backgroundColor: '#1D1D1B' }}>
+    <section id="hero" className="relative h-screen flex flex-col justify-end md:justify-center px-8 md:px-[96px] pt-24 pb-10 md:pt-28 md:pb-16 overflow-hidden" style={{ backgroundColor: '#000000' }}>
       {/* Fondo dinámico: imagen o gradiente */}
       {currentSlide.media_url && currentSlide.tipo === 'imagen' ? (
         <div

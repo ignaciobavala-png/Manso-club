@@ -84,7 +84,7 @@ export function HeroClient() {
           loop
           playsInline
           className="absolute inset-0 w-full h-full object-cover z-0"
-          style={{ backgroundColor: '#1D1D1B' }}
+          style={{ backgroundColor: '#000000' }}
         >
           <source src={videoUrl} type="video/mp4" />
         </video>
@@ -145,7 +145,7 @@ export function HeroClient() {
           className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
           style={{
             backgroundImage: `url(${imageUrl})`,
-            backgroundColor: '#1D1D1B'
+            backgroundColor: '#000000'
           }}
         />
 

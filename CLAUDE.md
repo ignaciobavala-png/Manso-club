@@ -50,7 +50,7 @@ el primer día del rango para no romper lo viejo.
 ### Styling
 
 Tailwind CSS v4 via PostCSS. Custom color palette — always use these tokens:
-- `manso-black` (#1D1D1B), `manso-blue` (#030044), `manso-terra` (#BC2915)
+- `manso-black` (#000000 — negro puro; era #1D1D1B hasta que Ana pidió sacarle el gris), `manso-blue` (#030044), `manso-terra` (#BC2915)
 - `manso-olive` (#868229), `manso-cream` (#FFFCDC), `manso-brown` (#542C1B)
 
 Font: Helvetica Neue Pro (defined in global CSS).
