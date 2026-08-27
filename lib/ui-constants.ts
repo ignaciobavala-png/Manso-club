@@ -2,7 +2,8 @@
  * Design System - Manso Club
  *
  * JERARQUÍA TIPOGRÁFICA:
- *   display    → Hero principal (clamp fluid)
+ *   display    → Titulares grandes de sección (clamp fluid)
+ *   hero       → Título del banner de home (Neue Montreal, centrado)
  *   h1         → Títulos de página
  *   h2         → Títulos de sección
  *   h3         → Subtítulos / Títulos de card principales
@@ -62,6 +63,8 @@ export const OPACITY = {
 // TOKENS DE TIPOGRAFÍA
 // ==========================================
 export const TYPE = {
+  hero:
+    'font-montreal text-hero font-black uppercase italic tracking-[-0.03em] leading-[1.05]',
   display:
     'text-display font-black uppercase italic tracking-[-0.04em] leading-[0.85]',
   h1:

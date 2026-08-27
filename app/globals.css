@@ -1,5 +1,45 @@
 @import "tailwindcss";
 
+/* ========================================
+   Neue Montreal — tipografía del título del hero.
+   Es una fuente paga (Pangram Pangram): los .woff2 van en
+   public/fonts/ y no están versionados. Mientras falten, el
+   `local()` la toma si está instalada en el sistema y si no
+   cae al stack de Helvetica sin romper nada.
+   ======================================== */
+@font-face {
+  font-family: "Neue Montreal";
+  src: local("Neue Montreal Regular"), local("NeueMontreal-Regular"),
+       url("/fonts/NeueMontreal-Regular.woff2") format("woff2");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Neue Montreal";
+  src: local("Neue Montreal Medium"), local("NeueMontreal-Medium"),
+       url("/fonts/NeueMontreal-Medium.woff2") format("woff2");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Neue Montreal";
+  src: local("Neue Montreal Bold"), local("NeueMontreal-Bold"),
+       url("/fonts/NeueMontreal-Bold.woff2") format("woff2");
+  font-weight: 700 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Neue Montreal";
+  src: local("Neue Montreal Italic"), local("NeueMontreal-Italic"),
+       url("/fonts/NeueMontreal-Italic.woff2") format("woff2");
+  font-weight: 400 900;
+  font-style: italic;
+  font-display: swap;
+}
+
 @theme {
   /* ========================================
      TIPOGRAFÍA — Type Scale Modular (1.25)
@@ -7,11 +47,19 @@
      clases md: / lg: en los componentes
      ======================================== */
   --font-sans: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-montreal: "Neue Montreal", "Helvetica Neue", Helvetica, Arial, sans-serif;
 
   --text-display: clamp(3.5rem, 12vw, 8rem);
   --text-display--line-height: 0.85;
   --text-display--letter-spacing: -0.04em;
   --text-display--font-weight: 900;
+
+  /* Título del hero: más chico que `display`, para que entre centrado
+     con los botones sin comerse la imagen de fondo. */
+  --text-hero: clamp(2.25rem, 5vw, 4rem);
+  --text-hero--line-height: 1.05;
+  --text-hero--letter-spacing: -0.03em;
+  --text-hero--font-weight: 900;
 
   --text-h1: 2.25rem;
   --text-h1--line-height: 1;
