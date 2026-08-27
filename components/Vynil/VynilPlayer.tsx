@@ -175,11 +175,11 @@ export function VynilPlayer() {
         <div className={`fixed right-4 z-50 ${bottom}`}>
           <button
             onClick={() => setAbierto(true)}
-            aria-label="Vynil — la música que suena en Manso"
+            aria-label="Vinyl — la música que suena en Manso"
             className="group flex items-center justify-center relative"
           >
             <span className="absolute right-20 bg-black text-white text-[10px] font-black uppercase tracking-[0.3em] px-4 py-2 rounded-sm opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap translate-x-4 group-hover:translate-x-0">
-              Vynil_
+              Vinyl_
             </span>
 
             <VynilDisco

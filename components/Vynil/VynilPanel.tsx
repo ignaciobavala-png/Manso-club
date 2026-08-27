@@ -60,13 +60,14 @@ export function VynilPanel({ open, onClose, listo, alternar }: Props) {
     <div
       role="dialog"
       aria-modal="false"
-      aria-label="Vynil — la playlist de Manso"
-      className="fixed inset-x-3 bottom-3 sm:inset-x-auto sm:right-4 sm:bottom-4 sm:w-[380px] z-[60] flex flex-col max-h-[85dvh] rounded-[28px] border border-manso-cream/15 bg-manso-black/95 backdrop-blur-md shadow-[0_20px_60px_rgba(0,0,0,0.6)] overflow-hidden"
+      aria-label="Vinyl — la playlist de Manso"
+      className="fixed inset-x-3 bottom-3 sm:inset-x-auto sm:right-4 sm:bottom-4 sm:w-[380px] z-[60] flex flex-col max-h-[85dvh] overflow-y-auto overscroll-contain rounded-[28px] border border-manso-cream/15 bg-manso-black/95 backdrop-blur-md shadow-[0_20px_60px_rgba(0,0,0,0.6)]"
     >
-      {/* Cabecera */}
-      <div className="flex items-start justify-between gap-3 px-5 pt-5">
+      {/* Cabecera. Sticky porque ahora el contenedor scrollea y el botón de
+          cerrar tiene que quedar siempre a mano. */}
+      <div className="sticky top-0 z-20 flex items-start justify-between gap-3 px-5 pt-5 pb-2 bg-manso-black/95 backdrop-blur-md">
         <p className="text-[9px] font-black uppercase tracking-[0.5em] text-manso-terra">
-          Manso · Vynil
+          Manso · Vinyl
         </p>
         <button
           onClick={onClose}
@@ -79,7 +80,7 @@ export function VynilPanel({ open, onClose, listo, alternar }: Props) {
 
       {/* Bandeja. El plato se achica con la pantalla: en un mobile bajo, 210px
           fijos dejaban la lista sin lugar para scrollear. */}
-      <div className="px-5 pt-2 pb-5 shrink-0">
+      <div className="px-5 pb-5 shrink-0">
         <div className="relative mx-auto" style={{ width: PLATO, height: PLATO }}>
           <VynilDisco
             tema={actual}
@@ -147,7 +148,7 @@ export function VynilPanel({ open, onClose, listo, alternar }: Props) {
         {/* Compartir el reproductor, no la lista: el link abre Vynil sonando */}
         <div className="mt-4 flex justify-center">
           <ShareButton
-            title="Vynil — la música que suena en Manso"
+            title="Vinyl — la música que suena en Manso"
             url="/?vynil=1"
             label="Compartir el reproductor"
             className="flex items-center gap-2 px-4 py-2 rounded-full border border-manso-cream/15 text-manso-cream/50 hover:text-manso-cream hover:border-manso-cream/35 transition-colors"
@@ -178,7 +179,11 @@ export function VynilPanel({ open, onClose, listo, alternar }: Props) {
       </div>
 
       {/* La playlist */}
-      <div className="mt-4 flex-1 min-h-0 overflow-y-auto overscroll-contain px-5 pb-5">
+      {/* Dos scrolls, a propósito: la lista scrollea adentro de su alto y,
+          cuando llega al final, el gesto sigue en el contenedor. Sin
+          `overscroll-contain` acá para que esa cadena funcione — el que
+          corta la cadena hacia la página es el contenedor de afuera. */}
+      <div className="mt-4 shrink-0 max-h-[45dvh] overflow-y-auto px-5 pb-5">
         <p className="sticky top-0 z-10 -mx-1 px-1 pb-3 bg-manso-black text-[9px] font-black uppercase tracking-[0.35em] text-manso-cream/25">
           {temas.length === 0
             ? 'Todavía no hay nada'
