@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Manso — Vynil (boceto)</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://unpkg.com/lucide@latest"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body class="bg-[#1D1D1B] text-[#FFFCDC] antialiased" style="font-family:'Helvetica Neue','Inter',Helvetica,Arial,sans-serif">
+
+<!-- NAV -->
+<header class="sticky top-0 z-40 border-b border-[#FFFCDC]/10 bg-[#1D1D1B]/80 backdrop-blur">
+  <div class="max-w-6xl mx-auto px-5 h-14 flex items-center justify-between">
+    <div class="flex items-center gap-6">
+      <span class="text-[15px] font-semibold tracking-tighter">MANSO</span>
+      <span class="hidden sm:inline text-[11px] uppercase tracking-[0.25em] text-[#FFFCDC]/40">Vynil</span>
+    </div>
+    <nav class="flex items-center gap-5 text-[13px] text-[#FFFCDC]/55">
+      <a href="#deck" class="hover:text-[#FFFCDC] transition-colors">Bandeja</a>
+      <a href="#crate" class="hover:text-[#FFFCDC] transition-colors">Mi crate</a>
+      <a href="#share" class="hover:text-[#FFFCDC] transition-colors">Compartir</a>
+      <span class="w-7 h-7 rounded-full overflow-hidden ring-1 ring-[#FFFCDC]/20">
+        <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=80&h=80&fit=crop" alt="" class="w-full h-full object-cover">
+      </span>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO + DECK -->
+<section id="deck" class="max-w-6xl mx-auto px-5 pt-14 pb-20">
+  <div class="max-w-xl">
+    <p class="text-[11px] uppercase tracking-[0.3em] text-[#868229] mb-4">Juego social · beta interna</p>
+    <h1 class="text-3xl sm:text-[42px] leading-[1.05] tracking-tight font-semibold">Poné un tema en la bandeja.</h1>
+    <p class="mt-4 text-[15px] leading-relaxed text-[#FFFCDC]/55">Pegás un link de YouTube, contás en una línea por qué ese tema, y queda grabado en tu crate. El crate se comparte: quien lo abre escucha tu selección y puede devolver la gentileza con la suya.</p>
+  </div>
+
+  <div class="mt-12 grid lg:grid-cols-[minmax(0,1fr)_360px] gap-8 items-start">
+
+    <!-- ===== TECHNICS ===== -->
+    <div class="rounded-[22px] p-5 sm:p-8 border border-black/60 shadow-2xl" style="background:linear-gradient(160deg,#c9c9c2 0%,#a9a9a2 45%,#8e8e88 100%)">
+      <div class="flex items-start justify-between mb-5">
+        <div>
+          <p class="text-[10px] uppercase tracking-[0.3em] text-black/45">Manso Club</p>
+          <p class="text-[15px] font-semibold tracking-tighter text-black/75">SL-M1200</p>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <button class="px-3 py-1.5 rounded-[4px] text-[10px] font-medium tracking-widest text-black/70 border border-black/25 bg-[#d5d5ce] hover:bg-white transition-colors">33</button>
+          <button class="px-3 py-1.5 rounded-[4px] text-[10px] font-medium tracking-widest text-black/40 border border-black/15 bg-black/5 hover:text-black/70 hover:border-black/25 transition-colors">45</button>
+        </div>
+      </div>
+
+      <div class="flex gap-5 sm:gap-8">
+        <!-- START/STOP -->
+        <div class="flex flex-col items-center justify-end pb-2 shrink-0">
+          <div class="w-11 h-11 sm:w-14 sm:h-14 rounded-[6px] border border-black/30 flex items-center justify-center cursor-pointer group" style="background:linear-gradient(180deg,#dcdcd5,#b6b6af)">
+            <span class="w-4 h-4 sm:w-5 sm:h-5 rounded-full bg-[#BC2915] shadow-[0_0_10px_rgba(188,41,21,.7)] group-hover:shadow-[0_0_16px_rgba(188,41,21,.9)] transition-shadow"></span>
+          </div>
+          <span class="mt-2 text-[9px] uppercase tracking-[0.2em] text-black/45">Start / Stop</span>
+        </div>
+
+        <!-- PLATO -->
+        <div class="relative flex-1 max-w-[420px] mx-auto">
+          <div class="relative aspect-square rounded-full p-[6px]" style="background:conic-gradient(from 0deg,#9a9a94,#c6c6bf,#8f8f89,#c6c6bf,#9a9a94);box-shadow:0 18px 40px rgba(0,0,0,.45), inset 0 0 0 1px rgba(0,0,0,.2)">
+            <!-- puntos estroboscópicos -->
+            <div class="absolute inset-0 rounded-full" style="background:repeating-conic-gradient(from 0deg, rgba(0,0,0,.55) 0deg 1.4deg, transparent 1.4deg 4.5deg);-webkit-mask:radial-gradient(circle, transparent 0 49%, #000 49% 100%);mask:radial-gradient(circle, transparent 0 49%, #000 49% 100%)"></div>
+            <!-- disco -->
+            <div class="relative w-full h-full rounded-full animate-[spin_3.2s_linear_infinite]" style="background:repeating-radial-gradient(circle at 50% 50%, #121212 0 2px, #1c1c1c 2px 3px, #151515 3px 5px);box-shadow:inset 0 0 60px rgba(0,0,0,.9)">
+              <div class="absolute inset-0 rounded-full" style="background:conic-gradient(from 200deg, rgba(255,255,255,.10), transparent 90deg, rgba(255,255,255,.06) 200deg, transparent 300deg)"></div>
+              <!-- label = portada del video -->
+              <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[38%] h-[38%] rounded-full overflow-hidden ring-1 ring-black/70">
+                <img src="https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400&h=400&fit=crop" alt="" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-[#030044]/45 mix-blend-multiply"></div>
+              </div>
+              <span class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[7px] h-[7px] rounded-full bg-[#a9a9a2] ring-1 ring-black/60"></span>
+            </div>
+          </div>
+
+          <!-- brazo -->
+          <div class="absolute -right-1 sm:right-2 top-2 w-[46%] h-[46%] origin-top-right rotate-[26deg] pointer-events-none">
+            <div class="absolute right-0 top-0 w-11 h-11 rounded-full border border-black/25" style="background:linear-gradient(180deg,#d3d3cc,#a5a59e);box-shadow:0 4px 10px rgba(0,0,0,.35)"></div>
+            <div class="absolute right-[19px] top-[20px] h-[3px] w-[86%] origin-right rotate-[24deg] rounded-full bg-gradient-to-l from-[#e3e3dc] to-[#9c9c95] shadow-[0_2px_5px_rgba(0,0,0,.4)]">
+              <span class="absolute -left-1 -top-[3px] w-3.5 h-[9px] rounded-[2px] bg-[#1D1D1B] rotate-[8deg]"></span>
+            </div>
+          </div>
+        </div>
+
+        <!-- PITCH -->
+        <div class="flex flex-col items-center justify-between shrink-0 py-1">
+          <div class="text-center">
+            <p class="text-[19px] leading-none font-semibold tracking-tight text-black/75">124</p>
+            <p class="text-[9px] uppercase tracking-[0.2em] text-black/40 mt-0.5">BPM</p>
+          </div>
+          <div class="relative w-8 h-32 sm:h-40 rounded-[4px] border border-black/25 flex justify-center" style="background:linear-gradient(180deg,#a3a39c,#c2c2bb)">
+            <div class="absolute inset-y-3 w-[3px] rounded-full bg-black/45"></div>
+            <div class="absolute top-1/2 -translate-y-1/2 w-full h-[1px] bg-[#BC2915]/70"></div>
+            <div class="absolute top-[38%] w-9 h-6 rounded-[3px] border border-black/35 cursor-grab hover:border-black/60 transition-colors" style="background:linear-gradient(180deg,#efefe8,#bcbcb5)">
+              <span class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-6 h-[1px] bg-black/40"></span>
+            </div>
+          </div>
+          <span class="text-[9px] uppercase tracking-[0.2em] text-black/45">Pitch</span>
+        </div>
+      </div>
+
+      <!-- pista / onda -->
+      <div class="mt-7 rounded-[10px] bg-[#1D1D1B] border border-black/50 px-4 py-3">
+        <div class="flex items-center justify-between gap-4">
+          <div class="min-w-0">
+            <p class="text-[13px] font-medium truncate">Suburban Knight — Midnite Sunshine</p>
+            <p class="text-[11px] text-[#FFFCDC]/35 mt-0.5">youtube.com/watch?v=•••••••</p>
+          </div>
+          <span class="shrink-0 text-[10px] uppercase tracking-[0.2em] text-[#868229]">A1</span>
+        </div>
+        <div class="mt-3 flex items-end gap-[2px] h-9">
+          <div class="w-[3px] rounded-sm bg-[#BC2915]" style="height:40%"></div><div class="w-[3px] rounded-sm bg-[#BC2915]" style="height:70%"></div><div class="w-[3px] rounded-sm bg-[#BC2915]" style="height:55%"></div><div class="w-[3px] rounded-sm bg-[#BC2915]" style="height:90%"></div><div class="w-[3px] rounded-sm bg-[#BC2915]" style="height:35%"></div><div class="w-[3px] rounded-sm bg-[#FFFCDC]/25" style="height:60%"></div><div class="w-[3px] rounded-sm bg-[#FFFCDC]/25" style="height:85%"></div><div class="w-[3px] rounded-sm bg-[#FFFCDC]/25" style="height:45%"></div><div class="w-[3px] rounded-sm bg-[#FFFCDC]/25" style="height:75%"></div><div class="w-[3px] rounded-sm bg-[#FFFCDC]/25" style="height:30%"></div><div class="w-[3px] rounded-sm bg-[#FFFCDC]/25" style="height:65%"></div><div class="w-[3px] rounded-sm bg-[#FFFCDC]/25" style="height:50%"></div><div class="w-[3px] rounded-sm bg-[#FFFCDC]/25" style="height:80%"></div><div class="w-[3px] rounded-sm bg-[#FFFCDC]/25" style="height:38%"></div><div class="w-[3px] rounded-sm bg-[#FFFCDC]/25" style="height:68%"></div><div class="w-[3px] rounded-sm bg-[#FFFCDC]/25" style="height:52%"></div><div class="w-[3px] rounded-sm bg-[#FFFCDC]/25" style="height:88%"></div><div class="w-[3px] rounded-sm bg-[#FFFCDC]/25" style="height:42%"></div><div class="w-[3px] rounded-sm bg-[#FFFCDC]/25" style="height:72%"></div><div class="w-[3px] rounded-sm bg-[#FFFCDC]/25" style="height:33%"></div><div class="w-[3px] rounded-sm bg-[#FFFCDC]/25" style="height:60%"></div><div class="w-[3px] rounded-sm bg-[#FFFCDC]/25" style="height:78%"></div><div class="w-[3px] rounded-sm bg-[#FFFCDC]/25" style="height:48%"></div><div class="w-[3px] rounded-sm bg-[#FFFCDC]/25" style="height:66%"></div><div class="w-[3px] rounded-sm bg-[#FFFCDC]/25" style="height:36%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== FICHA ===== -->
+    <aside class="rounded-[18px] border border-[#FFFCDC]/12 bg-[#FFFCDC]/[0.03] p-6">
+      <h2 class="text-[17px] font-semibold tracking-tight">Cargar un tema</h2>
+      <p class="text-[13px] text-[#FFFCDC]/45 mt-1.5 leading-relaxed">Máximo 12 por crate. Se piensa, no se acumula.</p>
+
+      <label class="block mt-6 text-[11px] uppercase tracking-[0.2em] text-[#FFFCDC]/40">Link de YouTube</label>
+      <div class="mt-2 flex items-center gap-2 rounded-[8px] border border-[#FFFCDC]/15 bg-[#1D1D1B] px-3 py-2.5 focus-within:border-[#868229] transition-colors">
+        <i data-lucide="link" class="w-4 h-4 text-[#FFFCDC]/35"></i>
+        <input type="text" value="https://youtu.be/aB3kQ..." class="flex-1 bg-transparent outline-none text-[13px] placeholder:text-[#FFFCDC]/25">
+      </div>
+
+      <label class="block mt-5 text-[11px] uppercase tracking-[0.2em] text-[#FFFCDC]/40">Por qué este tema <span class="text-[#FFFCDC]/25 normal-case tracking-normal">— 140</span></label>
+      <textarea rows="3" class="mt-2 w-full rounded-[8px] border border-[#FFFCDC]/15 bg-[#1D1D1B] px-3 py-2.5 text-[13px] leading-relaxed outline-none resize-none focus:border-[#868229] transition-colors">Lo escuché a las 6am saliendo de un after en Chacarita y no fui el mismo.</textarea>
+
+      <label class="block mt-5 text-[11px] uppercase tracking-[0.2em] text-[#FFFCDC]/40">Para cuándo</label>
+      <div class="mt-2.5 flex flex-wrap gap-2">
+        <button class="px-3 py-1.5 rounded-full text-[12px] border border-[#BC2915] bg-[#BC2915]/15 text-[#FFFCDC] transition-colors">Amanecer</button>
+        <button class="px-3 py-1.5 rounded-full text-[12px] border border-[#FFFCDC]/15 text-[#FFFCDC]/55 hover:border-[#FFFCDC]/35 hover:text-[#FFFCDC] transition-colors">Previa</button>
+        <button class="px-3 py-1.5 rounded-full text-[12px] border border-[#FFFCDC]/15 text-[#FFFCDC]/55 hover:border-[#FFFCDC]/35 hover:text-[#FFFCDC] transition-colors">Pico</button>
+        <button class="px-3 py-1.5 rounded-full text-[12px] border border-[#FFFCDC]/15 text-[#FFFCDC]/55 hover:border-[#FFFCDC]/35 hover:text-[#FFFCDC] transition-colors">Bajón</button>
+        <button class="px-3 py-1.5 rounded-full text-[12px] border border-[#FFFCDC]/15 text-[#FFFCDC]/55 hover:border-[#FFFCDC]/35 hover:text-[#FFFCDC] transition-colors">Viaje</button>
+      </div>
+
+      <button class="mt-7 w-full rounded-[8px] bg-[#FFFCDC] text-[#1D1D1B] text-[13px] font-medium py-3 hover:bg-white transition-colors flex items-center justify-center gap-2">
+        <i data-lucide="disc-3" class="w-4 h-4"></i> Grabar en mi crate
+      </button>
+      <p class="mt-3 text-[11px] text-[#FFFCDC]/30 leading-relaxed">Al grabarlo aparece en tu perfil público y se abre un hilo en el foro si tres personas lo marcan.</p>
+    </aside>
+  </div>
+</section>
+
+<!-- CRATE -->
+<section id="crate" class="border-t border-[#FFFCDC]/10 bg-[#FFFCDC]/[0.02]">
+  <div class="max-w-6xl mx-auto px-5 py-16">
+    <div class="flex flex-wrap items-end justify-between gap-4">
+      <div>
+        <h2 class="text-2xl tracking-tight font-semibold">El crate de Nacho</h2>
+        <p class="text-[13px] text-[#FFFCDC]/45 mt-1.5">7 de 12 · actualizado hace 2 días · 214 escuchas</p>
+      </div>
+      <div class="flex items-center gap-2">
+        <button class="px-4 py-2 rounded-[8px] text-[13px] border border-[#FFFCDC]/15 text-[#FFFCDC]/70 hover:border-[#FFFCDC]/35 hover:text-[#FFFCDC] transition-colors flex items-center gap-2"><i data-lucide="shuffle" class="w-4 h-4"></i>Mezclar</button>
+        <button class="px-4 py-2 rounded-[8px] text-[13px] bg-[#BC2915] hover:bg-[#d03219] transition-colors flex items-center gap-2"><i data-lucide="share-2" class="w-4 h-4"></i>Compartir crate</button>
+      </div>
+    </div>
+
+    <div class="mt-9 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <!-- card -->
+      <article class="group rounded-[14px] border border-[#FFFCDC]/12 p-4 hover:border-[#868229]/60 transition-colors">
+        <div class="flex gap-4">
+          <div class="relative w-16 h-16 shrink-0 rounded-full overflow-hidden ring-1 ring-black/60" style="background:repeating-radial-gradient(circle at 50% 50%, #121212 0 2px, #1c1c1c 2px 3px)">
+            <img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=200&h=200&fit=crop" alt="" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[42%] h-[42%] rounded-full object-cover group-hover:animate-[spin_3s_linear_infinite]">
+          </div>
+          <div class="min-w-0">
+            <p class="text-[13px] font-medium leading-snug">Midnite Sunshine</p>
+            <p class="text-[12px] text-[#FFFCDC]/40 mt-0.5 truncate">Suburban Knight</p>
+            <span class="inline-block mt-2 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-widest text-[#868229] border border-[#868229]/40">Amanecer</span>
+          </div>
+        </div>
+        <p class="mt-4 text-[12.5px] leading-relaxed text-[#FFFCDC]/60">“Lo escuché a las 6am saliendo de un after en Chacarita y no fui el mismo.”</p>
+        <div class="mt-4 pt-3 border-t border-[#FFFCDC]/10 flex items-center justify-between text-[12px] text-[#FFFCDC]/40">
+          <span class="flex items-center gap-1.5 hover:text-[#BC2915] cursor-pointer transition-colors"><i data-lucide="flame" class="w-3.5 h-3.5"></i>34</span>
+          <span class="flex items-center gap-1.5 hover:text-[#FFFCDC] cursor-pointer transition-colors"><i data-lucide="message-circle" class="w-3.5 h-3.5"></i>6</span>
+          <span class="flex items-center gap-1.5 hover:text-[#FFFCDC] cursor-pointer transition-colors"><i data-lucide="corner-up-right" class="w-3.5 h-3.5"></i>Robar</span>
+        </div>
+      </article>
+
+      <article class="group rounded-[14px] border border-[#FFFCDC]/12 p-4 hover:border-[#868229]/60 transition-colors">
+        <div class="flex gap-4">
+          <div class="relative w-16 h-16 shrink-0 rounded-full overflow-hidden ring-1 ring-black/60" style="background:repeating-radial-gradient(circle at 50% 50%, #121212 0 2px, #1c1c1c 2px 3px)">
+            <img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=200&h=200&fit=crop" alt="" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[42%] h-[42%] rounded-full object-cover group-hover:animate-[spin_3s_linear_infinite]">
+          </div>
+          <div class="min-w-0">
+            <p class="text-[13px] font-medium leading-snug">Windowlicker</p>
+            <p class="text-[12px] text-[#FFFCDC]/40 mt-0.5 truncate">Aphex Twin</p>
+            <span class="inline-block mt-2 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-widest text-[#BC2915] border border-[#BC2915]/40">Viaje</span>
+          </div>
+        </div>
+        <p class="mt-4 text-[12.5px] leading-relaxed text-[#FFFCDC]/60">“El único tema que puedo poner a las 4am sin que nadie pregunte qué es.”</p>
+        <div class="mt-4 pt-3 border-t border-[#FFFCDC]/10 flex items-center justify-between text-[12px] text-[#FFFCDC]/40">
+          <span class="flex items-center gap-1.5 hover:text-[#BC2915] cursor-pointer transition-colors"><i data-lucide="flame" class="w-3.5 h-3.5"></i>58</span>
+          <span class="flex items-center gap-1.5 hover:text-[#FFFCDC] cursor-pointer transition-colors"><i data-lucide="message-circle" class="w-3.5 h-3.5"></i>12</span>
+          <span class="flex items-center gap-1.5 hover:text-[#FFFCDC] cursor-pointer transition-colors"><i data-lucide="corner-up-right" class="w-3.5 h-3.5"></i>Robar</span>
+        </div>
+      </article>
+
+      <article class="group rounded-[14px] border border-[#FFFCDC]/12 p-4 hover:border-[#868229]/60 transition-colors">
+        <div class="flex gap-4">
+          <div class="relative w-16 h-16 shrink-0 rounded-full overflow-hidden ring-1 ring-black/60" style="background:repeating-radial-gradient(circle at 50% 50%, #121212 0 2px, #1c1c1c 2px 3px)">
+            <img src="https://images.unsplash.com/photo-1458560871784-56d23406c091?w=200&h=200&fit=crop" alt="" class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[42%] h-[42%] rounded-full object-cover group-hover:animate-[spin_3s_linear_infinite]">
+          </div>
+          <div class="min-w-0">
+            <p class="text-[13px] font-medium leading-snug">Knights of the Jaguar</p>
+            <p class="text-[12px] text-[#FFFCDC]/40 mt-0.5 truncate">DJ Rolando</p>
+            <span class="inline-block mt-2 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-widest text-[#FFFCDC]/60 border border-[#FFFCDC]/25">Pico</span>
+          </div>
+        </div>
+        <p class="mt-4 text-[12.5px] leading-relaxed text-[#FFFCDC]/60">“Si esto no te mueve algo, revisá el pulso.”</p>
+        <div class="mt-4 pt-3 border-t border-[#FFFCDC]/10 flex items-center justify-between text-[12px] text-[#FFFCDC]/40">
+          <span class="flex items-center gap-1.5 hover:text-[#BC2915] cursor-pointer transition-colors"><i data-lucide="flame" class="w-3.5 h-3.5"></i>91</span>
+          <span class="flex items-center gap-1.5 hover:text-[#FFFCDC] cursor-pointer transition-colors"><i data-lucide="message-circle" class="w-3.5 h-3.5"></i>24</span>
+          <span class="flex items-center gap-1.5 hover:text-[#FFFCDC] cursor-pointer transition-colors"><i data-lucide="corner-up-right" class="w-3.5 h-3.5"></i>Robar</span>
+        </div>
+      </article>
+
+      <!-- slot vacío -->
+      <button class="rounded-[14px] border border-dashed border-[#FFFCDC]/15 p-4 min-h-[172px] flex flex-col items-center justify-center gap-2 text-[#FFFCDC]/35 hover:border-[#868229]/60 hover:text-[#FFFCDC]/70 transition-colors">
+        <i data-lucide="plus" class="w-5 h-5"></i>
+        <span class="text-[12px]">Quedan 5 lugares</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARTIR -->
+<section id="share" class="max-w-6xl mx-auto px-5 py-16 grid lg:grid-cols-2 gap-10 items-start">
+  <div>
+    <h2 class="text-2xl tracking-tight font-semibold">Se comparte como una foto, se abre como una bandeja</h2>
+    <p class="mt-3 text-[14px] leading-relaxed text-[#FFFCDC]/50">El link del crate genera una imagen para stories con los primeros tres vinilos. Quien la abre entra a Manso, escucha, y si quiere devolver la selección tiene que loguearse. Ese es todo el embudo.</p>
+    <ul class="mt-7 space-y-4">
+      <li class="flex gap-3"><span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#BC2915] shrink-0"></span><p class="text-[13.5px] leading-relaxed text-[#FFFCDC]/65"><span class="text-[#FFFCDC]">Robar un tema</span> lo copia a tu crate citando a quien lo puso. Nadie pierde crédito.</p></li>
+      <li class="flex gap-3"><span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#868229] shrink-0"></span><p class="text-[13.5px] leading-relaxed text-[#FFFCDC]/65"><span class="text-[#FFFCDC]">Duelo de crates</span>: dos usuarios, seis temas cada uno, la comunidad vota una semana.</p></li>
+      <li class="flex gap-3"><span class="mt-1.5 w-1.5 h-1.5 rounded-full bg-[#FFFCDC]/40 shrink-0"></span><p class="text-[13.5px] leading-relaxed text-[#FFFCDC]/65"><span class="text-[#FFFCDC]">Crate de la casa</span>: cada semana Manso arma uno con lo más pinchado y sale en el mail.</p></li>
+    </ul>
+  </div>
+
+  <div class="rounded-[18px] border border-[#FFFCDC]/12 p-6 bg-[#030044]/25">
+    <p class="text-[10px] uppercase tracking-[0.3em] text-[#FFFCDC]/35">Vista previa · story</p>
+    <div class="mt-4 aspect-[9/14] max-w-[280px] mx-auto rounded-[14px] border border-[#FFFCDC]/15 p-5 flex flex-col justify-between" style="background:linear-gradient(180deg,#030044 0%,#1D1D1B 70%)">
+      <div>
+        <p class="text-[10px] uppercase tracking-[0.3em] text-[#868229]">Manso · Vynil</p>
+        <p class="mt-3 text-[19px] leading-tight tracking-tight font-semibold">El crate de Nacho</p>
+        <p class="mt-1 text-[11px] text-[#FFFCDC]/40">7 temas · para el amanecer</p>
+      </div>
+      <div class="flex -space-x-5 justify-center">
+        <span class="w-20 h-20 rounded-full overflow-hidden ring-1 ring-black/60" style="background:repeating-radial-gradient(circle at 50% 50%, #121212 0 2px, #1c1c1c 2px 3px)"><img src="https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=200&h=200&fit=crop" class="w-[42%] h-[42%] rounded-full object-cover m-auto mt-[29%]" alt=""></span>
+        <span class="w-20 h-20 rounded-full overflow-hidden ring-1 ring-black/60" style="background:repeating-radial-gradient(circle at 50% 50%, #121212 0 2px, #1c1c1c 2px 3px)"><img src="https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=200&h=200&fit=crop" class="w-[42%] h-[42%] rounded-full object-cover m-auto mt-[29%]" alt=""></span>
+        <span class="w-20 h-20 rounded-full overflow-hidden ring-1 ring-black/60" style="background:repeating-radial-gradient(circle at 50% 50%, #121212 0 2px, #1c1c1c 2px 3px)"><img src="https://images.unsplash.com/photo-1458560871784-56d23406c091?w=200&h=200&fit=crop" class="w-[42%] h-[42%] rounded-full object-cover m-auto mt-[29%]" alt=""></span>
+      </div>
+      <p class="text-center text-[11px] text-[#FFFCDC]/45">manso.club/vynil/nacho</p>
+    </div>
+  </div>
+</section>
+
+<footer class="border-t border-[#FFFCDC]/10">
+  <div class="max-w-6xl mx-auto px-5 py-8 text-[11px] text-[#FFFCDC]/30 flex flex-wrap gap-3 justify-between">
+    <span>Boceto interno — no es la UI final</span>
+    <span class="tracking-tighter">MANSO</span>
+  </div>
+</footer>
+
+<script>lucide.createIcons({attrs:{"stroke-width":1.5}});</script>
+</body>
+</html>

@@ -9,15 +9,18 @@ interface ShareButtonProps {
   url?: string;
   className?: string;
   label?: string;
+  /** Se dispara al compartir, antes de abrir el share nativo o copiar. */
+  onShare?: () => void;
 }
 
 const DEFAULT_CLASS =
   'flex items-center gap-2 px-4 py-2.5 bg-manso-cream/5 border border-manso-cream/10 rounded-full text-manso-cream hover:bg-manso-cream/10 hover:border-manso-cream/20 transition-all';
 
-export function ShareButton({ title, url, className, label = 'Compartir' }: ShareButtonProps) {
+export function ShareButton({ title, url, className, label = 'Compartir', onShare }: ShareButtonProps) {
   const [copied, setCopied] = useState(false);
 
   const handleShare = async () => {
+    onShare?.();
     const shareUrl = url ? new URL(url, window.location.origin).toString() : window.location.href;
 
     if (navigator.share) {
