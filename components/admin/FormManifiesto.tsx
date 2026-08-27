@@ -2,11 +2,15 @@
 
 import { useState, useEffect } from 'react';
 import { getManifiesto, updateManifiesto } from '@/lib/manifiesto';
-import { AlertCircle, CheckCircle, X, FileText } from 'lucide-react';
+import { ImageUploader } from './ImageUploader';
+import { AlertCircle, CheckCircle, X, FileText, Trash2 } from 'lucide-react';
 
 export function FormManifiesto() {
   const [id, setId] = useState<string | null>(null);
   const [contenido, setContenido] = useState('');
+  const [slide1Imagen, setSlide1Imagen] = useState<string | null>(null);
+  const [slide1Frase, setSlide1Frase] = useState('');
+  const [slide2Imagen, setSlide2Imagen] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -15,6 +19,9 @@ export function FormManifiesto() {
     getManifiesto().then((data) => {
       setId(data.id);
       setContenido(data.contenido);
+      setSlide1Imagen(data.slide1_imagen);
+      setSlide1Frase(data.slide1_frase ?? '');
+      setSlide2Imagen(data.slide2_imagen);
     });
   }, []);
 
@@ -26,7 +33,12 @@ export function FormManifiesto() {
     setSuccess(false);
 
     try {
-      await updateManifiesto(id, contenido.trim());
+      await updateManifiesto(id, {
+        contenido: contenido.trim(),
+        slide1_imagen: slide1Imagen,
+        slide1_frase: slide1Frase,
+        slide2_imagen: slide2Imagen,
+      });
       await fetch('/api/revalidate-admin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -48,7 +60,8 @@ export function FormManifiesto() {
           Editar Manifiesto
         </h2>
         <p className="text-xs text-manso-cream/60">
-          Escribí cada párrafo separado por una línea en blanco. El texto se publicará tal cual lo escribís.
+          Primero las dos placas que abren la página, después el texto. Cada párrafo va separado
+          por una línea en blanco y se publica tal cual lo escribís.
         </p>
       </div>
 
@@ -72,7 +85,74 @@ export function FormManifiesto() {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Placa 1: imagen de fondo con una frase encima */}
+        <div className="p-4 rounded-2xl border border-manso-cream/10 bg-manso-cream/5 space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <h3 className="text-[11px] font-black uppercase tracking-widest text-manso-cream">
+                Placa 1 — imagen con frase
+              </h3>
+              <p className="text-[10px] text-manso-cream/40 mt-0.5">
+                La frase va centrada encima de la imagen.
+              </p>
+            </div>
+            {slide1Imagen && (
+              <button
+                type="button"
+                onClick={() => setSlide1Imagen(null)}
+                className="shrink-0 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-manso-cream/40 hover:text-red-400 transition-colors"
+              >
+                <Trash2 size={12} /> Quitar
+              </button>
+            )}
+          </div>
+
+          <ImageUploader
+            bucket="flyers"
+            folder="manifiesto"
+            initialPreview={slide1Imagen}
+            onUpload={setSlide1Imagen}
+          />
+
+          <textarea
+            value={slide1Frase}
+            onChange={(e) => setSlide1Frase(e.target.value)}
+            placeholder="La frase que va sobre la imagen"
+            className="w-full bg-manso-cream/10 p-3 rounded-xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-medium text-manso-cream placeholder:text-manso-cream/30 transition-all resize-none min-h-[80px] text-sm leading-relaxed"
+          />
+        </div>
+
+        {/* Placa 2: solo la imagen */}
+        <div className="p-4 rounded-2xl border border-manso-cream/10 bg-manso-cream/5 space-y-3">
+          <div className="flex items-center justify-between gap-3">
+            <div>
+              <h3 className="text-[11px] font-black uppercase tracking-widest text-manso-cream">
+                Placa 2 — solo imagen
+              </h3>
+              <p className="text-[10px] text-manso-cream/40 mt-0.5">
+                Sin texto encima.
+              </p>
+            </div>
+            {slide2Imagen && (
+              <button
+                type="button"
+                onClick={() => setSlide2Imagen(null)}
+                className="shrink-0 flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-manso-cream/40 hover:text-red-400 transition-colors"
+              >
+                <Trash2 size={12} /> Quitar
+              </button>
+            )}
+          </div>
+
+          <ImageUploader
+            bucket="flyers"
+            folder="manifiesto"
+            initialPreview={slide2Imagen}
+            onUpload={setSlide2Imagen}
+          />
+        </div>
+
         <div className="relative">
           <FileText className="absolute left-3 top-3 text-manso-cream/40" size={16} />
           <textarea
