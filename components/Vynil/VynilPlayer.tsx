@@ -2,51 +2,46 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
-import { Play, Pause, SkipBack, SkipForward, X } from 'lucide-react';
+import { useUser } from '@/hooks/useUser';
 import { useVynil } from '@/store/useVynil';
-import { decodificarMix, thumbDeTema, VYNIL_PARAM, type TemaVynil } from '@/lib/vynil';
+import { VynilDisco } from './VynilDisco';
+import { VynilPanel } from './VynilPanel';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 /**
- * Barra del mix de Vynil. Reproduce YouTube (IFrame API) y SoundCloud (Widget
- * API) — solo monta el iframe de la fuente del tema actual, para que nunca
- * suenen dos a la vez. Cuando esta barra está activa, GlobalMusicPlayer se
- * calla (lee el mismo store): un solo reproductor por vez.
+ * Vynil — el reproductor de Manso. No hay barra al pie: el widget tiene la
+ * forma del disco. Flota en la esquina girando mientras suena y, al tocarlo,
+ * crece en un panel con la bandeja, los controles y la playlist general.
+ *
+ * Reproduce YouTube (IFrame API) y SoundCloud (Widget API), y monta un solo
+ * iframe por vez —el de la fuente del tema actual— para que nunca suenen dos.
  */
 export function VynilPlayer() {
   const pathname = usePathname();
-  const { indice, sonando, setSonando, siguiente, anterior, ponerInvitado, salirDeInvitado } =
-    useVynil();
-  const mixInvitado = useVynil(s => s.mixInvitado);
-  const autorInvitado = useVynil(s => s.autorInvitado);
+  const { user, loading } = useUser();
+  const { indice, sonando, setSonando, siguiente, cargar } = useVynil();
   const temas = useVynil(s => s.temas);
+  const cargado = useVynil(s => s.cargado);
 
+  // El link que se comparte (`/?vynil=1`) cae acá con el reproductor abierto.
+  // No arranca solo a propósito: el navegador bloquea el audio sin gesto, así
+  // que quedaría el disco "girando" sin sonar. Se abre y la persona toca play.
+  const [abierto, setAbierto] = useState(
+    () => typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('vynil'),
+  );
   const [listo, setListo] = useState(false);
   const ytRef = useRef<any>(null);
   const scRef = useRef<any>(null);
   const ytDivRef = useRef<HTMLDivElement>(null);
   const scIframeRef = useRef<HTMLIFrameElement>(null);
 
-  const activo: TemaVynil[] = mixInvitado ?? temas;
-  const actual = activo[indice];
+  const actual = temas[indice];
 
-  // ── Mix que llega por link ────────────────────────────────────────────────
+  // ── La playlist general ───────────────────────────────────────────────────
   useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const mix = decodificarMix(params.get(VYNIL_PARAM));
-    if (mix.length > 0) {
-      ponerInvitado(mix, params.get('de'));
-    }
-  }, [ponerInvitado]);
-
-  // La barra tapa el pie: se compensa con padding mientras está montada.
-  useEffect(() => {
-    if (activo.length === 0) return;
-    const previo = document.body.style.paddingBottom;
-    document.body.style.paddingBottom = '58px';
-    return () => { document.body.style.paddingBottom = previo; };
-  }, [activo.length]);
+    cargar();
+  }, [cargar]);
 
   // ── YouTube ───────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -120,10 +115,17 @@ export function VynilPlayer() {
     if (actual?.fuente === 'soundcloud') ytRef.current?.pauseVideo?.();
   }, [actual?.fuente]);
 
-  if (!actual) return null;
-  if (pathname?.startsWith('/mansoadm') || pathname?.startsWith('/login')) return null;
+  if (!cargado) return null;
+  if (
+    pathname?.startsWith('/mansoadm') ||
+    pathname?.startsWith('/login') ||
+    pathname?.startsWith('/registro')
+  ) {
+    return null;
+  }
 
   const alternar = () => {
+    if (!actual) return;
     if (actual.fuente === 'youtube') {
       const p = ytRef.current;
       if (!p) return;
@@ -138,98 +140,70 @@ export function VynilPlayer() {
     setSonando(!sonando);
   };
 
-  const thumb = thumbDeTema(actual);
+  // Mismas condiciones que CalendarioFab y WhatsAppButton, para apilarse bien.
+  const whatsappVisible = !loading && !user && !pathname?.startsWith('/foro');
+  const calendarioVisible = !pathname?.startsWith('/calendario');
+  const bottom = calendarioVisible
+    ? whatsappVisible
+      ? 'bottom-[12.5rem]'
+      : 'bottom-28'
+    : whatsappVisible
+      ? 'bottom-28'
+      : 'bottom-6';
 
   return (
     <>
       {/* Motores de audio, ocultos */}
-      <div className="fixed -left-[9999px] top-0 w-0 h-0 overflow-hidden" aria-hidden="true">
-        {actual.fuente === 'youtube' ? (
-          <div ref={ytDivRef} />
-        ) : (
-          <iframe
-            ref={scIframeRef}
-            allow="autoplay"
-            src={`https://w.soundcloud.com/player/?url=${encodeURIComponent(
-              `https://soundcloud.com/${actual.ref}`,
-            )}&auto_play=false&hide_related=true&show_comments=false&show_user=false&visual=false`}
-          />
-        )}
-      </div>
-
-      {/* Barra */}
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-manso-black border-t border-manso-cream/10">
-        <div className="max-w-6xl mx-auto px-3 sm:px-5 h-[58px] flex items-center gap-3">
-          {/* Disco */}
-          <span
-            className={`relative block w-9 h-9 shrink-0 rounded-full ring-1 ring-black/60 overflow-hidden ${
-              sonando ? 'animate-[spin_3s_linear_infinite]' : ''
-            }`}
-            style={{
-              background:
-                'repeating-radial-gradient(circle at 50% 50%, #121212 0 2px, #1c1c1c 2px 3px)',
-            }}
-          >
-            {thumb ? (
-              <img
-                src={thumb}
-                alt=""
-                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[44%] h-[44%] rounded-full object-cover"
-              />
-            ) : (
-              <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[44%] h-[44%] rounded-full bg-manso-terra" />
-            )}
-          </span>
-
-          {/* Info */}
-          <div className="min-w-0 flex-1">
-            <p className="text-manso-cream text-[11px] font-black uppercase tracking-wider truncate">
-              {actual.titulo ?? 'Tu música'}
-            </p>
-            <p className="text-manso-cream/40 text-[9px] uppercase tracking-widest truncate">
-              {mixInvitado
-                ? `Lista${autorInvitado ? ` de ${autorInvitado}` : ' compartida'} · ${indice + 1}/${activo.length}`
-                : `Tu lista · ${indice + 1}/${activo.length}`}
-            </p>
-          </div>
-
-          {/* Controles */}
-          <div className="flex items-center gap-1 shrink-0">
-            <button
-              onClick={anterior}
-              aria-label="Anterior"
-              className="w-8 h-8 flex items-center justify-center text-manso-cream/40 hover:text-manso-cream transition-colors"
-            >
-              <SkipBack size={15} />
-            </button>
-            <button
-              onClick={alternar}
-              disabled={!listo}
-              aria-label={sonando ? 'Pausar' : 'Reproducir'}
-              className="w-9 h-9 rounded-full bg-manso-terra text-manso-cream flex items-center justify-center disabled:opacity-40 transition-opacity"
-            >
-              {sonando ? <Pause size={15} /> : <Play size={15} className="ml-0.5" />}
-            </button>
-            <button
-              onClick={siguiente}
-              aria-label="Siguiente"
-              className="w-8 h-8 flex items-center justify-center text-manso-cream/40 hover:text-manso-cream transition-colors"
-            >
-              <SkipForward size={15} />
-            </button>
-            {mixInvitado && (
-              <button
-                onClick={salirDeInvitado}
-                aria-label="Salir de la lista compartida"
-                title="Volver a la música de Manso"
-                className="w-8 h-8 flex items-center justify-center text-manso-cream/25 hover:text-manso-cream transition-colors"
-              >
-                <X size={15} />
-              </button>
-            )}
-          </div>
+      {actual && (
+        <div className="fixed -left-[9999px] top-0 w-0 h-0 overflow-hidden" aria-hidden="true">
+          {actual.fuente === 'youtube' ? (
+            <div ref={ytDivRef} />
+          ) : (
+            <iframe
+              ref={scIframeRef}
+              allow="autoplay"
+              src={`https://w.soundcloud.com/player/?url=${encodeURIComponent(
+                `https://soundcloud.com/${actual.ref}`,
+              )}&auto_play=false&hide_related=true&show_comments=false&show_user=false&visual=false`}
+            />
+          )}
         </div>
-      </div>
+      )}
+
+      {/* El disco flotante: el reproductor cerrado */}
+      {!abierto && (
+        <div className={`fixed right-4 z-50 ${bottom}`}>
+          <button
+            onClick={() => setAbierto(true)}
+            aria-label="Vynil — la música que suena en Manso"
+            className="group flex items-center justify-center relative"
+          >
+            <span className="absolute right-20 bg-black text-white text-[10px] font-black uppercase tracking-[0.3em] px-4 py-2 rounded-sm opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none whitespace-nowrap translate-x-4 group-hover:translate-x-0">
+              Vynil_
+            </span>
+
+            <VynilDisco
+              tema={actual}
+              tamano={60}
+              girando={sonando}
+              className="shadow-[0_10px_20px_rgba(0,0,0,0.45)] transition-transform duration-500 group-hover:scale-110"
+            />
+
+            {temas.length > 0 && (
+              <span className="absolute -top-1 -left-1 min-w-[20px] h-5 px-1 rounded-full bg-manso-cream text-manso-black text-[10px] font-black flex items-center justify-center ring-2 ring-manso-black">
+                {temas.length}
+              </span>
+            )}
+          </button>
+        </div>
+      )}
+
+      <VynilPanel
+        open={abierto}
+        onClose={() => setAbierto(false)}
+        listo={listo}
+        alternar={alternar}
+      />
     </>
   );
 }

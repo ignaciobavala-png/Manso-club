@@ -21,10 +21,10 @@ interface ArtistOverride {
 
 export function GlobalMusicPlayer() {
   const pathname = usePathname();
-  // Si el visitante tiene su mix de Vynil (propio o recibido por link), ese
-  // manda: dos reproductores sonando a la vez se pisan y en mobile el sistema
-  // mata uno al azar.
-  const vynilActivo = useVynil(s => (s.mixInvitado ?? s.temas).length > 0);
+  // Vynil pasó a ser el reproductor de Manso: mientras haya playlist, esta
+  // barra no se muestra. Dos reproductores sonando a la vez se pisan, y Ana
+  // no quiere barra al pie: el widget es el disco.
+  const vynilActivo = useVynil(s => s.temas.length > 0);
   const [mainTracks, setMainTracks] = useState<Track[]>([]);
   const [artistOverride, setArtistOverride] = useState<ArtistOverride | null>(null);
   const [loaded, setLoaded] = useState(false);

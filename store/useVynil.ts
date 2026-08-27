@@ -1,84 +1,115 @@
 // store/useVynil.ts
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
-import { VYNIL_MAX_TEMAS, type TemaVynil } from '@/lib/vynil';
+import { supabase } from '@/lib/supabase';
+import { buscarMetadata, parsearLink, type TemaVynil } from '@/lib/vynil';
 
+/**
+ * La playlist de Vynil es una sola para todo Manso y vive en la base. Este
+ * store es la copia en memoria de esa lista más el estado de reproducción; no
+ * persiste nada en el navegador, porque lo que se escucha no es "lo mío" sino
+ * lo que fue dejando la gente.
+ */
 interface VynilStore {
-  /** El mix que armó esta persona en este navegador. */
+  /** La playlist general, del último puesto al primero. */
   temas: TemaVynil[];
-  /** Mix que llegó por link de otro. Manda sobre el propio mientras esté puesto. */
-  mixInvitado: TemaVynil[] | null;
-  autorInvitado: string | null;
-  /** Índice del tema sonando dentro del mix activo. */
+  cargado: boolean;
+  /** Índice del tema sonando. */
   indice: number;
   sonando: boolean;
 
-  agregar: (tema: TemaVynil) => boolean;
-  quitar: (ref: string) => void;
-  limpiar: () => void;
-  ponerInvitado: (temas: TemaVynil[], autor?: string | null) => void;
-  salirDeInvitado: () => void;
+  cargar: () => Promise<void>;
+  /** Pega un link, lo guarda en la playlist y lo deja sonando. */
+  poner: (url: string) => Promise<{ ok: boolean; error?: string }>;
   setIndice: (i: number) => void;
   setSonando: (v: boolean) => void;
   siguiente: () => void;
   anterior: () => void;
-  /** El mix que está sonando: el del invitado si hay, si no el propio. */
-  activo: () => TemaVynil[];
 }
 
-export const useVynil = create<VynilStore>()(
-  persist(
-    (set, get) => ({
-      temas: [],
-      mixInvitado: null,
-      autorInvitado: null,
-      indice: 0,
-      sonando: false,
+/* eslint-disable @typescript-eslint/no-explicit-any */
+function desdeFila(f: any): TemaVynil {
+  return {
+    id: f.id,
+    fuente: f.fuente,
+    ref: f.ref,
+    titulo: f.titulo ?? undefined,
+    autor: f.autor ?? undefined,
+    thumb: f.thumb ?? undefined,
+    puestoPor: f.puesto_por ?? undefined,
+  };
+}
 
-      agregar: tema => {
-        const { temas } = get();
-        if (temas.length >= VYNIL_MAX_TEMAS) return false;
-        if (temas.some(t => t.ref === tema.ref)) return false;
-        set({ temas: [...temas, tema] });
-        return true;
-      },
+export const useVynil = create<VynilStore>()((set, get) => ({
+  temas: [],
+  cargado: false,
+  indice: 0,
+  sonando: false,
 
-      quitar: ref =>
-        set(state => {
-          const temas = state.temas.filter(t => t.ref !== ref);
-          return { temas, indice: Math.min(state.indice, Math.max(temas.length - 1, 0)) };
-        }),
+  cargar: async () => {
+    const { data, error } = await supabase
+      .from('vynil_temas')
+      .select('id, fuente, ref, titulo, autor, thumb, puesto_por')
+      .eq('visible', true)
+      .order('created_at', { ascending: false });
 
-      limpiar: () => set({ temas: [], indice: 0, sonando: false }),
+    if (error) {
+      // Sin playlist el widget no se muestra; no vale romper la página.
+      set({ cargado: true });
+      return;
+    }
+    set({ temas: (data ?? []).map(desdeFila), cargado: true });
+  },
 
-      ponerInvitado: (temas, autor = null) =>
-        set({ mixInvitado: temas, autorInvitado: autor, indice: 0, sonando: false }),
+  poner: async url => {
+    const parseado = parsearLink(url);
+    if (!parseado) return { ok: false, error: 'Pegá un link de YouTube o de SoundCloud.' };
 
-      salirDeInvitado: () =>
-        set({ mixInvitado: null, autorInvitado: null, indice: 0, sonando: false }),
+    const yaEsta = get().temas.findIndex(t => t.fuente === parseado.fuente && t.ref === parseado.ref);
+    if (yaEsta >= 0) {
+      // Ya lo puso otro: en vez de un error seco, lo pone a sonar.
+      set({ indice: yaEsta, sonando: true });
+      return { ok: false, error: 'Ese tema ya estaba en la playlist. Va sonando.' };
+    }
 
-      setIndice: i => set({ indice: i }),
-      setSonando: v => set({ sonando: v }),
+    // El título es un lujo, no un requisito: si el oEmbed falla, entra igual.
+    const meta = await buscarMetadata(parseado);
+    const { data: { user } } = await supabase.auth.getUser();
 
-      siguiente: () => {
-        const lista = get().activo();
-        if (lista.length === 0) return;
-        set(state => ({ indice: (state.indice + 1) % lista.length }));
-      },
+    const { data, error } = await supabase
+      .from('vynil_temas')
+      .insert({
+        fuente: parseado.fuente,
+        ref: parseado.ref,
+        titulo: meta.titulo ?? null,
+        autor: meta.autor ?? null,
+        thumb: meta.thumb ?? null,
+        user_id: user?.id ?? null,
+        puesto_por: user?.user_metadata?.display_name ?? null,
+      })
+      .select('id, fuente, ref, titulo, autor, thumb, puesto_por')
+      .single();
 
-      anterior: () => {
-        const lista = get().activo();
-        if (lista.length === 0) return;
-        set(state => ({ indice: (state.indice - 1 + lista.length) % lista.length }));
-      },
+    if (error || !data) {
+      return { ok: false, error: 'No se pudo guardar el tema. Probá de nuevo.' };
+    }
 
-      activo: () => get().mixInvitado ?? get().temas,
-    }),
-    {
-      name: 'manso-vynil',
-      // El mix de otro no se persiste: llega por URL y se va al recargar sin el
-      // parámetro. Solo se guarda lo que la persona armó.
-      partialize: state => ({ temas: state.temas }),
-    },
-  ),
-);
+    // Entra arriba de todo y arranca: el que lo puso lo escucha ya.
+    set(state => ({ temas: [desdeFila(data), ...state.temas], indice: 0, sonando: true }));
+    return { ok: true };
+  },
+
+  setIndice: i => set({ indice: i }),
+  setSonando: v => set({ sonando: v }),
+
+  siguiente: () => {
+    const { temas } = get();
+    if (temas.length === 0) return;
+    set(state => ({ indice: (state.indice + 1) % temas.length }));
+  },
+
+  anterior: () => {
+    const { temas } = get();
+    if (temas.length === 0) return;
+    set(state => ({ indice: (state.indice - 1 + temas.length) % temas.length }));
+  },
+}));

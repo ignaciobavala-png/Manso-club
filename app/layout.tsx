@@ -8,7 +8,6 @@ import { GlobalMusicPlayer } from "@/components/Layout/GlobalMusicPlayer";
 import { CalendarioFab } from "@/components/Layout/CalendarioFab";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { CursorTrail } from "@/components/ui/CursorTrail";
-import { VynilFab } from "@/components/Vynil/VynilFab";
 import { VynilPlayer } from "@/components/Vynil/VynilPlayer";
 import { OrganizationSchema } from "@/components/SEO/OrganizationSchema";
 import { WebSiteSchema } from "@/components/SEO/WebSiteSchema";
@@ -92,7 +91,6 @@ export default function RootLayout({
         <GlobalMusicPlayer />
         <WhatsAppButton />
         <CalendarioFab />
-        <VynilFab />
         <VynilPlayer />
         <CursorTrail />
 

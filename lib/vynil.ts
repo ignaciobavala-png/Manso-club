@@ -1,27 +1,27 @@
 /**
- * Vynil — la playlist que el visitante arma para recorrer Manso.
+ * Vynil — la playlist general de Manso.
  *
- * Acepta links de YouTube y de SoundCloud: el player global ya reproduce
- * SoundCloud, así que sumar YouTube es ampliar lo que hay, no reemplazarlo.
+ * No hay lista por persona: es una sola, común, que crece con lo que va
+ * dejando la gente (tabla `vynil_temas`). Lo que uno pega lo escucha el que
+ * entra después, así que la fuente de verdad es la base y no el navegador.
  *
- * Con 5 temas la lista entra holgada en una URL (un id de YouTube son 11
- * caracteres), así que compartir no necesita base de datos: el mix viaja en el
- * link y el propio vive en localStorage. La tabla existe solo para que Ana
- * pueda escuchar lo que deja la gente.
+ * Acepta YouTube y SoundCloud: el player de la casa ya reproducía SoundCloud,
+ * así que sumar YouTube fue ampliar lo que había.
  */
-
-export const VYNIL_MAX_TEMAS = 5;
-export const VYNIL_PARAM = 'mix';
 
 export type FuenteVynil = 'youtube' | 'soundcloud';
 
 export interface TemaVynil {
+  /** Id de la fila; falta solo en el tema recién parseado, antes de guardarlo. */
+  id?: string;
   fuente: FuenteVynil;
   /** Id de YouTube (11 chars) o path de SoundCloud ("artista/track"). */
   ref: string;
   titulo?: string;
   autor?: string;
   thumb?: string;
+  /** Nombre de quien lo puso, si estaba logueado. */
+  puestoPor?: string;
 }
 
 const RE_YOUTUBE = /(?:youtu\.be\/|youtube\.com\/(?:watch\?(?:.*&)?v=|shorts\/|embed\/|live\/))([A-Za-z0-9_-]{11})/;
@@ -55,41 +55,9 @@ export function thumbDeTema(tema: TemaVynil): string | null {
 }
 
 /**
- * Serializa el mix para la URL. YouTube va como `y:<id>` y SoundCloud como
- * `s:<path>`, separados por coma. Cinco temas quedan en ~70 caracteres.
- */
-export function codificarMix(temas: TemaVynil[]): string {
-  return temas
-    .slice(0, VYNIL_MAX_TEMAS)
-    .map(t => `${t.fuente === 'youtube' ? 'y' : 's'}:${t.ref}`)
-    .join(',');
-}
-
-export function decodificarMix(valor: string | null): TemaVynil[] {
-  if (!valor) return [];
-  return valor
-    .split(',')
-    .map((parte): TemaVynil | null => {
-      const [tipo, ...resto] = parte.split(':');
-      const ref = resto.join(':');
-      if (!ref) return null;
-      if (tipo === 'y' && /^[A-Za-z0-9_-]{11}$/.test(ref)) return { fuente: 'youtube', ref };
-      if (tipo === 's' && /^[A-Za-z0-9_-]+\/[A-Za-z0-9_-]+$/.test(ref)) return { fuente: 'soundcloud', ref };
-      return null;
-    })
-    .filter((t): t is TemaVynil => t !== null)
-    .slice(0, VYNIL_MAX_TEMAS);
-}
-
-/** Link para compartir: cae en la home con el mix puesto y listo para sonar. */
-export function linkDeMix(temas: TemaVynil[], origen: string): string {
-  return `${origen}/?${VYNIL_PARAM}=${encodeURIComponent(codificarMix(temas))}`;
-}
-
-/**
  * Título y autor del tema. YouTube tiene oEmbed público con CORS abierto;
- * SoundCloud también. Si falla, se devuelve null y la UI muestra el link pelado
- * — no vale romper la carga por no haber conseguido el título.
+ * SoundCloud también. Si falla, se devuelve vacío y la UI muestra el link
+ * pelado — no vale romper la carga por no haber conseguido el título.
  */
 export async function buscarMetadata(tema: TemaVynil): Promise<Partial<TemaVynil>> {
   const endpoint =
