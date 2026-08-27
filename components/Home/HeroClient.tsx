@@ -4,8 +4,6 @@ import { useEffect, useState } from 'react';
 import { getHeroSlidesByDevice, getMediaUrlForDevice } from '@/lib/hero';
 import { HeroCarousel } from '@/components/Home/HeroCarousel';
 import { HeroSlide } from '@/lib/hero';
-import Link from 'next/link';
-import { TYPE, OPACITY } from '@/lib/ui-constants';
 
 const HERO_SLIDES = [
   {
@@ -37,7 +35,7 @@ export function HeroClient() {
         const isMobile = window.innerWidth <= 768;
         const device = isMobile ? 'mobile' : 'desktop';
         setCurrentDevice(device);
-        
+
         const heroSlides = await getHeroSlidesByDevice(device);
         setSlides(heroSlides);
       } catch (error) {
@@ -66,141 +64,25 @@ export function HeroClient() {
     );
   }
 
-  const hasSlides = slides.length > 0;
-  
-  // If no slides in DB, use hardcoded fallback
-  if (!hasSlides) {
+  // Sin slides en la DB, se usa el fallback hardcodeado
+  if (slides.length === 0) {
     return <HeroCarousel slides={HERO_SLIDES} />;
   }
-  
-  // If single video slide
-  if (slides.length === 1 && slides[0].tipo === 'video' && slides[0].media_url) {
-    const videoUrl = getMediaUrlForDevice(slides[0], currentDevice) || slides[0].media_url;
-    return (
-      <section id="hero" className="relative min-h-screen flex flex-col justify-end md:justify-center px-8 md:px-[96px] py-10 md:py-20 overflow-hidden">
-        <video
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="absolute inset-0 w-full h-full object-cover z-0"
-          style={{ backgroundColor: '#000000' }}
-        >
-          <source src={videoUrl} type="video/mp4" />
-        </video>
-        
-        <div className="absolute inset-0 z-10 bg-black/40" />
-        
-        <div className="relative z-20 w-full max-w-6xl mx-auto">
-          <header className="mb-6 md:mb-8">
-            {slides[0].tag && (
-              <span className={`${TYPE.label} ${OPACITY.onDark} block mb-3 md:mb-4`}>
-                {slides[0].tag}
-              </span>
-            )}
-            <h1 className={`${TYPE.display} text-manso-cream break-words`}>
-              {slides[0].title_line1} <br />
-              {slides[0].title_line2 && (
-                <span className={`${TYPE.display} italic font-light text-manso-cream/75`}>{slides[0].title_line2}</span>
-              )}
-            </h1>
-          </header>
 
-          <div className="mt-4 flex flex-col gap-6 max-w-[450px]">
-            {slides[0].description && (
-              <p className={`${TYPE.body} md:text-xl ${OPACITY.onDark}`}>
-                {slides[0].description}
-              </p>
-            )}
-            <div className="flex flex-row gap-3">
-              <Link
-                href="/membresias"
-                className="bg-manso-cream text-manso-black px-8 py-4 text-xs font-black uppercase tracking-widest hover:bg-white transition-all active:scale-95"
-              >
-                Membresías
-              </Link>
-              <Link
-                href="/agenda"
-                className="border border-manso-cream/50 text-manso-cream px-8 py-4 text-xs font-black uppercase tracking-widest hover:border-manso-cream transition-all active:scale-95"
-              >
-                Ver Agenda
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  }
+  // Un solo camino de render para todos los tipos: el carrusel resuelve
+  // video / imagen / gradiente. Antes había tres ramas casi idénticas y la
+  // de carrusel no dibujaba video, así que un slide de video mezclado con
+  // imágenes se veía como el gradiente de fallback.
+  const carouselSlides = slides.map((slide) => ({
+    ...slide,
+    title: [slide.title_line1, slide.title_line2 || ''].filter(Boolean),
+    media_url:
+      slide.tipo === 'imagen'
+        ? getMediaUrlForDevice(slide, currentDevice)
+        : slide.tipo === 'video'
+          ? getMediaUrlForDevice(slide, currentDevice) || slide.media_url
+          : null,
+  }));
 
-  // If single image slide
-  if (slides.length === 1 && slides[0].tipo === 'imagen') {
-    const imageUrl = getMediaUrlForDevice(slides[0], currentDevice);
-    if (!imageUrl) {
-      return <HeroCarousel slides={HERO_SLIDES} />;
-    }
-
-    return (
-      <section id="hero" className="relative min-h-screen flex flex-col justify-end md:justify-center px-8 md:px-[96px] py-10 md:py-20 overflow-hidden">
-        <div
-          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: `url(${imageUrl})`,
-            backgroundColor: '#000000'
-          }}
-        />
-
-        <div className="absolute inset-0 z-10 bg-black/40" />
-
-        <div className="relative z-20 w-full max-w-6xl mx-auto">
-          <header className="mb-6 md:mb-8">
-            {slides[0].tag && (
-              <span className={`${TYPE.label} ${OPACITY.onDark} block mb-3 md:mb-4`}>
-                {slides[0].tag}
-              </span>
-            )}
-            <h1 className={`${TYPE.display} text-manso-cream break-words`}>
-              {slides[0].title_line1} <br />
-              {slides[0].title_line2 && (
-                <span className={`${TYPE.display} italic font-light text-manso-cream/75`}>{slides[0].title_line2}</span>
-              )}
-            </h1>
-          </header>
-
-          <div className="mt-4 flex flex-col gap-6 max-w-[450px]">
-            {slides[0].description && (
-              <p className={`${TYPE.body} md:text-xl ${OPACITY.onDark}`}>
-                {slides[0].description}
-              </p>
-            )}
-            <div className="flex flex-row gap-3">
-              <Link
-                href="/membresias"
-                className="bg-manso-cream text-manso-black px-8 py-4 text-xs font-black uppercase tracking-widest hover:bg-white transition-all active:scale-95"
-              >
-                Membresías
-              </Link>
-              <Link
-                href="/agenda"
-                className="border border-manso-cream/50 text-manso-cream px-8 py-4 text-xs font-black uppercase tracking-widest hover:border-manso-cream transition-all active:scale-95"
-              >
-                Ver Agenda
-              </Link>
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  }
-  
-  // For text slides or multiple slides, use carousel behavior
-  const carouselSlides = slides.map(slide => {
-    const mediaUrl = slide.tipo === 'imagen' ? getMediaUrlForDevice(slide, currentDevice) : slide.media_url;
-    return {
-      ...slide,
-      title: [slide.title_line1, slide.title_line2 || ''].filter(Boolean),
-      media_url: mediaUrl
-    };
-  });
-  
   return <HeroCarousel slides={carouselSlides} />;
 }

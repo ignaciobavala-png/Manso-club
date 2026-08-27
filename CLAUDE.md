@@ -53,7 +53,14 @@ Tailwind CSS v4 via PostCSS. Custom color palette — always use these tokens:
 - `manso-black` (#000000 — negro puro; era #1D1D1B hasta que Ana pidió sacarle el gris), `manso-blue` (#030044), `manso-terra` (#BC2915)
 - `manso-olive` (#868229), `manso-cream` (#FFFCDC), `manso-brown` (#542C1B)
 
-Font: Helvetica Neue Pro (defined in global CSS).
+Font: Helvetica Neue Pro (defined in global CSS). El título del hero del home
+usa **Neue Montreal** (`font-montreal` / `TYPE.hero`): es paga y los `.woff2`
+no están versionados — ver `public/fonts/README.md`. Sin los archivos cae a
+Helvetica sin romper nada.
+
+El hero (`HeroCarousel`) va centrado y sin tag ni descripción desde que Ana
+pidió "que sea sólo el título": el carrusel sigue rotando imagen/video y
+título, pero el copy largo no se muestra aunque esté cargado en el panel.
 
 ### Data Flow
 
