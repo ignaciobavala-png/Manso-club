@@ -6,6 +6,12 @@ import { ShareButton } from '@/components/ShareButton';
 import { useVynil } from '@/store/useVynil';
 import { VynilDisco } from './VynilDisco';
 
+/**
+ * Diámetro del plato. Va atado a la altura de la ventana para que en un mobile
+ * bajo el disco ceda espacio y la lista siga teniendo dónde scrollear.
+ */
+const PLATO = 'clamp(120px, 26vh, 210px)';
+
 interface Props {
   open: boolean;
   onClose: () => void;
@@ -55,7 +61,7 @@ export function VynilPanel({ open, onClose, listo, alternar }: Props) {
       role="dialog"
       aria-modal="false"
       aria-label="Vynil — la playlist de Manso"
-      className="fixed inset-x-3 bottom-3 sm:inset-x-auto sm:right-4 sm:bottom-4 sm:w-[380px] z-[60] flex flex-col max-h-[85vh] rounded-[28px] border border-manso-cream/15 bg-manso-black/95 backdrop-blur-md shadow-[0_20px_60px_rgba(0,0,0,0.6)] overflow-hidden"
+      className="fixed inset-x-3 bottom-3 sm:inset-x-auto sm:right-4 sm:bottom-4 sm:w-[380px] z-[60] flex flex-col max-h-[85dvh] rounded-[28px] border border-manso-cream/15 bg-manso-black/95 backdrop-blur-md shadow-[0_20px_60px_rgba(0,0,0,0.6)] overflow-hidden"
     >
       {/* Cabecera */}
       <div className="flex items-start justify-between gap-3 px-5 pt-5">
@@ -71,12 +77,13 @@ export function VynilPanel({ open, onClose, listo, alternar }: Props) {
         </button>
       </div>
 
-      {/* Bandeja */}
+      {/* Bandeja. El plato se achica con la pantalla: en un mobile bajo, 210px
+          fijos dejaban la lista sin lugar para scrollear. */}
       <div className="px-5 pt-2 pb-5 shrink-0">
-        <div className="relative mx-auto w-[210px] h-[210px]">
+        <div className="relative mx-auto" style={{ width: PLATO, height: PLATO }}>
           <VynilDisco
             tema={actual}
-            tamano={210}
+            tamano={PLATO}
             girando={sonando}
             vuelta={6}
             className="shadow-[0_10px_30px_rgba(0,0,0,0.5)]"
@@ -88,7 +95,10 @@ export function VynilPanel({ open, onClose, listo, alternar }: Props) {
             aria-hidden="true"
           >
             <span className="block w-2.5 h-2.5 rounded-full bg-manso-cream/70 ring-2 ring-manso-black" />
-            <span className="block w-[3px] h-[86px] ml-[4px] bg-gradient-to-b from-manso-cream/70 to-manso-cream/25 rounded-full" />
+            <span
+              className="block w-[3px] ml-[4px] bg-gradient-to-b from-manso-cream/70 to-manso-cream/25 rounded-full"
+              style={{ height: `calc(${PLATO} * 0.41)` }}
+            />
           </span>
         </div>
 
@@ -168,8 +178,8 @@ export function VynilPanel({ open, onClose, listo, alternar }: Props) {
       </div>
 
       {/* La playlist */}
-      <div className="mt-4 px-5 pb-5 overflow-y-auto">
-        <p className="text-[9px] font-black uppercase tracking-[0.35em] text-manso-cream/25 mb-3">
+      <div className="mt-4 flex-1 min-h-0 overflow-y-auto overscroll-contain px-5 pb-5">
+        <p className="sticky top-0 z-10 -mx-1 px-1 pb-3 bg-manso-black text-[9px] font-black uppercase tracking-[0.35em] text-manso-cream/25">
           {temas.length === 0
             ? 'Todavía no hay nada'
             : `${temas.length} ${temas.length === 1 ? 'tema puesto' : 'temas puestos'} por la gente`}

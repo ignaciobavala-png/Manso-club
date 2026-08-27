@@ -4,8 +4,8 @@ import { thumbDeTema, type TemaVynil } from '@/lib/vynil';
 
 interface Props {
   tema?: TemaVynil | null;
-  /** Diámetro en px. */
-  tamano: number;
+  /** Diámetro: un número en px, o cualquier medida CSS (`clamp(...)`, `100%`). */
+  tamano: number | string;
   girando?: boolean;
   /** Segundos por vuelta. El grande gira más lento para no marear. */
   vuelta?: number;
@@ -19,7 +19,6 @@ interface Props {
  */
 export function VynilDisco({ tema, tamano, girando = false, vuelta = 3.5, className = '' }: Props) {
   const thumb = tema ? thumbDeTema(tema) : null;
-  const agujero = Math.max(4, Math.round(tamano * 0.035));
 
   return (
     <span
@@ -43,10 +42,11 @@ export function VynilDisco({ tema, tamano, girando = false, vuelta = 3.5, classN
         )}
       </span>
 
-      {/* Agujero */}
+      {/* Agujero. En % para que siga al disco cuando el diámetro es un clamp;
+          el mínimo en px es para que no desaparezca en el disco chico. */}
       <span
         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-manso-black ring-1 ring-black/80"
-        style={{ width: agujero, height: agujero }}
+        style={{ width: 'max(3px, 3.5%)', height: 'max(3px, 3.5%)' }}
       />
 
       {/* Brillo, para que el disco no quede plano */}
