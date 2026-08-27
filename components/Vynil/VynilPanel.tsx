@@ -155,7 +155,7 @@ export function VynilPanel({ open, onClose, listo, alternar }: Props) {
         </div>
       </div>
 
-      {/* Poner un tema */}
+      {/* Compartir un tema con la playlist */}
       <div className="px-5 shrink-0">
         <div className="flex items-center gap-2 rounded-[10px] border border-manso-cream/20 bg-black/40 px-3 py-2.5 focus-within:border-manso-terra transition-colors">
           <LinkIcon size={15} className="text-manso-cream/30 shrink-0" />
@@ -171,7 +171,7 @@ export function VynilPanel({ open, onClose, listo, alternar }: Props) {
             disabled={cargando || !url.trim()}
             className="shrink-0 px-3 py-1.5 rounded-[6px] bg-manso-cream text-manso-black text-[11px] font-black uppercase tracking-widest hover:opacity-80 transition-opacity disabled:opacity-25"
           >
-            {cargando ? '...' : 'Poner'}
+            {cargando ? '...' : 'Compartir'}
           </button>
         </div>
         {error && <p className="mt-2 text-[11.5px] text-manso-terra">{error}</p>}
