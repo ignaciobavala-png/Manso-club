@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { usePathname } from 'next/navigation';
 
 interface Point {
@@ -12,6 +12,10 @@ interface Point {
 const MAX_POINTS = 100;
 const TRAIL_DURATION = 700;
 
+// En touch el trazo sigue al dedo y tapa lo que la persona está tocando:
+// Ana pidió que en mobile no aparezca.
+const FINE_POINTER = '(hover: hover) and (pointer: fine)';
+
 export const CursorTrail = () => {
   const pathname = usePathname();
   const isAdmin = pathname.startsWith('/mansoadm');
@@ -19,9 +23,19 @@ export const CursorTrail = () => {
   const pointsRef = useRef<Point[]>([]);
   const mouseRef = useRef({ x: -200, y: -200 });
   const hiddenRef = useRef(false);
+  // Arranca apagado: se prende recién en el cliente si el puntero es fino.
+  const [finePointer, setFinePointer] = useState(false);
 
   useEffect(() => {
-    if (isAdmin) return;
+    const mq = window.matchMedia(FINE_POINTER);
+    const update = () => setFinePointer(mq.matches);
+    update();
+    mq.addEventListener('change', update);
+    return () => mq.removeEventListener('change', update);
+  }, []);
+
+  useEffect(() => {
+    if (isAdmin || !finePointer) return;
 
     const canvas = canvasRef.current;
     if (!canvas) return;
@@ -132,9 +146,9 @@ export const CursorTrail = () => {
       window.removeEventListener('mousemove', onMouseMove);
       window.removeEventListener('resize', resize);
     };
-  }, [isAdmin]);
+  }, [isAdmin, finePointer]);
 
-  if (isAdmin) return null;
+  if (isAdmin || !finePointer) return null;
 
   return (
     <canvas
