@@ -15,7 +15,7 @@ import { useForoNotifications } from '@/hooks/useForoNotifications';
  * ese peso es del nav de desktop, donde el texto es chico.
  */
 const mobileLink =
-  'text-2xl font-light tracking-tight first-letter:uppercase transition-colors py-1.5 min-h-[44px] flex items-center justify-center';
+  'text-2xl font-light tracking-tight transition-colors py-1.5 min-h-[44px] flex items-center justify-center';
 
 const sidebarLinks = [
   { name: 'Manifiesto',           href: '/manifiesto' },
@@ -139,13 +139,13 @@ export const Navbar = () => {
             {hasMounted && (
               <Link
                 href="/streaming"
-                className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.4em] text-manso-terra hover:text-red-500 transition-colors duration-500"
+                className="flex items-center gap-2 text-[10px] font-black lowercase tracking-[0.4em] text-manso-terra hover:text-red-500 transition-colors duration-500"
               >
                 <span className="relative flex h-2 w-2">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-manso-terra opacity-75" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-manso-terra" />
                 </span>
-                LIVE
+                live
               </Link>
             )}
 
@@ -303,7 +303,7 @@ export const Navbar = () => {
             )}
 
             {navLinks.map((link) => (
-              <Link key={link.name} href={link.href} onClick={() => setIsMenuOpen(false)} className={`relative gap-1.5 text-manso-black hover:text-orange-600 ${mobileLink}`}>
+              <Link key={link.name} href={link.href} onClick={() => setIsMenuOpen(false)} className={`relative gap-1.5 first-letter:uppercase text-manso-black hover:text-orange-600 ${mobileLink}`}>
                 {link.name}
                 {link.href === '/foro' && tieneNotificacionesForo && (
                   <span className="w-1.5 h-1.5 rounded-full bg-manso-terra" />
@@ -318,13 +318,13 @@ export const Navbar = () => {
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-manso-terra opacity-75" />
                   <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-manso-terra" />
                 </span>
-                Live
+                live
               </Link>
             )}
 
             <div className="border-t border-zinc-100 pt-6 flex flex-col gap-2">
               {sidebarLinks.map((link) => (
-                <Link key={link.href} href={link.href} onClick={() => setIsMenuOpen(false)} className={`text-manso-black/40 hover:text-orange-600 ${mobileLink}`}>
+                <Link key={link.href} href={link.href} onClick={() => setIsMenuOpen(false)} className={`first-letter:uppercase text-manso-black/40 hover:text-orange-600 ${mobileLink}`}>
                   {link.name}
                 </Link>
               ))}
