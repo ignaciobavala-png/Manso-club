@@ -24,7 +24,7 @@ export const AboutUsPreviewClient = ({
 }) => {
   return (
     <section
-      className="relative py-8 sm:py-10 md:py-16 px-4 sm:px-8 md:px-[96px] bg-manso-black"
+      className="relative pt-4 pb-8 sm:py-10 md:py-16 px-4 sm:px-8 md:px-[96px] bg-manso-black"
       style={{
         backgroundImage: 'linear-gradient(rgba(255,255,255,0.06) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.06) 1px, transparent 1px)',
         backgroundSize: '48px 48px'
@@ -32,7 +32,7 @@ export const AboutUsPreviewClient = ({
     >
       <div className="relative z-10 mx-auto">
         {/* Título con línea umbral */}
-        <div className="relative mb-8 sm:mb-10 h-20 sm:h-24 md:h-28">
+        <div className="relative mb-5 sm:mb-10 h-16 sm:h-24 md:h-28">
           <motion.div
             initial={{ y: 80, opacity: 0 }}
             whileInView={{ y: 0, opacity: 1 }}
