@@ -9,6 +9,14 @@ import { CartSidebar } from '@/components/shop/CartSidebar';
 import { useUser } from '@/hooks/useUser';
 import { useForoNotifications } from '@/hooks/useForoNotifications';
 
+/**
+ * El menú mobile sigue la referencia que pasó Ana: tipografía liviana y
+ * grande, sin mayúsculas ni tracking, centrada. Nada de `font-black` acá —
+ * ese peso es del nav de desktop, donde el texto es chico.
+ */
+const mobileLink =
+  'text-2xl font-light tracking-tight first-letter:uppercase transition-colors py-1.5 min-h-[44px] flex items-center justify-center';
+
 const sidebarLinks = [
   { name: 'Manifiesto',           href: '/manifiesto' },
   { name: 'Multimedia',           href: '/multimedia' },
@@ -264,12 +272,12 @@ export const Navbar = () => {
       {isMenuOpen && (
         <div className="fixed inset-0 w-full h-full bg-white z-[9999] flex flex-col" style={{ touchAction: 'none' }}>
           <div className="flex justify-between items-center p-6 border-b border-zinc-100">
-            <h2 className="text-xl font-black uppercase tracking-tighter text-manso-black">Menú</h2>
+            <h2 className="text-xl font-light tracking-tight text-manso-black/60">Menú</h2>
             <button onClick={() => setIsMenuOpen(false)} className="text-manso-black hover:text-orange-600 transition-colors">
               <X size={24} />
             </button>
           </div>
-          <div className="flex-1 flex flex-col p-8 gap-6 overflow-y-auto">
+          <div className="flex-1 flex flex-col p-8 gap-3 overflow-y-auto">
             {/* Auth mobile */}
             {hasMounted && !userLoading && (
               user ? (
@@ -279,23 +287,23 @@ export const Navbar = () => {
                       {userInitial}
                     </span>
                     <div>
-                      <p className="text-xs font-black uppercase tracking-wide text-manso-black truncate max-w-[160px]">{userName}</p>
-                      <p className="text-[9px] text-zinc-400 uppercase tracking-widest">Miembro</p>
+                      <p className="text-sm font-normal text-manso-black truncate max-w-[160px]">{userName}</p>
+                      <p className="text-xs font-light text-zinc-400">Miembro</p>
                     </div>
                   </div>
-                  <Link href={accountHref} onClick={() => setIsMenuOpen(false)} className="px-6 py-3 text-[10px] font-black uppercase tracking-widest border border-manso-black text-manso-black hover:bg-manso-black hover:text-white transition-all text-center rounded-full">
-                    {role === 'admin' ? 'Panel Admin' : 'Mi Cuenta'}
+                  <Link href={accountHref} onClick={() => setIsMenuOpen(false)} className="px-6 py-3 text-sm font-light border border-manso-black/40 text-manso-black hover:bg-manso-black hover:text-white transition-all text-center rounded-full">
+                    {role === 'admin' ? 'Panel admin' : 'Mi cuenta'}
                   </Link>
                 </div>
               ) : (
-                <Link href="/login" onClick={() => setIsMenuOpen(false)} className="px-6 py-3 text-[10px] font-black uppercase tracking-widest border border-manso-black text-manso-black hover:bg-manso-black hover:text-white transition-all text-center rounded-full">
+                <Link href="/login" onClick={() => setIsMenuOpen(false)} className="px-6 py-3 text-sm font-light border border-manso-black/40 text-manso-black hover:bg-manso-black hover:text-white transition-all text-center rounded-full">
                   Login
                 </Link>
               )
             )}
 
             {navLinks.map((link) => (
-              <Link key={link.name} href={link.href} onClick={() => setIsMenuOpen(false)} className="relative text-sm font-black uppercase tracking-[0.4em] text-manso-black hover:text-orange-600 transition-colors py-2 min-h-[44px] flex items-center justify-center gap-1.5">
+              <Link key={link.name} href={link.href} onClick={() => setIsMenuOpen(false)} className={`relative gap-1.5 text-manso-black hover:text-orange-600 ${mobileLink}`}>
                 {link.name}
                 {link.href === '/foro' && tieneNotificacionesForo && (
                   <span className="w-1.5 h-1.5 rounded-full bg-manso-terra" />
@@ -305,18 +313,18 @@ export const Navbar = () => {
 
             {/* Streaming mobile — siempre público; el acceso lo controla la página */}
             {hasMounted && (
-              <Link href="/streaming" onClick={() => setIsMenuOpen(false)} className="flex items-center justify-center gap-2 text-sm font-black uppercase tracking-[0.4em] text-manso-terra hover:text-orange-600 transition-colors py-2 min-h-[44px]">
+              <Link href="/streaming" onClick={() => setIsMenuOpen(false)} className={`gap-2 text-manso-terra hover:text-orange-600 ${mobileLink}`}>
                 <span className="relative flex h-2.5 w-2.5">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-manso-terra opacity-75" />
                   <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-manso-terra" />
                 </span>
-                LIVE
+                Live
               </Link>
             )}
 
-            <div className="border-t border-zinc-100 pt-6 flex flex-col gap-4">
+            <div className="border-t border-zinc-100 pt-6 flex flex-col gap-2">
               {sidebarLinks.map((link) => (
-                <Link key={link.href} href={link.href} onClick={() => setIsMenuOpen(false)} className="text-sm font-black uppercase tracking-[0.4em] text-manso-black/50 hover:text-orange-600 transition-colors py-2 flex items-center justify-center">
+                <Link key={link.href} href={link.href} onClick={() => setIsMenuOpen(false)} className={`text-manso-black/40 hover:text-orange-600 ${mobileLink}`}>
                   {link.name}
                 </Link>
               ))}
