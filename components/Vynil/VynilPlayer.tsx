@@ -141,15 +141,19 @@ export function VynilPlayer() {
   };
 
   // Mismas condiciones que CalendarioFab y WhatsAppButton, para apilarse bien.
+  // En mobile el calendario está oculto (ver CalendarioFab), así que el disco
+  // sube un escalón y se apoya directo sobre el botón de WhatsApp.
   const whatsappVisible = !loading && !user && !pathname?.startsWith('/foro');
   const calendarioVisible = !pathname?.startsWith('/calendario');
-  const bottom = calendarioVisible
+  const bottomMobile = whatsappVisible ? 'bottom-28' : 'bottom-6';
+  const bottomDesktop = calendarioVisible
     ? whatsappVisible
-      ? 'bottom-[12.5rem]'
-      : 'bottom-28'
+      ? 'sm:bottom-[12.5rem]'
+      : 'sm:bottom-28'
     : whatsappVisible
-      ? 'bottom-28'
-      : 'bottom-6';
+      ? 'sm:bottom-28'
+      : 'sm:bottom-6';
+  const bottom = `${bottomMobile} ${bottomDesktop}`;
 
   return (
     <>

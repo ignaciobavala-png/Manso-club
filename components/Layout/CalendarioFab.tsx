@@ -7,7 +7,8 @@ import { useUser } from '@/hooks/useUser';
 
 /**
  * Botón flotante (estilo WhatsApp) para acceder al calendario desde cualquier página.
- * Se oculta en el calendario mismo, el admin y el login. Si el botón de WhatsApp está
+ * Se oculta en el calendario mismo, el admin y el login, y en mobile no se muestra
+ * (la columna de flotantes queda en WhatsApp + Vynil). Si el botón de WhatsApp está
  * visible (usuarios no logueados), se apila encima de él; si no, ocupa su lugar.
  */
 export function CalendarioFab() {
@@ -26,7 +27,7 @@ export function CalendarioFab() {
   const whatsappVisible = !loading && !user && !pathname?.startsWith('/foro');
 
   return (
-    <div className={`fixed right-4 z-50 ${whatsappVisible ? 'bottom-28' : 'bottom-6'}`}>
+    <div className={`hidden sm:block fixed right-4 z-50 ${whatsappVisible ? 'bottom-28' : 'bottom-6'}`}>
       <Link
         href="/calendario"
         aria-label="Ver calendario de talleres y eventos"

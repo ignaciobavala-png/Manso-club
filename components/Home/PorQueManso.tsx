@@ -54,7 +54,7 @@ const bloques = [
   }
 ];
 
-const textoLinea = 'text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black uppercase tracking-wide sm:tracking-tighter leading-[0.85]';
+const textoLinea = 'text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black uppercase tracking-tight sm:tracking-tighter leading-[0.85]';
 const textWhite = `${textoLinea} text-white`;
 const textOlive = `${textoLinea} italic text-manso-olive`;
 const textManifiesto = 'text-2xl sm:text-3xl md:text-4xl italic font-light text-white/90 leading-snug';
@@ -67,7 +67,7 @@ export const PorQueManso = ({ children }: { children?: React.ReactNode }) => {
       <ParticleBackground />
       <div className="relative z-10 w-full">
         {/* TÍTULO + MANIFIESTO — centrado, ancho completo */}
-        <div className="mb-12 md:mb-16 space-y-4 sm:space-y-3 text-center px-0 sm:px-4 md:px-8">
+        <div className="mb-12 md:mb-16 space-y-2 sm:space-y-3 text-center px-0 sm:px-4 md:px-8">
           <AnimatedLine>
             <div className="flex items-baseline gap-2 sm:gap-2 flex-wrap justify-center gap-y-1">
               <span className={textWhite}>NUESTRO ADN</span>
