@@ -265,17 +265,6 @@ export const EventosHome = () => {
 
                       {/* Acciones derecha */}
                       <div className="flex items-center gap-2 sm:gap-3 shrink-0">
-                        {item.luma_url ? (
-                          <a
-                            href={item.luma_url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="text-[10px] sm:text-xs font-black uppercase tracking-widest bg-white text-black px-4 py-2 hover:bg-gray-100 transition-colors whitespace-nowrap"
-                            onClick={e => e.stopPropagation()}
-                          >
-                            INSCRIBIRME
-                          </a>
-                        ) : null}
                         <button
                           className={`flex items-center justify-center w-9 h-9 border-2 border-white/50 rounded-full transition-transform duration-300 hover:border-white ${isOpen ? 'rotate-45' : ''}`}
                           onClick={e => { e.stopPropagation(); toggleAccordion(item.id); }}
