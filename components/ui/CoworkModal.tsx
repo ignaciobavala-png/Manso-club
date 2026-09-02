@@ -30,11 +30,15 @@ const OPEN_COWORK_INFO =
   'Abrimos el cowork para que vengan a conocer a otras personas de la comunidad, ' +
   'compartir ideas, proyectos, charlas.';
 
-function formatearFecha(fecha: string, horario: string | null) {
+function formatearFecha(fecha: string, horario: string | null, horarioFin: string | null) {
   const d = new Date(`${fecha}T00:00:00`);
   const texto = d.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });
   const capitalizado = texto.charAt(0).toUpperCase() + texto.slice(1);
-  return horario ? `${capitalizado} · ${horario.slice(0, 5)}` : capitalizado;
+  if (!horario) return capitalizado;
+  const inicio = horario.slice(0, 5);
+  // El cierre es opcional: sin él se muestra solo la hora de inicio.
+  const franja = horarioFin ? `${inicio} a ${horarioFin.slice(0, 5)}` : inicio;
+  return `${capitalizado} · ${franja}`;
 }
 
 export function CoworkModal({ open, onClose, origen, membresiaId, membresiaNombre }: CoworkModalProps) {
@@ -63,7 +67,7 @@ export function CoworkModal({ open, onClose, origen, membresiaId, membresiaNombr
       const [{ data: filas }, { data: cupos }] = await Promise.all([
         supabase
           .from('cowork_fechas')
-          .select('id, fecha, horario, cupos_maximos')
+          .select('id, fecha, horario, horario_fin, cupos_maximos')
           .eq('activo', true)
           .gte('fecha', hoy)
           .order('fecha', { ascending: true }),
@@ -184,7 +188,7 @@ export function CoworkModal({ open, onClose, origen, membresiaId, membresiaNombr
                             }`}
                           >
                             <span className="text-sm font-light text-manso-cream">
-                              {formatearFecha(f.fecha, f.horario)}
+                              {formatearFecha(f.fecha, f.horario, f.horario_fin)}
                             </span>
                             <span className="flex items-center gap-2 shrink-0">
                               <span className="text-[10px] uppercase tracking-widest text-manso-cream/40">

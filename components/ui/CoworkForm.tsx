@@ -8,6 +8,7 @@ export interface CoworkFecha {
   id: string;
   fecha: string;
   horario: string | null;
+  horario_fin: string | null;
   cupos_maximos: number;
   ocupados: number;
 }

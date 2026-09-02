@@ -117,3 +117,13 @@ create index if not exists cowork_solicitudes_membresia_idx
 
 comment on column public.cowork_solicitudes.membresia_nombre is
   'Nombre del plan al momento de la solicitud. Snapshot: no sigue los renombres del plan.';
+
+-- ── Hora de cierre del encuentro ─────────────────────────────────────────────
+-- horario era solo la hora de inicio: quien se anota no sabía hasta cuándo iba
+-- el Open Cowork. Se agrega el cierre, opcional (una fecha puede seguir
+-- publicándose con hora de inicio nomás).
+alter table public.cowork_fechas add column if not exists horario_fin time;
+
+comment on column public.cowork_fechas.horario is 'Hora de inicio del encuentro.';
+comment on column public.cowork_fechas.horario_fin is
+  'Hora de cierre. Opcional: si está vacía se muestra solo el inicio.';

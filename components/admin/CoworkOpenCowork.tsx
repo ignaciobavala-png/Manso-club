@@ -47,19 +47,20 @@ const inputCls =
  * anotados adentro.
  */
 export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onBorrar }: Props) {
-  const [nueva, setNueva] = useState({ fecha: '', horario: '', cupos_maximos: '20' });
+  const [nueva, setNueva] = useState({ fecha: '', horario: '', horario_fin: '', cupos_maximos: '20' });
   const [ventana, setVentana] = useState<Ventana>('proximas');
   const [editando, setEditando] = useState<string | null>(null);
-  const [edicion, setEdicion] = useState({ fecha: '', horario: '', cupos_maximos: '20' });
+  const [edicion, setEdicion] = useState({ fecha: '', horario: '', horario_fin: '', cupos_maximos: '20' });
 
   const agregarFecha = async () => {
     if (!nueva.fecha) return;
     await supabase.from('cowork_fechas').insert({
       fecha: nueva.fecha,
       horario: nueva.horario || null,
+      horario_fin: nueva.horario_fin || null,
       cupos_maximos: Number(nueva.cupos_maximos) || 20,
     });
-    setNueva({ fecha: '', horario: '', cupos_maximos: '20' });
+    setNueva({ fecha: '', horario: '', horario_fin: '', cupos_maximos: '20' });
     onRefetch();
   };
 
@@ -87,6 +88,7 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
     setEdicion({
       fecha: f.fecha,
       horario: f.horario ? f.horario.slice(0, 5) : '',
+      horario_fin: f.horario_fin ? f.horario_fin.slice(0, 5) : '',
       cupos_maximos: String(f.cupos_maximos),
     });
   };
@@ -104,6 +106,7 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
       .update({
         fecha: edicion.fecha,
         horario: edicion.horario || null,
+        horario_fin: edicion.horario_fin || null,
         cupos_maximos: cupos,
       })
       .eq('id', f.id);
@@ -156,9 +159,18 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
           />
           <input
             type="time"
+            title="Hora de inicio"
             className={`${inputCls} w-auto`}
             value={nueva.horario}
             onChange={e => setNueva(p => ({ ...p, horario: e.target.value }))}
+          />
+          <span className="pb-2.5 text-[10px] uppercase tracking-widest text-manso-cream/35">a</span>
+          <input
+            type="time"
+            title="Hora de cierre (opcional)"
+            className={`${inputCls} w-auto`}
+            value={nueva.horario_fin}
+            onChange={e => setNueva(p => ({ ...p, horario_fin: e.target.value }))}
           />
           <input
             type="number"
@@ -235,9 +247,18 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
                       />
                       <input
                         type="time"
+                        title="Hora de inicio"
                         className={`${inputCls} w-auto`}
                         value={edicion.horario}
                         onChange={e => setEdicion(p => ({ ...p, horario: e.target.value }))}
+                      />
+                      <span className="text-[10px] uppercase tracking-widest text-manso-cream/35">a</span>
+                      <input
+                        type="time"
+                        title="Hora de cierre (opcional)"
+                        className={`${inputCls} w-auto`}
+                        value={edicion.horario_fin}
+                        onChange={e => setEdicion(p => ({ ...p, horario_fin: e.target.value }))}
                       />
                       <input
                         type="number"
@@ -268,7 +289,7 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
                   ) : (
                   <div className="flex items-center gap-3 min-w-0">
                     <span className="text-sm text-manso-cream font-medium">
-                      {fechaLarga(f.fecha, f.horario)}
+                      {fechaLarga(f.fecha, f.horario, f.horario_fin)}
                     </span>
                     {pasada && (
                       <span className="text-[9px] uppercase tracking-widest text-manso-cream/30">
@@ -294,7 +315,7 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
                     </span>
                     <button
                       onClick={() => (editando === f.id ? setEditando(null) : abrirEdicion(f))}
-                      title="Editar fecha, horario y cupos"
+                      title="Editar fecha, horarios y cupos"
                       className="text-manso-cream/30 hover:text-manso-cream transition-colors"
                     >
                       <Pencil size={13} />

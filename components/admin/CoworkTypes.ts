@@ -24,6 +24,7 @@ export interface Fecha {
   id: string;
   fecha: string;
   horario: string | null;
+  horario_fin: string | null;
   cupos_maximos: number;
   activo: boolean;
 }
@@ -50,11 +51,22 @@ export function fechaCorta(iso: string) {
   return new Date(iso).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: '2-digit' });
 }
 
-export function fechaLarga(fecha: string, horario: string | null) {
+export function fechaLarga(fecha: string, horario: string | null, horarioFin?: string | null) {
   const d = new Date(`${fecha}T00:00:00`);
   const texto = d.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });
   const capitalizado = texto.charAt(0).toUpperCase() + texto.slice(1);
-  return horario ? `${capitalizado} · ${horario.slice(0, 5)}` : capitalizado;
+  const rango = franjaHoraria(horario, horarioFin);
+  return rango ? `${capitalizado} · ${rango}` : capitalizado;
+}
+
+/**
+ * "18:00 a 21:00" cuando hay cierre; solo el inicio cuando no lo cargaron.
+ * El cierre es opcional, así que nunca se muestra un rango a medias.
+ */
+export function franjaHoraria(horario: string | null, horarioFin?: string | null) {
+  if (!horario) return '';
+  const inicio = horario.slice(0, 5);
+  return horarioFin ? `${inicio} a ${horarioFin.slice(0, 5)}` : inicio;
 }
 
 /** Una fecha ya pasada no se muestra entre las próximas. */

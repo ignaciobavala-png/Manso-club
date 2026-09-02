@@ -25,7 +25,7 @@ export function CoworkSolicitudesList() {
   const fetchTodo = async () => {
     const [{ data: sols }, { data: fchs }] = await Promise.all([
       supabase.from('cowork_solicitudes').select('*').order('created_at', { ascending: false }),
-      supabase.from('cowork_fechas').select('id, fecha, horario, cupos_maximos, activo').order('fecha', { ascending: true }),
+      supabase.from('cowork_fechas').select('id, fecha, horario, horario_fin, cupos_maximos, activo').order('fecha', { ascending: true }),
     ]);
 
     const solicitudesData = (sols as Solicitud[]) ?? [];
