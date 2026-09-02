@@ -21,14 +21,7 @@ export const MembresiasHome = () => {
   const fetchMembresias = async () => {
     const { data, error } = await supabase
       .from('membresias')
-      .select(`
-        *,
-        membresia_beneficios (
-          texto,
-          incluido,
-          orden
-        )
-      `)
+      .select('*')
       .eq('activo', true)
       .order('orden', { ascending: true })
 
@@ -98,15 +91,13 @@ export const MembresiasHome = () => {
                     <div className="flex-1 h-px bg-manso-cream/10" />
                   </div>
 
-                  <div className="mx-auto max-w-sm sm:max-w-5xl grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 items-stretch">
+                  <div className="mx-auto max-w-sm sm:max-w-5xl grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 items-stretch">
                     {grupos[categoria].map((membresia) => (
                       <MembresiaCard
                         key={membresia.id}
                         membresia={membresia}
                         currency={currency}
                         rate={rate}
-                        soloIncluidos
-                        maxBeneficios={3}
                       />
                     ))}
                   </div>

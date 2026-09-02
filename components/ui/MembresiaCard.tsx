@@ -1,36 +1,31 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Star } from 'lucide-react';
+import Link from 'next/link';
 import { Membresia } from '@/lib/types/membresia';
+import { fondoAcento } from '@/lib/membresia-color';
 import { CoworkModal, PARAM_FORM } from './CoworkModal';
 
 interface MembresiaCardProps {
   membresia: Membresia;
   currency: string;
   rate: number | null;
-  /** Home muestra un resumen: solo beneficios incluidos y un máximo de 3 */
-  soloIncluidos?: boolean;
-  maxBeneficios?: number;
 }
 
 /**
- * Card de membresía — estructura y efecto de hover tomados de las cards de
- * tickets de Labitconf (elevación + escala leve, sombra profunda, lista con
- * bullets en color de acento), pero con la paleta de Manso: card destacada en
- * manso-carbon —el gris—, el resto en manso-cream, acento manso-terra. La
- * destacada no va en manso-black porque ese es el fondo de la página: quedaría
- * un rectángulo invisible con un borde.
+ * Card de membresía — rediseño a partir de la refe que trajo Ana
+ * (somoseito.io): tarjeta alta de fondo crema, borde fino, sin sombra ni
+ * redondeo; el nombre del plan arriba y enorme en la tipografía del hero, el
+ * precio rotado en el margen izquierdo, y abajo la descripción corta con el
+ * botón a todo el ancho.
+ *
+ * La card ya no lista beneficios: en la refe la tarjeta solo lleva la
+ * "descripción de la tarjetita" y los beneficios viven en el bloque INCLUYE de
+ * la página de detalle.
  */
-export const MembresiaCard = ({
-  membresia,
-  currency,
-  rate,
-  soloIncluidos = false,
-  maxBeneficios,
-}: MembresiaCardProps) => {
+export const MembresiaCard = ({ membresia, currency, rate }: MembresiaCardProps) => {
   const [formAbierto, setFormAbierto] = useState(false);
-  const dark = membresia.destacado;
+  const cultural = membresia.es_cultural;
 
   // Link compartido de este plan (?form=<id>): abre su formulario al entrar.
   useEffect(() => {
@@ -39,100 +34,86 @@ export const MembresiaCard = ({
     if (param === membresia.id) setFormAbierto(true);
   }, [membresia.id]);
 
-  const cText = dark ? 'text-manso-cream' : 'text-manso-black';
-  const cMuted = dark ? 'text-manso-cream/60' : 'text-manso-black/60';
-  const cDivider = dark ? 'bg-manso-cream/15' : 'bg-manso-black/15';
-
-  let beneficios = (membresia.membresia_beneficios || []).filter(b => b.texto?.trim());
-  if (soloIncluidos) beneficios = beneficios.filter(b => b.incluido);
-  if (maxBeneficios) beneficios = beneficios.slice(0, maxBeneficios);
+  // La cultural va en color pleno y rompe la grilla; el resto en crema.
+  const cText = cultural ? 'text-manso-cream' : 'text-manso-black';
+  const cMuted = cultural ? 'text-manso-cream/70' : 'text-manso-black/55';
+  const cBorde = cultural ? 'border-transparent' : 'border-manso-black/20';
+  const cFondo = cultural ? fondoAcento(membresia.color_acento) : 'bg-manso-cream';
+  const cBoton = cultural
+    ? 'bg-manso-cream text-manso-black'
+    : 'bg-manso-black text-manso-cream';
 
   const precio =
     currency === 'ARS' && rate
       ? Math.round(membresia.precio * rate).toLocaleString('es-AR')
       : membresia.precio.toLocaleString('es-AR');
 
+  const descripcion = membresia.descripcion_corta?.trim() || membresia.descripcion?.trim();
+  // Cultural Manso tiene página propia —y su propia sección en el panel—, así
+  // que su card sale del detalle genérico y va derecho ahí.
+  const detalle = cultural
+    ? '/mansocultural'
+    : membresia.slug
+      ? `/membresias/${membresia.slug}`
+      : null;
+
   return (
-    <div
-      className={`group relative flex flex-col w-full h-full rounded-2xl p-5 sm:p-6 shadow-lg sm:shadow-[0_20px_50px_rgba(0,0,0,0.5)] sm:will-change-transform sm:transition-transform sm:duration-300 sm:ease-out sm:hover:-translate-y-1.5 sm:hover:scale-[1.035] sm:hover:z-10 ${
-        dark
-          ? 'bg-manso-carbon border border-manso-cream/15'
-          : 'bg-manso-cream border border-manso-black/10'
-      }`}
+    <article
+      className={`group relative flex w-full h-full min-h-[360px] sm:min-h-[440px] border ${cBorde} ${cFondo} transition-colors duration-300`}
     >
-      {membresia.destacado && (
-        <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-          <span className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[8px] font-black uppercase tracking-widest bg-manso-terra text-manso-cream">
-            <Star size={8} />
-            Más Popular
+      {/* El cuerpo de la card lleva al detalle; el botón, directo al formulario.
+          Va como capa debajo del contenido en vez de envolverlo porque un
+          <button> dentro de un <a> no es HTML válido. */}
+      {detalle && (
+        <Link href={detalle} className="absolute inset-0 z-0" aria-label={`Ver ${membresia.nombre}`}>
+          <span className="sr-only">Ver {membresia.nombre}</span>
+        </Link>
+      )}
+
+      <div className="relative z-10 flex w-full pointer-events-none">
+        {/* Margen izquierdo con el precio rotado, como en la refe */}
+        <div className="w-9 sm:w-10 shrink-0 flex items-end justify-center pb-5">
+          <span
+            className={`[writing-mode:vertical-rl] rotate-180 whitespace-nowrap text-[10px] font-bold uppercase tracking-[0.2em] ${cMuted}`}
+          >
+            {currency} {precio} / {membresia.periodo}
           </span>
         </div>
-      )}
 
-      {/* Nombre */}
-      <h3 className={`text-[11px] font-black uppercase tracking-widest ${cText}`}>
-        {membresia.nombre}
-      </h3>
-      <span className="text-[9px] font-black uppercase tracking-[0.3em] text-manso-terra mt-1">
-        {membresia.categoria || 'Cowork'}
-      </span>
+        <div className="flex-1 flex flex-col min-w-0 p-5 pl-0 sm:p-6 sm:pl-0">
+          {/* El slot va siempre, con o sin badge: si no, el título de la card
+              destacada baja y queda desalineado del de las vecinas. */}
+          <span className="h-4 text-[9px] font-black uppercase tracking-[0.3em] text-manso-terra">
+            {membresia.destacado ? 'Más popular' : ''}
+          </span>
 
-      {/* Precio: sin nowrap — un monto largo en ARS debe poder bajar de línea
-          antes que desbordar la card y meter scroll horizontal en el teléfono. */}
-      <div className="mt-5 flex flex-wrap items-baseline gap-x-2 gap-y-1">
-        <span className={`text-[10px] font-bold uppercase ${cMuted}`}>{currency}</span>
-        <span className={`text-4xl sm:text-5xl font-black leading-none break-all ${cText}`}>{precio}</span>
-        <span className={`text-[10px] font-bold uppercase ${cMuted}`}>/{membresia.periodo}</span>
-      </div>
+          {/* `break-words` y no `truncate`: un nombre largo baja de línea, que es
+              justo lo que hace la refe con "Half day pass". */}
+          <h3
+            className={`font-montreal font-black tracking-[-0.03em] leading-[0.95] text-3xl sm:text-[2.75rem] break-words ${cText}`}
+          >
+            {membresia.nombre}
+          </h3>
 
-      <div className={`h-px my-5 ${cDivider}`} />
+          <div className="mt-auto pt-8">
+            {descripcion && (
+              <p className={`text-xs leading-relaxed whitespace-pre-line mb-4 ${cMuted}`}>
+                {descripcion}
+              </p>
+            )}
 
-      {/* Beneficios */}
-      {beneficios.length > 0 && (
-        <>
-          <div className={`text-[9px] font-black uppercase tracking-[0.3em] mb-3 ${cMuted}`}>
-            Incluye
+            {/* SELECCIONAR abre el formulario de inscripción, no el checkout: el
+                alta al cowork pasa primero por una solicitud que Ana aprueba. */}
+            <button
+              type="button"
+              onClick={() => setFormAbierto(true)}
+              className={`pointer-events-auto flex items-center justify-center w-full px-4 min-h-[44px] text-[10px] font-black uppercase tracking-[0.25em] transition-opacity duration-200 hover:opacity-80 active:scale-[0.98] ${cBoton}`}
+            >
+              Seleccionar
+            </button>
           </div>
-          <ul className="flex flex-col gap-3">
-            {beneficios.map((beneficio, index) => (
-              <li key={beneficio.id || index} className="flex items-start gap-2.5">
-                <span
-                  className={`shrink-0 w-1.5 h-1.5 rounded-full mt-[7px] ${
-                    beneficio.incluido ? 'bg-manso-terra' : dark ? 'bg-manso-cream/25' : 'bg-manso-black/25'
-                  }`}
-                />
-                <span
-                  className={`text-sm leading-snug ${
-                    beneficio.incluido ? cText : `${cMuted} line-through`
-                  }`}
-                >
-                  {beneficio.texto}
-                </span>
-              </li>
-            ))}
-          </ul>
-        </>
-      )}
-
-      {membresia.descripcion && (
-        <p className={`text-sm leading-relaxed mt-4 ${cMuted}`}>{membresia.descripcion}</p>
-      )}
-
-      {/* SELECCIONAR abre el formulario de inscripción, no el checkout: el alta
-          al cowork pasa primero por una solicitud que Ana aprueba a mano. */}
-      <button
-        type="button"
-        onClick={() => setFormAbierto(true)}
-        className={`mt-auto pt-6 block w-full`}
-      >
-        <span
-          className={`flex items-center justify-center w-full px-4 min-h-[44px] rounded-full text-[10px] font-black uppercase tracking-widest text-center transition-opacity duration-200 hover:opacity-80 active:scale-95 ${
-            dark ? 'bg-manso-cream text-manso-black' : 'bg-manso-black text-manso-cream'
-          }`}
-        >
-          SELECCIONAR
-        </span>
-      </button>
+        </div>
+      </div>
 
       <CoworkModal
         open={formAbierto}
@@ -141,6 +122,6 @@ export const MembresiaCard = ({
         membresiaId={membresia.id}
         membresiaNombre={membresia.nombre}
       />
-    </div>
+    </article>
   );
 };

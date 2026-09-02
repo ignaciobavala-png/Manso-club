@@ -3,7 +3,17 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Crown, DollarSign, Calendar, Text, Plus, Trash2, Check, X, Hash } from 'lucide-react';
-import { Membresia, MembresiaBeneficio, MembresiaForm } from '@/lib/types/membresia';
+import { COLORES_ACENTO, Membresia, MembresiaBeneficio, MembresiaForm } from '@/lib/types/membresia';
+import { ACENTO_POR_DEFECTO } from '@/lib/membresia-color';
+import { toSlug } from '@/lib/slug';
+
+/** Los tokens de la paleta con el nombre con el que Ana los conoce. */
+const NOMBRE_COLOR: Record<(typeof COLORES_ACENTO)[number], string> = {
+  terra: 'Terracota',
+  olive: 'Oliva',
+  blue: 'Azul',
+  brown: 'Marrón',
+};
 
 export function FormMembresia() {
   const [loading, setLoading] = useState(false);
@@ -18,6 +28,11 @@ export function FormMembresia() {
     activo: true,
     orden: 0,
     categoria: 'Cowork',
+    slug: '',
+    descripcion_corta: '',
+    descripcion_completa: '',
+    color_acento: ACENTO_POR_DEFECTO,
+    es_cultural: false,
     beneficios: [],
   });
 
@@ -35,6 +50,11 @@ export function FormMembresia() {
         activo: item.activo || true,
         orden: item.orden || 0,
         categoria: item.categoria || 'Cowork',
+        slug: item.slug || '',
+        descripcion_corta: item.descripcion_corta || item.descripcion || '',
+        descripcion_completa: item.descripcion_completa || '',
+        color_acento: item.color_acento || ACENTO_POR_DEFECTO,
+        es_cultural: item.es_cultural || false,
         beneficios: item.membresia_beneficios || [],
       });
       window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -57,6 +77,11 @@ export function FormMembresia() {
       activo: true,
       orden: 0,
       categoria: 'Cowork',
+      slug: '',
+      descripcion_corta: '',
+      descripcion_completa: '',
+      color_acento: ACENTO_POR_DEFECTO,
+      es_cultural: false,
       beneficios: [],
     });
     setFeedback(null);
@@ -103,21 +128,30 @@ export function FormMembresia() {
     setLoading(true);
     setFeedback(null);
 
+    // El slug se deriva del nombre si Ana no lo escribe: es la URL del detalle
+    // (/membresias/<slug>), así que un plan sin slug quedaría sin página.
+    const payload = {
+      nombre: formData.nombre,
+      precio: parseFloat(String(formData.precio)) || 0,
+      periodo: formData.periodo,
+      descripcion: formData.descripcion,
+      destacado: formData.destacado,
+      activo: formData.activo,
+      orden: parseInt(String(formData.orden)) || 0,
+      categoria: formData.categoria,
+      slug: toSlug(formData.slug || formData.nombre),
+      descripcion_corta: formData.descripcion_corta,
+      descripcion_completa: formData.descripcion_completa,
+      color_acento: formData.color_acento,
+      es_cultural: formData.es_cultural,
+    };
+
     try {
       if (editingId) {
         // Update existing membresia
         const { error: membresiaError } = await supabase
           .from('membresias')
-          .update({
-            nombre: formData.nombre,
-            precio: parseFloat(String(formData.precio)) || 0,
-            periodo: formData.periodo,
-            descripcion: formData.descripcion,
-            destacado: formData.destacado,
-            activo: formData.activo,
-            orden: parseInt(String(formData.orden)) || 0,
-            categoria: formData.categoria,
-          })
+          .update(payload)
           .eq('id', editingId);
 
         if (membresiaError) throw membresiaError;
@@ -151,16 +185,7 @@ export function FormMembresia() {
         // Create new membresia
         const { data: newMembresia, error: membresiaError } = await supabase
           .from('membresias')
-          .insert({
-            nombre: formData.nombre,
-            precio: parseFloat(String(formData.precio)) || 0,
-            periodo: formData.periodo,
-            descripcion: formData.descripcion,
-            destacado: formData.destacado,
-            activo: formData.activo,
-            orden: parseInt(String(formData.orden)) || 0,
-            categoria: formData.categoria,
-          })
+          .insert(payload)
           .select()
           .single();
 
@@ -285,21 +310,73 @@ export function FormMembresia() {
         </select>
       </div>
 
-      {/* Descripción */}
+      {/* Descripción de la tarjeta — la que se lee en el home y en /membresias.
+          Escribe en `descripcion_corta`; `descripcion` queda como estaba para no
+          perder lo que ya había cargado. */}
       <div>
         <label className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/60 mb-2 block">
-          Descripción Corta
+          Descripción de la tarjeta
         </label>
         <div className="relative">
           <Text size={14} className="absolute left-3 top-3 text-manso-cream/40" />
           <textarea
-            value={formData.descripcion}
-            onChange={(e) => setFormData({ ...formData, descripcion: e.target.value })}
-            placeholder="Breve descripción del plan..."
+            value={formData.descripcion_corta}
+            onChange={(e) => setFormData({ ...formData, descripcion_corta: e.target.value })}
+            placeholder="Se ve en la tarjeta del home y de /membresías..."
             rows={3}
             className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 pl-10 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra/50 transition-colors resize-none"
           />
         </div>
+      </div>
+
+      {/* Descripción completa — la de la página de detalle */}
+      <div>
+        <label className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/60 mb-2 block">
+          Descripción completa
+        </label>
+        <div className="relative">
+          <Text size={14} className="absolute left-3 top-3 text-manso-cream/40" />
+          <textarea
+            value={formData.descripcion_completa}
+            onChange={(e) => setFormData({ ...formData, descripcion_completa: e.target.value })}
+            placeholder="Se ve al hacer click sobre la tarjeta. Dejá una línea en blanco para separar párrafos."
+            rows={5}
+            className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 pl-10 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra/50 transition-colors resize-none"
+          />
+        </div>
+      </div>
+
+      {/* Dirección del detalle */}
+      <div>
+        <label className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/60 mb-2 block">
+          Dirección de la página
+        </label>
+        <input
+          type="text"
+          value={formData.slug}
+          onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+          placeholder="Se arma sola con el nombre del plan"
+          className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra/50 transition-colors"
+        />
+        <p className="text-[10px] text-manso-cream/40 mt-2">
+          manso.club/membresias/<span className="text-manso-cream/70">{toSlug(formData.slug || formData.nombre) || 'nombre-del-plan'}</span>
+        </p>
+      </div>
+
+      {/* Color del detalle */}
+      <div>
+        <label className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/60 mb-2 block">
+          Color de la página de detalle
+        </label>
+        <select
+          value={formData.color_acento}
+          onChange={(e) => setFormData({ ...formData, color_acento: e.target.value as typeof formData.color_acento })}
+          className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra/50 transition-colors appearance-none"
+        >
+          {COLORES_ACENTO.map((color) => (
+            <option key={color} value={color}>{NOMBRE_COLOR[color]}</option>
+          ))}
+        </select>
       </div>
 
       {/* Orden */}
@@ -341,6 +418,18 @@ export function FormMembresia() {
           />
           <span className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/60">
             Activo (visible en la web)
+          </span>
+        </label>
+
+        <label className="flex items-center gap-3 cursor-pointer">
+          <input
+            type="checkbox"
+            checked={formData.es_cultural}
+            onChange={(e) => setFormData({ ...formData, es_cultural: e.target.checked })}
+            className="w-4 h-4 text-manso-terra bg-manso-cream/10 border-manso-cream/20 rounded focus:ring-manso-terra/50"
+          />
+          <span className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/60">
+            Cultural Manso (card de color, lleva a la página de Cultura)
           </span>
         </label>
       </div>
