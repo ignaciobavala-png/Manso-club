@@ -192,7 +192,7 @@ export function CoworkModal({ open, onClose, origen, membresiaId, membresiaNombr
                             </span>
                             <span className="flex items-center gap-2 shrink-0">
                               <span className="text-[10px] uppercase tracking-widest text-manso-cream/40">
-                                {completo ? 'Completo' : `${libres} de ${f.cupos_maximos}`}
+                                {completo ? 'Completo' : `${f.ocupados} de ${f.cupos_maximos}`}
                               </span>
                               {elegida && <Check size={14} className="text-manso-terra" />}
                             </span>
