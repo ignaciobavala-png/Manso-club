@@ -78,8 +78,8 @@ export function TeamList({ refreshTrigger }: TeamListProps) {
             }`}
           >
             <div className="flex items-center gap-4">
-              {/* Foto circular */}
-              <div className="w-16 h-16 rounded-full overflow-hidden flex-shrink-0 bg-manso-cream/5">
+              {/* Foto cuadrada */}
+              <div className="w-16 h-16 overflow-hidden flex-shrink-0 bg-manso-cream/5">
                 {member.photo_url ? (
                   <img
                     src={member.photo_url}
