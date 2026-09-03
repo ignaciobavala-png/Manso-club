@@ -150,7 +150,7 @@ export default function MembresiasPage() {
                     </div>
                   )}
 
-                  <div className="mx-auto max-w-sm sm:max-w-5xl grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 items-stretch">
+                  <div className="mx-auto max-w-sm sm:max-w-5xl grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 items-stretch">
                     {grupos[categoria].map((membresia) => (
                       <MembresiaCard
                         key={membresia.id}
