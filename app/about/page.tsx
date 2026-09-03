@@ -81,24 +81,24 @@ export default async function AboutPage() {
           Las personas detrás de Manso
         </p>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 auto-rows-fr gap-x-2 gap-y-8 px-2">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-x-6 gap-y-12 md:gap-x-10 md:gap-y-16">
           {teamMembers.map((member) => {
             const initials = member.name.split(' ').map((w: string) => w[0]).slice(0, 2).join('').toUpperCase();
             return (
               <div key={member.id} className="flex flex-col w-full">
                 {member.photo_url ? (
-                  <div className="relative w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden mb-5 flex-shrink-0 mx-auto">
+                  <div className="relative w-full aspect-square overflow-hidden mb-5">
                     <Image
                       src={member.photo_url}
                       alt={member.name}
                       fill
                       className="object-cover"
-                      sizes="(max-width: 768px) 96px, 128px"
+                      sizes="(max-width: 768px) 45vw, 30vw"
                     />
                   </div>
                 ) : (
-                  <div className="w-24 h-24 md:w-32 md:h-32 bg-zinc-800 rounded-full mb-5 flex items-center justify-center mx-auto">
-                    <span className="text-zinc-500 text-2xl md:text-3xl font-black tracking-widest">{initials}</span>
+                  <div className="w-full aspect-square bg-zinc-800 mb-5 flex items-center justify-center">
+                    <span className="text-zinc-500 text-3xl md:text-5xl font-black tracking-widest">{initials}</span>
                   </div>
                 )}
                 <p className="text-manso-cream font-black uppercase text-base md:text-lg tracking-tight leading-tight text-center">{member.name}</p>
@@ -108,10 +108,10 @@ export default async function AboutPage() {
           })}
           {teamMembers.length === 0 && (
             <>
-              {(['AH', 'AM', 'FB', 'JP'] as const).map((ini) => (
+              {(['AH', 'AM', 'FB'] as const).map((ini) => (
                 <div key={ini} className="flex flex-col w-full">
-                  <div className="w-24 h-24 md:w-32 md:h-32 bg-zinc-800 rounded-full mb-5 flex items-center justify-center mx-auto">
-                    <span className="text-zinc-500 text-2xl font-black tracking-widest">{ini}</span>
+                  <div className="w-full aspect-square bg-zinc-800 mb-5 flex items-center justify-center">
+                    <span className="text-zinc-500 text-3xl md:text-5xl font-black tracking-widest">{ini}</span>
                   </div>
                   <p className="text-manso-cream font-black uppercase text-base md:text-lg tracking-tight leading-tight text-center">Nombre</p>
                   <p className="text-zinc-500 text-sm md:text-base mt-1 text-center">Rol</p>
