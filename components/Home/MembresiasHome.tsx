@@ -8,6 +8,7 @@ import { Membresia } from '@/lib/types/membresia';
 import { CurrencyToggle } from '@/components/ui/CurrencyToggle';
 import { useCurrency } from '@/store/useCurrency';
 import { MembresiaCard } from '@/components/ui/MembresiaCard';
+import { gridMembresias } from '@/lib/membresia-grid';
 
 export const MembresiasHome = () => {
   const [membresias, setMembresias] = useState<Membresia[]>([]);
@@ -91,7 +92,7 @@ export const MembresiasHome = () => {
                     <div className="flex-1 h-px bg-manso-cream/10" />
                   </div>
 
-                  <div className="mx-auto max-w-sm sm:max-w-5xl grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 items-stretch">
+                  <div className={`mx-auto max-w-sm grid grid-cols-1 gap-4 sm:gap-5 items-stretch ${gridMembresias(grupos[categoria].length)}`}>
                     {grupos[categoria].map((membresia) => (
                       <MembresiaCard
                         key={membresia.id}

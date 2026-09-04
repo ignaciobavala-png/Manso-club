@@ -9,6 +9,7 @@ import { Crown } from 'lucide-react';
 import { CurrencyToggle } from '@/components/ui/CurrencyToggle';
 import { useCurrency } from '@/store/useCurrency';
 import { MembresiaCard } from '@/components/ui/MembresiaCard';
+import { gridMembresias } from '@/lib/membresia-grid';
 import { CoworkModal, PARAM_FORM, FORM_OPEN_COWORK } from '@/components/ui/CoworkModal';
 
 export default function MembresiasPage() {
@@ -150,7 +151,7 @@ export default function MembresiasPage() {
                     </div>
                   )}
 
-                  <div className="mx-auto max-w-sm sm:max-w-5xl grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 items-stretch">
+                  <div className={`mx-auto max-w-sm grid grid-cols-1 gap-4 sm:gap-5 items-stretch ${gridMembresias(grupos[categoria].length)}`}>
                     {grupos[categoria].map((membresia) => (
                       <MembresiaCard
                         key={membresia.id}
