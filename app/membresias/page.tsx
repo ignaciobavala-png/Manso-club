@@ -151,7 +151,7 @@ export default function MembresiasPage() {
                     </div>
                   )}
 
-                  <div className={`mx-auto max-w-sm grid grid-cols-1 gap-4 sm:gap-5 items-stretch ${gridMembresias(grupos[categoria].length)}`}>
+                  <div className={`mx-auto grid gap-3 sm:gap-5 items-stretch ${gridMembresias(grupos[categoria].length)}`}>
                     {grupos[categoria].map((membresia) => (
                       <MembresiaCard
                         key={membresia.id}

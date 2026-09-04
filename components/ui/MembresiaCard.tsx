@@ -60,7 +60,7 @@ export const MembresiaCard = ({ membresia, currency, rate }: MembresiaCardProps)
 
   return (
     <article
-      className={`group relative flex w-full h-full min-h-[360px] sm:min-h-[440px] border ${cBorde} ${cFondo} transition-colors duration-300`}
+      className={`group relative flex w-full h-full min-h-[290px] sm:min-h-[440px] border ${cBorde} ${cFondo} transition-colors duration-300`}
     >
       {/* El cuerpo de la card lleva al detalle; el botón, directo al formulario.
           Va como capa debajo del contenido en vez de envolverlo porque un
@@ -75,34 +75,34 @@ export const MembresiaCard = ({ membresia, currency, rate }: MembresiaCardProps)
         {/* Margen izquierdo con el precio rotado, como en la refe. Cultural
             Manso no es un plan y no tiene precio: el margen queda vacío para
             que el título siga alineado con el de las cards vecinas. */}
-        <div className="w-9 sm:w-10 shrink-0 flex items-end justify-center pb-5">
+        <div className="w-7 sm:w-10 shrink-0 flex items-end justify-center pb-3 sm:pb-5">
           {!cultural && (
             <span
-              className={`[writing-mode:vertical-rl] rotate-180 whitespace-nowrap text-[10px] font-bold uppercase tracking-[0.2em] ${cMuted}`}
+              className={`[writing-mode:vertical-rl] rotate-180 whitespace-nowrap text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.12em] sm:tracking-[0.2em] ${cMuted}`}
             >
               {currency} {precio} / {membresia.periodo}
             </span>
           )}
         </div>
 
-        <div className="flex-1 flex flex-col min-w-0 p-5 pl-0 sm:p-6 sm:pl-0">
+        <div className="flex-1 flex flex-col min-w-0 p-3 pl-0 sm:p-6 sm:pl-0">
           {/* El slot va siempre, con o sin badge: si no, el título de la card
               destacada baja y queda desalineado del de las vecinas. */}
-          <span className="h-4 text-[9px] font-black uppercase tracking-[0.3em] text-manso-terra">
+          <span className="h-4 text-[8px] sm:text-[9px] font-black uppercase tracking-[0.15em] sm:tracking-[0.3em] text-manso-terra">
             {membresia.destacado ? 'Más popular' : ''}
           </span>
 
           {/* `break-words` y no `truncate`: un nombre largo baja de línea, que es
               justo lo que hace la refe con "Half day pass". */}
           <h3
-            className={`font-montreal font-black tracking-[-0.03em] leading-[0.95] text-3xl sm:text-[2.75rem] break-words ${cText}`}
+            className={`font-montreal font-black tracking-[-0.03em] leading-[0.95] text-xl sm:text-[2.75rem] break-words ${cText}`}
           >
             {membresia.nombre}
           </h3>
 
-          <div className="mt-auto pt-8">
+          <div className="mt-auto pt-5 sm:pt-8">
             {descripcion && (
-              <p className={`text-xs leading-relaxed whitespace-pre-line mb-4 ${cMuted}`}>
+              <p className={`text-[11px] sm:text-xs leading-relaxed whitespace-pre-line mb-3 sm:mb-4 ${cMuted}`}>
                 {descripcion}
               </p>
             )}
@@ -114,7 +114,7 @@ export const MembresiaCard = ({ membresia, currency, rate }: MembresiaCardProps)
                 <a> no es HTML válido— y el click lo toma la capa de abajo. */}
             {cultural ? (
               <span
-                className={`flex items-center justify-center w-full px-4 min-h-[44px] text-[10px] font-black uppercase tracking-[0.25em] transition-opacity duration-200 group-hover:opacity-80 ${cBoton}`}
+                className={`flex items-center justify-center w-full px-2 sm:px-4 min-h-[44px] text-[9px] sm:text-[10px] font-black uppercase tracking-[0.12em] sm:tracking-[0.25em] transition-opacity duration-200 group-hover:opacity-80 ${cBoton}`}
               >
                 Conocer más
               </span>
@@ -122,7 +122,7 @@ export const MembresiaCard = ({ membresia, currency, rate }: MembresiaCardProps)
               <button
                 type="button"
                 onClick={() => setFormAbierto(true)}
-                className={`pointer-events-auto flex items-center justify-center w-full px-4 min-h-[44px] text-[10px] font-black uppercase tracking-[0.25em] transition-opacity duration-200 hover:opacity-80 active:scale-[0.98] ${cBoton}`}
+                className={`pointer-events-auto flex items-center justify-center w-full px-2 sm:px-4 min-h-[44px] text-[9px] sm:text-[10px] font-black uppercase tracking-[0.12em] sm:tracking-[0.25em] transition-opacity duration-200 hover:opacity-80 active:scale-[0.98] ${cBoton}`}
               >
                 Seleccionar
               </button>
