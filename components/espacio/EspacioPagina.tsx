@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { KeyboardEvent, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ImageIcon } from 'lucide-react';
 import { ParticleBackground } from '@/components/Home/ParticleBackground';
@@ -38,6 +38,37 @@ export const EspacioPagina = ({ titulo, intro, salas }: Props) => {
 
   const indice = Math.max(0, salas.findIndex(s => s.id === activaId));
   const activa = salas[indice] ?? null;
+
+  const botones = useRef<(HTMLButtonElement | null)[]>([]);
+
+  /** Elige una sala y le lleva el foco, para que la navegación con flechas y
+   *  lo que se ve resaltado no se separen. Da la vuelta en los extremos. */
+  const irA = (i: number) => {
+    if (salas.length === 0) return;
+    const destino = (i + salas.length) % salas.length;
+    setActivaId(salas[destino].id);
+    botones.current[destino]?.focus();
+  };
+
+  const alPresionarTecla = (e: KeyboardEvent<HTMLUListElement>) => {
+    const salto: Record<string, number> = {
+      ArrowDown: 1,
+      ArrowRight: 1,
+      ArrowUp: -1,
+      ArrowLeft: -1,
+    };
+
+    if (e.key in salto) {
+      e.preventDefault(); // si no, la flecha scrollea la página
+      irA(indice + salto[e.key]);
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      irA(0);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      irA(salas.length - 1);
+    }
+  };
 
   return (
     <main className="relative min-h-screen bg-manso-black text-manso-cream overflow-hidden">
@@ -77,13 +108,17 @@ export const EspacioPagina = ({ titulo, intro, salas }: Props) => {
           <p className="mt-16 text-sm text-manso-cream/40">Todavía no hay salas cargadas.</p>
         ) : (
           <div className="mt-14 md:mt-20 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 items-start">
-            {/* Lista de salas */}
-            <ul>
+            {/* Lista de salas. Es un tablist: se entra con Tab una sola vez
+                —el activo es el único que recibe foco— y adentro se recorre
+                con las flechas, que es lo que espera cualquiera que llegue
+                desde el teclado. */}
+            <ul role="tablist" aria-label="Salas" onKeyDown={alPresionarTecla}>
               {salas.map((sala, i) => {
                 const esActiva = i === indice;
                 return (
                   <motion.li
                     key={sala.id}
+                    role="presentation"
                     initial={{ opacity: 0, x: -18 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{
@@ -94,9 +129,16 @@ export const EspacioPagina = ({ titulo, intro, salas }: Props) => {
                   >
                     <button
                       type="button"
+                      role="tab"
+                      id={`sala-${sala.id}`}
+                      ref={el => {
+                        botones.current[i] = el;
+                      }}
                       onClick={() => setActivaId(sala.id)}
-                      aria-current={esActiva}
-                      className="group relative flex w-full items-baseline gap-3 sm:gap-4 py-1 text-left"
+                      aria-selected={esActiva}
+                      aria-controls="espacio-foto"
+                      tabIndex={esActiva ? 0 : -1}
+                      className="group relative flex w-full items-baseline gap-3 sm:gap-4 py-1 text-left focus:outline-none focus-visible:ring-1 focus-visible:ring-manso-terra/60"
                     >
                       {/* La barra del activo se desliza de un nombre a otro en
                           vez de aparecer y desaparecer: es el mismo elemento
@@ -134,7 +176,12 @@ export const EspacioPagina = ({ titulo, intro, salas }: Props) => {
 
             {/* Foto de la sala elegida */}
             <div className="md:sticky md:top-28">
-              <div className="relative w-full aspect-[4/3] overflow-hidden border border-manso-cream/10 bg-manso-cream/5">
+              <div
+                id="espacio-foto"
+                role="tabpanel"
+                aria-labelledby={activa ? `sala-${activa.id}` : undefined}
+                className="relative w-full aspect-[4/3] overflow-hidden border border-manso-cream/10 bg-manso-cream/5"
+              >
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={activa?.id ?? 'vacio'}
