@@ -19,6 +19,7 @@ const mobileLink =
 
 const sidebarLinks = [
   { name: 'Manifiesto',           href: '/manifiesto' },
+  { name: 'Nuestro espacio',      href: '/nuestro-espacio' },
   { name: 'Multimedia',           href: '/multimedia' },
   { name: 'Presentá tu proyecto', href: '/presenta-tu-proyecto' },
   { name: 'Trabajá con nosotros', href: '/trabaja-con-nosotros' },
