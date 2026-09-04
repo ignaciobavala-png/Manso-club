@@ -29,12 +29,13 @@ export const MembresiaCard = ({ membresia, currency, rate }: MembresiaCardProps)
 
   // Link compartido de este plan (?form=<id>): abre su formulario al entrar.
   useEffect(() => {
+    if (cultural) return;
     const param = new URLSearchParams(window.location.search).get(PARAM_FORM);
     // eslint-disable-next-line react-hooks/set-state-in-effect
     if (param === membresia.id) setFormAbierto(true);
-  }, [membresia.id]);
+  }, [membresia.id, cultural]);
 
-  // La cultural va en color pleno y rompe la grilla; el resto en crema.
+  // La cultural va en color pleno y sin precio; el resto en crema.
   const cText = cultural ? 'text-manso-cream' : 'text-manso-black';
   const cMuted = cultural ? 'text-manso-cream/70' : 'text-manso-black/55';
   const cBorde = cultural ? 'border-transparent' : 'border-manso-black/20';
@@ -71,13 +72,17 @@ export const MembresiaCard = ({ membresia, currency, rate }: MembresiaCardProps)
       )}
 
       <div className="relative z-10 flex w-full pointer-events-none">
-        {/* Margen izquierdo con el precio rotado, como en la refe */}
+        {/* Margen izquierdo con el precio rotado, como en la refe. Cultural
+            Manso no es un plan y no tiene precio: el margen queda vacío para
+            que el título siga alineado con el de las cards vecinas. */}
         <div className="w-9 sm:w-10 shrink-0 flex items-end justify-center pb-5">
-          <span
-            className={`[writing-mode:vertical-rl] rotate-180 whitespace-nowrap text-[10px] font-bold uppercase tracking-[0.2em] ${cMuted}`}
-          >
-            {currency} {precio} / {membresia.periodo}
-          </span>
+          {!cultural && (
+            <span
+              className={`[writing-mode:vertical-rl] rotate-180 whitespace-nowrap text-[10px] font-bold uppercase tracking-[0.2em] ${cMuted}`}
+            >
+              {currency} {precio} / {membresia.periodo}
+            </span>
+          )}
         </div>
 
         <div className="flex-1 flex flex-col min-w-0 p-5 pl-0 sm:p-6 sm:pl-0">
@@ -103,25 +108,38 @@ export const MembresiaCard = ({ membresia, currency, rate }: MembresiaCardProps)
             )}
 
             {/* SELECCIONAR abre el formulario de inscripción, no el checkout: el
-                alta al cowork pasa primero por una solicitud que Ana aprueba. */}
-            <button
-              type="button"
-              onClick={() => setFormAbierto(true)}
-              className={`pointer-events-auto flex items-center justify-center w-full px-4 min-h-[44px] text-[10px] font-black uppercase tracking-[0.25em] transition-opacity duration-200 hover:opacity-80 active:scale-[0.98] ${cBoton}`}
-            >
-              Seleccionar
-            </button>
+                alta al cowork pasa primero por una solicitud que Ana aprueba.
+                La cultural no se solicita: su botón es parte del link que
+                envuelve la card, así que va como <span> —un <a> dentro de otro
+                <a> no es HTML válido— y el click lo toma la capa de abajo. */}
+            {cultural ? (
+              <span
+                className={`flex items-center justify-center w-full px-4 min-h-[44px] text-[10px] font-black uppercase tracking-[0.25em] transition-opacity duration-200 group-hover:opacity-80 ${cBoton}`}
+              >
+                Conocer más
+              </span>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setFormAbierto(true)}
+                className={`pointer-events-auto flex items-center justify-center w-full px-4 min-h-[44px] text-[10px] font-black uppercase tracking-[0.25em] transition-opacity duration-200 hover:opacity-80 active:scale-[0.98] ${cBoton}`}
+              >
+                Seleccionar
+              </button>
+            )}
           </div>
         </div>
       </div>
 
-      <CoworkModal
-        open={formAbierto}
-        onClose={() => setFormAbierto(false)}
-        origen="membresia"
-        membresiaId={membresia.id}
-        membresiaNombre={membresia.nombre}
-      />
+      {!cultural && (
+        <CoworkModal
+          open={formAbierto}
+          onClose={() => setFormAbierto(false)}
+          origen="membresia"
+          membresiaId={membresia.id}
+          membresiaNombre={membresia.nombre}
+        />
+      )}
     </article>
   );
 };

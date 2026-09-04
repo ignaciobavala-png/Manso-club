@@ -5,11 +5,10 @@ import { CulturaPagina } from '@/components/cultura/CulturaPagina';
 
 export const dynamic = 'force-dynamic';
 
-// Ruta suelta: todavía no la linkea nadie y no queremos que la indexen hasta
-// que Ana la dé por lista.
+// Ana la dio por lista: ahora la linkea la card "Cultural Manso" de
+// /membresias y la ruta se indexa como cualquier otra.
 export const metadata: Metadata = {
   title: 'Cultural Manso',
-  robots: { index: false, follow: false },
 };
 
 export default async function MansoCulturalPage() {

@@ -429,7 +429,7 @@ export function FormMembresia() {
             className="w-4 h-4 text-manso-terra bg-manso-cream/10 border-manso-cream/20 rounded focus:ring-manso-terra/50"
           />
           <span className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/60">
-            Cultural Manso (card de color, lleva a la página de Cultura)
+            Cultural Manso (card de color sin precio, lleva a /mansocultural)
           </span>
         </label>
       </div>
