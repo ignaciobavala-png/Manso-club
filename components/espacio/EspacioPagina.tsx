@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ImageIcon } from 'lucide-react';
+import { ParticleBackground } from '@/components/Home/ParticleBackground';
 import { EspacioSala } from '@/lib/types/espacio';
 
 /** Solo lo que la página dibuja, para que la vista previa del panel pueda
@@ -14,6 +16,8 @@ interface Props {
   salas: SalaVista[];
 }
 
+const dosDigitos = (n: number) => String(n + 1).padStart(2, '0');
+
 /**
  * /nuestro-espacio — las salas del cowork.
  *
@@ -23,22 +27,41 @@ interface Props {
  * negro, el activo en terra— y con los nombres bastante más chicos que en la
  * refe, que era el pedido explícito.
  *
- * La foto se sostiene sola en desktop (`sticky`) para que se siga viendo
- * mientras la lista es larga; en mobile la lista va arriba y la foto abajo.
+ * El movimiento es lo que evita que la foto quede como una lámina pegada:
+ * entra con un fundido y un desplazamiento corto, y mientras está quieta hace
+ * un zoom lentísimo que va y vuelve. Nada de esto corre si el sistema pide
+ * menos animación.
  */
 export const EspacioPagina = ({ titulo, intro, salas }: Props) => {
   const [activaId, setActivaId] = useState<string | null>(salas[0]?.id ?? null);
-  const activa = salas.find(s => s.id === activaId) ?? salas[0] ?? null;
+  const menosMovimiento = useReducedMotion();
+
+  const indice = Math.max(0, salas.findIndex(s => s.id === activaId));
+  const activa = salas[indice] ?? null;
 
   return (
-    <main className="min-h-screen bg-manso-black text-manso-cream">
-      <div className="max-w-6xl mx-auto px-6 md:px-12 pt-28 md:pt-32 pb-24 md:pb-32">
-        <h1 className="font-montreal font-black tracking-[-0.04em] leading-[0.9] text-5xl sm:text-6xl md:text-7xl break-words">
+    <main className="relative min-h-screen bg-manso-black text-manso-cream overflow-hidden">
+      {/* Los puntos animados, como en /membresias. Siempre montado: no lo
+          afecta el cambio de sala. */}
+      <ParticleBackground />
+
+      <div className="relative z-10 max-w-6xl mx-auto px-6 md:px-12 pt-28 md:pt-32 pb-24 md:pb-32">
+        <motion.h1
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+          className="font-montreal font-black tracking-[-0.04em] leading-[0.9] text-5xl sm:text-6xl md:text-7xl break-words"
+        >
           {titulo}
-        </h1>
+        </motion.h1>
 
         {intro?.trim() && (
-          <div className="mt-6 max-w-2xl space-y-4">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.1, ease: [0.16, 1, 0.3, 1] }}
+            className="mt-6 max-w-2xl space-y-4"
+          >
             {intro.trim().split(/\n\n+/).map((p, i) => (
               <p
                 key={i}
@@ -47,7 +70,7 @@ export const EspacioPagina = ({ titulo, intro, salas }: Props) => {
                 {p}
               </p>
             ))}
-          </div>
+          </motion.div>
         )}
 
         {salas.length === 0 ? (
@@ -55,24 +78,56 @@ export const EspacioPagina = ({ titulo, intro, salas }: Props) => {
         ) : (
           <div className="mt-14 md:mt-20 grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-14 items-start">
             {/* Lista de salas */}
-            <ul className="space-y-1 md:space-y-2">
-              {salas.map(sala => {
-                const esActiva = sala.id === activa?.id;
+            <ul>
+              {salas.map((sala, i) => {
+                const esActiva = i === indice;
                 return (
-                  <li key={sala.id}>
+                  <motion.li
+                    key={sala.id}
+                    initial={{ opacity: 0, x: -18 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{
+                      duration: 0.5,
+                      delay: 0.15 + i * 0.05,
+                      ease: [0.16, 1, 0.3, 1],
+                    }}
+                  >
                     <button
                       type="button"
                       onClick={() => setActivaId(sala.id)}
                       aria-current={esActiva}
-                      className={`block w-full text-left font-montreal font-black tracking-[-0.02em] leading-[1.05] text-2xl sm:text-3xl md:text-4xl py-1 transition-colors duration-300 ${
-                        esActiva
-                          ? 'text-manso-terra'
-                          : 'text-manso-cream/25 hover:text-manso-cream/60'
-                      }`}
+                      className="group relative flex w-full items-baseline gap-3 sm:gap-4 py-1 text-left"
                     >
-                      {sala.nombre}
+                      {/* La barra del activo se desliza de un nombre a otro en
+                          vez de aparecer y desaparecer: es el mismo elemento
+                          movido por `layoutId`. */}
+                      {esActiva && (
+                        <motion.span
+                          layoutId="espacio-marca"
+                          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                          className="absolute -left-4 sm:-left-6 top-1/2 -translate-y-1/2 h-[2px] w-2.5 sm:w-4 bg-manso-terra"
+                        />
+                      )}
+
+                      <span
+                        className={`shrink-0 text-[9px] font-black tracking-[0.2em] tabular-nums transition-colors duration-300 ${
+                          esActiva ? 'text-manso-terra' : 'text-manso-cream/20'
+                        }`}
+                      >
+                        {dosDigitos(i)}
+                      </span>
+
+                      <span
+                        className={`font-montreal font-black tracking-[-0.02em] leading-[1.05] text-2xl sm:text-3xl md:text-4xl transition-all duration-300 group-hover:translate-x-1 ${
+                          esActiva
+                            ? 'text-manso-terra'
+                            : 'text-manso-cream/25 group-hover:text-manso-cream/60'
+                        }`}
+                      >
+                        {sala.nombre}
+                      </span>
                     </button>
-                  </li>
+                  </motion.li>
                 );
               })}
             </ul>
@@ -80,30 +135,78 @@ export const EspacioPagina = ({ titulo, intro, salas }: Props) => {
             {/* Foto de la sala elegida */}
             <div className="md:sticky md:top-28">
               <div className="relative w-full aspect-[4/3] overflow-hidden border border-manso-cream/10 bg-manso-cream/5">
-                {activa?.imagen_url ? (
-                  // Sin next/image: son fotos que sube Ana a Storage y el alto
-                  // es por aspect-ratio, no fijo.
-                  <img
-                    key={activa.id}
-                    src={activa.imagen_url}
-                    alt={activa.nombre}
-                    className="absolute inset-0 w-full h-full object-cover"
-                  />
-                ) : (
-                  <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 text-manso-cream/25">
-                    <ImageIcon size={28} />
-                    <span className="text-[10px] font-black uppercase tracking-[0.25em]">
-                      Foto en camino
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={activa?.id ?? 'vacio'}
+                    initial={{ opacity: 0, scale: 1.05 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.99 }}
+                    transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                    className="absolute inset-0"
+                  >
+                    {activa?.imagen_url ? (
+                      <motion.img
+                        // Sin next/image: son fotos que sube Ana a Storage y el
+                        // alto es por aspect-ratio, no fijo.
+                        src={activa.imagen_url}
+                        alt={activa.nombre}
+                        className="w-full h-full object-cover"
+                        animate={menosMovimiento ? undefined : { scale: [1, 1.07] }}
+                        transition={{
+                          duration: 14,
+                          repeat: Infinity,
+                          repeatType: 'reverse',
+                          ease: 'linear',
+                        }}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex flex-col items-center justify-center gap-3 text-manso-cream/25">
+                        <ImageIcon size={28} />
+                        <span className="text-[10px] font-black uppercase tracking-[0.25em]">
+                          Foto en camino
+                        </span>
+                      </div>
+                    )}
+                  </motion.div>
+                </AnimatePresence>
+
+                {/* Nombre sobre la foto: en mobile la lista queda arriba y sin
+                    esto no se sabe qué sala se está mirando. */}
+                {activa && (
+                  <div className="absolute inset-x-0 bottom-0 z-10 flex items-end justify-between gap-4 p-4 bg-gradient-to-t from-manso-black/80 to-transparent pt-14">
+                    <AnimatePresence mode="wait">
+                      <motion.span
+                        key={activa.id}
+                        initial={{ opacity: 0, y: 8 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: -8 }}
+                        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                        className="text-[10px] font-black uppercase tracking-[0.25em] text-manso-cream"
+                      >
+                        {activa.nombre}
+                      </motion.span>
+                    </AnimatePresence>
+                    <span className="shrink-0 text-[10px] font-black tracking-[0.2em] tabular-nums text-manso-cream/40">
+                      {dosDigitos(indice)} / {dosDigitos(salas.length - 1)}
                     </span>
                   </div>
                 )}
               </div>
 
-              {activa?.descripcion?.trim() && (
-                <p className="mt-4 text-sm leading-relaxed text-manso-cream/60 whitespace-pre-line">
-                  {activa.descripcion}
-                </p>
-              )}
+              <AnimatePresence mode="wait">
+                {activa?.descripcion?.trim() && (
+                  <motion.p
+                    key={activa.id}
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                    className="mt-4 text-sm leading-relaxed text-manso-cream/60 whitespace-pre-line"
+                  >
+                    {activa.descripcion}
+                  </motion.p>
+                )}
+              </AnimatePresence>
             </div>
           </div>
         )}
