@@ -140,13 +140,13 @@ export const Navbar = () => {
             {hasMounted && (
               <Link
                 href="/streaming"
-                className="flex items-center gap-2 text-[10px] font-black lowercase tracking-[0.4em] text-manso-terra hover:text-red-500 transition-colors duration-500"
+                className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.4em] text-manso-terra hover:text-red-500 transition-colors duration-500"
               >
                 <span className="relative flex h-2 w-2">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-manso-terra opacity-75" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-manso-terra" />
                 </span>
-                live
+                LIVE
               </Link>
             )}
 
