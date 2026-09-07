@@ -95,10 +95,10 @@ export function AppPromoModal() {
               id="app-promo-titulo"
               className="text-3xl sm:text-4xl font-black uppercase italic tracking-tighter leading-none text-manso-cream"
             >
-              Descargá la app
+              Manso en tu celular
             </h2>
             <p className="mt-5 text-manso-cream/55 text-sm font-light leading-relaxed">
-              Llevate Manso en el teléfono: agenda, membresía, eventos y comunidad en un solo lugar.
+              Agenda, membresía, eventos y comunidad en un solo lugar.
             </p>
 
             <a
@@ -108,7 +108,7 @@ export function AppPromoModal() {
               onClick={cerrar}
               className="mt-8 inline-flex w-full items-center justify-center px-6 py-4 rounded-full bg-manso-cream text-manso-black text-[11px] font-black uppercase tracking-[0.2em] hover:bg-manso-terra hover:text-manso-cream transition-colors"
             >
-              Ir a la app
+              Abrir web app
             </a>
 
             <button
