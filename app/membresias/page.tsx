@@ -15,6 +15,9 @@ import { CoworkModal, PARAM_FORM, FORM_OPEN_COWORK } from '@/components/ui/Cowor
 export default function MembresiasPage() {
   const [membresias, setMembresias] = useState<Membresia[]>([]);
   const [galleryImages, setGalleryImages] = useState<{ id: string; src: string }[]>([]);
+  // Una foto borrada del storage deja la fila viva en la DB: si no carga, se
+  // saca del mosaico en vez de mostrar el ícono de imagen rota.
+  const [fotosRotas, setFotosRotas] = useState<string[]>([]);
   const [textoIntro, setTextoIntro] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [openCoworkAbierto, setOpenCoworkAbierto] = useState(false);
@@ -73,6 +76,8 @@ export default function MembresiasPage() {
       .order('order_index', { ascending: true });
     setGalleryImages((data || []).map(img => ({ id: img.id, src: img.photo_url })));
   };
+
+  const galleryVisible = galleryImages.filter(img => !fotosRotas.includes(img.id));
 
   return (
     <div className="relative min-h-screen bg-manso-black">
@@ -195,7 +200,7 @@ export default function MembresiasPage() {
         />
 
         {/* Galería mosaico del cowork — cierre visual */}
-        {galleryImages.length > 0 && (
+        {galleryVisible.length > 0 && (
           <div className="mt-20">
             <div className="flex items-center gap-4 mb-6">
               <span className="text-[9px] font-black uppercase tracking-[0.6em] text-manso-terra">
@@ -204,7 +209,7 @@ export default function MembresiasPage() {
               <div className="flex-1 h-px bg-manso-cream/10" />
             </div>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-4">
-              {galleryImages.map((image) => (
+              {galleryVisible.map((image) => (
                 <div
                   key={image.id}
                   className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg hover:scale-[1.02] transition-transform duration-300 cursor-pointer"
@@ -213,6 +218,7 @@ export default function MembresiasPage() {
                     src={image.src}
                     alt="Manso Club Cowork"
                     className="w-full h-full object-cover"
+                    onError={() => setFotosRotas(prev => prev.includes(image.id) ? prev : [...prev, image.id])}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
                 </div>

@@ -43,19 +43,9 @@ export function MembresiaGalleryList({ refreshTrigger }: Props) {
   const handleDelete = async (image: MembresiaGalleryImage) => {
     if (!confirm('¿Eliminar esta foto?')) return;
 
-    // Intentar borrar del storage
-    if (image.photo_url.includes('supabase.co/storage/v1')) {
-      try {
-        const url = new URL(image.photo_url);
-        const parts = url.pathname.split('/');
-        const objIdx = parts.findIndex(p => p === 'object') + 2;
-        if (objIdx < parts.length) {
-          await supabase.storage
-            .from(parts[objIdx - 1])
-            .remove([parts.slice(objIdx).join('/')]);
-        }
-      } catch { /* ignorar errores de storage */ }
-    }
+    // Se borra solo la fila, no el archivo: la misma foto puede estar usada en
+    // otra sección (Cultura reusaba estas URLs) y borrarla del bucket la
+    // rompía allá sin que nadie se enterara.
 
     const { error } = await supabase.from('membresias_gallery').delete().eq('id', image.id);
     if (!error) setImages(prev => prev.filter(img => img.id !== image.id));

@@ -12,13 +12,6 @@ interface Props {
   initialPreview?: string | null;
 }
 
-function extractStoragePath(url: string, bucket: string): string | null {
-  const marker = `/object/public/${bucket}/`;
-  const index = url.indexOf(marker);
-  if (index === -1) return null;
-  return decodeURIComponent(url.slice(index + marker.length));
-}
-
 export function ImageUploader({ onUpload, bucket = 'flyers', folder, maxWidth = 1920, initialPreview = null }: Props) {
   const [isUploading, setIsUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(initialPreview);
@@ -77,11 +70,10 @@ export function ImageUploader({ onUpload, bucket = 'flyers', folder, maxWidth = 
       // 2. Obtener la URL pública
       const { data } = supabase.storage.from(bucket).getPublicUrl(filePath);
 
-      // Borrar el archivo anterior (si había uno en este mismo bucket) para no dejar huérfanos
-      const oldPath = preview ? extractStoragePath(preview, bucket) : null;
-      if (oldPath) {
-        supabase.storage.from(bucket).remove([oldPath]).catch(() => {});
-      }
+      // El archivo anterior NO se borra a propósito: una misma URL puede estar
+      // referenciada desde varias tablas (la galería del cowork y Cultura
+      // compartían fotos), y borrarla acá dejaba a la otra sección con la
+      // imagen rota. Un huérfano en el bucket es más barato que eso.
 
       setPreview(data.publicUrl);
       onUpload(data.publicUrl);
