@@ -72,29 +72,15 @@ export async function upsertTeamMember(member: Partial<TeamMember> & { name: str
 }
 
 export async function deleteTeamMember(id: string): Promise<void> {
-  // First, get the member to delete their photo if exists
-  const { data: member } = await supabase
-    .from('team_members')
-    .select('photo_url')
-    .eq('id', id)
-    .single();
-
-  // Delete the member
+  // Se borra solo la fila. La foto queda en el bucket a propósito: la misma URL
+  // puede estar referenciada desde otra tabla y borrarla acá la dejaría rota.
+  // Ver components/admin/ImageUploader.tsx.
   const { error } = await supabase
     .from('team_members')
     .delete()
     .eq('id', id);
 
   if (error) throw error;
-
-  // Delete photo from storage if exists
-  if (member?.photo_url?.includes('storage/v1/object/public/')) {
-    const bucketMatch = member.photo_url.match(/\/storage\/v1\/object\/public\/([^/]+)\/(.+)/);
-    if (bucketMatch) {
-      const [, bucketName, filePath] = bucketMatch;
-      await supabase.storage.from(bucketName).remove([filePath]);
-    }
-  }
 }
 
 export async function toggleTeamMemberActive(id: string, active: boolean): Promise<void> {

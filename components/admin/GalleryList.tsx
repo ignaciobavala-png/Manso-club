@@ -50,29 +50,9 @@ export function GalleryList({ refreshTrigger }: GalleryListProps) {
     if (!confirm('¿Eliminar esta imagen? Esta acción no se puede deshacer.')) return;
 
     try {
-      // Borrar archivo de storage si existe
-      if (image.photo_url && image.photo_url.includes('supabase.co/storage/v1')) {
-        try {
-          // Extraer path del archivo de la URL
-          const url = new URL(image.photo_url);
-          const pathParts = url.pathname.split('/');
-          const objectIndex = pathParts.findIndex(part => part === 'object') + 2;
-          if (objectIndex < pathParts.length) {
-            const filePath = pathParts.slice(objectIndex).join('/');
-            const bucket = pathParts[objectIndex - 1];
-            
-            const { error: storageError } = await supabase.storage
-              .from(bucket)
-              .remove([filePath]);
-            
-            if (storageError) {
-              console.warn('Error al eliminar archivo de storage:', storageError);
-            }
-          }
-        } catch (storageError) {
-          console.warn('Error procesando URL de storage:', storageError);
-        }
-      }
+      // El archivo del bucket no se borra: una misma URL puede estar referenciada
+      // desde otra tabla y borrarla acá deja esa sección con la imagen rota. Ver
+      // components/admin/ImageUploader.tsx.
 
       // Borrar registro de la base de datos
       const { error } = await supabase

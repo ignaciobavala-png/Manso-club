@@ -97,14 +97,8 @@ export function ArtistasList({ refreshTrigger }: ArtistasListProps) {
       return;
     }
 
-    // Borrar imagen del storage si existe
-    if (artista.imagen_url?.includes('storage/v1/object/public/')) {
-      const bucketMatch = artista.imagen_url.match(/\/storage\/v1\/object\/public\/([^/]+)\/(.+)/);
-      if (bucketMatch) {
-        const [, bucketName, filePath] = bucketMatch;
-        await supabase.storage.from(bucketName).remove([filePath]);
-      }
-    }
+    // La imagen del bucket no se borra: la misma URL puede estar referenciada desde
+    // otra tabla y borrarla acá la dejaría rota. Ver ImageUploader.
 
     setArtistas(prev => prev.filter(a => a.id !== artista.id));
     

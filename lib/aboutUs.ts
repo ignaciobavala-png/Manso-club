@@ -149,34 +149,6 @@ export async function uploadAboutUsPhoto(file: File, type: 'main' | 'gallery'): 
   }
 }
 
-export async function deleteAboutUsPhoto(url: string, type: 'main' | 'gallery'): Promise<void> {
-  try {
-    if (!url) {
-      throw new Error('URL de la foto no válida');
-    }
-
-    // Extraer el path de la URL
-    const urlObj = new URL(url);
-    const pathParts = urlObj.pathname.split('/');
-    const fileName = pathParts[pathParts.length - 1];
-    const folderPath = type === 'main' ? 'about-main' : 'about-gallery';
-    const filePath = `${folderPath}/${fileName}`;
-
-    // Eliminar archivo del storage
-    const { error } = await supabase.storage
-      .from('team-photos')
-      .remove([filePath]);
-
-    if (error) {
-      console.error('Error deleting photo:', error);
-      throw new Error('Error al eliminar la foto');
-    }
-  } catch (error) {
-    console.error('Error in deleteAboutUsPhoto:', error);
-    throw error;
-  }
-}
-
 // Función para revalidar la página after cambios
 export async function revalidateAboutUsPage(): Promise<void> {
   try {

@@ -22,15 +22,6 @@ const TIPO_META: Record<string, { icon: typeof Youtube; label: string }> = {
   imagen: { icon: ImageIcon, label: 'Foto' },
 };
 
-function deleteFromStorage(url: string) {
-  if (!url?.includes('storage/v1/object/public/')) return;
-  const match = url.match(/\/storage\/v1\/object\/public\/([^/]+)\/(.+)/);
-  if (match) {
-    const [, bucket, filePath] = match;
-    supabase.storage.from(bucket).remove([filePath]);
-  }
-}
-
 export function MultimediaList({ refreshTrigger }: { refreshTrigger?: number }) {
   const [items, setItems] = useState<MultimediaItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -59,8 +50,8 @@ export function MultimediaList({ refreshTrigger }: { refreshTrigger?: number }) 
   const handleDelete = async (id: string) => {
     if (!confirm('¿Eliminar este contenido?')) return;
 
-    const item = items.find(v => v.id === id);
-    if (item?.archivo_url) deleteFromStorage(item.archivo_url);
+    // Se borra la fila, no el archivo del bucket: la misma URL puede estar usada
+    // en otra sección. Ver ImageUploader.
 
     await supabase.from('multimedia_videos').delete().eq('id', id);
     setItems(prev => prev.filter(v => v.id !== id));

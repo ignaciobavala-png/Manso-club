@@ -12,13 +12,6 @@ interface Props {
   initialPreview?: string | null;
 }
 
-function extractStoragePath(url: string, bucket: string): string | null {
-  const marker = `/object/public/${bucket}/`;
-  const index = url.indexOf(marker);
-  if (index === -1) return null;
-  return decodeURIComponent(url.slice(index + marker.length));
-}
-
 export function VideoUploader({ onUpload, bucket = 'hero-media', folder = 'videos', initialPreview = null }: Props) {
   const [isUploading, setIsUploading] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
@@ -66,11 +59,8 @@ export function VideoUploader({ onUpload, bucket = 'hero-media', folder = 'video
 
       const { data } = supabase.storage.from(bucket).getPublicUrl(filePath);
 
-      // Borrar el archivo anterior (si había uno en este mismo bucket) para no dejar huérfanos
-      const oldPath = preview ? extractStoragePath(preview, bucket) : null;
-      if (oldPath) {
-        supabase.storage.from(bucket).remove([oldPath]).catch(() => {});
-      }
+      // El video anterior no se borra: la misma URL puede estar referenciada desde
+      // otra tabla y borrarla acá la dejaría rota. Ver ImageUploader.
 
       setPreview(data.publicUrl);
       setSavedNote(

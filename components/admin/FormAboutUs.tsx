@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { getAboutUs, updateAboutUs, uploadAboutUsPhoto, deleteAboutUsPhoto, AboutUsContent } from '@/lib/aboutUs';
+import { getAboutUs, updateAboutUs, uploadAboutUsPhoto, AboutUsContent } from '@/lib/aboutUs';
 import { CompactImageUploader } from './CompactImageUploader';
 import { FileText, Image as ImageIcon, Plus, X, AlertCircle, CheckCircle } from 'lucide-react';
 
@@ -111,9 +111,8 @@ export function FormAboutUs() {
   const handleMainPhotoDelete = async () => {
     if (formData.main_photo_url) {
       try {
-        // Eliminar del storage
-        await deleteAboutUsPhoto(formData.main_photo_url, 'main');
-        
+        // Se limpia la URL en la DB, pero el archivo queda en el bucket: la misma
+        // foto puede estar usada en otra sección. Ver ImageUploader.
         // Actualizar la base de datos para remover la URL
         if (aboutUsData) {
           await updateAboutUs({
@@ -157,11 +156,8 @@ export function FormAboutUs() {
   };
 
   const handleGalleryPhotoDelete = async (index: number) => {
-    const photoToDelete = formData.gallery_photos[index];
     try {
-      // Eliminar del storage
-      await deleteAboutUsPhoto(photoToDelete, 'gallery');
-      
+      // El archivo queda en el bucket a propósito. Ver ImageUploader.
       // Actualizar la base de datos
       const updatedGalleryPhotos = formData.gallery_photos.filter((_, i) => i !== index);
       if (aboutUsData) {
