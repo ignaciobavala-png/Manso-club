@@ -7,6 +7,7 @@ import { PorQueManso } from "@/components/Home/PorQueManso";
 import { SponsorBelt } from "@/components/Home/SponsorBelt";
 import { RandomGalleryPlaceholders } from "@/components/Home/RandomGalleryPlaceholders";
 import { Newsletter } from "@/components/Home/Newsletter";
+import { AppPromoModal } from "@/components/ui/AppPromoModal";
 
 export const revalidate = 30;
 
@@ -51,6 +52,9 @@ export default function Home() {
 
       {/* Cinturón de confianza — sponsors */}
       <SponsorBelt />
+
+      {/* Promo de la app: se abre solo a los 4s de entrar al home */}
+      <AppPromoModal />
 
     </div>
   );
