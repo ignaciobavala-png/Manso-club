@@ -1,14 +1,20 @@
 'use client';
 
-import { KeyboardEvent, useRef, useState } from 'react';
+import { KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { ImageIcon } from 'lucide-react';
 import { ParticleBackground } from '@/components/Home/ParticleBackground';
-import { EspacioSala } from '@/lib/types/espacio';
+import { EspacioSala, fotosDeSala } from '@/lib/types/espacio';
 
 /** Solo lo que la página dibuja, para que la vista previa del panel pueda
  *  pasarle borradores sin fila completa. */
-export type SalaVista = Pick<EspacioSala, 'id' | 'nombre' | 'descripcion' | 'imagen_url'>;
+export type SalaVista = Pick<
+  EspacioSala,
+  'id' | 'nombre' | 'descripcion' | 'imagen_url' | 'imagenes'
+>;
+
+/** Cada cuánto pasa sola a la foto siguiente. */
+const MS_POR_FOTO = 5000;
 
 interface Props {
   titulo: string;
@@ -41,12 +47,37 @@ export const EspacioPagina = ({ titulo, intro, salas }: Props) => {
 
   const botones = useRef<(HTMLButtonElement | null)[]>([]);
 
+  // Las fotos de la sala elegida. Pueden ser de una a cuatro: el contenedor es
+  // siempre el mismo y lo que cambia es lo que rota adentro, así que sumar
+  // fotos desde el panel no cambia el dibujo de la página.
+  const fotos = activa ? fotosDeSala(activa) : [];
+  const [foto, setFoto] = useState(0);
+
+  /** Cambiar de sala vuelve a la primera foto: si no, entrar a una sala con
+   *  dos fotos desde otra que estaba en la cuarta dejaría el cuadro vacío. */
+  const elegirSala = (id: string) => {
+    setActivaId(id);
+    setFoto(0);
+  };
+
+  // Rotación automática. Con una sola foto no hay nada que rotar, y si el
+  // sistema pide menos movimiento se queda quieta en la primera. Es un timeout
+  // por paso y no un intervalo para que elegir una foto a mano reinicie la
+  // espera: si no, el salto siguiente podía caer al instante.
+  useEffect(() => {
+    if (fotos.length < 2 || menosMovimiento) return;
+    const id = setTimeout(() => setFoto(f => (f + 1) % fotos.length), MS_POR_FOTO);
+    return () => clearTimeout(id);
+  }, [fotos.length, menosMovimiento, foto]);
+
+  const fotoActual = fotos[Math.min(foto, Math.max(0, fotos.length - 1))] ?? null;
+
   /** Elige una sala y le lleva el foco, para que la navegación con flechas y
    *  lo que se ve resaltado no se separen. Da la vuelta en los extremos. */
   const irA = (i: number) => {
     if (salas.length === 0) return;
     const destino = (i + salas.length) % salas.length;
-    setActivaId(salas[destino].id);
+    elegirSala(salas[destino].id);
     botones.current[destino]?.focus();
   };
 
@@ -134,7 +165,7 @@ export const EspacioPagina = ({ titulo, intro, salas }: Props) => {
                       ref={el => {
                         botones.current[i] = el;
                       }}
-                      onClick={() => setActivaId(sala.id)}
+                      onClick={() => elegirSala(sala.id)}
                       aria-selected={esActiva}
                       aria-controls="espacio-foto"
                       tabIndex={esActiva ? 0 : -1}
@@ -182,20 +213,22 @@ export const EspacioPagina = ({ titulo, intro, salas }: Props) => {
                 aria-labelledby={activa ? `sala-${activa.id}` : undefined}
                 className="relative w-full aspect-[4/3] overflow-hidden border border-manso-cream/10 bg-manso-cream/5"
               >
+                {/* Un solo cuadro: el fundido cruzado es entre salas y entre
+                    las fotos de una misma sala, por eso la key lleva las dos. */}
                 <AnimatePresence mode="wait">
                   <motion.div
-                    key={activa?.id ?? 'vacio'}
+                    key={`${activa?.id ?? 'vacio'}-${fotoActual ?? 'sinfoto'}`}
                     initial={{ opacity: 0, scale: 1.05 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.99 }}
                     transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                     className="absolute inset-0"
                   >
-                    {activa?.imagen_url ? (
+                    {activa && fotoActual ? (
                       <motion.img
                         // Sin next/image: son fotos que sube Ana a Storage y el
                         // alto es por aspect-ratio, no fijo.
-                        src={activa.imagen_url}
+                        src={fotoActual}
                         alt={activa.nombre}
                         className="w-full h-full object-cover"
                         animate={menosMovimiento ? undefined : { scale: [1, 1.07] }}
@@ -233,11 +266,45 @@ export const EspacioPagina = ({ titulo, intro, salas }: Props) => {
                         {activa.nombre}
                       </motion.span>
                     </AnimatePresence>
-                    <span className="shrink-0 text-[10px] font-black tracking-[0.2em] tabular-nums text-manso-cream/40">
-                      {dosDigitos(indice)} / {dosDigitos(salas.length - 1)}
-                    </span>
+
+                    <div className="flex items-center gap-3">
+                      {/* Puntos del carrusel: uno por foto cargada. Con una
+                          sola foto no aparecen, así que la sala que todavía no
+                          tiene las cuatro se ve igual de terminada. */}
+                      {fotos.length > 1 && (
+                        <div className="flex items-center gap-1.5">
+                          {fotos.map((url, i) => (
+                            <button
+                              key={url}
+                              type="button"
+                              onClick={() => setFoto(i)}
+                              aria-label={`Foto ${i + 1} de ${activa.nombre}`}
+                              aria-current={i === foto}
+                              className={`h-[3px] transition-all duration-300 focus:outline-none focus-visible:ring-1 focus-visible:ring-manso-terra ${
+                                i === foto
+                                  ? 'w-5 bg-manso-terra'
+                                  : 'w-2 bg-manso-cream/30 hover:bg-manso-cream/60'
+                              }`}
+                            />
+                          ))}
+                        </div>
+                      )}
+
+                      <span className="shrink-0 text-[10px] font-black tracking-[0.2em] tabular-nums text-manso-cream/40">
+                        {dosDigitos(indice)} / {dosDigitos(salas.length - 1)}
+                      </span>
+                    </div>
                   </div>
                 )}
+
+                {/* Precarga silenciosa del resto de las fotos: sin esto el
+                    fundido al pasar de una a otra arranca con el cuadro vacío
+                    la primera vuelta. */}
+                <div className="hidden" aria-hidden>
+                  {fotos.map(url => (
+                    <img key={url} src={url} alt="" />
+                  ))}
+                </div>
               </div>
 
               <AnimatePresence mode="wait">

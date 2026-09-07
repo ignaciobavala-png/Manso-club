@@ -13,9 +13,15 @@ import {
   Plus,
   Save,
   Trash2,
+  X,
 } from 'lucide-react';
-import { EspacioConfig, EspacioSala } from '@/lib/types/espacio';
-import { ImageUploader } from './ImageUploader';
+import {
+  EspacioConfig,
+  EspacioSala,
+  MAX_FOTOS_SALA,
+  fotosDeSala,
+} from '@/lib/types/espacio';
+import { CompactImageUploader } from './CompactImageUploader';
 
 const BUCKET = 'membresias-gallery';
 const INPUT =
@@ -67,6 +73,26 @@ export function EspacioAdmin() {
     const { error } = await supabase.from('espacio_salas').update(campos).eq('id', id);
     setGuardando(null);
     if (error) alert(error.message);
+  };
+
+  /**
+   * Escribe una foto en un hueco de la sala (o la saca, con `url` en null).
+   *
+   * El array se compacta —nada de huecos en el medio— y `imagen_url` sigue
+   * siendo la primera: es la portada que leía la página cuando había una sola
+   * foto, y así lo viejo no se rompe. Se guarda en el acto, igual que antes,
+   * para que no quede colgada si Ana se va sin apretar Guardar.
+   */
+  const cambiarFoto = (sala: EspacioSala, slot: number, url: string | null) => {
+    const fotos = fotosDeSala(sala);
+    if (url) fotos[slot] = url;
+    else fotos.splice(slot, 1);
+
+    const imagenes = fotos.filter(Boolean).slice(0, MAX_FOTOS_SALA);
+    const campos = { imagenes, imagen_url: imagenes[0] ?? null };
+
+    editarSala(sala.id, campos);
+    guardarSala(sala.id, campos);
   };
 
   const borrarSala = async (id: string) => {
@@ -268,18 +294,55 @@ export function EspacioAdmin() {
             <div>
               <label className={`${LABEL} flex items-center gap-2`}>
                 <ImageIcon size={14} />
-                Foto de la sala
+                Fotos de la sala (hasta {MAX_FOTOS_SALA})
               </label>
-              <ImageUploader
-                bucket={BUCKET}
-                folder="espacio/salas"
-                maxWidth={1800}
-                initialPreview={sala.imagen_url}
-                onUpload={url => {
-                  editarSala(sala.id, { imagen_url: url });
-                  guardarSala(sala.id, { imagen_url: url });
-                }}
-              />
+
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                {Array.from({ length: MAX_FOTOS_SALA }, (_, slot) => {
+                  const fotos = fotosDeSala(sala);
+                  const url = fotos[slot] ?? null;
+                  // Solo se habilita el hueco siguiente al último cargado: así
+                  // el array no queda con agujeros y el orden de la página es
+                  // el mismo que se ve acá.
+                  const habilitado = slot <= fotos.length;
+
+                  return (
+                    <div key={slot} className="relative">
+                      {habilitado ? (
+                        <CompactImageUploader
+                          // La key fuerza el remonte al borrar o reemplazar:
+                          // el preview del uploader es estado interno suyo.
+                          key={url ?? `vacio-${slot}-${fotos.length}`}
+                          bucket={BUCKET}
+                          folder="espacio/salas"
+                          maxWidth={1800}
+                          height="h-20"
+                          initialPreview={url}
+                          onUpload={nueva => cambiarFoto(sala, slot, nueva)}
+                        />
+                      ) : (
+                        <div className="w-full h-20 rounded-xl border-2 border-dashed border-manso-cream/10 bg-manso-cream/[0.02]" />
+                      )}
+
+                      {url && (
+                        <button
+                          type="button"
+                          onClick={() => cambiarFoto(sala, slot, null)}
+                          title="Quitar foto"
+                          className="absolute top-1 right-1 z-10 w-5 h-5 flex items-center justify-center rounded-md bg-manso-black/70 text-manso-cream/70 hover:text-manso-terra hover:bg-manso-black transition-colors"
+                        >
+                          <X size={11} />
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              <p className="text-[10px] text-manso-cream/30 mt-2 leading-relaxed">
+                En la página rotan solas dentro del mismo cuadro. Con una sola
+                foto se ve como hasta ahora; las que faltan no dejan hueco.
+              </p>
             </div>
 
             <div>

@@ -18,6 +18,8 @@ interface Props {
    * dibujo se ve más chico de lo pedido.
    */
   recortarAlfa?: boolean;
+  /** Foto ya cargada, para que el slot se dibuje lleno al abrir el panel. */
+  initialPreview?: string | null;
 }
 
 /** Alfa por debajo de esto cuenta como transparente al buscar el borde del dibujo. */
@@ -31,9 +33,10 @@ export function CompactImageUploader({
   className = "",
   height = "h-16",
   recortarAlfa = false,
+  initialPreview = null,
 }: Props) {
   const [isUploading, setIsUploading] = useState(false);
-  const [preview, setPreview] = useState<string | null>(null);
+  const [preview, setPreview] = useState<string | null>(initialPreview);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   /**
