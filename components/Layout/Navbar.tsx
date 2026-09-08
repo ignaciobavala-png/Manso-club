@@ -17,7 +17,8 @@ import { useForoNotifications } from '@/hooks/useForoNotifications';
 const mobileLink =
   'text-2xl font-light tracking-tight transition-colors py-1.5 min-h-[44px] flex items-center justify-center';
 
-const sidebarLinks = [
+const sidebarLinks: { name: string; href: string; external?: boolean }[] = [
+  { name: 'Manso App',            href: 'https://app.mansoclub.com.ar', external: true },
   { name: 'Manifiesto',           href: '/manifiesto' },
   { name: 'Nuestro espacio',      href: '/nuestro-espacio' },
   { name: 'Multimedia',           href: '/multimedia' },
@@ -254,6 +255,8 @@ export const Navbar = () => {
             <Link
               key={link.href}
               href={link.href}
+              target={link.external ? '_blank' : undefined}
+              rel={link.external ? 'noopener noreferrer' : undefined}
               onClick={() => setIsSidebarOpen(false)}
               className="text-2xl font-black uppercase italic tracking-tighter text-manso-cream hover:text-manso-terra transition-colors duration-300 leading-none"
             >
@@ -325,7 +328,7 @@ export const Navbar = () => {
 
             <div className="border-t border-zinc-100 pt-6 flex flex-col gap-2">
               {sidebarLinks.map((link) => (
-                <Link key={link.href} href={link.href} onClick={() => setIsMenuOpen(false)} className={`first-letter:uppercase text-manso-black/40 hover:text-orange-600 ${mobileLink}`}>
+                <Link key={link.href} href={link.href} target={link.external ? '_blank' : undefined} rel={link.external ? 'noopener noreferrer' : undefined} onClick={() => setIsMenuOpen(false)} className={`first-letter:uppercase text-manso-black/40 hover:text-orange-600 ${mobileLink}`}>
                   {link.name}
                 </Link>
               ))}
