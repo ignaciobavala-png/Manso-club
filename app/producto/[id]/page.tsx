@@ -3,11 +3,12 @@
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
-import { ArrowLeft, ArrowRight, Plus, ShoppingBag, Check, Minus, Truck, Shield, MessageCircle, ArrowRight as CheckoutIcon } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Plus, ShoppingBag, Check, Minus, Truck, Shield, MessageCircle, Expand, ArrowRight as CheckoutIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useCart } from '@/store/useCart';
 import { useCurrency } from '@/store/useCurrency';
 import { ParticleBackground } from '@/components/Home/ParticleBackground';
+import { Lightbox } from '@/components/ui/Lightbox';
 
 interface Producto {
   id: string;
@@ -25,6 +26,7 @@ export default function ProductoDetalle() {
   const [producto, setProducto] = useState<Producto | null>(null);
   const [loading, setLoading] = useState(true);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [fotoAmpliada, setFotoAmpliada] = useState(false);
   const [cantidad, setCantidad] = useState(1);
   const addItem = useCart((state) => state.addItem);
   const items = useCart((state) => state.items);
@@ -198,6 +200,16 @@ export default function ProductoDetalle() {
       <div className="relative min-h-screen bg-manso-black">
         <ParticleBackground />
 
+        {fotoAmpliada && (
+          <Lightbox
+            imagenes={producto.imagenes_urls?.length ? producto.imagenes_urls : ['/manso.png']}
+            indice={currentImageIndex}
+            alt={producto.nombre}
+            onCerrar={() => setFotoAmpliada(false)}
+            onCambiar={setCurrentImageIndex}
+          />
+        )}
+
         {/* Navbar especial de producto - ÚNICO NAVBAR VISIBLE */}
         <div className="sticky top-0 bg-manso-black/90 backdrop-blur-sm border-b border-manso-cream/10 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-8 md:px-20 py-3">
@@ -229,14 +241,26 @@ export default function ProductoDetalle() {
           <div className="flex flex-col justify-center">
             <div className="max-w-md mx-auto w-full space-y-3">
               <div className="aspect-square bg-manso-cream/5 border border-manso-cream/10 rounded-[20px] overflow-hidden relative">
-              <img 
-                src={currentImage}
-                alt={producto.nombre}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  e.currentTarget.src = '/manso.png';
-                }}
-              />
+              {/* La foto abre a pantalla completa: en este cuadro va recortada
+                  a cuadrado, y el detalle de la pieza es lo que se viene a ver. */}
+              <button
+                type="button"
+                onClick={() => setFotoAmpliada(true)}
+                title="Ver la foto en grande"
+                className="group block w-full h-full cursor-zoom-in"
+              >
+                <img 
+                  src={currentImage}
+                  alt={producto.nombre}
+                  className="w-full h-full object-cover"
+                  onError={(e) => {
+                    e.currentTarget.src = '/manso.png';
+                  }}
+                />
+                <span className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full bg-manso-black/60 text-manso-cream/80 group-hover:bg-manso-black group-hover:text-manso-cream transition-colors">
+                  <Expand size={15} />
+                </span>
+              </button>
               
               {/* Navegación de imágenes */}
               {(producto.imagenes_urls?.length || 0) > 1 && (

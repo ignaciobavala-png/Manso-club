@@ -123,7 +123,7 @@ export function ItemList({ table, title, refreshTrigger, onEdit }: Props) {
                     className="p-2 text-manso-cream/60 hover:text-manso-cream hover:bg-manso-cream/10 rounded-full transition-all flex-shrink-0"
                     title="Editar producto"
                   >
-                    <Edit3 size={14} />
+                    <Edit3 size={18} />
                   </button>
                 )}
 
@@ -136,11 +136,11 @@ export function ItemList({ table, title, refreshTrigger, onEdit }: Props) {
                   }`}
                 >
                   {savingId === item.id ? (
-                    <Loader2 size={14} className="animate-spin" />
+                    <Loader2 size={18} className="animate-spin" />
                   ) : activo ? (
-                    <Trash2 size={14} />
+                    <Trash2 size={18} />
                   ) : (
-                    <RotateCcw size={14} />
+                    <RotateCcw size={18} />
                   )}
                 </button>
               </div>
