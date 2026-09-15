@@ -90,6 +90,7 @@ export default async function MiCuentaPage() {
           tieneMembresia={tieneMembresia}
           esMiembro={esMiembro}
           artista={artistaRaw ?? null}
+          gestionApiUrl={process.env.GESTION_API_URL ?? ''}
         />
       </div>
     </div>

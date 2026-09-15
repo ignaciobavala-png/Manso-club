@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useActionState } from 'react';
+import { useState, useActionState, useEffect } from 'react';
 import Link from 'next/link';
 import { Play, User, CreditCard, ArrowRight, Check, Lock, Tv, Calendar, Music, ShoppingBag, Palette, MessageSquare, Plus, Trash2 } from 'lucide-react';
 import { MiArtePerfilForm } from '@/components/mi-cuenta/MiArtePerfilForm';
@@ -41,6 +41,8 @@ type ContenidoItem = {
   thumbnail_url: string | null;
 };
 
+type Carnet = { token: string; nombre: string } | null;
+
 type Props = {
   userId: string;
   displayName: string;
@@ -54,6 +56,7 @@ type Props = {
   tieneMembresia: boolean;
   esMiembro: boolean;
   artista: Artista;
+  gestionApiUrl: string;
 };
 
 const BASE_TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
@@ -63,12 +66,25 @@ const BASE_TABS: { id: Tab; label: string; icon: React.ReactNode }[] = [
   { id: 'membresia', label: 'Membresía',  icon: <CreditCard size={14} /> },
 ];
 
-export default function MiCuentaTabs({ userId, displayName, email, telefono, avatarUrl, bio, socialLinks, membresia, streaming, tieneMembresia, esMiembro, artista }: Props) {
+export default function MiCuentaTabs({ userId, displayName, email, telefono, avatarUrl, bio, socialLinks, membresia, streaming, tieneMembresia, esMiembro, artista, gestionApiUrl }: Props) {
   const TABS = BASE_TABS;
 
   const [tab, setTab] = useState<Tab>('perfil');
   const [currentAvatarUrl, setCurrentAvatarUrl] = useState<string | null>(avatarUrl);
+  const [carnet, setCarnet] = useState<Carnet>(null);
   const router = useRouter();
+
+  // El id lo resuelve el route handler desde la sesión, acá no viaja.
+  // Si el puente con gestión falla, se deja el bloque afuera sin romper el
+  // resto de Mi Cuenta.
+  useEffect(() => {
+    let vivo = true;
+    fetch('/api/gestion/mi-carnet')
+      .then(res => (res.ok ? res.json() : null))
+      .then(datos => { if (vivo && datos?.carnet) setCarnet(datos.carnet); })
+      .catch(() => {});
+    return () => { vivo = false; };
+  }, []);
 
   const initial = displayName?.[0]?.toUpperCase() ?? email?.[0]?.toUpperCase() ?? '?';
 
@@ -128,6 +144,30 @@ export default function MiCuentaTabs({ userId, displayName, email, telefono, ava
           </div>
         </div>
       </div>
+
+      {/* ── CARNET DEL COWORK ── */}
+      {carnet && gestionApiUrl && (
+        <div className="max-w-3xl mx-auto px-6 pb-8">
+          <div className="rounded-[20px] border border-manso-terra/30 bg-manso-terra/10 p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-5">
+            <div className="min-w-0">
+              <p className="text-[9px] font-black uppercase tracking-[0.5em] text-manso-terra mb-2">Tu carnet del cowork</p>
+              <p className="text-manso-cream text-sm font-black uppercase tracking-tight">{carnet.nombre}</p>
+              <p className="text-manso-cream/50 text-[11px] mt-1 leading-relaxed max-w-md">
+                Abrilo una vez desde el celular y ese teléfono queda reconocido: después el QR pegado en la puerta de cualquier sala ya sabe quién sos, sin que tengas que mostrar nada.
+              </p>
+            </div>
+            <a
+              href={`${gestionApiUrl}/c/${carnet.token}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full bg-manso-terra text-manso-cream text-[10px] font-black uppercase tracking-widest hover:bg-manso-cream hover:text-manso-black transition-all whitespace-nowrap shrink-0"
+            >
+              Abrir mi carnet
+              <ArrowRight size={14} className="flex-shrink-0" />
+            </a>
+          </div>
+        </div>
+      )}
 
       {/* ── DESCUBRÍ MANSO ── */}
       <div className="max-w-3xl mx-auto px-6 pb-8">
