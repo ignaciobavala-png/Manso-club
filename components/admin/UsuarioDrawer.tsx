@@ -68,6 +68,28 @@ interface Plan {
   precio: number;
   periodo: string;
   categoria: string;
+  /** Si al activarlo se emite una llave del cowork en Manso Gestión. */
+  otorga_llave: boolean;
+}
+
+/**
+ * Le avisa a Manso Gestión que se activó o se canceló una membresía.
+ *
+ * Falla en silencio a propósito: que el llavero esté caído no puede impedir
+ * que se active una membresía acá. La membresía queda bien guardada, y la
+ * llave se recupera resincronizando, porque `ref` es el id de
+ * user_membresias_activas y reenviarlo corrige en vez de duplicar.
+ */
+async function avisarAlLlavero(cuerpo: Record<string, unknown>) {
+  try {
+    await fetch('/api/gestion/cowork-llave', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(cuerpo),
+    });
+  } catch {
+    // El panel sigue como si nada.
+  }
 }
 
 function calcularVencimiento(periodo: string): string {
@@ -136,7 +158,7 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
 
     supabase
       .from('membresias')
-      .select('id, nombre, precio, periodo, categoria')
+      .select('id, nombre, precio, periodo, categoria, otorga_llave')
       .eq('activo', true)
       .order('orden', { ascending: true })
       .then(({ data }) => setPlanes(data ?? []));
@@ -186,6 +208,29 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
       .select('id')
       .single();
 
+    // Avisarle al llavero del cowork. Solo los planes que dan acceso al
+    // espacio: Cultural Manso y OPEN COWORK también son categoría 'Cowork'
+    // y no abren ninguna puerta.
+    if (plan.otorga_llave && nuevo?.id) {
+      await avisarAlLlavero({
+        accion: 'emitir',
+        ref: nuevo.id,
+        email: usuario.email,
+        nombre: usuario.display_name ?? usuario.email,
+        // El día que empieza a valer y el último que vale. `vencIso` es el
+        // instante en que deja de valer, así que el último día completo es
+        // el anterior; vitalicio manda null, que en el llavero es "no vence".
+        desde: new Date().toLocaleDateString('en-CA'),
+        hasta: vencIso
+          ? new Date(new Date(vencIso).getTime() - 1000).toLocaleDateString('en-CA')
+          : null,
+        plan: plan.nombre,
+        precio: plan.precio,
+        pagina_user_id: usuario.id,
+        telefono: usuario.telefono ?? undefined,
+      });
+    }
+
     // Sincronizar user_profiles
     const profileUpdate = {
       membresia_activa: true,
@@ -219,6 +264,12 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
       .update({ estado: 'cancelada' })
       .eq('user_id', usuario.id)
       .eq('estado', 'activa');
+
+    // El llavero anula la llave de esa misma membresía. Si el plan no daba
+    // llave, no hay nada que anular y gestión responde que anuló cero.
+    if (planActivo?.id) {
+      await avisarAlLlavero({ accion: 'anular', ref: planActivo.id });
+    }
 
     const profileUpdate = { membresia_activa: false, membresia_tipo: null, membresia_hasta: null };
     await supabase.from('user_profiles').update(profileUpdate).eq('id', usuario.id);
