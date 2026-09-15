@@ -2,10 +2,13 @@
 
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
-import { ImageUploader } from './ImageUploader';
+import { CompactImageUploader } from './CompactImageUploader';
 import { VisibilidadToggle } from './VisibilidadToggle';
 import { Tag, DollarSign, Package, Plus, X, AlertCircle, CheckCircle } from 'lucide-react';
 import { CATEGORIAS_TIENDA } from '@/lib/constants';
+
+/** Fotos por producto. El carrusel de la tienda las rota en este orden. */
+const MAX_FOTOS = 5;
 
 export function FormProducto() {
   const [loading, setLoading] = useState(false);
@@ -86,6 +89,23 @@ export function FormProducto() {
     });
     setError(null);
     setSuccess(false);
+  };
+
+  /**
+   * Escribe una foto en un hueco del producto (o la saca, con `url` en null).
+   *
+   * El array se compacta —nada de huecos en el medio— para que el orden del
+   * panel sea el mismo que el del carrusel de la tienda y la primera siga
+   * siendo la portada.
+   */
+  const cambiarFoto = (slot: number, url: string | null) => {
+    setFormData(prev => {
+      const fotos = [...prev.imagenes_urls];
+      if (url) fotos[slot] = url;
+      else fotos.splice(slot, 1);
+      return { ...prev, imagenes_urls: fotos.filter(Boolean).slice(0, MAX_FOTOS) };
+    });
+    setError(null);
   };
 
   const resetForm = () => {
@@ -201,49 +221,62 @@ export function FormProducto() {
           </div>
         )}
         
-        {/* Zona de Carga de Imágenes */}
+        {/* Fotos del producto: un hueco por foto */}
         <div className="space-y-2">
           <label className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2">
-            Imágenes del Producto ({formData.imagenes_urls.length}/5)
+            Fotos del producto ({formData.imagenes_urls.length}/{MAX_FOTOS})
           </label>
-          <div className="space-y-3">
-            <ImageUploader 
-              bucket="products" 
-              onUpload={(url) => {
-                if (formData.imagenes_urls.length < 5) {
-                  setFormData({...formData, imagenes_urls: [...formData.imagenes_urls, url]});
-                  setError(null); // Limpiar error al subir imagen exitosamente
-                } else {
-                  setError('Máximo 5 imágenes por producto');
-                }
-              }} 
-            />
-            
-            {/* Previsualización de imágenes cargadas */}
-            {formData.imagenes_urls.length > 0 && (
-              <div className="grid grid-cols-3 gap-2">
-                {formData.imagenes_urls.map((url, index) => (
-                  <div key={index} className="relative group">
-                    <img 
-                      src={url} 
-                      alt={`Imagen ${index + 1}`}
-                      className="w-full h-20 object-cover rounded-lg border border-manso-cream/20"
+
+          <div className="grid grid-cols-3 sm:grid-cols-5 gap-2">
+            {Array.from({ length: MAX_FOTOS }, (_, slot) => {
+              const url = formData.imagenes_urls[slot] ?? null;
+              // Solo se habilita el hueco siguiente al último cargado: así el
+              // array no queda con agujeros.
+              const habilitado = slot <= formData.imagenes_urls.length;
+
+              return (
+                <div key={slot} className="relative">
+                  {habilitado ? (
+                    <CompactImageUploader
+                      // La key fuerza el remonte al borrar, reemplazar o pasar
+                      // a editar otro producto: el preview es estado interno
+                      // del uploader.
+                      key={`${editingId ?? 'nuevo'}-${url ?? `vacio-${slot}-${formData.imagenes_urls.length}`}`}
+                      bucket="products"
+                      height="h-20"
+                      initialPreview={url}
+                      onUpload={nueva => cambiarFoto(slot, nueva)}
                     />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        const newUrls = formData.imagenes_urls.filter((_, i) => i !== index);
-                        setFormData({...formData, imagenes_urls: newUrls});
-                      }}
-                      className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600"
-                    >
-                      <X size={12} className="w-3 h-3" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            )}
+                  ) : (
+                    <div className="w-full h-20 rounded-xl border-2 border-dashed border-manso-cream/10 bg-manso-cream/[0.02]" />
+                  )}
+
+                  {url && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => cambiarFoto(slot, null)}
+                        title="Quitar foto"
+                        className="absolute top-1 right-1 z-10 w-5 h-5 flex items-center justify-center rounded-md bg-manso-black/70 text-manso-cream/70 hover:text-manso-terra hover:bg-manso-black transition-colors"
+                      >
+                        <X size={11} />
+                      </button>
+                      {slot === 0 && (
+                        <span className="absolute bottom-1 left-1 z-10 px-1.5 py-0.5 rounded bg-manso-black/70 text-[8px] font-black uppercase tracking-widest text-manso-cream/70">
+                          Portada
+                        </span>
+                      )}
+                    </>
+                  )}
+                </div>
+              );
+            })}
           </div>
+
+          <p className="text-[10px] text-manso-cream/30 ml-2 leading-relaxed">
+            La primera foto es la portada: es la que sale en la grilla de la
+            tienda. Las demás se pasan con las flechas en la ficha del producto.
+          </p>
         </div>
 
         <div className="grid grid-cols-1 gap-4">
