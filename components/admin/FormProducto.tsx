@@ -6,9 +6,20 @@ import { CompactImageUploader } from './CompactImageUploader';
 import { VisibilidadToggle } from './VisibilidadToggle';
 import { Tag, DollarSign, Package, Plus, X, AlertCircle, CheckCircle } from 'lucide-react';
 import { CATEGORIAS_TIENDA } from '@/lib/constants';
+import { useCurrency } from '@/store/useCurrency';
 
 /** Fotos por producto. El carrusel de la tienda las rota en este orden. */
 const MAX_FOTOS = 5;
+
+/**
+ * A partir de acá el precio se asume cargado en pesos por error.
+ *
+ * `productos.precio` está en USD —la tienda multiplica por el blue para
+ * mostrar ARS— pero el campo decía sólo "PRECIO", y una mochila cargada como
+ * 40000 salía publicada en USD 40.000. Nada del catálogo real llega a los
+ * cuatro dígitos en dólares, así que ese es el umbral para avisar.
+ */
+const PRECIO_USD_SOSPECHOSO = 1000;
 
 export function FormProducto() {
   const [loading, setLoading] = useState(false);
@@ -131,6 +142,21 @@ export function FormProducto() {
       delete (window as any).editProduct;
     };
   }, []);
+
+  // La cotización es sólo informativa acá: el cobro real la recalcula en el
+  // servidor (`lib/dolar.ts`), nunca con lo que diga el navegador.
+  const { rate, fetchRate } = useCurrency();
+
+  useEffect(() => {
+    fetchRate();
+  }, [fetchRate]);
+
+  const precioEnPesos =
+    rate && formData.precio > 0
+      ? `$${Math.round(formData.precio * rate).toLocaleString('es-AR')}`
+      : null;
+
+  const precioSospechoso = formData.precio >= PRECIO_USD_SOSPECHOSO;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -384,20 +410,38 @@ export function FormProducto() {
             )}
           </div>
 
-          {/* Precio en Moneda */}
-          <div className="relative">
-            <DollarSign className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-manso-cream/60 w-4 h-4" size={16} />
-            <input 
-              type="number" 
-              placeholder="PRECIO"
-              className="w-full bg-manso-cream/10 p-3 sm:p-4 pl-10 sm:pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono font-bold text-manso-cream placeholder:text-manso-cream/40 text-sm sm:text-base"
-              value={formData.precio === 0 ? '' : formData.precio}
-              onChange={e => {
-                setFormData({...formData, precio: Number(e.target.value)});
-                setError(null); // Limpiar error al escribir precio
-              }}
-              required
-            />
+          {/* Precio: siempre en USD, con el equivalente en pesos a la vista */}
+          <div className="space-y-2">
+            <div className="relative">
+              <DollarSign className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-manso-cream/60 w-4 h-4" size={16} />
+              <input 
+                type="number" 
+                placeholder="PRECIO EN DÓLARES"
+                className="w-full bg-manso-cream/10 p-3 sm:p-4 pl-10 sm:pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono font-bold text-manso-cream placeholder:text-manso-cream/40 text-sm sm:text-base"
+                value={formData.precio === 0 ? '' : formData.precio}
+                onChange={e => {
+                  setFormData({...formData, precio: Number(e.target.value)});
+                  setError(null); // Limpiar error al escribir precio
+                }}
+                required
+              />
+            </div>
+
+            {precioSospechoso ? (
+              <p className="text-[10px] font-bold text-manso-terra ml-2 leading-relaxed flex items-start gap-1.5">
+                <AlertCircle size={12} className="mt-0.5 shrink-0" />
+                <span>
+                  ¿Seguro? El precio va en dólares: USD {formData.precio.toLocaleString('es-AR')} se
+                  publica como {precioEnPesos ?? '—'} en la tienda.
+                </span>
+              </p>
+            ) : (
+              <p className="text-[10px] text-manso-cream/30 ml-2 leading-relaxed">
+                El precio se carga en dólares. En la tienda se ve así o en pesos,
+                según lo que elija cada persona.
+                {precioEnPesos && formData.precio > 0 && ` Hoy, USD ${formData.precio.toLocaleString('es-AR')} son ${precioEnPesos}.`}
+              </p>
+            )}
           </div>
 
           {/* Stock */}
