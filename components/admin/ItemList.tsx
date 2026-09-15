@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Trash2, Loader2, Calendar, Package, User, Edit3, RotateCcw } from 'lucide-react';
+import { formatMoneda } from '@/lib/precios';
 
 interface Props {
   table: 'eventos' | 'productos' | 'artistas';
@@ -111,7 +112,15 @@ export function ItemList({ table, title, refreshTrigger, onEdit }: Props) {
                     )}
                   </p>
                   <p className="text-[9px] sm:text-[10px] text-manso-cream/60 font-mono truncate">
-                    {item.fecha ? new Date(item.fecha).toLocaleDateString() : item.precio ? `$${item.precio}` : item.bio ? `${item.bio.substring(0, 30)}...` : 'Artista'}
+                    {item.fecha
+                      ? new Date(item.fecha).toLocaleDateString()
+                      : item.precio
+                        // La moneda va escrita: en la lista conviven precios de
+                        // referencia en dólares y en pesos.
+                        ? formatMoneda(Number(item.precio), item.moneda === 'ARS' ? 'ARS' : 'USD')
+                        : item.bio
+                          ? `${item.bio.substring(0, 30)}...`
+                          : 'Artista'}
                   </p>
                 </div>
               </div>

@@ -7,6 +7,7 @@ import { ArrowLeft, ArrowRight, Plus, ShoppingBag, Check, Minus, Truck, Shield, 
 import Link from 'next/link';
 import { useCart } from '@/store/useCart';
 import { useCurrency } from '@/store/useCurrency';
+import { mostrarPrecio as formatearPrecio, precioEnUsd, formatUsd, type Moneda } from '@/lib/precios';
 import { ParticleBackground } from '@/components/Home/ParticleBackground';
 import { Lightbox } from '@/components/ui/Lightbox';
 
@@ -14,6 +15,8 @@ interface Producto {
   id: string;
   nombre: string;
   precio: number;
+  /** Moneda en la que se cargó el precio; sin ella, USD. */
+  moneda?: Moneda | string | null;
   imagenes_urls: string[];
   descripcion?: string;
   stock: number;
@@ -42,16 +45,10 @@ export default function ProductoDetalle() {
     }
   }, [params.id]);
 
-  // Los precios están cargados en USD; se muestran en pesos según el blue.
-  const mostrarPrecio = (precioUsd: number) =>
-    rate
-      ? new Intl.NumberFormat('es-AR', {
-          style: 'currency',
-          currency: 'ARS',
-          minimumFractionDigits: 0,
-          maximumFractionDigits: 0,
-        }).format(Math.round(precioUsd * rate))
-      : `USD $${precioUsd.toLocaleString('es-AR')}`;
+  // La ficha muestra siempre el precio en pesos: si el producto se cargó en
+  // dólares sale del blue, y si se cargó en pesos es el número tal cual.
+  const mostrarPrecio = (prod: { precio: number; moneda?: Moneda | string | null }) =>
+    formatearPrecio(prod, 'ARS', rate);
 
   const fetchProducto = async (id: string) => {
     const { data, error } = await supabase
@@ -102,6 +99,7 @@ export default function ProductoDetalle() {
             id: producto.id,
             nombre: producto.nombre,
             precio: producto.precio,
+            moneda: producto.moneda,
             imagenes_urls: producto.imagenes_urls,
             stock: producto.stock
           });
@@ -146,6 +144,7 @@ export default function ProductoDetalle() {
             id: producto.id,
             nombre: producto.nombre,
             precio: producto.precio,
+            moneda: producto.moneda,
             imagenes_urls: producto.imagenes_urls,
             stock: producto.stock
           });
@@ -331,15 +330,15 @@ export default function ProductoDetalle() {
               </h2>
               <div className="flex items-baseline gap-3 mb-2">
                 <span className="text-2xl md:text-3xl font-black text-manso-cream">
-                  {mostrarPrecio(producto.precio)}
+                  {mostrarPrecio(producto)}
                 </span>
                 <span className="text-xs text-manso-cream/40 uppercase tracking-wider font-medium">
                   + envío
                 </span>
               </div>
-              {rate && (
+              {rate && precioEnUsd(producto, rate) !== null && (
                 <p className="text-[11px] text-manso-cream/30">
-                  USD ${producto.precio.toLocaleString('es-AR')} · cotización dólar blue $
+                  {formatUsd(precioEnUsd(producto, rate)!)} · cotización dólar blue $
                   {rate.toLocaleString('es-AR')}
                 </p>
               )}

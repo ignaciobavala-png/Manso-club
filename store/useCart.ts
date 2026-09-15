@@ -1,11 +1,15 @@
 // store/useCart.ts
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
+import { totalEn, type Moneda } from '@/lib/precios';
 
 interface Product {
   id: string;
   nombre: string;
+  /** Precio tal como se cargó en el panel, en `moneda`. */
   precio: number;
+  /** Moneda de referencia del producto; los ítems viejos del localStorage no la tienen. */
+  moneda?: Moneda | string | null;
   imagenes_urls: string[];
   stock?: number; // Stock opcional para validación
 }
@@ -19,7 +23,11 @@ interface CartStore {
   addItem: (product: Product) => void;
   removeItem: (id: string) => void;
   clearCart: () => void;
-  total: () => number;
+  /**
+   * Total del carrito en una moneda. Devuelve `null` si hay que convertir
+   * algún ítem y todavía no llegó la cotización.
+   */
+  total: (moneda: Moneda, cotizacion: number | null) => number | null;
   checkout: () => void;
 }
 
@@ -52,7 +60,7 @@ export const useCart = create<CartStore>()(
       },
       removeItem: (id) => set({ items: get().items.filter((item) => item.id !== id) }),
       clearCart: () => set({ items: [] }),
-      total: () => get().items.reduce((acc, item) => acc + item.precio * item.quantity, 0),
+      total: (moneda, cotizacion) => totalEn(get().items, moneda, cotizacion),
       checkout: () => {
         // Redirigir a la página de checkout
         console.log('DEBUG: Checkout function called, redirecting to /checkout');

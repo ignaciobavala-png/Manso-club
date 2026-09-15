@@ -11,6 +11,7 @@ interface Producto {
   id: string;
   nombre: string;
   precio: number;
+  moneda?: string | null;
   imagenes_urls: string[];
   descripcion?: string;
   stock: number;
@@ -42,6 +43,7 @@ export const TiendaHome = () => {
           id: '1',
           nombre: 'MANSO TEE BLACK',
           precio: 15000,
+          moneda: 'ARS',
           imagenes_urls: ['/assets/manso1.webp'],
           descripcion: 'Edición limitada 2026',
           stock: 10,
@@ -52,6 +54,7 @@ export const TiendaHome = () => {
           id: '2',
           nombre: 'MANSO HOODIE TERRA',
           precio: 28000,
+          moneda: 'ARS',
           imagenes_urls: ['/assets/manso2.webp'],
           descripcion: 'Premium cotton blend',
           stock: 5,
@@ -62,6 +65,7 @@ export const TiendaHome = () => {
           id: '3',
           nombre: 'MANSO CAP BEIGE',
           precio: 12000,
+          moneda: 'ARS',
           imagenes_urls: ['/assets/manso3.webp'],
           descripcion: 'Limited edition',
           stock: 8,
@@ -72,6 +76,7 @@ export const TiendaHome = () => {
           id: '4',
           nombre: 'MANSO TOTE BAG',
           precio: 8000,
+          moneda: 'ARS',
           imagenes_urls: ['/assets/manso5.webp'],
           descripcion: 'Organic canvas',
           stock: 15,
@@ -140,6 +145,7 @@ export const TiendaHome = () => {
                   id: producto.id,
                   nombre: producto.nombre,
                   precio: producto.precio,
+                  moneda: producto.moneda,
                   imagenes_urls: producto.imagenes_urls,
                   descripcion: producto.descripcion
                 }} 

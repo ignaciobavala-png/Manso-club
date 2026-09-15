@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
-import { getCotizacionDolar, usdToArs } from '@/lib/dolar';
+import { getCotizacionDolar } from '@/lib/dolar';
+import { formatArs, monedaDe, precioEnArs, precioEnUsd } from '@/lib/precios';
 
 interface NotifyRequest {
   cliente: {
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest) {
     const ids = items.map((i) => i.id);
     const { data: productos, error: productosError } = await supabase
       .from('productos')
-      .select('id, nombre, precio, stock')
+      .select('id, nombre, precio, stock, moneda')
       .eq('active', true)
       .in('id', ids);
 
@@ -39,38 +40,37 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Uno o más productos ya no están disponibles' }, { status: 400 });
     }
 
-    let cotizacion;
+    // La cotización sólo hace falta si hay algún producto cargado en dólares.
+    const hayDolares = productos.some((p) => monedaDe(p) === 'USD');
+    let cotizacion: number | null = null;
     try {
-      cotizacion = await getCotizacionDolar();
+      cotizacion = (await getCotizacionDolar()).venta;
     } catch {
-      return NextResponse.json(
-        { error: 'No pudimos obtener la cotización del dólar. Probá de nuevo en unos minutos.' },
-        { status: 503 }
-      );
+      if (hayDolares) {
+        return NextResponse.json(
+          { error: 'No pudimos obtener la cotización del dólar. Probá de nuevo en unos minutos.' },
+          { status: 503 }
+        );
+      }
     }
 
     const pedidoProductos = items.map((item) => {
       const producto = productos.find((p) => p.id === item.id)!;
-      const precioUsd = Number(producto.precio);
       return {
         id: producto.id,
         nombre: producto.nombre,
-        precio_usd: precioUsd,
-        precio: usdToArs(precioUsd, cotizacion.venta),
+        moneda: monedaDe(producto),
+        precio_usd: precioEnUsd(producto, cotizacion),
+        precio: precioEnArs(producto, cotizacion)!,
         quantity: item.quantity,
       };
     });
 
     const total = pedidoProductos.reduce((acc, p) => acc + p.precio * p.quantity, 0);
-    const totalUsd = pedidoProductos.reduce((acc, p) => acc + p.precio_usd * p.quantity, 0);
-
-    const formatArs = (n: number) =>
-      new Intl.NumberFormat('es-AR', {
-        style: 'currency',
-        currency: 'ARS',
-        minimumFractionDigits: 0,
-        maximumFractionDigits: 0,
-      }).format(n);
+    // Sin cotización (pedido todo en pesos) no hay equivalente en dólares.
+    const totalUsd = pedidoProductos.every((p) => p.precio_usd !== null)
+      ? pedidoProductos.reduce((acc, p) => acc + p.precio_usd! * p.quantity, 0)
+      : null;
 
     const productosTexto = pedidoProductos
       .map((p) => `• ${p.nombre} x${p.quantity} — ${formatArs(p.precio * p.quantity)}`)
@@ -86,7 +86,9 @@ export async function POST(request: NextRequest) {
       `🏠 Dirección: ${cliente.direccion}\n\n` +
       `*PRODUCTOS SOLICITADOS:*\n${productosTexto}\n\n` +
       `*TOTAL: ${formatArs(total)}*\n` +
-      `_(USD ${totalUsd} — cotización $${cotizacion.venta})_\n\n` +
+      (totalUsd !== null && cotizacion
+        ? `_(USD ${Math.round(totalUsd)} — cotización $${cotizacion})_\n\n`
+        : `\n`) +
       `*📋 PRÓXIMOS PASOS:*\n` +
       `1. Contactar al cliente para confirmar el pedido\n` +
       `2. Enviar datos bancarios para el pago\n` +
@@ -103,8 +105,8 @@ export async function POST(request: NextRequest) {
         productos: pedidoProductos,
         total,
         total_usd: totalUsd,
-        cotizacion_dolar: cotizacion.venta,
-        moneda_origen: 'USD',
+        cotizacion_dolar: cotizacion,
+        moneda_origen: hayDolares ? 'USD' : 'ARS',
         estado: 'pendiente_pago',
         metodo_pago: 'transferencia',
         mensaje_whatsapp: mensaje,
@@ -121,7 +123,7 @@ export async function POST(request: NextRequest) {
       success: true,
       pedido_id: pedido?.id,
       total_ars: total,
-      cotizacion: cotizacion.venta,
+      cotizacion,
       message: 'Pedido recibido exitosamente',
     });
   } catch (error) {

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
 import { getMPPreferenceClient, getSiteUrl } from '@/lib/mercadopago';
-import { getCotizacionDolar, usdToArs } from '@/lib/dolar';
+import { getCotizacionDolar } from '@/lib/dolar';
+import { monedaDe, precioEnArs, precioEnUsd } from '@/lib/precios';
 
 interface CreatePreferenceRequest {
   cliente: {
@@ -39,7 +40,7 @@ export async function POST(request: NextRequest) {
     const ids = items.map((i) => i.id);
     const { data: productos, error: productosError } = await supabase
       .from('productos')
-      .select('id, nombre, precio, stock')
+      .select('id, nombre, precio, stock, moneda')
       .eq('active', true)
       .in('id', ids);
 
@@ -47,20 +48,24 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Uno o más productos ya no están disponibles' }, { status: 400 });
     }
 
-    // Los precios de `productos` están en USD y Mercado Pago cobra en ARS.
-    // La cotización se resuelve acá y nunca se acepta desde el cliente: si
-    // viniera del navegador se podría manipular para pagar menos.
-    let cotizacion;
+    // Mercado Pago cobra en ARS. Los productos cargados en dólares necesitan la
+    // cotización, que se resuelve acá y nunca se acepta desde el cliente: si
+    // viniera del navegador se podría manipular para pagar menos. Si todo el
+    // carrito está cargado en pesos, el pedido puede seguir sin cotización.
+    const hayDolares = productos.some((p) => monedaDe(p) === 'USD');
+    let cotizacion: number | null = null;
     try {
-      cotizacion = await getCotizacionDolar();
+      cotizacion = (await getCotizacionDolar()).venta;
     } catch {
-      return NextResponse.json(
-        {
-          error:
-            'No pudimos obtener la cotización del dólar en este momento. Probá de nuevo en unos minutos o coordiná el pago por WhatsApp.',
-        },
-        { status: 503 }
-      );
+      if (hayDolares) {
+        return NextResponse.json(
+          {
+            error:
+              'No pudimos obtener la cotización del dólar en este momento. Probá de nuevo en unos minutos o coordiná el pago por WhatsApp.',
+          },
+          { status: 503 }
+        );
+      }
     }
 
     const pedidoProductos = items.map((item) => {
@@ -68,18 +73,21 @@ export async function POST(request: NextRequest) {
       if (typeof producto.stock === 'number' && item.quantity > producto.stock) {
         throw new Error(`Sin stock suficiente para ${producto.nombre}`);
       }
-      const precioUsd = Number(producto.precio);
       return {
         id: producto.id,
         nombre: producto.nombre,
-        precio_usd: precioUsd,
-        precio: usdToArs(precioUsd, cotizacion.venta),
+        moneda: monedaDe(producto),
+        precio_usd: precioEnUsd(producto, cotizacion),
+        precio: precioEnArs(producto, cotizacion)!,
         quantity: item.quantity,
       };
     });
 
     const total = pedidoProductos.reduce((acc, p) => acc + p.precio * p.quantity, 0);
-    const totalUsd = pedidoProductos.reduce((acc, p) => acc + p.precio_usd * p.quantity, 0);
+    // Sin cotización (carrito todo en pesos) no hay equivalente en dólares.
+    const totalUsd = pedidoProductos.every((p) => p.precio_usd !== null)
+      ? pedidoProductos.reduce((acc, p) => acc + p.precio_usd! * p.quantity, 0)
+      : null;
 
     const { data: pedido, error: pedidoError } = await supabase
       .from('pedidos')
@@ -92,8 +100,8 @@ export async function POST(request: NextRequest) {
         productos: pedidoProductos,
         total,
         total_usd: totalUsd,
-        cotizacion_dolar: cotizacion.venta,
-        moneda_origen: 'USD',
+        cotizacion_dolar: cotizacion,
+        moneda_origen: hayDolares ? 'USD' : 'ARS',
         estado: 'pendiente_pago',
         metodo_pago: 'mercadopago',
       })
@@ -143,7 +151,7 @@ export async function POST(request: NextRequest) {
       pedido_id: pedido.id,
       init_point: preference.init_point,
       total_ars: total,
-      cotizacion: cotizacion.venta,
+      cotizacion,
     });
   } catch (error) {
     console.error('Error creando preferencia de Mercado Pago:', error);

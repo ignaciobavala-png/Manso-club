@@ -136,6 +136,19 @@ dos circuitos distintos.
   / registrado / membresía activa). Otorgar reusa `UsuarioDrawer`; si la persona
   no tiene cuenta, el botón ofrece copiar el link de registro.
 
+### Precios de la tienda
+
+Cada producto guarda su **moneda de referencia** en `productos.moneda`
+(`'USD' | 'ARS'`, default `'USD'` para lo que ya estaba cargado). El número que
+se escribe en el panel es el que queda fijo; el precio en la otra moneda se
+calcula con el blue al mostrarlo o al cobrar. Toda la conversión y el formato
+pasan por `lib/precios.ts` — no multiplicar por la cotización a mano.
+
+El cobro siempre es en pesos y la cotización se resuelve en el servidor
+(`lib/dolar.ts`), nunca con la que manda el navegador. Si dolarapi no responde,
+un carrito enteramente en pesos igual puede comprar; con un producto en dólares
+adentro, el checkout devuelve 503.
+
 ### Image Uploads
 
 Images are stored in Supabase Storage. `ImageUploader` and `CompactImageUploader` components handle upload; products support an array of image URLs.

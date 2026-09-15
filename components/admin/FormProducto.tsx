@@ -7,19 +7,21 @@ import { VisibilidadToggle } from './VisibilidadToggle';
 import { Tag, DollarSign, Package, Plus, X, AlertCircle, CheckCircle } from 'lucide-react';
 import { CATEGORIAS_TIENDA } from '@/lib/constants';
 import { useCurrency } from '@/store/useCurrency';
+import { convertir, formatArs, formatUsd, type Moneda } from '@/lib/precios';
 
 /** Fotos por producto. El carrusel de la tienda las rota en este orden. */
 const MAX_FOTOS = 5;
 
 /**
- * A partir de acá el precio se asume cargado en pesos por error.
+ * Umbrales para avisar que el precio parece cargado en la otra moneda.
  *
- * `productos.precio` está en USD —la tienda multiplica por el blue para
- * mostrar ARS— pero el campo decía sólo "PRECIO", y una mochila cargada como
- * 40000 salía publicada en USD 40.000. Nada del catálogo real llega a los
- * cuatro dígitos en dólares, así que ese es el umbral para avisar.
+ * Nada del catálogo real llega a los cuatro dígitos en dólares ni baja de los
+ * cuatro dígitos en pesos, así que un número fuera de rango casi siempre es la
+ * moneda equivocada: una mochila cargada como 40000 con el selector en USD, o
+ * como 40 con el selector en pesos.
  */
 const PRECIO_USD_SOSPECHOSO = 1000;
+const PRECIO_ARS_SOSPECHOSO = 1000;
 
 export function FormProducto() {
   const [loading, setLoading] = useState(false);
@@ -35,6 +37,7 @@ export function FormProducto() {
     nombre: '',
     categoria: CATEGORIAS_TIENDA[0] as string,
     precio: 0,
+    moneda: 'USD' as Moneda,
     descripcion: '',
     imagenes_urls: [] as string[],
     stock: 10,
@@ -93,6 +96,7 @@ export function FormProducto() {
       nombre: product.nombre || '',
       categoria: product.categoria || CATEGORIAS_TIENDA[0],
       precio: product.precio || 0,
+      moneda: (product.moneda === 'ARS' ? 'ARS' : 'USD') as Moneda,
       descripcion: product.descripcion || '',
       imagenes_urls: product.imagenes_urls || [],
       stock: product.stock || 10,
@@ -122,15 +126,18 @@ export function FormProducto() {
   const resetForm = () => {
     setIsEditing(false);
     setEditingId(null);
-    setFormData({
+    // La moneda se conserva: quien carga diez productos en pesos no tiene que
+    // volver a elegirla en cada uno.
+    setFormData(prev => ({
       nombre: '',
       categoria: categorias[0] || CATEGORIAS_TIENDA[0],
       precio: 0,
+      moneda: prev.moneda,
       descripcion: '',
       imagenes_urls: [],
       stock: 10,
       visibilidad: 'publico' as 'publico' | 'registrado' | 'miembro',
-    });
+    }));
     setError(null);
     setSuccess(false);
   };
@@ -151,12 +158,21 @@ export function FormProducto() {
     fetchRate();
   }, [fetchRate]);
 
-  const precioEnPesos =
-    rate && formData.precio > 0
-      ? `$${Math.round(formData.precio * rate).toLocaleString('es-AR')}`
-      : null;
+  const esDolares = formData.moneda === 'USD';
+  const otraMoneda: Moneda = esDolares ? 'ARS' : 'USD';
 
-  const precioSospechoso = formData.precio >= PRECIO_USD_SOSPECHOSO;
+  // El precio traducido a la otra moneda, para que se vea qué se va a publicar.
+  const equivalente =
+    formData.precio > 0
+      ? convertir(formData.precio, formData.moneda, otraMoneda, rate)
+      : null;
+  const equivalenteTexto =
+    equivalente === null ? null : otraMoneda === 'ARS' ? formatArs(equivalente) : formatUsd(equivalente);
+  const precioTexto = esDolares ? formatUsd(formData.precio) : formatArs(formData.precio);
+
+  const precioSospechoso = esDolares
+    ? formData.precio >= PRECIO_USD_SOSPECHOSO
+    : formData.precio > 0 && formData.precio < PRECIO_ARS_SOSPECHOSO;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -410,13 +426,38 @@ export function FormProducto() {
             )}
           </div>
 
-          {/* Precio: siempre en USD, con el equivalente en pesos a la vista */}
+          {/* Precio: se carga en la moneda de referencia que se elija */}
           <div className="space-y-2">
+            <p className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2">
+              Precio de referencia
+            </p>
+
+            {/* Moneda: la que se elige acá es la que queda fija en la tienda */}
+            <div className="flex gap-2">
+              {([
+                { id: 'USD' as Moneda, label: 'Dólares' },
+                { id: 'ARS' as Moneda, label: 'Pesos' },
+              ]).map(op => (
+                <button
+                  key={op.id}
+                  type="button"
+                  onClick={() => { setFormData({ ...formData, moneda: op.id }); setError(null); }}
+                  className={`flex-1 px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${
+                    formData.moneda === op.id
+                      ? 'bg-manso-terra text-manso-cream border-manso-terra'
+                      : 'bg-manso-cream/10 text-manso-cream/60 border-manso-cream/20 hover:border-manso-cream/40'
+                  }`}
+                >
+                  {op.label}
+                </button>
+              ))}
+            </div>
+
             <div className="relative">
               <DollarSign className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 text-manso-cream/60 w-4 h-4" size={16} />
               <input 
                 type="number" 
-                placeholder="PRECIO EN DÓLARES"
+                placeholder={esDolares ? 'PRECIO EN DÓLARES' : 'PRECIO EN PESOS'}
                 className="w-full bg-manso-cream/10 p-3 sm:p-4 pl-10 sm:pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono font-bold text-manso-cream placeholder:text-manso-cream/40 text-sm sm:text-base"
                 value={formData.precio === 0 ? '' : formData.precio}
                 onChange={e => {
@@ -431,15 +472,17 @@ export function FormProducto() {
               <p className="text-[10px] font-bold text-manso-terra ml-2 leading-relaxed flex items-start gap-1.5">
                 <AlertCircle size={12} className="mt-0.5 shrink-0" />
                 <span>
-                  ¿Seguro? El precio va en dólares: USD {formData.precio.toLocaleString('es-AR')} se
-                  publica como {precioEnPesos ?? '—'} en la tienda.
+                  ¿Seguro? Este precio está cargado en {esDolares ? 'dólares' : 'pesos'}:{' '}
+                  {precioTexto} se publica como {equivalenteTexto ?? '—'} en la otra moneda.
                 </span>
               </p>
             ) : (
               <p className="text-[10px] text-manso-cream/30 ml-2 leading-relaxed">
-                El precio se carga en dólares. En la tienda se ve así o en pesos,
-                según lo que elija cada persona.
-                {precioEnPesos && formData.precio > 0 && ` Hoy, USD ${formData.precio.toLocaleString('es-AR')} son ${precioEnPesos}.`}
+                {esDolares
+                  ? 'Los dólares quedan fijos y los pesos se recalculan con el blue.'
+                  : 'Los pesos quedan fijos y los dólares se recalculan con el blue.'}
+                {' '}En la tienda se ve en la moneda que elija cada persona.
+                {equivalenteTexto && formData.precio > 0 && ` Hoy, ${precioTexto} son ${equivalenteTexto}.`}
               </p>
             )}
           </div>

@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useCart } from '@/store/useCart';
 import { useCurrency } from '@/store/useCurrency';
+import { formatArs, formatUsd, mostrarPrecio as formatearPrecio } from '@/lib/precios';
 import { ParticleBackground } from '@/components/Home/ParticleBackground';
 import {
   ArrowLeft,
@@ -145,19 +146,12 @@ export default function CheckoutPage() {
     if (!loadingConfig && !transferenciaDisponible) setMetodoPago('mercadopago');
   }, [loadingConfig, transferenciaDisponible]);
 
-  const totalUsd = total();
-  const totalArs = rate ? Math.round(totalUsd * rate) : null;
+  // Cada producto tiene su moneda de referencia; el cobro siempre es en pesos.
+  const totalArs = total('ARS', rate);
+  const totalUsd = total('USD', rate);
 
-  const formatArs = (monto: number) =>
-    new Intl.NumberFormat('es-AR', {
-      style: 'currency',
-      currency: 'ARS',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(monto);
-
-  const mostrarPrecio = (precioUsd: number) =>
-    rate ? formatArs(Math.round(precioUsd * rate)) : `USD $${precioUsd.toLocaleString('es-AR')}`;
+  const mostrarPrecio = (item: { precio: number; moneda?: string | null }, cantidad = 1) =>
+    formatearPrecio({ precio: item.precio * cantidad, moneda: item.moneda }, 'ARS', rate);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -694,11 +688,11 @@ export default function CheckoutPage() {
                         {item.nombre}
                       </p>
                       <p className="text-xs text-manso-cream/40 mt-0.5">
-                        {mostrarPrecio(item.precio)} c/u
+                        {mostrarPrecio(item)} c/u
                       </p>
                     </div>
                     <p className="font-bold text-manso-cream text-sm whitespace-nowrap">
-                      {mostrarPrecio(item.precio * item.quantity)}
+                      {mostrarPrecio(item, item.quantity)}
                     </p>
                   </div>
                 ))}
@@ -724,15 +718,17 @@ export default function CheckoutPage() {
                     <p className="text-2xl font-black text-manso-cream leading-none">
                       {totalArs !== null ? formatArs(totalArs) : '—'}
                     </p>
-                    <p className="text-xs text-manso-cream/40 mt-1">
-                      USD ${totalUsd.toLocaleString('es-AR')}
-                    </p>
+                    {totalUsd !== null && (
+                      <p className="text-xs text-manso-cream/40 mt-1">
+                        {formatUsd(totalUsd)}
+                      </p>
+                    )}
                   </div>
                 </div>
 
                 {rate && (
                   <p className="text-[11px] text-manso-cream/30 leading-relaxed pt-2">
-                    Los precios se publican en dólares y se cobran en pesos según la cotización del
+                    Los productos publicados en dólares se cobran en pesos según la cotización del
                     dólar blue ({formatArs(rate)} por USD) al momento del pago.
                   </p>
                 )}

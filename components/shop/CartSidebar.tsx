@@ -3,6 +3,7 @@
 import { X, Plus, Minus, Trash2, ShoppingBag, MessageCircle, ArrowRight } from 'lucide-react';
 import { useCart } from '@/store/useCart';
 import { useCurrency } from '@/store/useCurrency';
+import { formatArs, formatUsd, mostrarPrecio } from '@/lib/precios';
 import { useState, useEffect } from 'react';
 
 interface CartSidebarProps {
@@ -73,6 +74,7 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
             id: product.id, 
             nombre: product.nombre, 
             precio: product.precio, 
+            moneda: product.moneda,
             imagenes_urls: product.imagenes_urls,
             stock: product.stock
           });
@@ -97,19 +99,14 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
     checkout();
   };
 
-  // Los precios de los productos están en USD; el cobro se hace en pesos según
-  // la cotización del blue. Hasta tenerla, se muestra el precio en dólares para
-  // no exhibir un monto en pesos que no es el que se va a cobrar.
-  const formatPrice = (priceUsd: number) => {
-    if (!rate) return `USD $${priceUsd.toLocaleString('es-AR')}`;
+  // El cobro se hace en pesos, así que el carrito muestra pesos. Los productos
+  // cargados en dólares se convierten con el blue; hasta tener la cotización se
+  // muestran en su moneda, para no exhibir un monto que no es el que se cobra.
+  const formatPrice = (item: { precio: number; moneda?: string | null }, cantidad = 1) =>
+    mostrarPrecio({ precio: item.precio * cantidad, moneda: item.moneda }, 'ARS', rate);
 
-    return new Intl.NumberFormat('es-AR', {
-      style: 'currency',
-      currency: 'ARS',
-      minimumFractionDigits: 0,
-      maximumFractionDigits: 0,
-    }).format(Math.round(priceUsd * rate));
-  };
+  const totalArs = total('ARS', rate);
+  const totalUsd = total('USD', rate);
 
   return (
     <>
@@ -190,7 +187,7 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                         {item.nombre}
                       </h4>
                       <p className="text-lg font-black text-manso-cream mb-3">
-                        {formatPrice(item.precio)}
+                        {formatPrice(item)}
                       </p>
                       
                       {/* Quantity Controls */}
@@ -223,7 +220,7 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                             Subtotal:
                           </span>
                           <span className="text-sm font-bold text-manso-cream">
-                            {formatPrice(item.precio * item.quantity)}
+                            {formatPrice(item, item.quantity)}
                           </span>
                         </div>
                         
@@ -260,11 +257,11 @@ export function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                   <span className="text-lg font-bold uppercase tracking-tight text-manso-cream">Total</span>
                   <div className="text-right">
                     <span className="text-2xl font-black text-manso-cream block leading-none">
-                      {formatPrice(total())}
+                      {totalArs !== null ? formatArs(totalArs) : '—'}
                     </span>
-                    {rate && (
+                    {totalUsd !== null && (
                       <span className="text-[11px] text-manso-cream/40">
-                        USD ${total().toLocaleString('es-AR')}
+                        {formatUsd(totalUsd)}
                       </span>
                     )}
                   </div>
