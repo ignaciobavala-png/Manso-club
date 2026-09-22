@@ -110,22 +110,22 @@ export function EventosList({ refreshTrigger }: EventosListProps) {
       ) : (
         eventos.map((evento) => (
           <div key={evento.id} className="bg-manso-cream/5 p-6 rounded-2xl border border-manso-cream/10">
-            <div className="flex justify-between items-start mb-4">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-2">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4 mb-4">
+              <div className="flex-1 min-w-0">
+                <div className="flex flex-wrap items-center gap-3 mb-2">
                   <h3 className="text-xl font-black text-manso-cream uppercase tracking-tighter">
                     {evento.titulo}
                   </h3>
                   <span className={`text-[10px] px-2 py-1 rounded-full font-bold uppercase ${
-                    evento.activo 
-                      ? 'bg-manso-terra/20 text-manso-terra' 
+                    evento.activo
+                      ? 'bg-manso-terra/20 text-manso-terra'
                       : 'bg-manso-cream/20 text-manso-cream/60'
                   }`}>
                     {evento.activo ? 'Activo' : 'Inactivo'}
                   </span>
                   <span className={`text-[10px] px-2 py-1 rounded-full font-bold uppercase ${
-                    evento.disponible 
-                      ? 'bg-green-500/20 text-green-400' 
+                    evento.disponible
+                      ? 'bg-green-500/20 text-green-400'
                       : 'bg-yellow-500/20 text-yellow-400'
                   }`}>
                     {evento.disponible ? 'Disponible' : 'No disponible'}
@@ -185,7 +185,7 @@ export function EventosList({ refreshTrigger }: EventosListProps) {
                 </div>
               </div>
 
-              <div className="flex gap-2 ml-4">
+              <div className="flex flex-wrap gap-2 sm:flex-nowrap sm:shrink-0">
                 <button
                   onClick={() => handleEdit(evento)}
                   className="p-2 bg-manso-cream/10 text-manso-cream/60 hover:text-manso-terra rounded-xl transition-colors"
