@@ -93,11 +93,28 @@ export const MembresiaCard = ({ membresia, currency, rate }: MembresiaCardProps)
           </span>
 
           {/* `break-words` y no `truncate`: un nombre largo baja de línea, que es
-              justo lo que hace la refe con "Half day pass". */}
+              justo lo que hace la refe con "Half day pass" (y lo que necesita
+              "Cultural Manso" para partir en dos líneas sin salirse del
+              contenedor). Ana pidió que "x week" salga sin negrita y más
+              chico que el resto del nombre, en el mismo renglón (ver
+              cards_cowork.jpeg): si el nombre termina en " x week", ese
+              sufijo se separa en un span aparte, más chico y sin bold, y sólo
+              ese fragmento va con `whitespace-nowrap` para no partirse él
+              solo. Título 10% más chico que el original (15px/2.75rem). */}
           <h3
-            className={`font-montreal font-black tracking-[-0.03em] leading-[0.95] text-[15px] sm:text-[2.75rem] break-words ${cText}`}
+            className={`font-montreal font-black tracking-[-0.03em] leading-[0.95] text-[13.5px] sm:text-[2.5rem] break-words ${cText}`}
           >
-            {membresia.nombre}
+            {(() => {
+              const match = membresia.nombre.match(/^(.*)\s(x week)$/i);
+              if (!match) return membresia.nombre;
+              const [, resto, xWeek] = match;
+              return (
+                <span className="whitespace-nowrap">
+                  {resto}{' '}
+                  <span className="font-normal text-[9px] sm:text-lg align-baseline">{xWeek}</span>
+                </span>
+              );
+            })()}
           </h3>
 
           <div className="mt-auto pt-4 sm:pt-8">
