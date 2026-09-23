@@ -107,21 +107,21 @@ export const MembresiaCard = ({ membresia, currency, rate }: MembresiaCardProps)
               reducido daba apenas 14.85px, casi indistinguible del 13.5px
               anterior y todavía por debajo del original —por eso se veía
               "reducido" en vez de agrandado.
-              El nowrap de "x week" forzado también en desktop hacía que
-              "FULL 3D x week" (el nombre más largo) se saliera de la card:
-              en sm+ se permite volver a envolver si no entra —de nuevo, el
-              mismo recurso que ya usa "Cultural Manso"—, y el badge baja de
-              sm:text-lg a sm:text-sm para que entre en una sola línea en los
-              casos que sí tienen espacio (ver cards.png). */}
+              "FULL 3D x week" (el nombre más largo) no puede quedar como la
+              única card con "week" en un renglón aparte: rompía la
+              consistencia entre las 4 cards. En vez de dejar que envuelva,
+              el título en desktop baja otro toque (2.5rem → 2.25rem, ~10%
+              más) para que las cuatro entren siempre en una sola línea con
+              `whitespace-nowrap` fijo (ver cards.png). */}
           <h3
-            className={`font-montreal font-black tracking-[-0.03em] leading-[0.95] text-[16.5px] sm:text-[2.5rem] break-words ${cText}`}
+            className={`font-montreal font-black tracking-[-0.03em] leading-[0.95] text-[16.5px] sm:text-[2.25rem] break-words ${cText}`}
           >
             {(() => {
               const match = membresia.nombre.match(/^(.*)\s(x week)$/i);
               if (!match) return membresia.nombre;
               const [, resto, xWeek] = match;
               return (
-                <span className="whitespace-nowrap sm:whitespace-normal">
+                <span className="whitespace-nowrap">
                   {resto}{' '}
                   <span className="font-normal text-[9px] sm:text-sm align-baseline">{xWeek}</span>
                 </span>
