@@ -100,9 +100,11 @@ export const MembresiaCard = ({ membresia, currency, rate }: MembresiaCardProps)
               cards_cowork.jpeg): si el nombre termina en " x week", ese
               sufijo se separa en un span aparte, más chico y sin bold, y sólo
               ese fragmento va con `whitespace-nowrap` para no partirse él
-              solo. Título 10% más chico que el original (15px/2.75rem). */}
+              solo. Título 10% más chico que el original (15px/2.75rem), y en
+              mobile otro +10% arriba de ese ajuste (13.5px → 14.85px); en
+              desktop queda igual. */}
           <h3
-            className={`font-montreal font-black tracking-[-0.03em] leading-[0.95] text-[13.5px] sm:text-[2.5rem] break-words ${cText}`}
+            className={`font-montreal font-black tracking-[-0.03em] leading-[0.95] text-[14.85px] sm:text-[2.5rem] break-words ${cText}`}
           >
             {(() => {
               const match = membresia.nombre.match(/^(.*)\s(x week)$/i);
@@ -131,7 +133,7 @@ export const MembresiaCard = ({ membresia, currency, rate }: MembresiaCardProps)
                 <a> no es HTML válido— y el click lo toma la capa de abajo. */}
             {cultural ? (
               <span
-                className={`flex items-center justify-center w-full px-2 sm:px-4 min-h-[44px] text-[8px] sm:text-[10px] font-black uppercase tracking-[0.1em] sm:tracking-[0.25em] transition-opacity duration-200 group-hover:opacity-80 ${cBoton}`}
+                className={`flex items-center justify-center w-full px-[7px] sm:px-[14px] min-h-[40px] text-[7px] sm:text-[9px] font-black uppercase tracking-[0.1em] sm:tracking-[0.25em] transition-opacity duration-200 group-hover:opacity-80 ${cBoton}`}
               >
                 Conocer más
               </span>
@@ -139,7 +141,7 @@ export const MembresiaCard = ({ membresia, currency, rate }: MembresiaCardProps)
               <button
                 type="button"
                 onClick={() => setFormAbierto(true)}
-                className={`pointer-events-auto flex items-center justify-center w-full px-2 sm:px-4 min-h-[44px] text-[8px] sm:text-[10px] font-black uppercase tracking-[0.1em] sm:tracking-[0.25em] transition-opacity duration-200 hover:opacity-80 active:scale-[0.98] ${cBoton}`}
+                className={`pointer-events-auto flex items-center justify-center w-full px-[7px] sm:px-[14px] min-h-[40px] text-[7px] sm:text-[9px] font-black uppercase tracking-[0.1em] sm:tracking-[0.25em] transition-opacity duration-200 hover:opacity-80 active:scale-[0.98] ${cBoton}`}
               >
                 Seleccionar
               </button>
