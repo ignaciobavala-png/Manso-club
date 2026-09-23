@@ -106,7 +106,13 @@ export const MembresiaCard = ({ membresia, currency, rate }: MembresiaCardProps)
               13.5px ya reducido: aplicar el +10% en cadena sobre el valor
               reducido daba apenas 14.85px, casi indistinguible del 13.5px
               anterior y todavía por debajo del original —por eso se veía
-              "reducido" en vez de agrandado. */}
+              "reducido" en vez de agrandado.
+              El nowrap de "x week" forzado también en desktop hacía que
+              "FULL 3D x week" (el nombre más largo) se saliera de la card:
+              en sm+ se permite volver a envolver si no entra —de nuevo, el
+              mismo recurso que ya usa "Cultural Manso"—, y el badge baja de
+              sm:text-lg a sm:text-sm para que entre en una sola línea en los
+              casos que sí tienen espacio (ver cards.png). */}
           <h3
             className={`font-montreal font-black tracking-[-0.03em] leading-[0.95] text-[16.5px] sm:text-[2.5rem] break-words ${cText}`}
           >
@@ -115,9 +121,9 @@ export const MembresiaCard = ({ membresia, currency, rate }: MembresiaCardProps)
               if (!match) return membresia.nombre;
               const [, resto, xWeek] = match;
               return (
-                <span className="whitespace-nowrap">
+                <span className="whitespace-nowrap sm:whitespace-normal">
                   {resto}{' '}
-                  <span className="font-normal text-[9px] sm:text-lg align-baseline">{xWeek}</span>
+                  <span className="font-normal text-[9px] sm:text-sm align-baseline">{xWeek}</span>
                 </span>
               );
             })()}
