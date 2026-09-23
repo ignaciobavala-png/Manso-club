@@ -81,14 +81,32 @@ function targetBitrate(width: number, height: number): number {
   return Math.max(600_000, Math.round(pixels * perPixel));
 }
 
+/** Extensiones/MIME que todos los navegadores reproducen con el `<source type>` que ya calcula el hero. */
+const SAFE_OUTPUT_EXTENSIONS = ['mp4', 'webm', 'ogv', 'ogg'];
+
+function hasSafeContainer(file: File): boolean {
+  const ext = file.name.split('.').pop()?.toLowerCase();
+  if (ext && SAFE_OUTPUT_EXTENSIONS.includes(ext)) return true;
+  return /^video\/(mp4|webm|ogg)$/.test(file.type);
+}
+
 export async function compressVideo(
   file: File,
   { maxWidth = DEFAULT_MAX_WIDTH, targetBytes = DEFAULT_TARGET_BYTES, onProgress }: CompressOptions = {}
 ): Promise<CompressResult> {
   const originalBytes = file.size;
   const mimeType = pickMimeType();
+  // .mov (típico de iPhone, a veces HEVC), .avi, .mkv, etc.: aunque el archivo
+  // pese poco, Chrome no lo reproduce en el banner. A estos SIEMPRE hay que
+  // transcodificarlos a mp4/webm, nunca subirlos tal cual.
+  const needsTranscode = !hasSafeContainer(file);
 
   if (!mimeType) {
+    if (needsTranscode) {
+      throw new Error(
+        'Este navegador no puede convertir ese formato de video. Exportalo como .mp4 (H.264) o .webm y volvé a subirlo.'
+      );
+    }
     return { file, compressed: false, originalBytes };
   }
 
@@ -97,6 +115,11 @@ export async function compressVideo(
   try {
     ({ video, url } = await loadVideo(file));
   } catch {
+    if (needsTranscode) {
+      throw new Error(
+        'No pudimos leer ese video en este navegador (pasa seguido con .mov exportado directo del celular). Exportalo como .mp4 (H.264) o .webm y volvé a subirlo.'
+      );
+    }
     return { file, compressed: false, originalBytes };
   }
 
@@ -111,13 +134,20 @@ export async function compressVideo(
   const srcHeight = video.videoHeight;
   const duration = video.duration;
 
-  // Ya está liviano y en resolución razonable: no vale la pena recomprimir
-  // (una segunda pasada sólo agrega artefactos).
   if (!srcWidth || !srcHeight || !isFinite(duration) || duration <= 0) {
     cleanup();
+    if (needsTranscode) {
+      throw new Error(
+        'No pudimos leer ese video en este navegador. Exportalo como .mp4 (H.264) o .webm y volvé a subirlo.'
+      );
+    }
     return { file, compressed: false, originalBytes };
   }
-  if (originalBytes <= targetBytes && srcWidth <= maxWidth) {
+  // Ya está liviano, en resolución razonable y en un formato que todos los
+  // navegadores reproducen: no vale la pena recomprimir (una segunda pasada
+  // sólo agrega artefactos). Si el contenedor no es seguro, se transcodifica
+  // igual aunque sea chico.
+  if (!needsTranscode && originalBytes <= targetBytes && srcWidth <= maxWidth) {
     cleanup();
     return { file, compressed: false, originalBytes };
   }
@@ -180,6 +210,11 @@ export async function compressVideo(
   } catch {
     stop();
     cleanup();
+    if (needsTranscode) {
+      throw new Error(
+        'No pudimos reproducir ese video en este navegador para convertirlo. Exportalo como .mp4 (H.264) o .webm y volvé a subirlo.'
+      );
+    }
     return { file, compressed: false, originalBytes };
   }
 
@@ -190,6 +225,11 @@ export async function compressVideo(
     blob = await recorded;
   } catch {
     cleanup();
+    if (needsTranscode) {
+      throw new Error(
+        'Falló la conversión de ese video en este navegador. Exportalo como .mp4 (H.264) o .webm y volvé a subirlo.'
+      );
+    }
     return { file, compressed: false, originalBytes };
   } finally {
     cleanup();
@@ -197,9 +237,19 @@ export async function compressVideo(
 
   onProgress?.(1);
 
+  if (blob.size === 0) {
+    if (needsTranscode) {
+      throw new Error(
+        'La conversión de ese video no produjo ningún archivo. Exportalo como .mp4 (H.264) o .webm y volvé a subirlo.'
+      );
+    }
+    return { file, compressed: false, originalBytes };
+  }
   // Si la recompresión no achicó nada (pasa con clips ya muy optimizados),
-  // conviene quedarse con el original.
-  if (blob.size === 0 || blob.size >= originalBytes) {
+  // conviene quedarse con el original — salvo que el contenedor original no
+  // sea seguro para el navegador: ahí el transcodificado, aunque pese igual
+  // o más, es el único que se puede reproducir.
+  if (!needsTranscode && blob.size >= originalBytes) {
     return { file, compressed: false, originalBytes };
   }
 

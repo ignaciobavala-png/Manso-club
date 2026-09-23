@@ -36,18 +36,28 @@ const videoMimeType = (url: string) => {
   return 'video/mp4';
 };
 
+// Duración por defecto de un slide de imagen o texto.
+const SLIDE_DURATION_MS = 5000;
+// Piso para un slide de video: si el video dura menos, igual se espera esto
+// para no cortarlo antes de arrancar bien.
+const MIN_VIDEO_DURATION_MS = 8000;
+
 export const HeroCarousel = ({ slides }: { slides: CarouselSlide[] }) => {
   const [current, setCurrent] = useState(0);
+  const currentSlide = slides[current];
+  const isCurrentVideo = Boolean(currentSlide?.media_url) && currentSlide?.tipo === 'video';
 
   useEffect(() => {
     if (slides.length <= 1) return;
+    // El slide de video se lo espera entero: avanza con el `onEnded` del
+    // <video>, no con este timer. Igual queda una red de seguridad generosa
+    // por si el archivo no dispara `onEnded` (autoplay bloqueado, red lenta).
     const timer = setTimeout(() => {
       setCurrent((prev) => (prev + 1) % slides.length);
-    }, 5000);
+    }, isCurrentVideo ? MIN_VIDEO_DURATION_MS * 3 : SLIDE_DURATION_MS);
     return () => clearTimeout(timer);
-  }, [current, slides.length]);
+  }, [current, slides.length, isCurrentVideo]);
 
-  const currentSlide = slides[current];
   const title = getTitle(currentSlide);
   // El tamaño se guarda como porcentaje y no como px: multiplicando el clamp()
   // el título sigue adaptándose solo a cada pantalla.
@@ -64,10 +74,13 @@ export const HeroCarousel = ({ slides }: { slides: CarouselSlide[] }) => {
           key={currentSlide.media_url}
           autoPlay
           muted
-          loop
+          loop={slides.length <= 1}
           playsInline
           preload="auto"
           className="absolute inset-0 w-full h-full object-cover z-0"
+          onEnded={() => {
+            if (slides.length > 1) setCurrent((prev) => (prev + 1) % slides.length);
+          }}
         >
           <source src={currentSlide.media_url} type={videoMimeType(currentSlide.media_url)} />
         </video>
