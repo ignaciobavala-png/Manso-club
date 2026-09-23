@@ -100,11 +100,15 @@ export const MembresiaCard = ({ membresia, currency, rate }: MembresiaCardProps)
               cards_cowork.jpeg): si el nombre termina en " x week", ese
               sufijo se separa en un span aparte, más chico y sin bold, y sólo
               ese fragmento va con `whitespace-nowrap` para no partirse él
-              solo. Título 10% más chico que el original (15px/2.75rem), y en
-              mobile otro +10% arriba de ese ajuste (13.5px → 14.85px); en
-              desktop queda igual. */}
+              solo. Desktop -10% del original (2.75rem → 2.5rem). Mobile pasó
+              por -10% (15px → 13.5px) y después +10% en mobile solamente,
+              pero calculado sobre el original (15px → 16.5px) y no sobre el
+              13.5px ya reducido: aplicar el +10% en cadena sobre el valor
+              reducido daba apenas 14.85px, casi indistinguible del 13.5px
+              anterior y todavía por debajo del original —por eso se veía
+              "reducido" en vez de agrandado. */}
           <h3
-            className={`font-montreal font-black tracking-[-0.03em] leading-[0.95] text-[14.85px] sm:text-[2.5rem] break-words ${cText}`}
+            className={`font-montreal font-black tracking-[-0.03em] leading-[0.95] text-[16.5px] sm:text-[2.5rem] break-words ${cText}`}
           >
             {(() => {
               const match = membresia.nombre.match(/^(.*)\s(x week)$/i);
