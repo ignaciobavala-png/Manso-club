@@ -136,6 +136,31 @@ dos circuitos distintos.
   / registrado / membresía activa). Otorgar reusa `UsuarioDrawer`; si la persona
   no tiene cuenta, el botón ofrece copiar el link de registro.
 
+### Festival (`/festival`)
+
+Página de venta de entradas que nace de Manso pero con **identidad propia**:
+`ChromeManso` (en el root layout) le saca navbar, footer y flotantes, y los
+colores salen del panel (`festival_config.color_*`), no de la paleta `manso-*`.
+La estética sale de las láminas de Ana (raves en el bosque con humo, foto
+analógica, degradés naranja→magenta→violeta). El hero es geometría sagrada
+animada en canvas y en línea blanca (`GeometriaSagrada.tsx`): semilla de la
+vida y filotaxis. Salió de probar patrones de bookofshapes.com (licencia libre,
+sin atribución; solo prohíbe redistribuirlos como pack).
+Tipografías propias cargadas solo en `app/festival/layout.tsx` con
+`next/font`: Cormorant Garamond (serif fina) e IBM Plex Mono.
+Modelo tomado de una página de Passline: tabla de tipos de entrada con precio y
+estado (`en_venta` muestra selector de cantidad; `agotado` / `finalizado` /
+`proximamente`, una etiqueta). Los packs son una fila con
+`entradas_por_unidad` > 1 y el precio del pack entero.
+
+**No publicada por RLS, no por código**: mientras `festival_config.publicado`
+sea false, las tres tablas (`supabase/migration_festival.sql`) solo las lee un
+admin, así que la página —que usa el cliente con cookies— da 404 a cualquier
+otro. No está enlazada desde el sitio ni en el sitemap, y va `noindex`.
+
+La compra **todavía no cobra**: el botón COMPRAR solo avisa que la venta abre
+pronto. Falta conectar Mercado Pago y emitir los tickets.
+
 ### Precios de la tienda
 
 Cada producto guarda su **moneda de referencia** en `productos.moneda`

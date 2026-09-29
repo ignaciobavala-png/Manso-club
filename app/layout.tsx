@@ -6,6 +6,7 @@ import { Navbar } from "@/components/Layout/Navbar";
 import { Footer } from "@/components/Layout/Footer";
 import { GlobalMusicPlayer } from "@/components/Layout/GlobalMusicPlayer";
 import { CalendarioFab } from "@/components/Layout/CalendarioFab";
+import { ChromeManso } from "@/components/Layout/ChromeManso";
 import { WhatsAppButton } from "@/components/ui/WhatsAppButton";
 import { CursorTrail } from "@/components/ui/CursorTrail";
 import { VynilPlayer } from "@/components/Vynil/VynilPlayer";
@@ -78,7 +79,9 @@ export default function RootLayout({
           />
         </noscript>
 
-        <Navbar />
+        <ChromeManso>
+          <Navbar />
+        </ChromeManso>
         
         {/* IMPORTANTE: El main tiene 'relative' y el Footer está FUERA 
             para evitar que sus capas fijas tapen los inputs del Login.
@@ -87,12 +90,14 @@ export default function RootLayout({
           {children}
         </main>
 
-        <Footer /> 
-        <GlobalMusicPlayer />
-        <WhatsAppButton />
-        <CalendarioFab />
-        <VynilPlayer />
-        <CursorTrail />
+        <ChromeManso>
+          <Footer />
+          <GlobalMusicPlayer />
+          <WhatsAppButton />
+          <CalendarioFab />
+          <VynilPlayer />
+          <CursorTrail />
+        </ChromeManso>
 
         {/* ── Google Tag Manager ── */}
         <Script

@@ -1,0 +1,38 @@
+/*
+ * Texturas del festival. Referencia: láminas de Ana (Descargas/party) — foto
+ * analógica con grano y degradés naranja → magenta → violeta. El hero es
+ * canvas (GeometriaSagrada.tsx); acá queda lo que se resuelve con CSS.
+ *
+ * Todo lleva prefijo `fest-` para no pisar nada del sitio de Manso.
+ */
+
+/* ── Grano de película ─────────────────────────────────────────────────── */
+@keyframes fest-grano {
+  0%   { transform: translate(0, 0); }
+  20%  { transform: translate(-3%, 2%); }
+  40%  { transform: translate(2%, -3%); }
+  60%  { transform: translate(-2%, -1%); }
+  80%  { transform: translate(3%, 3%); }
+  100% { transform: translate(0, 0); }
+}
+
+.fest-grano {
+  position: absolute;
+  inset: -10%;
+  pointer-events: none;
+  opacity: 0.22;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1.1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: fest-grano 0.9s steps(5) infinite;
+}
+
+/* ── Título: halo blanco suave, sin color (va con las líneas del hero) ─── */
+.fest-titulo {
+  text-shadow: 0 0 40px rgb(255 255 255 / 0.18);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fest-grano {
+    animation: none;
+  }
+}
