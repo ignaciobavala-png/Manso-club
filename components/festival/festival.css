@@ -1,7 +1,7 @@
 /*
  * Texturas del festival. Referencia: láminas de Ana (Descargas/party) — foto
- * analógica con grano y degradés naranja → magenta → violeta. El hero es
- * canvas (GeometriaSagrada.tsx); acá queda lo que se resuelve con CSS.
+ * analógica con grano y degradés naranja → magenta → violeta. Las fotos
+ * (banner y foto del medio) se cargan desde el panel.
  *
  * Todo lleva prefijo `fest-` para no pisar nada del sitio de Manso.
  */
@@ -26,7 +26,7 @@
   animation: fest-grano 0.9s steps(5) infinite;
 }
 
-/* ── Título: halo blanco suave, sin color (va con las líneas del hero) ─── */
+/* ── Título: halo blanco suave, sin color ─────────────────────────────── */
 .fest-titulo {
   text-shadow: 0 0 40px rgb(255 255 255 / 0.18);
 }

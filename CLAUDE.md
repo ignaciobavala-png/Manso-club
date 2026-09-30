@@ -142,10 +142,12 @@ Página de venta de entradas que nace de Manso pero con **identidad propia**:
 `ChromeManso` (en el root layout) le saca navbar, footer y flotantes, y los
 colores salen del panel (`festival_config.color_*`), no de la paleta `manso-*`.
 La estética sale de las láminas de Ana (raves en el bosque con humo, foto
-analógica, degradés naranja→magenta→violeta). El hero es geometría sagrada
-animada en canvas y en línea blanca (`GeometriaSagrada.tsx`): semilla de la
-vida y filotaxis. Salió de probar patrones de bookofshapes.com (licencia libre,
-sin atribución; solo prohíbe redistribuirlos como pack).
+analógica, degradés naranja→magenta→violeta). Las dos imágenes de la página se
+cargan desde el panel: `banner_url` (fondo del hero, oscurecido) y `foto_url`
+(foto a sangre entre line-up y entradas, con tratamiento analógico en
+`FotoAnalogica.tsx`; sin foto la franja no se dibuja). Hubo un hero de geometría
+sagrada animada en canvas que Ana pidió sacar; del footer queda solo el sello
+estático `SemillaDeLaVida`.
 Tipografías propias cargadas solo en `app/festival/layout.tsx` con
 `next/font`: Cormorant Garamond (serif fina) e IBM Plex Mono.
 Modelo tomado de una página de Passline: tabla de tipos de entrada con precio y

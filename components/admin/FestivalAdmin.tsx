@@ -358,6 +358,59 @@ export function FestivalAdmin() {
         </button>
       </section>
 
+      {/* ── Imágenes ────────────────────────────────────────────────── */}
+      <section className={CARD}>
+        <div>
+          <h3 className={TITULO}>Imágenes de la página</h3>
+          <p className={AYUDA}>
+            Se guardan al subirlas. El banner va de fondo detrás del nombre, oscurecido para que se
+            lea el texto; la foto va a sangre entre el line-up y las entradas. Sin foto, esa franja
+            no aparece.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {(
+            [
+              ['banner_url', 'Banner (arriba)', 'Horizontal, mínimo 1920 px de ancho.'],
+              ['foto_url', 'Foto debajo del line-up', 'Horizontal, a sangre.'],
+            ] as const
+          ).map(([campo, etiqueta, ayuda]) => (
+            <div key={campo}>
+              <label className={`${LABEL} flex items-center gap-2`}>
+                <ImageIcon size={14} />
+                {etiqueta}
+              </label>
+              <CompactImageUploader
+                key={config[campo] ?? `sin-${campo}`}
+                bucket="flyers"
+                folder="festival"
+                maxWidth={2400}
+                height="h-40"
+                initialPreview={config[campo]}
+                onUpload={url => {
+                  editarConfig({ [campo]: url });
+                  guardarConfig({ [campo]: url }, campo);
+                }}
+              />
+              <p className={AYUDA}>{ayuda}</p>
+              {config[campo] && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    editarConfig({ [campo]: null });
+                    guardarConfig({ [campo]: null }, campo);
+                  }}
+                  className="mt-2 text-[9px] font-black uppercase tracking-widest text-manso-cream/40 hover:text-manso-terra transition-colors"
+                >
+                  Quitar
+                </button>
+              )}
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* ── Identidad ───────────────────────────────────────────────── */}
       <section className={CARD}>
         <div>

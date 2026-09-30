@@ -16,6 +16,10 @@ export interface FestivalConfig {
   lugar: string | null;
   direccion: string | null;
   flyer_url: string | null;
+  /** Fondo del hero. Sin banner, el hero queda en el color de fondo. */
+  banner_url: string | null;
+  /** Foto a sangre entre el line-up y las entradas. Sin foto no se dibuja. */
+  foto_url: string | null;
   /** Línea destacada debajo de la tabla, ej. "solo para mayores de 18". */
   aviso: string | null;
   /** Frase de cierre de la página. */
@@ -70,6 +74,8 @@ export const CONFIG_FESTIVAL_VACIA: FestivalConfig = {
   lugar: null,
   direccion: null,
   flyer_url: null,
+  banner_url: null,
+  foto_url: null,
   aviso: null,
   lema: null,
   color_fondo: '#12130E',
