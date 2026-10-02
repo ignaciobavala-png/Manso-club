@@ -19,3 +19,18 @@ export const ACENTO_POR_DEFECTO: ColorAcento = 'terra';
 
 export const fondoAcento = (color: ColorAcento | null) =>
   FONDOS[color ?? ACENTO_POR_DEFECTO] ?? FONDOS[ACENTO_POR_DEFECTO];
+
+/**
+ * Mismo fondo, pero solo mientras el mouse está sobre el botón SELECCIONAR de
+ * la card (marcado con `data-seleccionar`). Va en la propia card con `has-`,
+ * así que no hace falta estado de React.
+ */
+const FONDOS_HOVER_BOTON: Record<ColorAcento, string> = {
+  terra: 'has-[[data-seleccionar]:hover]:bg-manso-terra',
+  olive: 'has-[[data-seleccionar]:hover]:bg-manso-olive',
+  blue: 'has-[[data-seleccionar]:hover]:bg-manso-blue',
+  brown: 'has-[[data-seleccionar]:hover]:bg-manso-brown',
+};
+
+export const fondoAcentoHoverBoton = (color: ColorAcento | null) =>
+  FONDOS_HOVER_BOTON[color ?? ACENTO_POR_DEFECTO] ?? FONDOS_HOVER_BOTON[ACENTO_POR_DEFECTO];

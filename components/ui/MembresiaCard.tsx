@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Membresia } from '@/lib/types/membresia';
-import { fondoAcento } from '@/lib/membresia-color';
+import { fondoAcento, fondoAcentoHoverBoton } from '@/lib/membresia-color';
 import { CoworkModal, PARAM_FORM } from './CoworkModal';
 
 interface MembresiaCardProps {
@@ -35,14 +35,26 @@ export const MembresiaCard = ({ membresia, currency, rate }: MembresiaCardProps)
     if (param === membresia.id) setFormAbierto(true);
   }, [membresia.id, cultural]);
 
-  // La cultural va en color pleno y sin precio; el resto en crema.
-  const cText = cultural ? 'text-manso-cream' : 'text-manso-black';
-  const cMuted = cultural ? 'text-manso-cream/70' : 'text-manso-black/55';
-  const cBorde = cultural ? 'border-transparent' : 'border-manso-black/20';
-  const cFondo = cultural ? fondoAcento(membresia.color_acento) : 'bg-manso-cream';
+  // La cultural va en color pleno y sin precio; el resto en crema. Al pasar
+  // el mouse por SELECCIONAR, la card se llena con su color de acento y queda
+  // igual que la cultural (texto crema, botón crema): el hover se dispara
+  // desde el botón y no desde toda la card porque el resto de la card lleva al
+  // detalle, no al formulario.
+  const cText = cultural
+    ? 'text-manso-cream'
+    : 'text-manso-black group-has-[[data-seleccionar]:hover]/card:text-manso-cream';
+  const cMuted = cultural
+    ? 'text-manso-cream/70'
+    : 'text-manso-black/55 group-has-[[data-seleccionar]:hover]/card:text-manso-cream/70';
+  const cBorde = cultural
+    ? 'border-transparent'
+    : 'border-manso-black/20 has-[[data-seleccionar]:hover]:border-transparent';
+  const cFondo = cultural
+    ? fondoAcento(membresia.color_acento)
+    : `bg-manso-cream ${fondoAcentoHoverBoton(membresia.color_acento)}`;
   const cBoton = cultural
     ? 'bg-manso-cream text-manso-black'
-    : 'bg-manso-black text-manso-cream';
+    : 'bg-manso-black text-manso-cream hover:bg-manso-cream hover:text-manso-black';
 
   const precio =
     currency === 'ARS' && rate
@@ -60,7 +72,7 @@ export const MembresiaCard = ({ membresia, currency, rate }: MembresiaCardProps)
 
   return (
     <article
-      className={`group relative flex w-full h-full min-h-[218px] sm:min-h-[440px] border ${cBorde} ${cFondo} transition-colors duration-300`}
+      className={`group group/card relative flex w-full h-full min-h-[218px] sm:min-h-[440px] border ${cBorde} ${cFondo} transition-colors duration-300`}
     >
       {/* El cuerpo de la card lleva al detalle; el botón, directo al formulario.
           Va como capa debajo del contenido en vez de envolverlo porque un
@@ -78,7 +90,7 @@ export const MembresiaCard = ({ membresia, currency, rate }: MembresiaCardProps)
         <div className="w-6 sm:w-10 shrink-0 flex items-end justify-center pb-2.5 sm:pb-5">
           {!cultural && (
             <span
-              className={`[writing-mode:vertical-rl] rotate-180 whitespace-nowrap text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.1em] sm:tracking-[0.2em] ${cMuted}`}
+              className={`[writing-mode:vertical-rl] rotate-180 whitespace-nowrap text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.1em] sm:tracking-[0.2em] transition-colors duration-300 ${cMuted}`}
             >
               {currency} {precio} / {membresia.periodo}
             </span>
@@ -88,7 +100,7 @@ export const MembresiaCard = ({ membresia, currency, rate }: MembresiaCardProps)
         <div className="flex-1 flex flex-col min-w-0 p-2.5 pl-0 sm:p-6 sm:pl-0">
           {/* El slot va siempre, con o sin badge: si no, el título de la card
               destacada baja y queda desalineado del de las vecinas. */}
-          <span className="h-3 sm:h-4 text-[7px] sm:text-[9px] font-black uppercase tracking-[0.15em] sm:tracking-[0.3em] text-manso-terra">
+          <span className="h-3 sm:h-4 text-[7px] sm:text-[9px] font-black uppercase tracking-[0.15em] sm:tracking-[0.3em] text-manso-terra group-has-[[data-seleccionar]:hover]/card:text-manso-cream transition-colors duration-300">
             {membresia.destacado ? 'Más popular' : ''}
           </span>
 
@@ -114,7 +126,7 @@ export const MembresiaCard = ({ membresia, currency, rate }: MembresiaCardProps)
               más) para que las cuatro entren siempre en una sola línea con
               `whitespace-nowrap` fijo (ver cards.png). */}
           <h3
-            className={`font-montreal font-black tracking-[-0.03em] leading-[0.95] text-[16.5px] sm:text-[2.25rem] break-words ${cText}`}
+            className={`font-montreal font-black tracking-[-0.03em] leading-[0.95] text-[16.5px] sm:text-[2.25rem] break-words transition-colors duration-300 ${cText}`}
           >
             {(() => {
               const match = membresia.nombre.match(/^(.*)\s(x week)$/i);
@@ -131,14 +143,15 @@ export const MembresiaCard = ({ membresia, currency, rate }: MembresiaCardProps)
 
           <div className="mt-auto pt-4 sm:pt-8">
             {descripcion && (
-              <p className={`text-[10px] sm:text-xs leading-relaxed whitespace-pre-line mb-2.5 sm:mb-4 ${cMuted}`}>
+              <p className={`text-[10px] sm:text-xs leading-relaxed whitespace-pre-line mb-2.5 sm:mb-4 transition-colors duration-300 ${cMuted}`}>
                 {descripcion}
               </p>
             )}
 
             {/* SELECCIONAR abre el formulario de inscripción, no el checkout: el
                 alta al cowork pasa primero por una solicitud que Ana aprueba.
-                La cultural no se solicita: su botón es parte del link que
+                Redondo como el resto de los botones del sitio; la cultural
+                queda cuadrada a propósito. La cultural no se solicita: su botón es parte del link que
                 envuelve la card, así que va como <span> —un <a> dentro de otro
                 <a> no es HTML válido— y el click lo toma la capa de abajo. */}
             {cultural ? (
@@ -150,8 +163,9 @@ export const MembresiaCard = ({ membresia, currency, rate }: MembresiaCardProps)
             ) : (
               <button
                 type="button"
+                data-seleccionar
                 onClick={() => setFormAbierto(true)}
-                className={`pointer-events-auto flex items-center justify-center w-full px-[7px] sm:px-[14px] min-h-[40px] text-[7px] sm:text-[9px] font-black uppercase tracking-[0.1em] sm:tracking-[0.25em] transition-opacity duration-200 hover:opacity-80 active:scale-[0.98] ${cBoton}`}
+                className={`pointer-events-auto flex items-center justify-center w-full px-[7px] sm:px-[14px] min-h-[40px] rounded-full text-[7px] sm:text-[9px] font-black uppercase tracking-[0.1em] sm:tracking-[0.25em] transition-colors duration-300 active:scale-[0.98] ${cBoton}`}
               >
                 Seleccionar
               </button>
