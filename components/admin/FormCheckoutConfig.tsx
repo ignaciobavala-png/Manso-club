@@ -81,9 +81,8 @@ export function FormCheckoutConfig() {
         
         // Revalidar cache
         try {
-          await fetch('/api/revalidate', {
+          await fetch('/api/revalidate-admin', {
             method: 'POST',
-            headers: { 'Authorization': `Bearer ${process.env.NEXT_PUBLIC_REVALIDATE_SECRET}` }
           });
         } catch (error) {
           console.warn('Error revalidando cache:', error);

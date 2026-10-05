@@ -13,6 +13,7 @@ const TABLE_PATHS: Record<string, string[]> = {
   agenda_fotos: ['/agenda', '/agenda/[slug]'],
   productos: ['/tienda', '/'],
   gallery: ['/'],
+  hero: ['/'],
   about_us: ['/about'],
   membresias: ['/membresias', '/'],
   manifiesto: ['/manifiesto'],

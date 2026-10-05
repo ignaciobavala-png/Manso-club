@@ -65,9 +65,10 @@ export function ArtistasList({ refreshTrigger }: ArtistasListProps) {
       
       // Revalidar cache
       try {
-        const response = await fetch('/api/revalidate', {
+        const response = await fetch('/api/revalidate-admin', {
           method: 'POST',
-          headers: { 'Authorization': `Bearer ${process.env.CRON_SECRET}` }
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ table: 'artistas' }),
         });
         
         if (!response.ok) {
@@ -104,9 +105,10 @@ export function ArtistasList({ refreshTrigger }: ArtistasListProps) {
     
     // Revalidar cache
     try {
-      const response = await fetch('/api/revalidate', {
+      const response = await fetch('/api/revalidate-admin', {
         method: 'POST',
-        headers: { 'Authorization': `Bearer ${process.env.CRON_SECRET}` }
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ table: 'artistas' }),
       });
       
       if (!response.ok) {

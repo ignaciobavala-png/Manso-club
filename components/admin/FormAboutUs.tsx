@@ -88,10 +88,10 @@ export function FormAboutUs() {
       });
 
       // Revalidar página
-      await fetch('/api/revalidate', {
+      await fetch('/api/revalidate-admin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ path: '/about' })
+        body: JSON.stringify({ table: 'about_us' }),
       });
 
       setSuccess(true);
@@ -177,10 +177,10 @@ export function FormAboutUs() {
       setImageKeys({ ...imageKeys, gallery: imageKeys.gallery + 1 });
       
       // Revalidar página
-      await fetch('/api/revalidate', {
+      await fetch('/api/revalidate-admin', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ path: '/about' })
+        body: JSON.stringify({ table: 'about_us' }),
       });
       
       // Mostrar éxito

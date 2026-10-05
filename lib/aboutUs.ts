@@ -152,14 +152,10 @@ export async function uploadAboutUsPhoto(file: File, type: 'main' | 'gallery'): 
 // Función para revalidar la página after cambios
 export async function revalidateAboutUsPage(): Promise<void> {
   try {
-    await fetch('/api/revalidate', {
+    await fetch('/api/revalidate-admin', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        path: '/about'
-      })
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ table: 'about_us' }),
     });
   } catch (error) {
     console.error('Error revalidating about page:', error);
