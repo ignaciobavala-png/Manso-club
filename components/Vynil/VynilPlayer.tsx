@@ -30,6 +30,11 @@ export function VynilPlayer() {
   const [abierto, setAbierto] = useState(
     () => typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('vynil'),
   );
+  // Los motores (API de YouTube, iframe de SoundCloud) se montan recién la
+  // primera vez que se abre el panel. Antes se cargaban al entrar a cualquier
+  // página: ~1 MB de JS de YouTube que casi nadie usaba. Abrir el panel es el
+  // gesto previo a tocar play, así que llega listo a tiempo.
+  const [motorActivo, setMotorActivo] = useState(abierto);
   const [listo, setListo] = useState(false);
   const ytRef = useRef<any>(null);
   const scRef = useRef<any>(null);
@@ -45,7 +50,7 @@ export function VynilPlayer() {
 
   // ── YouTube ───────────────────────────────────────────────────────────────
   useEffect(() => {
-    if (actual?.fuente !== 'youtube') return;
+    if (!motorActivo || actual?.fuente !== 'youtube') return;
 
     const arrancar = () => {
       if (!ytDivRef.current || ytRef.current) return;
@@ -83,7 +88,7 @@ export function VynilPlayer() {
       s.src = 'https://www.youtube.com/iframe_api';
       document.body.appendChild(s);
     }
-  }, [actual?.fuente, actual?.ref, siguiente, setSonando]);
+  }, [motorActivo, actual?.fuente, actual?.ref, siguiente, setSonando]);
 
   // Cambio de tema dentro de YouTube
   useEffect(() => {
@@ -94,7 +99,7 @@ export function VynilPlayer() {
 
   // ── SoundCloud ────────────────────────────────────────────────────────────
   useEffect(() => {
-    if (actual?.fuente !== 'soundcloud' || !scIframeRef.current) return;
+    if (!motorActivo || actual?.fuente !== 'soundcloud' || !scIframeRef.current) return;
     if (!(window as any).SC?.Widget) return;
 
     const w = (window as any).SC.Widget(scIframeRef.current);
@@ -107,7 +112,7 @@ export function VynilPlayer() {
     w.bind(Events.FINISH, () => siguiente());
     w.bind(Events.PLAY, () => setSonando(true));
     w.bind(Events.PAUSE, () => setSonando(false));
-  }, [actual?.fuente, actual?.ref, siguiente, setSonando, sonando]);
+  }, [motorActivo, actual?.fuente, actual?.ref, siguiente, setSonando, sonando]);
 
   // Un solo motor sonando: al cambiar de fuente, se apaga el otro.
   useEffect(() => {
@@ -158,7 +163,7 @@ export function VynilPlayer() {
   return (
     <>
       {/* Motores de audio, ocultos */}
-      {actual && (
+      {motorActivo && actual && (
         <div className="fixed -left-[9999px] top-0 w-0 h-0 overflow-hidden" aria-hidden="true">
           {actual.fuente === 'youtube' ? (
             <div ref={ytDivRef} />
@@ -178,7 +183,10 @@ export function VynilPlayer() {
       {!abierto && (
         <div className={`fixed right-4 z-50 ${bottom}`}>
           <button
-            onClick={() => setAbierto(true)}
+            onClick={() => {
+              setMotorActivo(true);
+              setAbierto(true);
+            }}
             aria-label="Vinyl — la música que suena en Manso"
             className="group flex items-center justify-center relative"
           >
