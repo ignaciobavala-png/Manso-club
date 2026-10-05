@@ -29,6 +29,6 @@ export function getMPPaymentClient() {
 export function getSiteUrl() {
   return (
     process.env.NEXT_PUBLIC_SITE_URL ||
-    (process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://manso.club')
+    (process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://mansoclub.com.ar')
   );
 }

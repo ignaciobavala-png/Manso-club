@@ -83,7 +83,7 @@ export async function enviarCampania(
   }
 
   const bloques = await procesarBloquesCanvas(supabase, campania.id, campania.bloques);
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://manso.club";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://mansoclub.com.ar";
   const unsubscribeUrl = (email: string) =>
     `${siteUrl}/api/mailing/unsubscribe?email=${encodeURIComponent(email)}`;
 

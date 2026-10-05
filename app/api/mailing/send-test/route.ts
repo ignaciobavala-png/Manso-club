@@ -67,7 +67,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: message }, { status: 400 });
   }
 
-  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://manso.club";
+  const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://mansoclub.com.ar";
 
   try {
     const { data, error } = await getResend().batch.send(

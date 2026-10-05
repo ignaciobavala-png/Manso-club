@@ -81,7 +81,7 @@ export async function GET(
 
     // Footer
     ctx.font = '12px Arial';
-    ctx.fillText('www.manso.club', 300, 750);
+    ctx.fillText('mansoclub.com.ar', 300, 750);
 
     // Convertir a buffer
     const buffer = canvas.toBuffer('image/png');

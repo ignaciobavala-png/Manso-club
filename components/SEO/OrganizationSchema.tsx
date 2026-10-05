@@ -1,10 +1,12 @@
+import { SITE_URL } from '@/lib/constants';
+
 export function OrganizationSchema() {
   const schema = {
     '@context': 'https://schema.org',
     '@type': 'Organization',
     name: 'Manso Club',
-    url: 'https://manso.club',
-    logo: 'https://manso.club/manso-logo-black.png',
+    url: SITE_URL,
+    logo: `${SITE_URL}/manso-logo-black.png`,
     sameAs: [
       'https://www.instagram.com/manso___club/',
     ],

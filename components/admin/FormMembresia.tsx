@@ -359,7 +359,7 @@ export function FormMembresia() {
           className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra/50 transition-colors"
         />
         <p className="text-[10px] text-manso-cream/40 mt-2">
-          manso.club/membresias/<span className="text-manso-cream/70">{toSlug(formData.slug || formData.nombre) || 'nombre-del-plan'}</span>
+          mansoclub.com.ar/membresias/<span className="text-manso-cream/70">{toSlug(formData.slug || formData.nombre) || 'nombre-del-plan'}</span>
         </p>
       </div>
 

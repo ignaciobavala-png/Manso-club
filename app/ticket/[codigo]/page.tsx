@@ -196,7 +196,7 @@ export default async function TicketPage({ params }: TicketPageProps) {
                   Presenta este código QR en la entrada para su validación.
                 </p>
                 <p className="text-[9px] text-manso-cream/20 mt-4">
-                  Manso Club • www.manso.club
+                  Manso Club • mansoclub.com.ar
                 </p>
               </div>
             </div>

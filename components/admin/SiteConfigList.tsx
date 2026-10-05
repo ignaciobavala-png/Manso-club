@@ -53,7 +53,7 @@ export function SiteConfigList({ refreshTrigger }: SiteConfigListProps) {
         <p className="text-[#1a0dab] text-lg font-medium leading-tight">
           {seoTitle || 'Manso Club | Cowork Creativo & Talleres en Buenos Aires'}
         </p>
-        <p className="text-[#006621] text-xs mt-0.5">manso.club</p>
+        <p className="text-[#006621] text-xs mt-0.5">mansoclub.com.ar</p>
         <p className="text-[#545454] text-sm mt-1 leading-snug">
           {seoDescription || 'Ideal para freelancers, emprendedores, startups, trabajadores remotos, estudiantes y artistas que busquen un lugar creativo de pertenencia.'}
         </p>

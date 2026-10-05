@@ -14,6 +14,7 @@ import { OrganizationSchema } from "@/components/SEO/OrganizationSchema";
 import { WebSiteSchema } from "@/components/SEO/WebSiteSchema";
 import { createSupabaseAnon } from "@/lib/supabase";
 import { Analytics } from "@vercel/analytics/next";
+import { SITE_URL } from "@/lib/constants";
 
 export async function generateMetadata(): Promise<Metadata> {
   const supabase = createSupabaseAnon();
@@ -25,6 +26,7 @@ export async function generateMetadata(): Promise<Metadata> {
   const config = Object.fromEntries((data ?? []).map(({ key, value }) => [key, value]));
 
   return {
+    metadataBase: new URL(SITE_URL),
     title: config.seo_title || "Manso Club | Cowork Creativo & Talleres en Buenos Aires",
     description: config.seo_description || "Ideal para freelancers, emprendedores, startups, trabajadores remotos, estudiantes y artistas que busquen un lugar creativo de pertenencia.",
     icons: {
@@ -41,12 +43,14 @@ export async function generateMetadata(): Promise<Metadata> {
       },
     },
     alternates: {
-      canonical: 'https://manso.club',
+      // './' se resuelve contra la ruta de cada página: antes todas declaraban
+      // la home como canónica.
+      canonical: './',
     },
     openGraph: {
       title: config.seo_title || "Manso Club | Cowork Creativo & Talleres en Buenos Aires",
       description: config.seo_description || "Ideal para freelancers, emprendedores, startups, trabajadores remotos, estudiantes y artistas que busquen un lugar creativo de pertenencia.",
-      url: 'https://manso.club',
+      url: './',
       siteName: 'Manso Club',
       locale: 'es_AR',
       type: 'website',

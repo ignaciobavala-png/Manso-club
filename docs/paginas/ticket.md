@@ -62,7 +62,7 @@ Se genera como data URL y se pasa a `next/image` para renderizado. Colores: QR o
 ### Footer
 - Texto legal: "Este ticket es válido para la entrada al evento"
 - "Presenta este código QR en la entrada para su validación"
-- "Manso Club • www.manso.club"
+- "Manso Club • mansoclub.com.ar"
 
 ## API de descarga: `/api/ticket/download/[codigo]`
 

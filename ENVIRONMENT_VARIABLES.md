@@ -39,7 +39,7 @@ Después de cargarlas hace falta un redeploy: Vercel no las inyecta en un deploy
 **Cómo obtener las credenciales:**
 1. mercadopago.com.ar/developers/panel/app → aplicación de Manso Club
 2. "Credenciales de producción" → copiar el *Access Token* (`APP_USR-...`)
-3. Sección "Webhooks" → registrar `https://manso.club/api/mp/webhook`, evento `payment`
+3. Sección "Webhooks" → registrar `https://mansoclub.com.ar/api/mp/webhook`, evento `payment`
 4. Copiar el *Webhook Secret* que devuelve al crear el webhook
 
 **Sin `MP_WEBHOOK_SECRET` el webhook rechaza todas las notificaciones** (`app/api/mp/webhook/route.ts`
@@ -51,7 +51,7 @@ cliente puede pagar, pero el pedido queda en `pendiente_pago` hasta confirmarlo 
 NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
-NEXT_PUBLIC_SITE_URL=https://manso.club
+NEXT_PUBLIC_SITE_URL=https://mansoclub.com.ar
 ```
 
 ## 💵 Moneda: precios en USD, cobro en ARS
@@ -113,7 +113,7 @@ con qué cotización se cobró.
 
 3. **Configurar webhook en Mercado Pago:**
    ```
-   URL: https://manso.club/api/mp/webhook
+   URL: https://mansoclub.com.ar/api/mp/webhook
    Events: payment
    Secret: (el mismo que MP_WEBHOOK_SECRET)
    ```
