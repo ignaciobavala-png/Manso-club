@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { getHeroSlidesByDevice, getMediaUrlForDevice } from '@/lib/hero';
+import { useSyncExternalStore } from 'react';
+import { getMediaUrlForDevice } from '@/lib/hero';
 import { HeroCarousel } from '@/components/Home/HeroCarousel';
 import { HeroSlide } from '@/lib/hero';
 
@@ -23,49 +23,34 @@ const HERO_SLIDES = [
   }
 ];
 
-export function HeroClient() {
-  const [slides, setSlides] = useState<HeroSlide[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [currentDevice, setCurrentDevice] = useState<'desktop' | 'mobile'>('desktop');
+type Device = 'desktop' | 'mobile';
 
-  useEffect(() => {
-    const loadSlides = async () => {
-      try {
-        // Detectar dispositivo client-side
-        const isMobile = window.innerWidth <= 768;
-        const device = isMobile ? 'mobile' : 'desktop';
-        setCurrentDevice(device);
+// Mismo corte que antes (innerWidth <= 768). Antes se volvían a pedir los
+// slides a Supabase en cada resize, y en mobile la barra de direcciones que se
+// esconde al scrollear dispara resize: el carrusel se reiniciaba scrolleando.
+const MOBILE_QUERY = '(max-width: 768px)';
 
-        const heroSlides = await getHeroSlidesByDevice(device);
-        setSlides(heroSlides);
-      } catch (error) {
-        console.error('Error loading hero slides:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
+const subscribe = (onChange: () => void) => {
+  const mq = window.matchMedia(MOBILE_QUERY);
+  mq.addEventListener('change', onChange);
+  return () => mq.removeEventListener('change', onChange);
+};
+const getDevice = (): Device => (window.matchMedia(MOBILE_QUERY).matches ? 'mobile' : 'desktop');
+// En el servidor no se sabe el dispositivo.
+const getServerDevice = (): Device | null => null;
 
-    loadSlides();
+export function HeroClient({ slides }: { slides: HeroSlide[] }) {
+  const device = useSyncExternalStore<Device | null>(subscribe, getDevice, getServerDevice);
 
-    // Escuchar cambios de tamaño de ventana
-    const handleResize = () => {
-      loadSlides();
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  if (loading) {
-    return (
-      <section id="hero" className="relative min-h-screen flex items-center justify-center bg-manso-black">
-        <div className="animate-pulse text-manso-cream/60">Cargando...</div>
-      </section>
-    );
-  }
+  // Sin saber el dispositivo (HTML del servidor e hidratación) se muestran los
+  // slides que van en los dos; si no hay ninguno así, todos.
+  const ambos = slides.filter((s) => s.device_type === 'ambos');
+  const visibles = device
+    ? slides.filter((s) => s.device_type === 'ambos' || s.device_type === device)
+    : ambos.length > 0 ? ambos : slides;
 
   // Sin slides en la DB, se usa el fallback hardcodeado
-  if (slides.length === 0) {
+  if (visibles.length === 0) {
     return <HeroCarousel slides={HERO_SLIDES} />;
   }
 
@@ -73,15 +58,22 @@ export function HeroClient() {
   // video / imagen / gradiente. Antes había tres ramas casi idénticas y la
   // de carrusel no dibujaba video, así que un slide de video mezclado con
   // imágenes se veía como el gradiente de fallback.
-  const carouselSlides = slides.map((slide) => ({
+  //
+  // Las imágenes llevan las dos versiones y el carrusel elige por CSS, así
+  // que salen bien desde el HTML. El video sí espera a saber el dispositivo:
+  // un <video> con autoplay no se puede dejar oculto sin que se descargue.
+  const carouselSlides = visibles.map((slide) => ({
     ...slide,
     title: [slide.title_line1, slide.title_line2 || ''].filter(Boolean),
     media_url:
       slide.tipo === 'imagen'
-        ? getMediaUrlForDevice(slide, currentDevice)
+        ? getMediaUrlForDevice(slide, 'desktop')
         : slide.tipo === 'video'
-          ? getMediaUrlForDevice(slide, currentDevice) || slide.media_url
+          ? device
+            ? getMediaUrlForDevice(slide, device) || slide.media_url
+            : null
           : null,
+    media_url_mobile: slide.tipo === 'imagen' ? getMediaUrlForDevice(slide, 'mobile') : null,
   }));
 
   return <HeroCarousel slides={carouselSlides} />;

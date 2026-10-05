@@ -13,6 +13,8 @@ const transitionConfig = {
 export interface CarouselSlide {
   tipo?: 'texto' | 'imagen' | 'video';
   media_url?: string | null;
+  /** Solo imágenes: versión mobile. Se elige por CSS para no depender del JS. */
+  media_url_mobile?: string | null;
   title_line1?: string | null;
   title_line2?: string | null;
   /** Forma vieja del fallback hardcodeado: [line1, line2]. */
@@ -44,7 +46,9 @@ const MIN_VIDEO_DURATION_MS = 8000;
 
 export const HeroCarousel = ({ slides }: { slides: CarouselSlide[] }) => {
   const [current, setCurrent] = useState(0);
-  const currentSlide = slides[current];
+  // La lista puede achicarse al saber el dispositivo (slides solo desktop o
+  // solo mobile): el índice se acota para no salirse.
+  const currentSlide = slides[current % slides.length];
   const isCurrentVideo = Boolean(currentSlide?.media_url) && currentSlide?.tipo === 'video';
 
   useEffect(() => {
@@ -62,7 +66,7 @@ export const HeroCarousel = ({ slides }: { slides: CarouselSlide[] }) => {
   // El tamaño se guarda como porcentaje y no como px: multiplicando el clamp()
   // el título sigue adaptándose solo a cada pantalla.
   const titleScale = (currentSlide.title_scale ?? 100) / 100;
-  const hasMedia = Boolean(currentSlide.media_url);
+  const hasMedia = Boolean(currentSlide.media_url || currentSlide.media_url_mobile);
   const isVideo = hasMedia && currentSlide.tipo === 'video';
   const isImage = hasMedia && currentSlide.tipo === 'imagen';
 
@@ -85,10 +89,25 @@ export const HeroCarousel = ({ slides }: { slides: CarouselSlide[] }) => {
           <source src={currentSlide.media_url} type={videoMimeType(currentSlide.media_url)} />
         </video>
       ) : isImage ? (
-        <div
-          className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat transition-all duration-900"
-          style={{ backgroundImage: `url(${currentSlide.media_url})` }}
-        />
+        // Un fondo con display:none no se descarga: cada pantalla baja solo
+        // la versión que le toca.
+        currentSlide.media_url_mobile && currentSlide.media_url_mobile !== currentSlide.media_url ? (
+          <>
+            <div
+              className="absolute inset-0 z-0 hidden md:block bg-cover bg-center bg-no-repeat transition-all duration-900"
+              style={currentSlide.media_url ? { backgroundImage: `url(${currentSlide.media_url})` } : undefined}
+            />
+            <div
+              className="absolute inset-0 z-0 md:hidden bg-cover bg-center bg-no-repeat transition-all duration-900"
+              style={{ backgroundImage: `url(${currentSlide.media_url_mobile})` }}
+            />
+          </>
+        ) : (
+          <div
+            className="absolute inset-0 z-0 bg-cover bg-center bg-no-repeat transition-all duration-900"
+            style={{ backgroundImage: `url(${currentSlide.media_url})` }}
+          />
+        )
       ) : (
         <div
           className="absolute inset-0 z-0"
@@ -103,7 +122,10 @@ export const HeroCarousel = ({ slides }: { slides: CarouselSlide[] }) => {
       <div className="absolute top-1/2 right-1/4 transform translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-manso-terra opacity-10 rounded-full blur-[120px] pointer-events-none" />
 
       <div className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center text-center">
-        <AnimatePresence mode="wait">
+        {/* initial={false}: el primer título sale visible desde el HTML del
+            servidor. Con la animación de entrada quedaba en opacity 0 hasta
+            hidratar, y como es el LCP del home, en mobile tardaba segundos. */}
+        <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={current}
             initial={{ opacity: 0, y: 12 }}
