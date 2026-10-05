@@ -2,13 +2,20 @@ import type { Metadata } from 'next';
 import { createSupabaseAnon } from '@/lib/supabase';
 import { CulturaBanner, CulturaBloque, CulturaConfig } from '@/lib/types/cultura';
 import { CulturaPagina } from '@/components/cultura/CulturaPagina';
+import { og } from '@/lib/seo';
 
 export const dynamic = 'force-dynamic';
 
 // Ana la dio por lista: ahora la linkea la card "Cultural Manso" de
 // /membresias y la ruta se indexa como cualquier otra.
+const titulo = 'Cultural Manso | Manso Club';
+const descripcion =
+  'La pata cultural de Manso Club en Colegiales: ciclos, muestras, charlas y encuentros que cruzan música, arte, gastronomía y tecnología.';
+
 export const metadata: Metadata = {
-  title: 'Cultural Manso',
+  title: titulo,
+  description: descripcion,
+  openGraph: og({ title: titulo, description: descripcion }),
 };
 
 export default async function MansoCulturalPage() {

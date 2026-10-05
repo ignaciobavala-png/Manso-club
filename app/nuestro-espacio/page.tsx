@@ -2,12 +2,18 @@ import type { Metadata } from 'next';
 import { createSupabaseAnon } from '@/lib/supabase';
 import { EspacioConfig, EspacioSala } from '@/lib/types/espacio';
 import { EspacioPagina } from '@/components/espacio/EspacioPagina';
+import { og } from '@/lib/seo';
 
 export const dynamic = 'force-dynamic';
 
+const titulo = 'Nuestro espacio | Manso Club';
+const descripcion =
+  'Las salas de Manso Club en Colegiales, Buenos Aires: cowork, terraza y espacio para eventos, talleres y encuentros.';
+
 export const metadata: Metadata = {
-  title: 'Nuestro espacio',
-  description: 'Las salas del cowork de Manso Club.',
+  title: titulo,
+  description: descripcion,
+  openGraph: og({ title: titulo, description: descripcion }),
 };
 
 export default async function NuestroEspacioPage() {

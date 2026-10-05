@@ -1,10 +1,22 @@
+import type { Metadata } from 'next';
 import Image from 'next/image';
 import { AdaptiveSectionLayout } from '@/components/ui/AdaptiveSectionLayout';
 import { getTeamMembers } from '@/lib/team';
 import { getAboutUs } from '@/lib/aboutUs';
 import { ParticleBackground } from '@/components/Home/ParticleBackground';
+import { og } from '@/lib/seo';
 
 export const revalidate = 60;
+
+const titulo = 'Sobre nosotros | Manso Club';
+const descripcion =
+  'Manso Club es un club creativo en Colegiales, Buenos Aires: un tercer lugar para mentes inquietas, con cowork durante la semana y cultura los fines de semana.';
+
+export const metadata: Metadata = {
+  title: titulo,
+  description: descripcion,
+  openGraph: og({ title: titulo, description: descripcion }),
+};
 
 export default async function AboutPage() {
   const teamMembers = await getTeamMembers();

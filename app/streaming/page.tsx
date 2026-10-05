@@ -1,11 +1,18 @@
 import { createSupabaseServer } from '@/lib/supabase';
 import { ParticleBackground } from '@/components/Home/ParticleBackground';
 import StreamingLibrary from './StreamingLibrary';
+import { og } from '@/lib/seo';
 
 export const dynamic = 'force-dynamic';
 
+const titulo = 'Streaming | Manso Club';
+const descripcion =
+  'Sets, charlas y contenido grabado en Manso Club, en vivo y a demanda.';
+
 export const metadata = {
-  title: 'Streaming | Manso Club',
+  title: titulo,
+  description: descripcion,
+  openGraph: og({ title: titulo, description: descripcion }),
 };
 
 type Nivel = 'publico' | 'registrado' | 'miembro';
@@ -72,6 +79,8 @@ export default async function StreamingPage() {
       {/* pt-24 en celular: el navbar mide ~68px ahí, así que 8rem de aire
           empujaban el player fuera de la primera pantalla sin necesidad. */}
       <div className="relative z-10 max-w-[1400px] mx-auto px-4 md:px-8 pt-24 md:pt-32 pb-20">
+        {/* El diseño no lleva título visible: el h1 queda para buscadores y lectores de pantalla. */}
+        <h1 className="sr-only">Streaming de Manso Club</h1>
         <StreamingLibrary
           contenido={contenido ?? []}
           categorias={categorias ?? []}

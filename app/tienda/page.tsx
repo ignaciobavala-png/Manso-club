@@ -9,15 +9,15 @@ import { ProductCard } from '@/components/shop/ProductCard';
 import { CurrencyToggle } from '@/components/ui/CurrencyToggle';
 import Link from 'next/link';
 import { Users, Lock } from 'lucide-react';
+import { og } from '@/lib/seo';
 
 export const metadata: Metadata = {
   title: 'Tienda | Manso Club',
   description: 'Merchandising y productos de Manso Club. Indumentaria, accesorios y más.',
-  openGraph: {
+  openGraph: og({
     title: 'Tienda | Manso Club',
     description: 'Merchandising y productos de Manso Club.',
-    images: [{ url: '/og-image.png', width: 800, height: 800 }],
-  },
+  }),
   twitter: {
     card: 'summary_large_image',
     title: 'Tienda | Manso Club',

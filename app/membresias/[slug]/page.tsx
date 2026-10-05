@@ -6,6 +6,9 @@ import { createSupabaseAnon } from '@/lib/supabase';
 import { Membresia } from '@/lib/types/membresia';
 import { fondoAcento } from '@/lib/membresia-color';
 import { MembresiaDetalleCTA } from './MembresiaDetalleCTA';
+import { og, descripcion as resumen, ORG_ID } from '@/lib/seo';
+import { SITE_URL } from '@/lib/constants';
+import { JsonLd } from '@/components/SEO/JsonLd';
 
 export const dynamic = 'force-dynamic';
 
@@ -30,13 +33,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const membresia = await getMembresia(slug);
   if (!membresia) return { title: 'Membresía | Manso Club' };
 
-  const descripcion =
-    membresia.descripcion_corta?.trim() || membresia.descripcion?.trim() || undefined;
+  const descripcion = resumen(membresia.descripcion_corta) ?? resumen(membresia.descripcion);
 
   return {
     title: `${membresia.nombre} | Manso Club`,
     description: descripcion,
-    openGraph: { title: `${membresia.nombre} | Manso Club`, description: descripcion },
+    openGraph: og({ title: `${membresia.nombre} | Manso Club`, description: descripcion }),
   };
 }
 
@@ -63,6 +65,30 @@ export default async function MembresiaDetallePage({ params }: Props) {
 
   return (
     <main className={`min-h-screen ${fondoAcento(membresia.color_acento)} text-manso-cream`}>
+      {/* Los precios de los planes se cargan en dólares (ver MembresiaCard). */}
+      <JsonLd
+        data={{
+          '@type': 'Service',
+          serviceType: 'Membresía de cowork',
+          name: `${membresia.nombre} — Manso Club`,
+          url: `${SITE_URL}/membresias/${membresia.slug}`,
+          ...(descripcion && { description: resumen(descripcion, 500) }),
+          provider: { '@id': ORG_ID },
+          ...(membresia.precio > 0 && {
+            offers: {
+              '@type': 'Offer',
+              price: membresia.precio,
+              priceCurrency: 'USD',
+              priceSpecification: {
+                '@type': 'UnitPriceSpecification',
+                price: membresia.precio,
+                priceCurrency: 'USD',
+                unitText: membresia.periodo,
+              },
+            },
+          }),
+        }}
+      />
       <div className="max-w-5xl mx-auto px-6 md:px-12 pt-28 md:pt-32 pb-16">
         <Link
           href="/membresias"

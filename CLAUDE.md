@@ -176,6 +176,24 @@ El cobro siempre es en pesos y la cotización se resuelve en el servidor
 un carrito enteramente en pesos igual puede comprar; con un producto en dólares
 adentro, el checkout devuelve 503.
 
+### SEO
+
+El dominio oficial es **mansoclub.com.ar** (`SITE_URL` en `lib/constants.ts`).
+`manso.club` aparecía en el código pero nunca fue de Manso: da 404.
+
+- Canonical: el root layout pone `canonical: './'` con `metadataBase`, así que
+  cada ruta se canoniza sola. No poner una URL fija ahí.
+- Open Graph: usar `og({ title, description })` de `lib/seo.ts`. Next
+  **reemplaza** el `openGraph` del layout en vez de mezclarlo, y sin el helper
+  la página pierde imagen, siteName y url al compartirse.
+- Descripciones que vienen de la DB pasan por `descripcion()` (limpia saltos de
+  línea y corta en ~160).
+- Datos estructurados con `<JsonLd>` (escapa `<`): LocalBusiness en el layout,
+  Person en artistas, Service en planes, Product en productos, y Event en
+  `/agenda/[slug]` solo si tiene fecha, no terminó y dura ≤ 180 días.
+- `/llms.txt` (resumen para asistentes de IA) y el sitemap salen de la DB y
+  solo incluyen lo público.
+
 ### Image Uploads
 
 Images are stored in Supabase Storage. `ImageUploader` and `CompactImageUploader` components handle upload; products support an array of image URLs.

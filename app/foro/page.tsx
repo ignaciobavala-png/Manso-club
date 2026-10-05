@@ -5,11 +5,18 @@ import { ParticleBackground } from '@/components/Home/ParticleBackground'
 import ThreadCard from '@/components/Foro/ThreadCard'
 import Pagination from '@/components/Foro/Pagination'
 import type { ForoCategoria } from '@/lib/types/foro'
+import { og } from '@/lib/seo';
 
 export const dynamic = 'force-dynamic'
 
+const titulo = 'Comunidad Manso | Manso Club';
+const descripcion =
+  'El foro de la comunidad de Manso Club: proyectos, colaboraciones, búsquedas y charlas entre artistas, creativos y emprendedores.';
+
 export const metadata = {
-  title: 'Comunidad Manso | Manso Club',
+  title: titulo,
+  description: descripcion,
+  openGraph: og({ title: titulo, description: descripcion }),
 }
 
 const PAGE_SIZE = 20

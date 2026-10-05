@@ -6,6 +6,9 @@ import { ArrowLeft } from 'lucide-react';
 import { TallerCarousel } from '@/components/Home/TallerCarousel';
 import { ContenidoDetalle } from '@/components/Home/ContenidoDetalle';
 import { ShareButton } from '@/components/ShareButton';
+import { og, descripcion, LUGAR, ORG_ID } from '@/lib/seo';
+import { SITE_URL } from '@/lib/constants';
+import { JsonLd } from '@/components/SEO/JsonLd';
 
 export const dynamic = 'force-dynamic';
 
@@ -31,6 +34,9 @@ interface AgendaItem {
   clases?: number;
   luma_url?: string;
   visibilidad: Nivel;
+  fecha_inicio?: string | null;
+  fecha_fin?: string | null;
+  horario?: string | null;
 }
 
 interface AgendaFoto {
@@ -47,7 +53,7 @@ async function getTaller(slug: string): Promise<AgendaItem | null> {
   const supabase = createSupabaseAnon();
   const { data } = await supabase
     .from('agenda')
-    .select('id, titulo, descripcion, contenido_detalle, slug, categoria, duracion, frecuencia, precio, cupos_maximos, clases, luma_url, visibilidad')
+    .select('id, titulo, descripcion, contenido_detalle, slug, categoria, duracion, frecuencia, precio, cupos_maximos, clases, luma_url, visibilidad, fecha_inicio, fecha_fin, horario')
     .eq('slug', slug)
     .eq('activo', true)
     .single();
@@ -85,14 +91,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: 'Taller no encontrado | Manso Club' };
   }
 
+  const desc = descripcion(taller.descripcion) ?? `${taller.titulo} en Manso Club.`;
+  const [foto] = await getTallerFotos(taller.id);
+
   return {
     title: `${taller.titulo} | Manso Club`,
-    description: taller.descripcion || `${taller.titulo} en Manso Club.`,
-    openGraph: {
+    description: desc,
+    openGraph: og({
       title: `${taller.titulo} | Manso Club`,
-      description: taller.descripcion || `${taller.titulo} en Manso Club.`,
-      type: 'website',
-    },
+      description: desc,
+      ...(foto && { images: [{ url: foto.url }] }),
+    }),
   };
 }
 
@@ -125,8 +134,54 @@ export default async function TallerPage({ params }: Props) {
     ? 'Gratis'
     : `$${taller.precio.toLocaleString('es-AR')}`;
 
+  // Event solo para lo que tiene fecha, no terminó y dura como un taller o un
+  // ciclo. El cowork está cargado de 2025 a 2029: declararlo evento de cuatro
+  // años sería falso, y Google lo descarta igual.
+  const hoy = new Date().toISOString().slice(0, 10);
+  const fin = taller.fecha_fin ?? taller.fecha_inicio;
+  const esEvento =
+    !!taller.fecha_inicio &&
+    !!fin &&
+    fin >= hoy &&
+    (Date.parse(fin) - Date.parse(taller.fecha_inicio)) / 86_400_000 <= 180;
+
+  const evento = esEvento && {
+    '@type': 'Event',
+    name: taller.titulo,
+    url: `${SITE_URL}/agenda/${taller.slug}`,
+    ...(taller.descripcion && { description: descripcion(taller.descripcion, 500) }),
+    startDate: taller.horario
+      ? `${taller.fecha_inicio}T${taller.horario.slice(0, 5)}:00-03:00`
+      : taller.fecha_inicio,
+    ...(taller.fecha_fin && { endDate: taller.fecha_fin }),
+    eventStatus: 'https://schema.org/EventScheduled',
+    eventAttendanceMode: 'https://schema.org/OfflineEventAttendanceMode',
+    ...(fotos.length > 0 && { image: fotos.map(f => f.url) }),
+    location: {
+      '@type': 'Place',
+      name: 'Manso Club',
+      address: {
+        '@type': 'PostalAddress',
+        streetAddress: LUGAR.calle,
+        postalCode: LUGAR.codigoPostal,
+        addressLocality: LUGAR.ciudad,
+        addressCountry: LUGAR.pais,
+      },
+    },
+    organizer: { '@id': ORG_ID },
+    offers: {
+      '@type': 'Offer',
+      price: taller.precio ?? 0,
+      priceCurrency: 'ARS',
+      url: `${SITE_URL}/agenda/${taller.slug}`,
+      availability: 'https://schema.org/InStock',
+    },
+  };
+
   return (
     <main className="min-h-screen bg-manso-black">
+      {evento && <JsonLd data={evento} />}
+
       {/* Back button */}
       <div className="max-w-5xl mx-auto px-6 md:px-12 pt-28 pb-4">
         <Link

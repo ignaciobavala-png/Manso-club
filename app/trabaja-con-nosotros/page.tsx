@@ -2,17 +2,17 @@ import type { Metadata } from 'next';
 import { ParticleBackground } from '@/components/Home/ParticleBackground';
 import { ArrowRight } from 'lucide-react';
 import { createClient } from '@supabase/supabase-js';
+import { og } from '@/lib/seo';
 
 export const revalidate = 60;
 
 export const metadata: Metadata = {
   title: 'Trabajá con nosotros | Manso Club',
   description: 'Sumate al equipo de Manso Club. Buscamos talento en producción, comunicación, curaduría y técnica.',
-  openGraph: {
+  openGraph: og({
     title: 'Trabajá con nosotros | Manso Club',
     description: 'Sumate al equipo de Manso Club.',
-    images: [{ url: '/og-image.png', width: 800, height: 800 }],
-  },
+  }),
   twitter: {
     card: 'summary_large_image',
     title: 'Trabajá con nosotros | Manso Club',

@@ -8,6 +8,9 @@ import { ArtistProfilePlayer } from './ArtistProfilePlayer';
 import { ArtistTrackManager } from '@/components/artistas/ArtistTrackManager';
 import { GalleryGrid } from '@/components/Home/GalleryGrid';
 import { ShareButton } from '@/components/ShareButton';
+import { og, descripcion, ORG_ID } from '@/lib/seo';
+import { SITE_URL } from '@/lib/constants';
+import { JsonLd } from '@/components/SEO/JsonLd';
 
 export const dynamic = 'force-dynamic';
 
@@ -118,15 +121,17 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     return { title: 'Artista no encontrado | Manso Club' };
   }
 
+  const desc = descripcion(artista.bio) ?? `${artista.nombre} — ${artista.estilo || 'DJ'} en Manso Club.`;
+
   return {
     title: `${artista.nombre} | Manso Club`,
-    description: artista.bio || `${artista.nombre} — ${artista.estilo || 'DJ'} en Manso Club.`,
-    openGraph: {
+    description: desc,
+    openGraph: og({
       title: `${artista.nombre} | Manso Club`,
-      description: artista.bio || `${artista.nombre} — ${artista.estilo || 'DJ'} en Manso Club.`,
+      description: desc,
       type: 'profile',
       ...(artista.imagen_url && { images: [{ url: artista.imagen_url }] }),
-    },
+    }),
   };
 }
 
@@ -177,6 +182,19 @@ export default async function ArtistaPage({ params }: Props) {
     <main className="min-h-screen bg-manso-black">
       {/* Maneja el track del artista en el reproductor global */}
       <ArtistTrackManager artist={artista} />
+
+      <JsonLd
+        data={{
+          '@type': 'Person',
+          name: artista.nombre,
+          url: `${SITE_URL}/artistas/${artista.slug}`,
+          ...(artista.imagen_url && { image: artista.imagen_url }),
+          ...(artista.bio && { description: descripcion(artista.bio, 500) }),
+          ...(artista.estilo && { jobTitle: artista.estilo }),
+          affiliation: { '@id': ORG_ID },
+          sameAs: [...publicLinks.map(l => l.url), ...(scUrl ? [scUrl] : [])],
+        }}
+      />
 
       {/* Back button */}
       <div className="max-w-[1400px] mx-auto px-6 md:px-12 pt-28 pb-4">

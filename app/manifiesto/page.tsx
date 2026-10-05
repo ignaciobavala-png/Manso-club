@@ -3,16 +3,16 @@ import { ParticleBackground } from '@/components/Home/ParticleBackground';
 import { getManifiesto } from '@/lib/manifiesto';
 import { TituloCinta } from '@/components/ui/TituloCinta';
 import { SlideFrase, SlideImagen } from '@/components/Manifiesto/Slides';
+import { og } from '@/lib/seo';
 
 export const revalidate = 60;
 export const metadata: Metadata = {
   title: 'Manifiesto | Manso Club',
   description: 'El manifiesto de Manso Club: nuestra visión sobre la cultura electrónica, el arte y el diseño en Buenos Aires.',
-  openGraph: {
+  openGraph: og({
     title: 'Manifiesto | Manso Club',
     description: 'Nuestra visión sobre la cultura electrónica, el arte y el diseño en Buenos Aires.',
-    images: [{ url: '/og-image.png', width: 800, height: 800 }],
-  },
+  }),
   twitter: {
     card: 'summary_large_image',
     title: 'Manifiesto | Manso Club',
