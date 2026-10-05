@@ -59,7 +59,9 @@ export function ProductCard({ producto }: ProductProps) {
         <div className="relative">
           {/* Contenedor de Imagen */}
           <div className="aspect-square w-full bg-zinc-50 relative overflow-hidden">
-            <img 
+            <img
+              loading="lazy"
+              decoding="async" 
               src={currentImage} 
               alt={producto.nombre}
               className="w-full h-full object-cover transition-all duration-700"

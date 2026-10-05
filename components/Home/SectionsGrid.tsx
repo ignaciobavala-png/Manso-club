@@ -123,6 +123,8 @@ export function SectionsGrid() {
             >
               <div className="aspect-[4/5] overflow-hidden rounded-[2rem] bg-zinc-50 mb-4 relative">
                 <img
+                  loading="lazy"
+                  decoding="async"
                   src={prod.imagen_url}
                   alt={prod.nombre}
                   className="w-full h-full object-cover grayscale group-hover:grayscale-0 group-hover:scale-105 transition-all duration-700"

@@ -17,7 +17,7 @@ export function SlideFrase({ imagen, frase }: { imagen: string | null; frase: st
     <section className={`relative w-full ${ALTO} overflow-hidden bg-manso-carbon`}>
       {imagen ? (
         <>
-          <img src={imagen} alt="" className="absolute inset-0 w-full h-full object-cover" />
+          <img loading="lazy" decoding="async" src={imagen} alt="" className="absolute inset-0 w-full h-full object-cover" />
           {/* La frase tiene que leerse sobre cualquier foto, clara u oscura */}
           <div className="absolute inset-0 bg-black/45" />
         </>
@@ -41,7 +41,7 @@ export function SlideImagen({ imagen }: { imagen: string | null }) {
   return (
     <section className={`relative w-full ${ALTO} overflow-hidden bg-manso-carbon`}>
       {imagen ? (
-        <img src={imagen} alt="" className="absolute inset-0 w-full h-full object-cover" />
+        <img loading="lazy" decoding="async" src={imagen} alt="" className="absolute inset-0 w-full h-full object-cover" />
       ) : (
         <Placeholder icono={<ImageOff size={22} />} texto="Imagen" />
       )}

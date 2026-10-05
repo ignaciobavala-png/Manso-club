@@ -106,7 +106,7 @@ export function TallerCarousel({ fotos }: { fotos: Foto[] }) {
               }}
               className="h-[92%] w-[92%] flex items-center justify-center will-change-transform"
             >
-              <img src={foto.url} alt="Taller" className="w-full h-full object-cover" />
+              <img loading="lazy" decoding="async" src={foto.url} alt="Taller" className="w-full h-full object-cover" />
             </div>
           </div>
         ))}

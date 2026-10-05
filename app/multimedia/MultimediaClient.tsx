@@ -93,7 +93,7 @@ function ImageCard({ src, titulo }: { src: string; titulo: string }) {
       {expanded && (
         <div className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 md:p-10" onClick={() => setExpanded(false)}>
           <button onClick={() => setExpanded(false)} className="absolute top-6 right-6 text-white/60 hover:text-white text-2xl z-10">✕</button>
-          <img src={src} alt={titulo} className="max-w-full max-h-full object-contain" onClick={(e) => e.stopPropagation()} />
+          <img loading="lazy" decoding="async" src={src} alt={titulo} className="max-w-full max-h-full object-contain" onClick={(e) => e.stopPropagation()} />
         </div>
       )}
     </>

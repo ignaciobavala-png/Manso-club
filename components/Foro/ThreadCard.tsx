@@ -44,6 +44,8 @@ export default function ThreadCard({ thread }: Props) {
         <div className="shrink-0 w-11 h-11 rounded-full overflow-hidden ring-2 ring-manso-cream/15 mt-0.5">
           {thread.autor_avatar ? (
             <img
+              loading="lazy"
+              decoding="async"
               src={thread.autor_avatar}
               alt={thread.autor_nombre ?? 'Usuario'}
               className="w-full h-full object-cover"

@@ -37,6 +37,8 @@ function Avatar({ nombre, avatarUrl, size = 'md' }: { nombre: string | null; ava
     <div className={`shrink-0 ${dimensions} rounded-full overflow-hidden ring-2 ring-manso-cream/15`}>
       {avatarUrl ? (
         <img
+          loading="lazy"
+          decoding="async"
           src={avatarUrl}
           alt={nombre ?? 'Usuario'}
           className="w-full h-full object-cover"

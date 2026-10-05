@@ -302,7 +302,7 @@ export const EspacioPagina = ({ titulo, intro, salas }: Props) => {
                     la primera vuelta. */}
                 <div className="hidden" aria-hidden>
                   {fotos.map(url => (
-                    <img key={url} src={url} alt="" />
+                    <img loading="lazy" decoding="async" key={url} src={url} alt="" />
                   ))}
                 </div>
               </div>

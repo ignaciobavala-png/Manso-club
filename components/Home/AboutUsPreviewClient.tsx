@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { motion, type Easing } from 'framer-motion';
 
 const ease: Easing = [0.16, 1, 0.3, 1];
@@ -71,10 +72,12 @@ export const AboutUsPreviewClient = ({
           >
             {mainPhotoUrl ? (
               <div className="relative aspect-[4/3] overflow-hidden">
-                <img
+                <Image
+                  fill
+                  sizes="(min-width: 768px) 50vw, 100vw"
                   src={mainPhotoUrl}
                   alt="Manso Club"
-                  className="w-full h-full object-cover"
+                  className="object-cover"
                 />
               </div>
             ) : (

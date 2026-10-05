@@ -1,14 +1,15 @@
 'use client';
 
+import Image from 'next/image';
 import { useState, useEffect, useCallback } from 'react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
-interface Image {
+interface GalleryImage {
   id: string | number;
   src: string;
 }
 
-export function GalleryGrid({ images }: { images: Image[] }) {
+export function GalleryGrid({ images }: { images: GalleryImage[] }) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
 
   const close = () => setSelectedIndex(null);
@@ -35,10 +36,12 @@ export function GalleryGrid({ images }: { images: Image[] }) {
             onClick={() => setSelectedIndex(i)}
             className="group relative aspect-[4/3] overflow-hidden cursor-pointer outline-none transition-transform duration-300 ease-out active:scale-125 active:z-20 hover:scale-105 hover:z-10"
           >
-            <img
+            <Image
+              fill
+              sizes="(min-width: 768px) 33vw, 50vw"
               src={image.src}
               alt="Manso Club"
-              className="w-full h-full object-cover transition-all duration-300 ease-out group-hover:brightness-110 group-active:brightness-110"
+              className="object-cover transition-all duration-300 ease-out group-hover:brightness-110 group-active:brightness-110"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 group-active:opacity-100 transition-all duration-300" />
           </div>
@@ -72,6 +75,8 @@ export function GalleryGrid({ images }: { images: Image[] }) {
 
           {/* Imagen */}
           <img
+            loading="lazy"
+            decoding="async"
             src={images[selectedIndex].src}
             alt="Manso Club"
             className="max-w-[90vw] max-h-[85vh] object-contain rounded-xl shadow-2xl"

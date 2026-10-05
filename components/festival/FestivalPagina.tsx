@@ -89,6 +89,8 @@ export function FestivalPagina({ config, escenarios, entradas, borrador }: Props
           {config.banner_url && (
             <>
               <img
+                loading="lazy"
+                decoding="async"
                 src={config.banner_url}
                 alt=""
                 fetchPriority="high"

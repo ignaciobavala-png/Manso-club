@@ -42,6 +42,8 @@ const Foto = ({ src, className }: { src: string; className: string }) => (
   // Sin next/image: son fotos que sube Ana a Storage y el tamaño acá es
   // porcentual, no fijo — no hay un `sizes` sensato que dar.
   <img
+    loading="lazy"
+    decoding="async"
     src={src}
     alt=""
     className={`block object-cover aspect-[4/3] ${className}`}
@@ -92,6 +94,8 @@ export const CulturaPagina = ({ titulo, intro, banners, bloques }: Props) => {
               className={`relative w-full overflow-hidden flex items-center justify-center min-h-[240px] ${ALTURA_BANNER[i % ALTURA_BANNER.length]}`}
             >
               <img
+                loading="lazy"
+                decoding="async"
                 src={banner.imagen_url}
                 alt=""
                 className="absolute inset-0 w-full h-full object-cover grayscale"

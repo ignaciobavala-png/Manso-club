@@ -54,7 +54,7 @@ export default async function PerfilUsuarioPage({ params }: Props) {
         <div className="flex items-start gap-5 mb-8">
           <div className="shrink-0 w-20 h-20 rounded-full overflow-hidden ring-2 ring-manso-cream/15">
             {perfil.avatar_url ? (
-              <img src={perfil.avatar_url} alt={nombre} className="w-full h-full object-cover" />
+              <img loading="lazy" decoding="async" src={perfil.avatar_url} alt={nombre} className="w-full h-full object-cover" />
             ) : (
               <div className="w-full h-full bg-manso-blue flex items-center justify-center text-manso-cream text-2xl font-bold">
                 {inicial}

@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import { AdaptiveSectionLayout } from '@/components/ui/AdaptiveSectionLayout';
 import { ParticleBackground } from '@/components/Home/ParticleBackground';
@@ -214,10 +215,12 @@ export default function MembresiasPage() {
                   key={image.id}
                   className="relative aspect-[4/3] rounded-2xl overflow-hidden shadow-lg hover:scale-[1.02] transition-transform duration-300 cursor-pointer"
                 >
-                  <img
+                  <Image
+                    fill
+                    sizes="(min-width: 768px) 33vw, 50vw"
                     src={image.src}
                     alt="Manso Club Cowork"
-                    className="w-full h-full object-cover"
+                    className="object-cover"
                     onError={() => setFotosRotas(prev => prev.includes(image.id) ? prev : [...prev, image.id])}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />

@@ -155,7 +155,7 @@ function CanalPlayer({ canal, nivel }: { canal: Canal; nivel: Nivel }) {
           ) : (
             <>
               {thumbnailUrl && (
-                <img src={thumbnailUrl} alt={titulo} className="absolute inset-0 w-full h-full object-cover" />
+                <img loading="lazy" decoding="async" src={thumbnailUrl} alt={titulo} className="absolute inset-0 w-full h-full object-cover" />
               )}
               <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
                 <button
@@ -288,6 +288,8 @@ export default function StreamingLibrary({ contenido, categorias, nivel, canal }
                 <div className="relative aspect-video bg-zinc-900 overflow-hidden">
                   {item.thumbnail_url ? (
                     <img
+                      loading="lazy"
+                      decoding="async"
                       src={item.thumbnail_url}
                       alt={item.titulo}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"

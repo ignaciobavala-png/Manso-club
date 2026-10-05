@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { motion, useMotionValue, useTransform, animate } from "framer-motion";
 
@@ -64,10 +65,12 @@ export const GalleryCardStack = ({ images }: GalleryCardStackProps) => {
             animate={{ rotate: rotation, y: yOffset, scale: cardScale }}
             transition={{ type: "spring", stiffness: 280, damping: 22 }}
           >
-            <img
+            <Image
+              fill
+              sizes="320px"
               src={image.src}
               alt="Manso Club"
-              className="w-full h-full object-cover"
+              className="object-cover"
               draggable={false}
             />
             <div className="absolute inset-0 bg-black/20" />
@@ -163,10 +166,12 @@ const TopCard = ({ image, rotation, yOffset, scale, onAdvance }: TopCardProps) =
       onDragEnd={handleDragEnd}
       whileTap={{ scale: scale * 1.02 }}
     >
-      <img
+      <Image
+        fill
+        sizes="320px"
         src={image.src}
         alt="Manso Club"
-        className="w-full h-full object-cover"
+        className="object-cover"
         draggable={false}
       />
       <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
