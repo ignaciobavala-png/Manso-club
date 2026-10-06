@@ -19,8 +19,10 @@ const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
  * cuántas. La red y el monto exacto se eligen después, en esa página.
  */
 export async function POST(request: NextRequest) {
+  // Sin wallets todavía no se cobra: la tabla manda a la demo para que se vea
+  // la pantalla de pago con lo que la persona eligió, sin crear ninguna orden.
   if (redesActivas().length === 0) {
-    return NextResponse.json({ error: 'La venta online abre pronto.' }, { status: 503 });
+    return NextResponse.json({ error: 'La venta online abre pronto.', demo: true }, { status: 503 });
   }
 
   let body: CompraRequest;

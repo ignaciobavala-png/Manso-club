@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { ORDEN_REDES, type EstadoPago } from '@/lib/cripto-redes';
 import { formatArs, formatUsd } from '@/lib/precios';
+import { getCotizacionDolar } from '@/lib/dolar';
+import { leerEntradas } from '@/lib/festival';
 import { PagoCripto } from '@/components/festival/PagoCripto';
 import { CompraPagada, Dato, Marco, qrDeEntrada } from '@/components/festival/CompraPagada';
 
@@ -12,9 +14,21 @@ export const metadata: Metadata = { title: 'Pago con cripto (ejemplo)', robots: 
  * existan las wallets. No crea órdenes ni lee la cadena: todo es inventado y
  * la "dirección" es un texto que no es una dirección. `?estado=pagada` muestra
  * cómo quedan las entradas después de pagar.
+ *
+ * Mientras no haya wallets cargadas, COMPRAR en la tabla trae acá lo elegido
+ * (`?items=<id>:<cantidad>,…&nombre=…`), con los precios reales del panel.
+ * Sin `items`, muestra una compra de ejemplo fija.
  */
 
-const ORDEN = {
+type OrdenDemo = {
+  nombre: string;
+  email: string;
+  items: { nombre: string; cantidad: number; entradas: number }[];
+  totalArs: number;
+  totalUsd: number;
+};
+
+const EJEMPLO: OrdenDemo = {
   nombre: 'Juana Ejemplo',
   email: 'juana@ejemplo.com',
   items: [
@@ -25,9 +39,53 @@ const ORDEN = {
   totalUsd: 150.97,
 };
 
-export default async function DemoPagoCripto({ searchParams }: { searchParams: Promise<{ estado?: string }> }) {
-  const { estado } = await searchParams;
+/** Arma la orden con las entradas reales; ante cualquier dato raro, el ejemplo fijo. */
+async function ordenDesde(items?: string, nombre?: string): Promise<OrdenDemo> {
+  if (!items) return EJEMPLO;
+  const entradas = await leerEntradas();
+  const elegidas = items
+    .split(',')
+    .map(par => {
+      const [id, cant] = par.split(':');
+      const entrada = entradas.find(e => e.id === id);
+      const cantidad = Math.min(Number(cant) || 0, entrada?.max_por_compra ?? 0);
+      return entrada && cantidad > 0 ? { entrada, cantidad } : null;
+    })
+    .filter(x => x !== null);
+  if (elegidas.length === 0) return EJEMPLO;
+
+  const totalArs = elegidas.reduce((acc, { entrada, cantidad }) => acc + entrada.precio * cantidad, 0);
+  const cotizacion = await getCotizacionDolar()
+    .then(c => c.venta)
+    .catch(() => EJEMPLO.totalArs / EJEMPLO.totalUsd);
+  return {
+    nombre: nombre?.trim().slice(0, 120) || EJEMPLO.nombre,
+    email: EJEMPLO.email,
+    items: elegidas.map(({ entrada, cantidad }) => ({
+      nombre: entrada.nombre,
+      cantidad,
+      entradas: entrada.entradas_por_unidad,
+    })),
+    totalArs,
+    totalUsd: Math.round((totalArs / cotizacion) * 100) / 100,
+  };
+}
+
+export default async function DemoPagoCripto({
+  searchParams,
+}: {
+  searchParams: Promise<{ estado?: string; items?: string; nombre?: string }>;
+}) {
+  const { estado, items, nombre } = await searchParams;
   const pagada = estado === 'pagada';
+  const ORDEN = await ordenDesde(items, nombre);
+  const base = new URLSearchParams();
+  if (items) base.set('items', items);
+  if (nombre) base.set('nombre', nombre);
+  const conEstado = new URLSearchParams(base);
+  conEstado.set('estado', 'pagada');
+  const urlPago = `/festival/compra/demo${base.size ? `?${base}` : ''}`;
+  const urlPagada = `/festival/compra/demo?${conEstado}`;
 
   const resumen = (
     <dl className="mt-12 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 fest-mono text-[13px] max-w-[620px]">
@@ -43,10 +101,10 @@ export default async function DemoPagoCripto({ searchParams }: { searchParams: P
     <div className="mb-10 border border-[var(--fest-resalte)] text-[var(--fest-resalte)] px-4 py-3 fest-mono text-[11px] uppercase tracking-[0.2em] leading-relaxed flex flex-wrap gap-x-6 gap-y-2 items-center">
       <span>Vista de ejemplo · nada de esta página cobra · no mandes cripto</span>
       <span className="flex gap-4">
-        <Link href="/festival/compra/demo" className={pagada ? 'underline' : 'opacity-50'}>
+        <Link href={urlPago} className={pagada ? 'underline' : 'opacity-50'}>
           Pago
         </Link>
-        <Link href="/festival/compra/demo?estado=pagada" className={pagada ? 'opacity-50' : 'underline'}>
+        <Link href={urlPagada} className={pagada ? 'opacity-50' : 'underline'}>
           Pago confirmado
         </Link>
       </span>
@@ -68,7 +126,7 @@ export default async function DemoPagoCripto({ searchParams }: { searchParams: P
         <CompraPagada
           email={ORDEN.email}
           tickets={tickets}
-          pago={{ red: 'bsc', token: 'USDT', monto: 151.34, tx_hash: '' }}
+          pago={{ red: 'bsc', token: 'USDT', monto: Math.round(ORDEN.totalUsd * 100 + 37) / 100, tx_hash: '' }}
         >
           {resumen}
         </CompraPagada>

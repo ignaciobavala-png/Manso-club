@@ -11,7 +11,8 @@ import { formatArs } from '@/lib/precios';
  * Se cobra en cripto (USDT / USDC directo a la wallet de Manso): COMPRAR pide
  * nombre y mail, `/api/festival/compra` arma la orden y el navegador va a
  * `/festival/compra/[id]`, donde se elige la red y se paga. Sin wallets
- * configuradas la API contesta 503 y acá se muestra "la venta abre pronto".
+ * configuradas la API contesta 503 con `demo` y se va a `/festival/compra/demo`
+ * con lo elegido: la pantalla de pago con datos de ejemplo, sin cobrar.
  */
 export function TablaTickets({ entradas, aviso }: { entradas: FestivalEntrada[]; aviso: string | null }) {
   const [cantidades, setCantidades] = useState<Record<string, number>>({});
@@ -41,6 +42,9 @@ export function TablaTickets({ entradas, aviso }: { entradas: FestivalEntrada[];
 
   const comprar = async (ev: FormEvent) => {
     ev.preventDefault();
+    const seleccion = Object.entries(cantidades)
+      .filter(([, cantidad]) => cantidad > 0)
+      .map(([id, cantidad]) => ({ id, cantidad }));
     setEnviando(true);
     setError(null);
     try {
@@ -50,12 +54,15 @@ export function TablaTickets({ entradas, aviso }: { entradas: FestivalEntrada[];
         body: JSON.stringify({
           nombre,
           email,
-          items: Object.entries(cantidades)
-            .filter(([, cantidad]) => cantidad > 0)
-            .map(([id, cantidad]) => ({ id, cantidad })),
+          items: seleccion,
         }),
       });
       const data = await res.json().catch(() => ({}));
+      if (data.demo) {
+        const params = new URLSearchParams({ nombre, items: seleccion.map(i => `${i.id}:${i.cantidad}`).join(',') });
+        window.location.href = `/festival/compra/demo?${params}`;
+        return;
+      }
       if (!res.ok || !data.url) throw new Error(data.error ?? 'No pudimos iniciar la compra.');
       window.location.href = data.url;
     } catch (e) {
