@@ -1,9 +1,17 @@
 import { notFound } from 'next/navigation';
 import { fechaCorta, leerConfig } from '@/lib/festival';
+import { TituloDifuso } from '@/components/festival/TituloDifuso';
+
+/** Lo que dice el hero. Por ahora no es el nombre del panel (`config.nombre`). */
+const TITULO_HERO = 'Blur';
+
+/** Foto de fondo mientras no se cargue un banner desde el panel. */
+const BANNER_POR_DEFECTO = '/festival/hero-cabina.jpg';
 
 /**
- * Home de Subreal: como la de Basilar, solo el hero. Foto del panel a sangre,
- * el nombre en Archivo ancha y la fecha y el lema en cajitas resaltadas.
+ * Home de Subreal: como la de Basilar, solo el hero. La foto a sangre tal cual,
+ * sin filtros, el nombre con el redondeo difuso de Basilar encima de la cabina y la fecha y el lema
+ * en cajitas translúcidas.
  */
 export default async function FestivalHome() {
   const config = await leerConfig();
@@ -12,34 +20,24 @@ export default async function FestivalHome() {
   const fecha = [fechaCorta(config.fecha), config.horario].filter(Boolean).join(' — ');
 
   return (
-    <section className="relative h-[calc(100svh-4.25rem)] min-h-[520px] overflow-hidden grid place-items-center text-center">
-      {config.banner_url && (
-        <img
-          src={config.banner_url}
-          alt=""
-          fetchPriority="high"
-          decoding="async"
-          className="absolute inset-0 w-full h-full object-cover [filter:sepia(0.25)_saturate(0.85)_contrast(0.92)_brightness(0.8)]"
-        />
-      )}
-      {/* Viñeta hacia el color de fondo: el título se lee sobre cualquier foto. */}
-      <div
-        aria-hidden
-        className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_55%,transparent_30%,color-mix(in_srgb,var(--fest-fondo)_65%,transparent)_100%)]"
+    <section className="relative h-[calc(100svh-4.25rem)] min-h-[520px] overflow-hidden flex flex-col items-center justify-start text-center">
+      <img
+        src={config.banner_url || BANNER_POR_DEFECTO}
+        alt=""
+        fetchPriority="high"
+        decoding="async"
+        className="absolute inset-0 w-full h-full object-cover object-[50%_70%]"
       />
-
-      <div className="relative z-10 px-4 fest-entra">
-        <h1 className="fest-ancha leading-[0.82] text-[clamp(3.4rem,13.5vw,12.5rem)] [text-shadow:0_0_60px_rgb(0_0_0/0.35)]">
-          {config.nombre}
-        </h1>
+      <div className="relative z-10 px-4 pt-[16svh] sm:pt-[14svh] fest-entra">
+        <TituloDifuso texto={TITULO_HERO} />
 
         {(fecha || config.lema) && (
-          <div className="mt-7 flex flex-col items-center gap-3.5 fest-mono text-[clamp(13px,1.4vw,18px)] tracking-[0.04em] uppercase">
+          <div className="mt-6 sm:mt-8 flex flex-col items-center gap-3 fest-mono text-[clamp(12px,1.3vw,17px)] tracking-[0.04em] uppercase text-[#2a1d18]">
             {fecha && (
-              <span className="px-2.5 py-0.5 bg-[color-mix(in_srgb,var(--fest-acento)_78%,transparent)]">{fecha}</span>
+              <span className="px-2 py-0.5 bg-[color-mix(in_srgb,var(--fest-acento)_55%,transparent)]">{fecha}</span>
             )}
             {config.lema && (
-              <span className="px-2.5 py-0.5 bg-[color-mix(in_srgb,var(--fest-fondo)_72%,transparent)]">
+              <span className="px-2 py-0.5 bg-[color-mix(in_srgb,var(--fest-acento)_55%,transparent)]">
                 {config.lema}
               </span>
             )}

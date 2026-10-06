@@ -144,8 +144,12 @@ estructura copia basilarfestival.com (pedido de Ana): un menú `> HOME > VISIÓN
 LOCACIÓN > LINE UP > TICKETS > INFO & FAQ` en `app/festival/layout.tsx` y una
 página por sección. Todas leen por `lib/festival.ts` (cacheado por request).
 
-- `/festival` — solo el hero: `banner_url` a sangre, el nombre y dos cajitas
-  (fecha + horario, `lema`).
+- `/festival` — solo el hero: la foto a sangre y **sin filtros** (`banner_url`,
+  o `public/festival/hero-cabina.jpg` si el panel no tiene banner), el título y
+  dos cajitas (fecha + horario, `lema`). El título dice **BLUR** fijo en el
+  código (`TITULO_HERO`), no `config.nombre`, que sigue siendo "Subreal" y es
+  el que sale en la pestaña y el pie. Si BLUR pasa a ser el nombre, cambiarlo
+  en el panel y volver a leerlo de ahí.
 - `/vision` y `/locacion` — texto del panel por `TextoResaltado`: `*así*` va en
   `color_resalte` y `**así**` en `color_acento`. No es Markdown, a propósito.
 - `/line-up` — en escalera; cada nombre lleva a `/line-up/[slug]`, que copia la
@@ -162,6 +166,11 @@ oscuro (fondo `#1C1410`, cream, terra encendida `#E2532B`, oliva `#B9B23E`).
 Tipografía: **Archivo** variable en ancho (ancha para el nombre del festival y
 del artista, angosta para el menú y el line-up; clases `fest-*` en
 `festival.css`), Helvetica para el texto corrido y Plex Mono para los datos.
+El título del hero (`TituloDifuso`) imita el logo de Basilar: Archivo ancha
+estirada y un filtro SVG (desenfoque + umbral de alfa + desenfoque leve) que
+redondea todas las esquinas y deja el borde difuso. El filtro mide en
+`objectBoundingBox`, así escala con el tamaño de letra; está calibrado para
+una palabra corta y con una larga redondea de más.
 
 **No publicada por RLS, no por código**: mientras `festival_config.publicado`
 sea false, las tablas del festival (`supabase/migration_festival*.sql`) solo las lee un
