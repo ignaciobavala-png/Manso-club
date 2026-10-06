@@ -11,6 +11,10 @@
     {
       "path": "/api/mailing/cron",
       "schedule": "*/15 * * * *"
+    },
+    {
+      "path": "/api/festival/conciliar",
+      "schedule": "*/10 * * * *"
     }
   ]
 }

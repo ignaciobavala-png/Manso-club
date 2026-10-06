@@ -54,6 +54,28 @@ SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 NEXT_PUBLIC_SITE_URL=https://mansoclub.com.ar
 ```
 
+## 🪙 Festival — cobro en cripto (directo a la wallet)
+
+Solo direcciones **públicas**: la frase semilla de la wallet no va en ningún
+lado del proyecto. Sin estas dos variables la compra del festival contesta "la
+venta abre pronto" y no se rompe nada.
+
+```bash
+FESTIVAL_WALLET_TRON=T...   # dirección Tron de Manso (para USDT TRC20)
+FESTIVAL_WALLET_EVM=0x...   # dirección 0x de Manso: la misma sirve en BSC, Polygon y Base
+```
+
+Opcionales:
+
+```bash
+TRONGRID_API_KEY=...        # gratis en trongrid.io; sin ella TronGrid responde con menos cupo
+CRIPTO_RPC_BSC=...          # nodos propios si los públicos (publicnode) se ponen lentos
+CRIPTO_RPC_POLYGON=...
+CRIPTO_RPC_BASE=...
+```
+
+`CRON_SECRET` (ya existe) protege `/api/festival/conciliar`.
+
 ## 💵 Moneda: precios en USD, cobro en ARS
 
 Los precios de `productos.precio` están cargados **en dólares**. Mercado Pago cobra en ARS, así que

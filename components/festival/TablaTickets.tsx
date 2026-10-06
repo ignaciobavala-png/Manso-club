@@ -1,17 +1,25 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { FormEvent, useMemo, useState } from 'react';
 import { FestivalEntrada, etiquetaEstado } from '@/lib/types/festival';
 import { formatArs } from '@/lib/precios';
 
 /**
  * Tabla de venta (modelo Passline): una fila por tipo de entrada. Solo las que
- * están en venta tienen contador; el resto muestra su estado. La compra
- * todavía no cobra: el botón avisa que la venta abre pronto.
+ * están en venta tienen contador; el resto muestra su estado.
+ *
+ * Se cobra en cripto (USDT / USDC directo a la wallet de Manso): COMPRAR pide
+ * nombre y mail, `/api/festival/compra` arma la orden y el navegador va a
+ * `/festival/compra/[id]`, donde se elige la red y se paga. Sin wallets
+ * configuradas la API contesta 503 y acá se muestra "la venta abre pronto".
  */
 export function TablaTickets({ entradas, aviso }: { entradas: FestivalEntrada[]; aviso: string | null }) {
   const [cantidades, setCantidades] = useState<Record<string, number>>({});
-  const [avisoCompra, setAvisoCompra] = useState(false);
+  const [datosAbiertos, setDatosAbiertos] = useState(false);
+  const [nombre, setNombre] = useState('');
+  const [email, setEmail] = useState('');
+  const [enviando, setEnviando] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const { total, unidades } = useMemo(
     () =>
@@ -30,6 +38,31 @@ export function TablaTickets({ entradas, aviso }: { entradas: FestivalEntrada[];
       const n = Math.min(entrada.max_por_compra, Math.max(0, (prev[entrada.id] ?? 0) + delta));
       return { ...prev, [entrada.id]: n };
     });
+
+  const comprar = async (ev: FormEvent) => {
+    ev.preventDefault();
+    setEnviando(true);
+    setError(null);
+    try {
+      const res = await fetch('/api/festival/compra', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          nombre,
+          email,
+          items: Object.entries(cantidades)
+            .filter(([, cantidad]) => cantidad > 0)
+            .map(([id, cantidad]) => ({ id, cantidad })),
+        }),
+      });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok || !data.url) throw new Error(data.error ?? 'No pudimos iniciar la compra.');
+      window.location.href = data.url;
+    } catch (e) {
+      setError(e instanceof Error ? e.message : 'No pudimos iniciar la compra.');
+      setEnviando(false);
+    }
+  };
 
   if (entradas.length === 0) {
     return <p className="text-sm opacity-60">Las entradas se anuncian pronto.</p>;
@@ -118,17 +151,49 @@ export function TablaTickets({ entradas, aviso }: { entradas: FestivalEntrada[];
         <button
           type="button"
           disabled={total === 0}
-          onClick={() => setAvisoCompra(true)}
+          onClick={() => setDatosAbiertos(true)}
           className="fest-angosta text-2xl px-10 py-3 bg-[var(--fest-acento)] text-[var(--fest-fondo)] enabled:hover:bg-[var(--fest-texto)] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
         >
           Comprar
         </button>
       </div>
 
-      {avisoCompra && (
-        <p role="status" className="sm:text-right fest-mono text-[11px] uppercase tracking-[0.25em] mt-4 opacity-70">
-          La venta online abre pronto.
-        </p>
+      {datosAbiertos && total > 0 && (
+        <form onSubmit={comprar} className="mt-8 sm:ml-auto sm:max-w-[420px] grid gap-3">
+          <p className="fest-mono text-[11px] uppercase tracking-[0.2em] opacity-70 leading-relaxed">
+            Se paga en USDT o USDC, en la red que elijas, al dólar blue del momento. En el paso siguiente te mostramos el monto y la dirección.
+          </p>
+          <input
+            required
+            value={nombre}
+            onChange={e => setNombre(e.target.value)}
+            placeholder="Nombre y apellido"
+            autoComplete="name"
+            maxLength={120}
+            className="bg-transparent border border-[var(--fest-texto)]/40 px-3 py-2.5 text-[15px] placeholder:opacity-50 focus:outline-none focus:border-[var(--fest-acento)]"
+          />
+          <input
+            required
+            type="email"
+            value={email}
+            onChange={e => setEmail(e.target.value)}
+            placeholder="Mail"
+            autoComplete="email"
+            className="bg-transparent border border-[var(--fest-texto)]/40 px-3 py-2.5 text-[15px] placeholder:opacity-50 focus:outline-none focus:border-[var(--fest-acento)]"
+          />
+          <button
+            type="submit"
+            disabled={enviando}
+            className="fest-angosta text-2xl py-3 bg-[var(--fest-acento)] text-[var(--fest-fondo)] enabled:hover:bg-[var(--fest-texto)] transition-colors disabled:opacity-50"
+          >
+            {enviando ? 'Preparando…' : 'Pagar con cripto'}
+          </button>
+          {error && (
+            <p role="alert" className="fest-mono text-[11px] uppercase tracking-[0.2em] text-[var(--fest-acento)]">
+              {error}
+            </p>
+          )}
+        </form>
       )}
 
       {aviso && (

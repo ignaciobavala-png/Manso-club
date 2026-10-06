@@ -181,8 +181,38 @@ sea false, las tablas del festival (`supabase/migration_festival*.sql`) solo las
 admin, así que la página —que usa el cliente con cookies— da 404 a cualquier
 otro. No está enlazada desde el sitio ni en el sitemap, y va `noindex`.
 
-La compra **todavía no cobra**: el botón COMPRAR solo avisa que la venta abre
-pronto. Falta conectar Mercado Pago y emitir los tickets.
+**Cobro en cripto directo a la wallet de Manso** (USDT / USDC), verificado
+leyendo la blockchain: sin pasarela, sin servidor propio y sin comisiones
+(Bitcart se descartó porque necesita un VPS). Esquema y razones en
+`supabase/migration_festival_cripto.sql`.
+
+1. COMPRAR pide nombre y mail → `/api/festival/compra` arma la orden en
+   `festival_ordenes` (pesos del panel ÷ blue, resuelto en el servidor).
+2. `/festival/compra/[id]` (`PagoCripto`): el comprador elige red (Tron, BSC,
+   Polygon, Base) y recibe un **monto único** —total + 1 a 99 centavos— que no
+   comparte con ninguna otra pendiente de esa red (índice único). Es lo que
+   permite reconocer el pago sin pedirle nada.
+3. `sincronizarRed` (`lib/festival-compra.ts`) lee las transferencias que
+   entraron a la wallet (`lib/cripto-escaner.ts`: `eth_getLogs` en las EVM,
+   TronGrid en Tron, sin librerías) y acredita la de monto exacto. La disparan
+   la pantalla de pago (cada 8 s, con freno de 10 s por red) y el cron
+   `/api/festival/conciliar` (cada 10 min).
+4. Si el monto no coincide (el exchange descontó la comisión), el comprador
+   pega el hash: se acepta si llegó al menos lo pedido; si llegó menos queda en
+   `observacion` para que lo resuelva Ana.
+
+- `festival_acreditar_pago` reclama la transferencia, marca la orden y crea
+  los tickets (uno por persona: un pack x3 da tres) en una sola transacción.
+- Los contratos de `lib/cripto-redes.ts` están verificados contra la cadena.
+  **No editarlos de memoria**: el de USDC en Base se escribió mal de memoria
+  (`4a71` por `4f71`) y apuntaba a una dirección vacía.
+- Sin `FESTIVAL_WALLET_TRON` / `FESTIVAL_WALLET_EVM` la API contesta 503 y la
+  tabla muestra "la venta abre pronto". Cada red aparece solo si su wallet está.
+- `/festival/compra/demo` muestra la pantalla con datos inventados (sin API ni
+  cadena, y con una "dirección" que no es una dirección) para enseñarla sin
+  wallets; `?estado=pagada` muestra las entradas.
+- Una orden vence a los 60 min de elegir red, pero un pago exacto que llegue
+  dentro de las 24 h igual la acredita.
 
 ### Precios de la tienda
 
