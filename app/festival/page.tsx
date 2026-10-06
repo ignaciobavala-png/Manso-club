@@ -28,7 +28,7 @@ export default async function FestivalHome() {
         decoding="async"
         className="absolute inset-0 w-full h-full object-cover object-[50%_70%]"
       />
-      <div className="relative z-10 px-4 pt-[16svh] sm:pt-[14svh] fest-entra">
+      <div className="relative z-10 px-4 pt-[23svh] sm:pt-[21svh] fest-entra">
         <TituloDifuso texto={TITULO_HERO} />
 
         {(fecha || config.lema) && (

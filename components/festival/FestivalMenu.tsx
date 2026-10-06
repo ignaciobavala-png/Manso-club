@@ -13,8 +13,8 @@ export const SECCIONES = [
 ] as const;
 
 /**
- * Menú de Basilar: links con ">" en la letra angosta, y TICKETS aparte como
- * bloque de color. En el celular el menú se acomoda en dos renglones y TICKETS
+ * Menú de Basilar, medido sobre su sitio (ver `.fest-menu` en festival.css):
+ * links con chevron, y TICKETS aparte como bloque de color, sin la manito. En el celular el menú se acomoda en dos renglones y TICKETS
  * pasa a ser un botón fijo abajo a la derecha (salvo en la página de tickets,
  * donde sobra).
  */
@@ -26,15 +26,15 @@ export function FestivalMenu() {
   const enTickets = actual('/festival/tickets');
 
   return (
-    <header className="relative sm:sticky top-0 z-20 bg-[var(--fest-fondo)] flex items-start justify-between gap-4 px-4 sm:px-7 py-3.5 sm:py-[18px]">
+    <header className="relative sm:sticky top-0 z-20 bg-[var(--fest-fondo)] flex items-start justify-between gap-4 px-4 py-3.5 sm:px-[26px] sm:pt-[26px] sm:pb-[26px]">
       <nav aria-label="Festival">
-        <ul className="flex flex-wrap gap-x-3.5 sm:gap-x-[22px] max-w-[760px]">
+        <ul className="flex flex-wrap gap-x-[0.45em] fest-menu leading-none text-[17px] sm:text-[23.328px]">
           {SECCIONES.map(s => (
             <li key={s.href}>
               <Link
                 href={s.href}
                 aria-current={actual(s.href) ? 'page' : undefined}
-                className="fest-angosta fest-flecha text-[19px] sm:text-[22px] leading-[1.05] text-[var(--fest-acento)] hover:text-[var(--fest-texto)] aria-[current=page]:text-[var(--fest-texto)]/55 transition-colors"
+                className="fest-chevron pb-[0.1em] text-[var(--fest-acento)] hover:text-[var(--fest-texto)] aria-[current=page]:text-[var(--fest-texto)]/55 transition-colors"
               >
                 {s.etiqueta}
               </Link>
@@ -45,11 +45,11 @@ export function FestivalMenu() {
 
       <Link
         href="/festival/tickets"
-        className={`fest-angosta shrink-0 bg-[var(--fest-acento)] text-[var(--fest-fondo)] hover:bg-[var(--fest-texto)] transition-colors text-[17px] sm:text-[22px] leading-[1.05] px-[18px] py-2.5 sm:px-3 sm:pt-1 sm:pb-[3px] fixed right-4 bottom-4 z-30 sm:static ${
+        className={`fest-menu shrink-0 bg-[var(--fest-acento)] text-[var(--fest-fondo)] hover:bg-[var(--fest-texto)] transition-colors text-[19px] sm:text-[22.032px] leading-[1.3] px-[0.26em] py-2 sm:py-0 fixed right-4 bottom-4 z-30 sm:static ${
           enTickets ? 'hidden sm:inline-block' : ''
         }`}
       >
-        <span aria-hidden>☞ </span>Tickets
+        Tickets
       </Link>
     </header>
   );

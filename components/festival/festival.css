@@ -114,3 +114,28 @@
   color: #dcdce6;
   opacity: 0.93;
 }
+
+/* ── Menú: medidas de basilarfestival.com ───────────────────────────────────
+   Basilar usa Space Grotesk; acá va Space Mono Bold (pedido del equipo) con el
+   resto de sus medidas: 23,328px fijo en escritorio (no escala con la
+   ventana), interlineado 1 (`leading-none` en el componente: si va acá pisa
+   el de Tailwind), sin tracking y con un espacio común entre links.
+   La flecha no es un ">": en Basilar es un chevron fino de la fuente de íconos
+   de Cargo, de la altura de las mayúsculas, y ocupa 1,05em contando el aire
+   antes del texto. Acá se dibuja con una máscara SVG con esas proporciones. */
+.fest-menu {
+  font-family: var(--font-fest-menu), sans-serif;
+  font-weight: 700;
+  letter-spacing: normal;
+  text-transform: uppercase;
+}
+
+.fest-chevron::before {
+  content: '';
+  display: inline-block;
+  width: 1.05em;
+  height: 0.7em;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 105 70'%3E%3Cpath d='M33 3 L72 35 L33 67' fill='none' stroke='black' stroke-width='6'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 105 70'%3E%3Cpath d='M33 3 L72 35 L33 67' fill='none' stroke='black' stroke-width='6'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
+}

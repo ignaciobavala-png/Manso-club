@@ -166,6 +166,10 @@ oscuro (fondo `#1C1410`, cream, terra encendida `#E2532B`, oliva `#B9B23E`).
 Tipografía: **Archivo** variable en ancho (ancha para el nombre del festival y
 del artista, angosta para el menú y el line-up; clases `fest-*` en
 `festival.css`), Helvetica para el texto corrido y Plex Mono para los datos.
+El menú y el botón TICKETS van en **Space Mono** Bold (`.fest-menu`), con las
+medidas del menú de Basilar (23,3px fijo en escritorio, chevron dibujado con
+una máscara SVG en `.fest-chevron`). Basilar en realidad usa Space Grotesk; el
+equipo eligió la Mono.
 El título del hero (`TituloDifuso`) imita el logo de Basilar: Archivo ancha
 estirada y un filtro SVG (desenfoque + umbral de alfa + desenfoque leve) que
 redondea todas las esquinas y deja el borde difuso. El filtro mide en

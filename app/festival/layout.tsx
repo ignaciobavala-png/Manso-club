@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { Archivo, IBM_Plex_Mono } from 'next/font/google';
+import { Archivo, IBM_Plex_Mono, Space_Mono } from 'next/font/google';
 import '@/components/festival/festival.css';
 import { leerConfig } from '@/lib/festival';
 import { FestivalMenu } from '@/components/festival/FestivalMenu';
@@ -23,6 +23,16 @@ const mono = IBM_Plex_Mono({
   subsets: ['latin'],
   weight: ['400', '500'],
   variable: '--font-fest-mono',
+});
+
+/**
+ * La del menú y el botón de tickets. Basilar usa Space Grotesk, pero el
+ * equipo eligió Space Mono, su hermana monoespaciada (mismo estudio).
+ */
+const menu = Space_Mono({
+  subsets: ['latin'],
+  weight: ['400', '700'],
+  variable: '--font-fest-menu',
 });
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -53,7 +63,7 @@ export default async function FestivalLayout({ children }: { children: React.Rea
   return (
     <div
       style={estilo}
-      className={`${display.variable} ${mono.variable} min-h-screen flex flex-col bg-[var(--fest-fondo)] text-[var(--fest-texto)] font-sans antialiased selection:bg-[var(--fest-acento)] selection:text-[var(--fest-fondo)]`}
+      className={`${display.variable} ${mono.variable} ${menu.variable} min-h-screen flex flex-col bg-[var(--fest-fondo)] text-[var(--fest-texto)] font-sans antialiased selection:bg-[var(--fest-acento)] selection:text-[var(--fest-fondo)]`}
     >
       <div aria-hidden className="fest-grano" />
 
