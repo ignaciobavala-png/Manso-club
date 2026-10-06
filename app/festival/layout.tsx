@@ -1,15 +1,21 @@
-import { Cormorant_Garamond, IBM_Plex_Mono } from 'next/font/google';
+import type { Metadata } from 'next';
+import { notFound } from 'next/navigation';
+import { Archivo, IBM_Plex_Mono } from 'next/font/google';
 import '@/components/festival/festival.css';
+import { leerConfig } from '@/lib/festival';
+import { FestivalMenu } from '@/components/festival/FestivalMenu';
 
 /**
- * Tipografía propia del festival, cargada solo en /festival: no es Manso.
- * Dos voces: una serif clásica y fina para el nombre y los artistas —va con la
- * geometría sagrada del hero— y una mono chica para todo lo informativo.
+ * Subreal (/festival) — sitio chico con identidad propia, sin el navbar de
+ * Manso (ver `ChromeManso`). Estructura de basilarfestival.com: un menú arriba
+ * y una página por sección.
+ *
+ * Archivo es variable también en ancho: la misma familia da el título ancho y
+ * el menú angosto. Se carga solo acá, no en el sitio de Manso.
  */
-const display = Cormorant_Garamond({
+const display = Archivo({
   subsets: ['latin'],
-  weight: ['300', '400'],
-  style: ['normal', 'italic'],
+  axes: ['wdth'],
   variable: '--font-fest-display',
 });
 
@@ -19,6 +25,71 @@ const mono = IBM_Plex_Mono({
   variable: '--font-fest-mono',
 });
 
-export default function FestivalLayout({ children }: { children: React.ReactNode }) {
-  return <div className={`${display.variable} ${mono.variable}`}>{children}</div>;
+export async function generateMetadata(): Promise<Metadata> {
+  const config = await leerConfig();
+  const nombre = config?.nombre ?? 'Festival';
+  return {
+    title: { default: nombre, template: `%s — ${nombre}` },
+    description: config?.bajada ?? undefined,
+    // Aunque se publique, no se indexa hasta que se decida lanzarlo en serio.
+    robots: { index: false, follow: false },
+  };
+}
+
+export default async function FestivalLayout({ children }: { children: React.ReactNode }) {
+  // Sin publicar, el RLS no le devuelve la fila a nadie que no sea admin.
+  const config = await leerConfig();
+  if (!config) notFound();
+
+  const estilo = {
+    '--fest-fondo': config.color_fondo,
+    '--fest-texto': config.color_texto,
+    '--fest-acento': config.color_acento,
+    '--fest-resalte': config.color_resalte,
+  } as React.CSSProperties;
+
+  const instagram = config.instagram?.replace(/^@/, '');
+
+  return (
+    <div
+      style={estilo}
+      className={`${display.variable} ${mono.variable} min-h-screen flex flex-col bg-[var(--fest-fondo)] text-[var(--fest-texto)] font-sans antialiased selection:bg-[var(--fest-acento)] selection:text-[var(--fest-fondo)]`}
+    >
+      <div aria-hidden className="fest-grano" />
+
+      {!config.publicado && (
+        <div className="bg-[var(--fest-acento)] text-[var(--fest-fondo)] text-center fest-mono text-[10px] uppercase tracking-[0.3em] py-1.5 px-4">
+          Borrador — sin publicar, solo lo ven los admins
+        </div>
+      )}
+
+      <FestivalMenu />
+
+      <main className="flex-1">{children}</main>
+
+      <footer className="border-t border-[var(--fest-texto)]/15 px-4 sm:px-7 pt-4 pb-20 sm:pb-4 flex flex-wrap justify-between gap-x-8 gap-y-2.5 fest-mono text-[11px] uppercase tracking-[0.2em]">
+        <nav className="flex flex-wrap gap-x-[22px] gap-y-1.5 text-[var(--fest-acento)]">
+          {config.email && (
+            <a href={`mailto:${config.email}`} className="fest-flecha hover:text-[var(--fest-texto)] transition-colors">
+              Contacto
+            </a>
+          )}
+          {instagram && (
+            <a
+              href={`https://instagram.com/${instagram}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="fest-flecha hover:text-[var(--fest-texto)] transition-colors"
+            >
+              Instagram
+            </a>
+          )}
+        </nav>
+        <a href="/" className="opacity-60 hover:opacity-100 transition-opacity">
+          Una producción de{' '}
+          <b className="font-sans font-black normal-case tracking-[-0.02em] text-[13px]">manso club</b>
+        </a>
+      </footer>
+    </div>
+  );
 }

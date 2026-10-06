@@ -1,68 +1,56 @@
-import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
-import { cache } from 'react';
-import { createSupabaseServer } from '@/lib/supabase';
-import {
-  CONFIG_FESTIVAL_VACIA,
-  FestivalConfig,
-  FestivalEntrada,
-  FestivalEscenario,
-} from '@/lib/types/festival';
-import { FestivalPagina } from '@/components/festival/FestivalPagina';
+import { fechaCorta, leerConfig } from '@/lib/festival';
 
 /**
- * /festival — venta de entradas con identidad propia (sin navbar de Manso:
- * ver `ChromeManso`).
- *
- * No hay chequeo de rol acá: lo hace el RLS. Mientras el festival no esté
- * publicado, `festival_config` solo se deja leer por un admin, así que para
- * cualquier otro la consulta vuelve vacía y la página da 404. Por eso se usa el
- * cliente con cookies y no el anónimo.
+ * Home de Subreal: como la de Basilar, solo el hero. Foto del panel a sangre,
+ * el nombre en Archivo ancha y la fecha y el lema en cajitas resaltadas.
  */
-// `cache`: generateMetadata y la página comparten la misma lectura.
-const leerConfig = cache(async () => {
-  const supabase = await createSupabaseServer();
-  const { data } = await supabase.from('festival_config').select('*').eq('id', 1).maybeSingle();
-  return { supabase, config: data as FestivalConfig | null };
-});
-
-export async function generateMetadata(): Promise<Metadata> {
-  const { config } = await leerConfig();
-  return {
-    title: config?.nombre ?? 'Festival',
-    description: config?.bajada ?? undefined,
-    // Aunque se publique, no se indexa hasta que se decida lanzarlo en serio.
-    robots: { index: false, follow: false },
-  };
-}
-
-export default async function FestivalPage() {
-  const { supabase, config } = await leerConfig();
+export default async function FestivalHome() {
+  const config = await leerConfig();
   if (!config) notFound();
 
-  const [escenarios, entradas] = await Promise.all([
-    supabase
-      .from('festival_escenarios')
-      .select('*')
-      .eq('activo', true)
-      .order('orden', { ascending: true }),
-    supabase
-      .from('festival_entradas')
-      .select('*')
-      .eq('activo', true)
-      .order('orden', { ascending: true }),
-  ]);
+  const fecha = [fechaCorta(config.fecha), config.horario].filter(Boolean).join(' — ');
 
   return (
-    <FestivalPagina
-      config={{ ...CONFIG_FESTIVAL_VACIA, ...config }}
-      escenarios={(escenarios.data as FestivalEscenario[] | null) ?? []}
-      entradas={((entradas.data as FestivalEntrada[] | null) ?? []).map(e => ({
-        ...e,
-        precio: Number(e.precio),
-      }))}
-      // Si se pudo leer sin estar publicado, quien mira es admin.
-      borrador={!config.publicado}
-    />
+    <section className="relative h-[calc(100svh-4.25rem)] min-h-[520px] overflow-hidden grid place-items-center text-center">
+      {config.banner_url && (
+        <img
+          src={config.banner_url}
+          alt=""
+          fetchPriority="high"
+          decoding="async"
+          className="absolute inset-0 w-full h-full object-cover [filter:sepia(0.25)_saturate(0.85)_contrast(0.92)_brightness(0.8)]"
+        />
+      )}
+      {/* Viñeta hacia el color de fondo: el título se lee sobre cualquier foto. */}
+      <div
+        aria-hidden
+        className="absolute inset-0 bg-[radial-gradient(ellipse_at_50%_55%,transparent_30%,color-mix(in_srgb,var(--fest-fondo)_65%,transparent)_100%)]"
+      />
+
+      <div className="relative z-10 px-4 fest-entra">
+        <h1 className="fest-ancha leading-[0.82] text-[clamp(3.4rem,13.5vw,12.5rem)] [text-shadow:0_0_60px_rgb(0_0_0/0.35)]">
+          {config.nombre}
+        </h1>
+
+        {(fecha || config.lema) && (
+          <div className="mt-7 flex flex-col items-center gap-3.5 fest-mono text-[clamp(13px,1.4vw,18px)] tracking-[0.04em] uppercase">
+            {fecha && (
+              <span className="px-2.5 py-0.5 bg-[color-mix(in_srgb,var(--fest-acento)_78%,transparent)]">{fecha}</span>
+            )}
+            {config.lema && (
+              <span className="px-2.5 py-0.5 bg-[color-mix(in_srgb,var(--fest-fondo)_72%,transparent)]">
+                {config.lema}
+              </span>
+            )}
+          </div>
+        )}
+      </div>
+
+      <p className="absolute z-10 left-4 sm:left-7 bottom-5 fest-mono text-[11px] uppercase tracking-[0.3em]">
+        Presenta{' '}
+        <b className="font-sans font-black normal-case tracking-[-0.02em] text-[15px] ml-1.5">manso club</b>
+      </p>
+    </section>
   );
 }

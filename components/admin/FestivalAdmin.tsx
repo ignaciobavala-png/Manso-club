@@ -20,49 +20,49 @@ import {
   EstadoEntrada,
   FestivalConfig,
   FestivalEntrada,
-  FestivalEscenario,
+  FestivalFaq,
 } from '@/lib/types/festival';
 import { formatArs } from '@/lib/precios';
 import { CompactImageUploader } from './CompactImageUploader';
-
-const INPUT =
-  'w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra/50 transition-colors';
-const LABEL = 'text-[10px] font-black uppercase tracking-widest text-manso-cream/60 mb-2 block';
-const CARD = 'bg-manso-cream/5 border border-manso-cream/10 rounded-2xl p-4 space-y-4';
-const TITULO = 'text-[10px] font-black uppercase tracking-[0.2em] text-manso-cream';
-const AYUDA = 'text-[11px] text-manso-cream/40 mt-1 leading-relaxed';
-const BOTON_ICONO =
-  'w-8 h-8 flex items-center justify-center rounded-lg text-manso-cream/40 hover:text-manso-cream hover:bg-manso-cream/10 transition-colors disabled:opacity-25 disabled:hover:bg-transparent disabled:hover:text-manso-cream/40';
-const BOTON_GUARDAR =
-  'flex items-center gap-2 px-4 py-2 rounded-xl bg-manso-terra/20 text-manso-terra text-[9px] font-black uppercase tracking-widest hover:bg-manso-terra/30 transition-colors disabled:opacity-40';
-const BOTON_AGREGAR =
-  'w-full flex items-center justify-center gap-2 py-3 border border-dashed border-manso-terra/30 rounded-2xl text-[9px] font-black uppercase tracking-widest text-manso-terra/60 hover:text-manso-terra hover:border-manso-terra/60 hover:bg-manso-terra/5 transition-all';
-
-type Tabla = 'festival_escenarios' | 'festival_entradas';
+import { FestivalLineupAdmin } from './FestivalLineupAdmin';
+import {
+  AYUDA,
+  BOTON_AGREGAR,
+  BOTON_GUARDAR,
+  BOTON_ICONO,
+  CARD,
+  INPUT,
+  LABEL,
+  TITULO,
+  TablaFestival,
+  moverFila,
+  siguienteOrden,
+} from './festivalComun';
 
 /**
- * Sección "Festival": la página de venta de entradas en /festival.
+ * Sección "Festival": Subreal, el sitio chico de /festival (hero, visión,
+ * locación, line-up con página por artista, tickets e info).
  *
- * La página tiene identidad propia —sin navbar ni paleta de Manso— y mientras
- * no se publique solo la ven los admins (el RLS tampoco deja leer nada a un
- * anónimo). Mismo criterio que Espacio: cada bloque se guarda por separado.
+ * Tiene identidad propia —sin navbar de Manso— y mientras no se publique solo
+ * la ven los admins (el RLS tampoco deja leer nada a un anónimo). Mismo
+ * criterio que Espacio: cada bloque se guarda por separado.
  */
 export function FestivalAdmin() {
   const [config, setConfig] = useState<FestivalConfig>(CONFIG_FESTIVAL_VACIA);
-  const [escenarios, setEscenarios] = useState<FestivalEscenario[]>([]);
+  const [faq, setFaq] = useState<FestivalFaq[]>([]);
   const [entradas, setEntradas] = useState<FestivalEntrada[]>([]);
   const [cargando, setCargando] = useState(true);
   const [guardando, setGuardando] = useState<string | null>(null);
 
   const cargar = useCallback(async () => {
-    const [c, esc, ent] = await Promise.all([
+    const [c, ent, preg] = await Promise.all([
       supabase.from('festival_config').select('*').eq('id', 1).maybeSingle(),
-      supabase.from('festival_escenarios').select('*').order('orden', { ascending: true }),
       supabase.from('festival_entradas').select('*').order('orden', { ascending: true }),
+      supabase.from('festival_faq').select('*').order('orden', { ascending: true }),
     ]);
 
     setConfig({ ...CONFIG_FESTIVAL_VACIA, ...((c.data as FestivalConfig | null) ?? {}) });
-    setEscenarios((esc.data as FestivalEscenario[] | null) ?? []);
+    setFaq((preg.data as FestivalFaq[] | null) ?? []);
     setEntradas(
       ((ent.data as FestivalEntrada[] | null) ?? []).map(e => ({ ...e, precio: Number(e.precio) }))
     );
@@ -88,13 +88,29 @@ export function FestivalAdmin() {
   };
 
   const guardarDatos = () => {
-    const { nombre, bajada, fecha, horario, lugar, direccion, aviso, lema } = config;
-    guardarConfig({ nombre, bajada, fecha: fecha || null, horario, lugar, direccion, aviso, lema });
+    const { nombre, bajada, fecha, horario, lugar, direccion, aviso, lema, instagram, email } = config;
+    guardarConfig({
+      nombre,
+      bajada,
+      fecha: fecha || null,
+      horario,
+      lugar,
+      direccion,
+      aviso,
+      lema,
+      instagram: instagram?.trim().replace(/^@/, '') || null,
+      email: email?.trim() || null,
+    });
+  };
+
+  const guardarTextos = () => {
+    const { vision, locacion } = config;
+    guardarConfig({ vision: vision?.trim() || null, locacion: locacion?.trim() || null }, 'textos');
   };
 
   const guardarColores = () => {
-    const { color_fondo, color_texto, color_acento } = config;
-    guardarConfig({ color_fondo, color_texto, color_acento }, 'colores');
+    const { color_fondo, color_texto, color_acento, color_resalte } = config;
+    guardarConfig({ color_fondo, color_texto, color_acento, color_resalte }, 'colores');
   };
 
   const alternarPublicado = () => {
@@ -109,45 +125,33 @@ export function FestivalAdmin() {
     guardarConfig({ publicado }, 'publicado');
   };
 
-  // ── Filas (escenarios y entradas) ──────────────────────────────────────
+  // ── Filas (entradas y preguntas) ───────────────────────────────────────
 
-  const guardarFila = async (tabla: Tabla, id: string, campos: Record<string, unknown>) => {
+  const guardarFila = async (tabla: TablaFestival, id: string, campos: Record<string, unknown>) => {
     setGuardando(id);
     const { error } = await supabase.from(tabla).update(campos).eq('id', id);
     setGuardando(null);
     if (error) alert(error.message);
   };
 
-  const borrarFila = async (tabla: Tabla, id: string, que: string) => {
+  const borrarFila = async (tabla: TablaFestival, id: string, que: string) => {
     if (!confirm(`¿Borrar ${que}? No se puede deshacer.`)) return;
     const { error } = await supabase.from(tabla).delete().eq('id', id);
     if (error) return alert(error.message);
     cargar();
   };
 
-  /** Intercambia una fila con su vecina y renumera toda la lista desde 0. */
-  const mover = async (tabla: Tabla, filas: { id: string }[], indice: number, delta: number) => {
-    const destino = indice + delta;
-    if (destino < 0 || destino >= filas.length) return;
-
-    const reordenadas = [...filas];
-    [reordenadas[indice], reordenadas[destino]] = [reordenadas[destino], reordenadas[indice]];
-
+  const mover = async (tabla: TablaFestival, filas: { id: string }[], indice: number, delta: number) => {
     setGuardando(filas[indice].id);
-    await Promise.all(
-      reordenadas.map((fila, i) => supabase.from(tabla).update({ orden: i }).eq('id', fila.id))
-    );
+    await moverFila(tabla, filas, indice, delta);
     setGuardando(null);
     cargar();
   };
 
-  const siguienteOrden = (filas: { orden: number }[]) =>
-    filas.reduce((max, f) => Math.max(max, f.orden), -1) + 1;
-
-  const agregarEscenario = async () => {
+  const agregarPregunta = async () => {
     const { error } = await supabase
-      .from('festival_escenarios')
-      .insert({ nombre: 'Escenario nuevo', orden: siguienteOrden(escenarios) });
+      .from('festival_faq')
+      .insert({ titulo: 'Pregunta nueva', orden: siguienteOrden(faq) });
     if (error) return alert(error.message);
     cargar();
   };
@@ -163,8 +167,8 @@ export function FestivalAdmin() {
     cargar();
   };
 
-  const editarEscenario = (id: string, campos: Partial<FestivalEscenario>) =>
-    setEscenarios(prev => prev.map(e => (e.id === id ? { ...e, ...campos } : e)));
+  const editarPregunta = (id: string, campos: Partial<FestivalFaq>) =>
+    setFaq(prev => prev.map(p => (p.id === id ? { ...p, ...campos } : p)));
 
   const editarEntrada = (id: string, campos: Partial<FestivalEntrada>) =>
     setEntradas(prev => prev.map(e => (e.id === id ? { ...e, ...campos } : e)));
@@ -272,7 +276,7 @@ export function FestivalAdmin() {
             type="text"
             value={config.nombre}
             onChange={e => editarConfig({ nombre: e.target.value })}
-            placeholder="Manso Festival"
+            placeholder="Subreal"
             className={INPUT}
           />
         </div>
@@ -342,18 +346,86 @@ export function FestivalAdmin() {
         </div>
 
         <div>
-          <label className={LABEL}>Frase de cierre (opcional)</label>
+          <label className={LABEL}>Segunda línea del hero (opcional)</label>
           <input
             type="text"
             value={config.lema ?? ''}
             onChange={e => editarConfig({ lema: e.target.value })}
-            placeholder="Ej: Hard times require furious dancing."
+            placeholder="Ej: Hecho en Argentina"
             className={INPUT}
           />
+          <p className={AYUDA}>Va en una cajita debajo de la fecha, en la portada.</p>
         </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label className={LABEL}>Instagram del festival</label>
+            <input
+              type="text"
+              value={config.instagram ?? ''}
+              onChange={e => editarConfig({ instagram: e.target.value })}
+              placeholder="@subreal"
+              className={INPUT}
+            />
+          </div>
+          <div>
+            <label className={LABEL}>Mail de contacto</label>
+            <input
+              type="email"
+              value={config.email ?? ''}
+              onChange={e => editarConfig({ email: e.target.value })}
+              placeholder="festival@mansoclub.com.ar"
+              className={INPUT}
+            />
+          </div>
+        </div>
+        <p className={AYUDA}>Instagram y mail aparecen en el pie de todas las páginas; sin cargar, no se muestran.</p>
 
         <button type="button" onClick={guardarDatos} disabled={guardando === 'config'} className={BOTON_GUARDAR}>
           {iconoGuardar('config')}
+          Guardar
+        </button>
+      </section>
+
+      {/* ── Textos ──────────────────────────────────────────────────── */}
+      <section className={CARD}>
+        <div>
+          <h3 className={TITULO}>Visión y Locación</h3>
+          <p className={AYUDA}>
+            Un renglón en blanco separa párrafos. Para pintar palabras, como en Basilar:{' '}
+            <code className="text-manso-cream/70">*así*</code> va en el color de resalte y{' '}
+            <code className="text-manso-cream/70">**así**</code> en el de acento.
+          </p>
+        </div>
+
+        <div>
+          <label className={LABEL}>Visión</label>
+          <textarea
+            value={config.vision ?? ''}
+            onChange={e => editarConfig({ vision: e.target.value })}
+            placeholder={'Subreal es un encuentro *chico y cuidado*, pensado para una comunidad que viene a **escuchar música**.'}
+            rows={8}
+            className={`${INPUT} resize-y`}
+          />
+        </div>
+
+        <div>
+          <label className={LABEL}>Locación</label>
+          <textarea
+            value={config.locacion ?? ''}
+            onChange={e => editarConfig({ locacion: e.target.value })}
+            placeholder={'A una hora de la ciudad, entre *árboles y agua*.'}
+            rows={5}
+            className={`${INPUT} resize-y`}
+          />
+          <p className={AYUDA}>
+            Debajo del texto se arma solo un cuadro con lugar, fecha y horario (de &quot;Datos del
+            festival&quot;), y al lado la foto de Locación.
+          </p>
+        </div>
+
+        <button type="button" onClick={guardarTextos} disabled={guardando === 'textos'} className={BOTON_GUARDAR}>
+          {iconoGuardar('textos')}
           Guardar
         </button>
       </section>
@@ -363,9 +435,8 @@ export function FestivalAdmin() {
         <div>
           <h3 className={TITULO}>Imágenes de la página</h3>
           <p className={AYUDA}>
-            Se guardan al subirlas. El banner va de fondo detrás del nombre, oscurecido para que se
-            lea el texto; la foto va a sangre entre el line-up y las entradas. Sin foto, esa franja
-            no aparece.
+            Se guardan al subirlas. El banner va de fondo en la portada, oscurecido para que se lea
+            el nombre; la foto va en la página de Locación, con marco de foto revelada.
           </p>
         </div>
 
@@ -373,7 +444,7 @@ export function FestivalAdmin() {
           {(
             [
               ['banner_url', 'Banner (arriba)', 'Horizontal, mínimo 1920 px de ancho.'],
-              ['foto_url', 'Foto debajo del line-up', 'Horizontal, a sangre.'],
+              ['foto_url', 'Foto de Locación', 'Vertical (4:5).'],
             ] as const
           ).map(([campo, etiqueta, ayuda]) => (
             <div key={campo}>
@@ -416,17 +487,19 @@ export function FestivalAdmin() {
         <div>
           <h3 className={TITULO}>Identidad</h3>
           <p className={AYUDA}>
-            El festival no usa los colores de Manso. Estos tres alcanzan para ir probando hasta que
-            llegue la identidad definitiva.
+            Por defecto, la paleta de Manso pasada a la estética de Basilar: marrón casi negro,
+            crema, terra y oliva. El acento pinta el menú y los botones; el resalte, las palabras
+            marcadas con *asteriscos* y los B2B.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {(
             [
               ['color_fondo', 'Fondo'],
               ['color_texto', 'Texto'],
-              ['color_acento', 'Botón de compra'],
+              ['color_acento', 'Acento'],
+              ['color_resalte', 'Resalte'],
             ] as const
           ).map(([campo, etiqueta]) => (
             <div key={campo}>
@@ -600,96 +673,87 @@ export function FestivalAdmin() {
         </button>
       </section>
 
-      {/* ── Line-up ─────────────────────────────────────────────────── */}
+      <FestivalLineupAdmin />
+
+      {/* ── Info & FAQ ──────────────────────────────────────────────── */}
       <section className="space-y-4">
         <div>
-          <h3 className={TITULO}>Line-up por escenario</h3>
+          <h3 className={TITULO}>Info &amp; FAQ</h3>
           <p className={AYUDA}>
-            Un artista por línea. Los B2B van en la misma línea (&quot;Gulp B2B Momo Trosman&quot;).
+            Cada pregunta es un bloque de /festival/info: título corto en mayúsculas y un párrafo.
+            Se acomodan en tres columnas en este orden.
           </p>
         </div>
 
-        {escenarios.length === 0 && <p className="text-xs text-manso-cream/40">Sin escenarios todavía.</p>}
+        {faq.length === 0 && <p className="text-xs text-manso-cream/40">Sin preguntas todavía.</p>}
 
-        {escenarios.map((esc, i) => (
-          <div key={esc.id} className={CARD}>
+        {faq.map((p, i) => (
+          <div key={p.id} className={CARD}>
             <div className="flex items-center justify-between gap-2">
               <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40 truncate">
-                {esc.nombre || `Escenario ${i + 1}`} · {esc.artistas.filter(Boolean).length} artistas
+                {p.titulo || `Pregunta ${i + 1}`}
+                {!p.activo && ' · oculta'}
               </span>
               <div className="flex items-center gap-1 shrink-0">
-                <button type="button" onClick={() => mover('festival_escenarios', escenarios, i, -1)} disabled={i === 0} className={BOTON_ICONO} title="Subir">
+                <button type="button" onClick={() => mover('festival_faq', faq, i, -1)} disabled={i === 0} className={BOTON_ICONO} title="Subir">
                   <ArrowUp size={13} />
                 </button>
-                <button type="button" onClick={() => mover('festival_escenarios', escenarios, i, 1)} disabled={i === escenarios.length - 1} className={BOTON_ICONO} title="Bajar">
+                <button type="button" onClick={() => mover('festival_faq', faq, i, 1)} disabled={i === faq.length - 1} className={BOTON_ICONO} title="Bajar">
                   <ArrowDown size={13} />
                 </button>
                 <button
                   type="button"
                   onClick={() => {
-                    editarEscenario(esc.id, { activo: !esc.activo });
-                    guardarFila('festival_escenarios', esc.id, { activo: !esc.activo });
+                    editarPregunta(p.id, { activo: !p.activo });
+                    guardarFila('festival_faq', p.id, { activo: !p.activo });
                   }}
                   className={BOTON_ICONO}
-                  title={esc.activo ? 'Ocultar' : 'Mostrar'}
+                  title={p.activo ? 'Ocultar' : 'Mostrar'}
                 >
-                  {esc.activo ? <Eye size={13} /> : <EyeOff size={13} />}
+                  {p.activo ? <Eye size={13} /> : <EyeOff size={13} />}
                 </button>
-                <button type="button" onClick={() => borrarFila('festival_escenarios', esc.id, 'el escenario')} className={`${BOTON_ICONO} hover:text-manso-terra`} title="Borrar">
+                <button type="button" onClick={() => borrarFila('festival_faq', p.id, 'la pregunta')} className={`${BOTON_ICONO} hover:text-manso-terra`} title="Borrar">
                   <Trash2 size={13} />
                 </button>
               </div>
             </div>
 
-            {!esc.activo && (
-              <p className="text-[10px] font-black uppercase tracking-widest text-manso-cream/30">
-                Oculto — no se ve en la página
-              </p>
-            )}
-
             <div>
-              <label className={LABEL}>Nombre del escenario</label>
+              <label className={LABEL}>Título</label>
               <input
                 type="text"
-                value={esc.nombre}
-                onChange={e => editarEscenario(esc.id, { nombre: e.target.value })}
-                placeholder="Ej: Stage 360"
+                value={p.titulo}
+                onChange={e => editarPregunta(p.id, { titulo: e.target.value })}
+                placeholder="Ej: Edad"
                 className={INPUT}
               />
             </div>
-
             <div>
-              <label className={LABEL}>Artistas</label>
+              <label className={LABEL}>Texto</label>
               <textarea
-                value={esc.artistas.join('\n')}
-                onChange={e => editarEscenario(esc.id, { artistas: e.target.value.split('\n') })}
-                placeholder={'Arca\nPatrick Mason\nSol Ortega'}
-                rows={6}
+                value={p.texto}
+                onChange={e => editarPregunta(p.id, { texto: e.target.value })}
+                placeholder="Ej: El evento es para mayores de 18. Se pide DNI en la puerta."
+                rows={4}
                 className={`${INPUT} resize-y`}
               />
             </div>
 
             <button
               type="button"
-              onClick={() =>
-                guardarFila('festival_escenarios', esc.id, {
-                  nombre: esc.nombre,
-                  // Las líneas vacías son solo del textarea: no se guardan.
-                  artistas: esc.artistas.map(a => a.trim()).filter(Boolean),
-                })
-              }
-              disabled={guardando === esc.id}
+              onClick={() => guardarFila('festival_faq', p.id, { titulo: p.titulo.trim(), texto: p.texto.trim() })}
+              disabled={guardando === p.id}
               className={BOTON_GUARDAR}
             >
-              {iconoGuardar(esc.id)}
+              {iconoGuardar(p.id)}
               Guardar
             </button>
           </div>
         ))}
 
-        <button type="button" onClick={agregarEscenario} className={BOTON_AGREGAR}>
+        <button type="button" onClick={agregarPregunta} className={BOTON_AGREGAR}>
           <Plus size={12} />
-          Agregar escenario
+          Agregar pregunta
         </button>
       </section>
     </div>

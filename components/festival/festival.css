@@ -1,38 +1,102 @@
 /*
- * Texturas del festival. Referencia: láminas de Ana (Descargas/party) — foto
- * analógica con grano y degradés naranja → magenta → violeta. Las fotos
- * (banner y foto del medio) se cargan desde el panel.
+ * Subreal (/festival). Fusión de basilarfestival.com —la referencia de Ana—
+ * con Manso: la estructura, el menú con ">" y la letra pesada son de Basilar;
+ * los colores salen de la paleta de Manso (vienen del panel como variables).
+ *
+ * Tres voces:
+ *   - Archivo ancha (wdth 125) para el nombre del festival y de cada artista.
+ *   - Archivo angosta (wdth 62–75) para el menú, el line-up y los títulos.
+ *   - Helvetica (la de Manso) para el texto corrido; Plex Mono para los datos.
  *
  * Todo lleva prefijo `fest-` para no pisar nada del sitio de Manso.
  */
 
-/* ── Grano de película ─────────────────────────────────────────────────── */
+.fest-ancha {
+  font-family: var(--font-fest-display), sans-serif;
+  font-variation-settings: 'wdth' 125;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: -0.035em;
+}
+
+.fest-angosta {
+  font-family: var(--font-fest-display), sans-serif;
+  font-variation-settings: 'wdth' 72;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+/* La del line-up: lo más angosta que da Archivo, para que entren nombres largos. */
+.fest-angostisima {
+  font-family: var(--font-fest-display), sans-serif;
+  font-variation-settings: 'wdth' 62;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+}
+
+.fest-mono {
+  font-family: var(--font-fest-mono), monospace;
+}
+
+/* Rótulo de sección: rayita + mono espaciada. */
+.fest-rotulo {
+  font-family: var(--font-fest-mono), monospace;
+  font-size: 11px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  opacity: 0.6;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.fest-rotulo::before {
+  content: '';
+  width: 32px;
+  height: 1px;
+  background: currentColor;
+}
+
+/* Links del menú y de redes: el ">" de Basilar. */
+.fest-flecha::before {
+  content: '>';
+  font-weight: 400;
+  font-variation-settings: 'wdth' 100;
+  margin-right: 0.3em;
+}
+
+/* ── Grano de película, encima de todo ──────────────────────────────────── */
 @keyframes fest-grano {
   0%   { transform: translate(0, 0); }
-  20%  { transform: translate(-3%, 2%); }
-  40%  { transform: translate(2%, -3%); }
-  60%  { transform: translate(-2%, -1%); }
-  80%  { transform: translate(3%, 3%); }
+  25%  { transform: translate(-3%, 2%); }
+  50%  { transform: translate(2%, -3%); }
+  75%  { transform: translate(3%, 3%); }
   100% { transform: translate(0, 0); }
 }
 
 .fest-grano {
-  position: absolute;
+  position: fixed;
   inset: -10%;
+  z-index: 50;
   pointer-events: none;
-  opacity: 0.22;
+  opacity: 0.13;
   mix-blend-mode: overlay;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 1.1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   animation: fest-grano 0.9s steps(5) infinite;
 }
 
-/* ── Título: halo blanco suave, sin color ─────────────────────────────── */
-.fest-titulo {
-  text-shadow: 0 0 40px rgb(255 255 255 / 0.18);
+/* ── Entrada de cada página ─────────────────────────────────────────────── */
+@keyframes fest-entra {
+  from { opacity: 0; transform: translateY(14px); }
+}
+
+.fest-entra {
+  animation: fest-entra 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94);
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .fest-grano {
+  .fest-grano,
+  .fest-entra {
     animation: none;
   }
 }

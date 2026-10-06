@@ -136,27 +136,35 @@ dos circuitos distintos.
   / registrado / membresía activa). Otorgar reusa `UsuarioDrawer`; si la persona
   no tiene cuenta, el botón ofrece copiar el link de registro.
 
-### Festival (`/festival`)
+### Festival — Subreal (`/festival`)
 
-Página de venta de entradas que nace de Manso pero con **identidad propia**:
-`ChromeManso` (en el root layout) le saca navbar, footer y flotantes, y los
-colores salen del panel (`festival_config.color_*`), no de la paleta `manso-*`.
-La estética sale de las láminas de Ana (raves en el bosque con humo, foto
-analógica, degradés naranja→magenta→violeta). Las dos imágenes de la página se
-cargan desde el panel: `banner_url` (fondo del hero, oscurecido) y `foto_url`
-(foto a sangre entre line-up y entradas, con tratamiento analógico en
-`FotoAnalogica.tsx`; sin foto la franja no se dibuja). Hubo un hero de geometría
-sagrada animada en canvas que Ana pidió sacar; del footer queda solo el sello
-estático `SemillaDeLaVida`.
-Tipografías propias cargadas solo en `app/festival/layout.tsx` con
-`next/font`: Cormorant Garamond (serif fina) e IBM Plex Mono.
-Modelo tomado de una página de Passline: tabla de tipos de entrada con precio y
-estado (`en_venta` muestra selector de cantidad; `agotado` / `finalizado` /
-`proximamente`, una etiqueta). Los packs son una fila con
-`entradas_por_unidad` > 1 y el precio del pack entero.
+Sitio chico de un festival que nace de Manso pero con **identidad propia**:
+`ChromeManso` (en el root layout) le saca navbar, footer y flotantes. La
+estructura copia basilarfestival.com (pedido de Ana): un menú `> HOME > VISIÓN >
+LOCACIÓN > LINE UP > TICKETS > INFO & FAQ` en `app/festival/layout.tsx` y una
+página por sección. Todas leen por `lib/festival.ts` (cacheado por request).
+
+- `/festival` — solo el hero: `banner_url` a sangre, el nombre y dos cajitas
+  (fecha + horario, `lema`).
+- `/vision` y `/locacion` — texto del panel por `TextoResaltado`: `*así*` va en
+  `color_resalte` y `**así**` en `color_acento`. No es Markdown, a propósito.
+- `/line-up` — en escalera; cada nombre lleva a `/line-up/[slug]`, que copia la
+  estructura de `/speakers/[slug]` de la bitconf. Un B2B son dos filas de
+  `festival_artistas` y la segunda tiene `b2b = true` ("con el de arriba").
+  `festival_escenarios.artistas` (text[]) quedó obsoleta.
+- `/tickets` — tabla de venta (modelo Passline): `en_venta` muestra contador; el
+  resto, su estado. Los packs son una fila con `entradas_por_unidad` > 1.
+- `/info` — `festival_faq` en tres columnas.
+
+Diseño: fusión Basilar + Manso. Los colores vienen del panel
+(`festival_config.color_*`) y por defecto son la paleta de Manso llevada a
+oscuro (fondo `#1C1410`, cream, terra encendida `#E2532B`, oliva `#B9B23E`).
+Tipografía: **Archivo** variable en ancho (ancha para el nombre del festival y
+del artista, angosta para el menú y el line-up; clases `fest-*` en
+`festival.css`), Helvetica para el texto corrido y Plex Mono para los datos.
 
 **No publicada por RLS, no por código**: mientras `festival_config.publicado`
-sea false, las tres tablas (`supabase/migration_festival.sql`) solo las lee un
+sea false, las tablas del festival (`supabase/migration_festival*.sql`) solo las lee un
 admin, así que la página —que usa el cliente con cookies— da 404 a cualquier
 otro. No está enlazada desde el sitio ni en el sitemap, y va `noindex`.
 
