@@ -153,8 +153,9 @@ página por sección. Todas leen por `lib/festival.ts` (cacheado por request).
 - `/vision` — texto del panel por `TextoResaltado`: `*así*` va en
   `color_resalte` y `**así**` en `color_acento`. No es Markdown, a propósito.
   `/locacion` no muestra su texto del panel (repetía la barra de datos): solo
-  la barra (lugar, fecha, horario) y un mosaico de fotos (`GaleriaLocacion`, como la
-  página Location de Basilar) que sale de `festival_config.locacion_fotos`
+  la barra (lugar, fecha, horario) y las fotos (`GaleriaLocacion`), enteras y
+  sin recorte, todas a la misma altura: el mosaico de Basilar recortaba las
+  verticales del celular a una franja. Salen de `festival_config.locacion_fotos`
   (text[], ordenado desde el panel). `foto_url` quedó obsoleta.
 - `/line-up` — en escalera; cada nombre lleva a `/line-up/[slug]`, que copia la
   estructura de `/speakers/[slug]` de la bitconf. Un B2B son dos filas de
