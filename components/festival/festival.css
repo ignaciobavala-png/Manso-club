@@ -101,20 +101,6 @@
   }
 }
 
-/* Nombre del festival en el hero (ver `TituloDifuso`): Archivo en su ancho
-   máximo, estirada un poco más y con las letras casi tocándose, en el gris
-   lavanda claro y translúcido del logo de Basilar. */
-.fest-titulo {
-  font-family: var(--font-fest-display), sans-serif;
-  font-variation-settings: 'wdth' 125;
-  font-weight: 900;
-  text-transform: uppercase;
-  letter-spacing: -0.05em;
-  transform: scaleX(1.15);
-  color: #dcdce6;
-  opacity: 0.93;
-}
-
 /* ── Menú: medidas de basilarfestival.com ───────────────────────────────────
    Basilar usa Space Grotesk; acá va Space Mono Bold (pedido del equipo) con el
    resto de sus medidas: 23,328px fijo en escritorio (no escala con la

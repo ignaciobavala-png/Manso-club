@@ -13,7 +13,8 @@ export const SECCIONES = [
 ] as const;
 
 /**
- * Menú de Basilar, medido sobre su sitio (ver `.fest-menu` en festival.css):
+ * Menú de Basilar (ver `.fest-menu` en festival.css), un poco más chico que
+ * el original —18px en vez de 23,3 y menos aire— porque ocupaba demasiado:
  * links con chevron, y TICKETS aparte como bloque de color, sin la manito. En el celular el menú se acomoda en dos renglones y TICKETS
  * pasa a ser un botón fijo abajo a la derecha (salvo en la página de tickets,
  * donde sobra).
@@ -26,9 +27,9 @@ export function FestivalMenu() {
   const enTickets = actual('/festival/tickets');
 
   return (
-    <header className="relative sm:sticky top-0 z-20 bg-[var(--fest-fondo)] flex items-start justify-between gap-4 px-4 py-3.5 sm:px-[26px] sm:pt-[26px] sm:pb-[26px]">
+    <header className="relative sm:sticky top-0 z-20 bg-[var(--fest-fondo)] flex items-start justify-between gap-4 px-4 py-3 sm:px-5 sm:py-4">
       <nav aria-label="Festival">
-        <ul className="flex flex-wrap gap-x-[0.45em] fest-menu leading-none text-[17px] sm:text-[23.328px]">
+        <ul className="flex flex-wrap gap-x-[0.45em] fest-menu leading-none text-[14px] sm:text-[18px]">
           {SECCIONES.map(s => (
             <li key={s.href}>
               <Link
@@ -45,7 +46,7 @@ export function FestivalMenu() {
 
       <Link
         href="/festival/tickets"
-        className={`fest-menu shrink-0 bg-[var(--fest-acento)] text-[var(--fest-fondo)] hover:bg-[var(--fest-texto)] transition-colors text-[19px] sm:text-[22.032px] leading-[1.3] px-[0.26em] py-2 sm:py-0 fixed right-4 bottom-4 z-30 sm:static ${
+        className={`fest-menu shrink-0 bg-[var(--fest-acento)] text-[var(--fest-fondo)] hover:bg-[var(--fest-texto)] transition-colors text-[16px] sm:text-[17px] leading-[1.3] px-[0.26em] py-2 sm:py-0 fixed right-4 bottom-4 z-30 sm:static ${
           enTickets ? 'hidden sm:inline-block' : ''
         }`}
       >

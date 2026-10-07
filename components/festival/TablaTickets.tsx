@@ -1,24 +1,33 @@
 'use client';
 
 import { FormEvent, useMemo, useState } from 'react';
-import { FestivalEntrada, etiquetaEstado } from '@/lib/types/festival';
+import { FestivalEntrada, MEDIOS_PAGO, MedioPago, etiquetaEstado } from '@/lib/types/festival';
 import { formatArs } from '@/lib/precios';
 
 /**
  * Tabla de venta (modelo Passline): una fila por tipo de entrada. Solo las que
  * están en venta tienen contador; el resto muestra su estado.
  *
- * Se cobra en cripto (USDT / USDC directo a la wallet de Manso): COMPRAR pide
- * nombre y mail, `/api/festival/compra` arma la orden y el navegador va a
- * `/festival/compra/[id]`, donde se elige la red y se paga. Sin wallets
- * configuradas la API contesta 503 con `demo` y se va a `/festival/compra/demo`
- * con lo elegido: la pantalla de pago con datos de ejemplo, sin cobrar.
+ * COMPRAR pide nombre, mail y medio de pago (los que estén prendidos y
+ * configurados, ver `mediosDePago`); `/api/festival/compra` arma la orden y
+ * devuelve a dónde ir: el checkout de Mercado Pago, o `/festival/compra/[id]`
+ * con los datos de la transferencia o la elección de red en cripto. Sin
+ * ningún medio disponible, la tabla se ve pero no se puede comprar.
  */
-export function TablaTickets({ entradas, aviso }: { entradas: FestivalEntrada[]; aviso: string | null }) {
+export function TablaTickets({
+  entradas,
+  aviso,
+  medios,
+}: {
+  entradas: FestivalEntrada[];
+  aviso: string | null;
+  medios: MedioPago[];
+}) {
   const [cantidades, setCantidades] = useState<Record<string, number>>({});
   const [datosAbiertos, setDatosAbiertos] = useState(false);
   const [nombre, setNombre] = useState('');
   const [email, setEmail] = useState('');
+  const [metodo, setMetodo] = useState<MedioPago | undefined>(medios[0]);
   const [enviando, setEnviando] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -54,15 +63,11 @@ export function TablaTickets({ entradas, aviso }: { entradas: FestivalEntrada[];
         body: JSON.stringify({
           nombre,
           email,
+          metodo,
           items: seleccion,
         }),
       });
       const data = await res.json().catch(() => ({}));
-      if (data.demo) {
-        const params = new URLSearchParams({ nombre, items: seleccion.map(i => `${i.id}:${i.cantidad}`).join(',') });
-        window.location.href = `/festival/compra/demo?${params}`;
-        return;
-      }
       if (!res.ok || !data.url) throw new Error(data.error ?? 'No pudimos iniciar la compra.');
       window.location.href = data.url;
     } catch (e) {
@@ -157,7 +162,7 @@ export function TablaTickets({ entradas, aviso }: { entradas: FestivalEntrada[];
         )}
         <button
           type="button"
-          disabled={total === 0}
+          disabled={total === 0 || !metodo}
           onClick={() => setDatosAbiertos(true)}
           className="fest-angosta text-2xl px-10 py-3 bg-[var(--fest-acento)] text-[var(--fest-fondo)] enabled:hover:bg-[var(--fest-texto)] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
         >
@@ -165,10 +170,39 @@ export function TablaTickets({ entradas, aviso }: { entradas: FestivalEntrada[];
         </button>
       </div>
 
-      {datosAbiertos && total > 0 && (
+      {!metodo && (
+        <p className="mt-4 sm:text-right fest-mono text-[11px] uppercase tracking-[0.2em] opacity-60">
+          La venta online abre pronto.
+        </p>
+      )}
+
+      {datosAbiertos && total > 0 && metodo && (
         <form onSubmit={comprar} className="mt-8 sm:ml-auto sm:max-w-[420px] grid gap-3">
+          {medios.length > 1 && (
+            <fieldset className="grid gap-2 mb-2">
+              <legend className="fest-mono text-[10px] uppercase tracking-[0.3em] opacity-60 mb-2">Medio de pago</legend>
+              {medios.map(m => (
+                <label
+                  key={m}
+                  className={`flex items-center gap-3 border px-3 py-2.5 cursor-pointer transition-colors ${
+                    m === metodo ? 'border-[var(--fest-acento)]' : 'border-[var(--fest-texto)]/25 hover:border-[var(--fest-texto)]/60'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="metodo"
+                    value={m}
+                    checked={m === metodo}
+                    onChange={() => setMetodo(m)}
+                    className="accent-[var(--fest-acento)]"
+                  />
+                  <span className="fest-angosta text-xl leading-none">{MEDIOS_PAGO[m].nombre}</span>
+                </label>
+              ))}
+            </fieldset>
+          )}
           <p className="fest-mono text-[11px] uppercase tracking-[0.2em] opacity-70 leading-relaxed">
-            Se paga en USDT o USDC, en la red que elijas, al dólar blue del momento. En el paso siguiente te mostramos el monto y la dirección.
+            {MEDIOS_PAGO[metodo].detalle}
           </p>
           <input
             required
@@ -193,7 +227,7 @@ export function TablaTickets({ entradas, aviso }: { entradas: FestivalEntrada[];
             disabled={enviando}
             className="fest-angosta text-2xl py-3 bg-[var(--fest-acento)] text-[var(--fest-fondo)] enabled:hover:bg-[var(--fest-texto)] transition-colors disabled:opacity-50"
           >
-            {enviando ? 'Preparando…' : 'Pagar con cripto'}
+            {enviando ? 'Preparando…' : MEDIOS_PAGO[metodo].boton}
           </button>
           {error && (
             <p role="alert" className="fest-mono text-[11px] uppercase tracking-[0.2em] text-[var(--fest-acento)]">

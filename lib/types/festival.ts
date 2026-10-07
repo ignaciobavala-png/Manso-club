@@ -19,8 +19,10 @@ export interface FestivalConfig {
   flyer_url: string | null;
   /** Fondo del hero. Sin banner, el hero queda en el color de fondo. */
   banner_url: string | null;
-  /** Foto de /festival/locacion, con marco de foto revelada. */
+  /** Obsoleta: la reemplazó `locacion_fotos`. Queda en la tabla, nadie la lee. */
   foto_url: string | null;
+  /** Galería de /festival/locacion, en el orden en que se muestra. */
+  locacion_fotos: string[];
   /** Línea destacada debajo de la tabla, ej. "solo para mayores de 18". */
   aviso: string | null;
   /** Segunda cajita del hero, debajo de la fecha. */
@@ -39,7 +41,32 @@ export interface FestivalConfig {
   /** Color de las palabras resaltadas con *asteriscos*. */
   color_resalte: string;
   publicado: boolean;
+  /** Perillas de los medios de cobro. Ver `mediosDePago` en lib/festival-compra. */
+  pago_mercadopago: boolean;
+  pago_transferencia: boolean;
+  /** Apagada hasta que estén las wallets (`FESTIVAL_WALLET_*`). */
+  pago_cripto: boolean;
 }
+
+export type MedioPago = 'mercadopago' | 'transferencia' | 'cripto';
+
+export const MEDIOS_PAGO: Record<MedioPago, { nombre: string; boton: string; detalle: string }> = {
+  mercadopago: {
+    nombre: 'Mercado Pago',
+    boton: 'Pagar con Mercado Pago',
+    detalle: 'Tarjeta, débito o dinero en cuenta. Las entradas llegan apenas se aprueba el pago.',
+  },
+  transferencia: {
+    nombre: 'Transferencia',
+    boton: 'Pagar por transferencia',
+    detalle: 'Te mostramos los datos de la cuenta. Las entradas llegan cuando confirmamos la transferencia.',
+  },
+  cripto: {
+    nombre: 'Cripto',
+    boton: 'Pagar con cripto',
+    detalle: 'USDT o USDC en la red que elijas, al dólar blue del momento.',
+  },
+};
 
 export interface FestivalEscenario {
   id: string;
@@ -118,6 +145,7 @@ export const CONFIG_FESTIVAL_VACIA: FestivalConfig = {
   flyer_url: null,
   banner_url: null,
   foto_url: null,
+  locacion_fotos: [],
   aviso: null,
   lema: null,
   vision: null,
@@ -129,4 +157,7 @@ export const CONFIG_FESTIVAL_VACIA: FestivalConfig = {
   color_acento: '#E2532B',
   color_resalte: '#B9B23E',
   publicado: false,
+  pago_mercadopago: true,
+  pago_transferencia: true,
+  pago_cripto: false,
 };

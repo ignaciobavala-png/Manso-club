@@ -327,7 +327,7 @@ function Paso({ numero, titulo, children }: { numero: string; titulo: string; ch
   );
 }
 
-function Copiar({ valor, etiqueta }: { valor: string; etiqueta: string }) {
+export function Copiar({ valor, etiqueta }: { valor: string; etiqueta: string }) {
   const [listo, setListo] = useState(false);
   return (
     <button

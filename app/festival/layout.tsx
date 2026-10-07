@@ -75,9 +75,11 @@ export default async function FestivalLayout({ children }: { children: React.Rea
 
       <FestivalMenu />
 
-      <main className="flex-1">{children}</main>
+      {/* Flex para que el hero del home ocupe justo el alto que dejan el menú y
+          el pie, sin scroll. Las otras páginas crecen normal. */}
+      <main className="flex-1 flex flex-col">{children}</main>
 
-      <footer className="border-t border-[var(--fest-texto)]/15 px-4 sm:px-7 pt-4 pb-20 sm:pb-4 flex flex-wrap justify-between gap-x-8 gap-y-2.5 fest-mono text-[11px] uppercase tracking-[0.2em]">
+      <footer className="relative z-10 bg-[var(--fest-fondo)] border-t border-[var(--fest-texto)]/15 px-4 sm:px-7 pt-4 pb-20 sm:pb-4 flex flex-wrap justify-between gap-x-8 gap-y-2.5 fest-mono text-[11px] uppercase tracking-[0.2em]">
         <nav className="flex flex-wrap gap-x-[22px] gap-y-1.5 text-[var(--fest-acento)]">
           {config.email && (
             <a href={`mailto:${config.email}`} className="fest-flecha hover:text-[var(--fest-texto)] transition-colors">

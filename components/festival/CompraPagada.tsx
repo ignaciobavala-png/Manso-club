@@ -22,11 +22,15 @@ export function CompraPagada({
   email,
   tickets,
   pago,
+  medio,
   children,
 }: {
   email: string;
   tickets: EntradaConQr[];
+  /** El pago en cripto, con link a la transacción. */
   pago: { red: RedCripto; token: string; monto: number; tx_hash: string } | null;
+  /** Para los pagos en pesos, que no tienen transacción: "Mercado Pago", "transferencia". */
+  medio?: string;
   /** El resumen de la compra (a nombre de, entradas, total). */
   children: React.ReactNode;
 }) {
@@ -54,6 +58,7 @@ export function CompraPagada({
       </ul>
 
       {children}
+      {!pago && medio && <p className="mt-3 fest-mono text-[12px] opacity-60">Pagado con {medio}</p>}
       {pago && (
         <p className="mt-3 fest-mono text-[12px] opacity-60">
           Pagado con {pago.monto} {pago.token} en {REDES[pago.red].nombre}

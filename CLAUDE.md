@@ -144,14 +144,17 @@ estructura copia basilarfestival.com (pedido de Ana): un menú `> HOME > VISIÓN
 LOCACIÓN > LINE UP > TICKETS > INFO & FAQ` en `app/festival/layout.tsx` y una
 página por sección. Todas leen por `lib/festival.ts` (cacheado por request).
 
-- `/festival` — solo el hero: la foto a sangre y **sin filtros** (`banner_url`,
+- `/festival` — solo el hero: la foto `fixed` a pantalla completa y **sin filtros** (`banner_url`,
   o `public/festival/hero-cabina.jpg` si el panel no tiene banner), el título y
-  dos cajitas (fecha + horario, `lema`). El título dice **BLUR** fijo en el
-  código (`TITULO_HERO`), no `config.nombre`, que sigue siendo "Subreal" y es
+  dos cajitas (fecha + horario, `lema`). El título es el logo **BLUR** de la
+  diseñadora (`public/festival/blur-logo.png`, `LOGO_HERO`), no `config.nombre`, que sigue siendo "Subreal" y es
   el que sale en la pestaña y el pie. Si BLUR pasa a ser el nombre, cambiarlo
   en el panel y volver a leerlo de ahí.
 - `/vision` y `/locacion` — texto del panel por `TextoResaltado`: `*así*` va en
   `color_resalte` y `**así**` en `color_acento`. No es Markdown, a propósito.
+  `/locacion` lleva abajo un mosaico de fotos (`GaleriaLocacion`, como la
+  página Location de Basilar) que sale de `festival_config.locacion_fotos`
+  (text[], ordenado desde el panel). `foto_url` quedó obsoleta.
 - `/line-up` — en escalera; cada nombre lleva a `/line-up/[slug]`, que copia la
   estructura de `/speakers/[slug]` de la bitconf. Un B2B son dos filas de
   `festival_artistas` y la segunda tiene `b2b = true` ("con el de arriba").
@@ -166,22 +169,35 @@ oscuro (fondo `#1C1410`, cream, terra encendida `#E2532B`, oliva `#B9B23E`).
 Tipografía: **Archivo** variable en ancho (ancha para el nombre del festival y
 del artista, angosta para el menú y el line-up; clases `fest-*` en
 `festival.css`), Helvetica para el texto corrido y Plex Mono para los datos.
-El menú y el botón TICKETS van en **Space Mono** Bold (`.fest-menu`), con las
-medidas del menú de Basilar (23,3px fijo en escritorio, chevron dibujado con
-una máscara SVG en `.fest-chevron`). Basilar en realidad usa Space Grotesk; el
+El menú y el botón TICKETS van en **Space Mono** Bold (`.fest-menu`), con el
+estilo del menú de Basilar (chevron dibujado con una máscara SVG en
+`.fest-chevron`) pero más chico: 18px en escritorio en vez de sus 23,3px. Basilar en realidad usa Space Grotesk; el
 equipo eligió la Mono.
-El título del hero (`TituloDifuso`) imita el logo de Basilar: Archivo ancha
-estirada y un filtro SVG (desenfoque + umbral de alfa + desenfoque leve) que
-redondea todas las esquinas y deja el borde difuso. El filtro mide en
-`objectBoundingBox`, así escala con el tamaño de letra; está calibrado para
-una palabra corta y con una larga redondea de más.
+El título del hero es una imagen que entregó la diseñadora (PNG blanco sobre
+transparente). Antes se imitaba el logo de Basilar con Archivo y un filtro SVG
+(`TituloDifuso`); se sacó al llegar el logo.
 
 **No publicada por RLS, no por código**: mientras `festival_config.publicado`
 sea false, las tablas del festival (`supabase/migration_festival*.sql`) solo las lee un
 admin, así que la página —que usa el cliente con cookies— da 404 a cualquier
 otro. No está enlazada desde el sitio ni en el sitemap, y va `noindex`.
 
-**Cobro en cripto directo a la wallet de Manso** (USDT / USDC), verificado
+**Cobro: Mercado Pago, transferencia y cripto**, cada uno con su perilla en el
+panel (Festival → Cobro). Se ofrece un medio solo si está prendido *y*
+configurado (`mediosDePago` en `lib/festival-compra.ts`): MP necesita
+`MP_ACCESS_TOKEN`, transferencia un CBU o alias en `checkout_config`, cripto las
+wallets. Los tres terminan en `festival_emitir_orden` (marca pagada + un ticket
+por persona) y el mismo mail con el link a `/festival/compra/[id]`.
+
+- **Mercado Pago**: la API crea la preferencia con `external_reference =
+  festival:<orden>` (el prefijo la separa de los pedidos de la tienda). Confirman
+  `/api/festival/mp-webhook` y la vuelta del comprador (`?payment_id=`), leyendo
+  el pago de la API de MP con nuestro token; por eso no depende de
+  `MP_WEBHOOK_SECRET`, que no está cargado en Vercel.
+- **Transferencia**: la compra muestra alias/CBU y un botón de WhatsApp con el
+  código (8 primeros caracteres de la orden). Ana confirma en Festival → Ventas
+  (`/api/festival/ordenes/[id]/confirmar`). No vencen.
+- **Cripto** (apagado hasta tener wallets), directo a la wallet de Manso (USDT / USDC), verificado
 leyendo la blockchain: sin pasarela, sin servidor propio y sin comisiones
 (Bitcart se descartó porque necesita un VPS). Esquema y razones en
 `supabase/migration_festival_cripto.sql`.
@@ -206,8 +222,8 @@ leyendo la blockchain: sin pasarela, sin servidor propio y sin comisiones
 - Los contratos de `lib/cripto-redes.ts` están verificados contra la cadena.
   **No editarlos de memoria**: el de USDC en Base se escribió mal de memoria
   (`4a71` por `4f71`) y apuntaba a una dirección vacía.
-- Sin `FESTIVAL_WALLET_TRON` / `FESTIVAL_WALLET_EVM` la API contesta 503 y la
-  tabla muestra "la venta abre pronto". Cada red aparece solo si su wallet está.
+- Sin `FESTIVAL_WALLET_TRON` / `FESTIVAL_WALLET_EVM` cripto no se ofrece
+  aunque la perilla esté prendida. Cada red aparece solo si su wallet está.
 - `/festival/compra/demo` muestra la pantalla con datos inventados (sin API ni
   cadena, y con una "dirección" que no es una dirección) para enseñarla sin
   wallets; `?estado=pagada` muestra las entradas.

@@ -3,7 +3,7 @@ interface Props {
   alt: string;
   /** Línea chica en mono en el borde de abajo del marco. */
   pie?: string | null;
-  /** Proporción de la foto: 4/5 en Locación, cuadrada en el artista. */
+  /** Proporción de la foto: 4/5 por defecto, cuadrada en el artista. */
   cuadrada?: boolean;
   prioridad?: boolean;
 }

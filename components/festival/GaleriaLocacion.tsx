@@ -1,0 +1,75 @@
+interface Props {
+  fotos: string[];
+  alt: string;
+}
+
+/**
+ * Mosaico de /festival/locacion, copiado de la página "Location" de Basilar:
+ * filas que alternan cuatro fotos altas de anchos distintos y tres apaisadas
+ * bajas, todas recortadas con `object-cover` para que la grilla no dependa de
+ * la proporción con que se suban. Si la última fila queda incompleta, sus
+ * fotos se reparten el ancho por igual.
+ *
+ * En el celular es una grilla de dos columnas en 4:3; con un número impar, la
+ * última ocupa el ancho entero para no dejar un hueco.
+ */
+
+const FILAS = [
+  { cantidad: 4, columnas: '1.8fr 1.8fr 0.75fr 1fr', alto: 'md:h-[clamp(220px,19vw,300px)]' },
+  { cantidad: 3, columnas: '1fr 1fr 1fr', alto: 'md:h-[clamp(110px,9vw,150px)]' },
+];
+
+function armarFilas(fotos: string[]) {
+  const filas: { fotos: string[]; inicio: number; columnas: string; alto: string }[] = [];
+  for (let i = 0, f = 0; i < fotos.length; f++) {
+    const patron = FILAS[f % FILAS.length];
+    const tramo = fotos.slice(i, i + patron.cantidad);
+    filas.push({
+      fotos: tramo,
+      inicio: i,
+      columnas: tramo.length === patron.cantidad ? patron.columnas : `repeat(${tramo.length}, 1fr)`,
+      alto: patron.alto,
+    });
+    i += tramo.length;
+  }
+  return filas;
+}
+
+export function GaleriaLocacion({ fotos, alt }: Props) {
+  if (fotos.length === 0) return null;
+  // Una sola foto no arma mosaico: va a lo ancho, con el alto de la fila alta.
+  const filas = fotos.length === 1
+    ? [{ fotos, inicio: 0, columnas: '1fr', alto: 'md:h-[clamp(320px,34vw,520px)]' }]
+    : armarFilas(fotos);
+  const impar = fotos.length % 2 === 1;
+
+  return (
+    <div className="grid grid-cols-2 gap-3 md:block md:space-y-6">
+      {filas.map((fila, f) => (
+        <div
+          key={f}
+          className={`contents md:grid md:gap-6 md:[grid-template-columns:var(--cols)] ${fila.alto}`}
+          style={{ '--cols': fila.columnas } as React.CSSProperties}
+        >
+          {fila.fotos.map((src, j) => {
+            // Índice global: la misma foto subida dos veces no choca en la key.
+            const i = fila.inicio + j;
+            const ultima = i === fotos.length - 1;
+            return (
+              <img
+                key={i}
+                src={src}
+                alt={alt}
+                loading="lazy"
+                decoding="async"
+                className={`block w-full aspect-[4/3] md:aspect-auto md:h-full object-cover [filter:sepia(0.3)_saturate(0.8)_contrast(0.9)] ${
+                  impar && ultima ? 'col-span-2 md:col-span-1' : ''
+                }`}
+              />
+            );
+          })}
+        </div>
+      ))}
+    </div>
+  );
+}

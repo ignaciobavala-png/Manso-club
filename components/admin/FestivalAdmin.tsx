@@ -25,6 +25,7 @@ import {
 import { formatArs } from '@/lib/precios';
 import { CompactImageUploader } from './CompactImageUploader';
 import { FestivalLineupAdmin } from './FestivalLineupAdmin';
+import { FestivalVentasAdmin } from './FestivalVentasAdmin';
 import {
   AYUDA,
   BOTON_AGREGAR,
@@ -85,6 +86,17 @@ export function FestivalAdmin() {
       .upsert({ id: 1, ...campos, updated_at: new Date().toISOString() });
     setGuardando(null);
     if (error) alert(error.message);
+  };
+
+  const guardarFotosLocacion = (fotos: string[]) => {
+    editarConfig({ locacion_fotos: fotos });
+    guardarConfig({ locacion_fotos: fotos }, 'locacion_fotos');
+  };
+
+  const moverFotoLocacion = (i: number, paso: -1 | 1) => {
+    const fotos = [...config.locacion_fotos];
+    [fotos[i], fotos[i + paso]] = [fotos[i + paso], fotos[i]];
+    guardarFotosLocacion(fotos);
   };
 
   const guardarDatos = () => {
@@ -226,10 +238,45 @@ export function FestivalAdmin() {
         </div>
       </section>
 
-      <p className="text-[11px] text-manso-cream/40 leading-relaxed">
-        La compra online todavía no está conectada: la página muestra la tabla de entradas y
-        deja elegir cantidades, pero el botón de comprar no cobra.
-      </p>
+      {/* ── Cobro ───────────────────────────────────────────────────── */}
+      <section className={CARD}>
+        <div>
+          <h3 className={TITULO}>Cobro</h3>
+          <p className={AYUDA}>
+            Los medios que se ofrecen al comprar. Se guardan al tocarlos. Uno prendido igual no
+            aparece si le falta su configuración.
+          </p>
+        </div>
+        <div className="divide-y divide-manso-cream/10">
+          {(
+            [
+              ['pago_mercadopago', 'Mercado Pago', 'Se confirma solo. Usa la cuenta de MP de la tienda.'],
+              ['pago_transferencia', 'Transferencia', 'Toma el CBU/alias de la config del checkout. Se confirma a mano en Ventas.'],
+              ['pago_cripto', 'Cripto (USDT / USDC)', 'Necesita las wallets cargadas en Vercel (FESTIVAL_WALLET_TRON / _EVM). Sin ellas no aparece aunque esté prendido.'],
+            ] as const
+          ).map(([campo, etiqueta, ayuda]) => (
+            <label key={campo} className="flex items-start justify-between gap-4 py-3 cursor-pointer">
+              <span>
+                <span className="block text-sm text-manso-cream">{etiqueta}</span>
+                <span className={AYUDA}>{ayuda}</span>
+              </span>
+              <input
+                type="checkbox"
+                role="switch"
+                checked={config[campo]}
+                disabled={guardando === campo}
+                onChange={e => {
+                  editarConfig({ [campo]: e.target.checked });
+                  guardarConfig({ [campo]: e.target.checked }, campo);
+                }}
+                className="mt-1 w-9 h-5 shrink-0 appearance-none rounded-full bg-manso-cream/15 checked:bg-manso-olive relative cursor-pointer transition-colors before:content-[''] before:absolute before:top-0.5 before:left-0.5 before:w-4 before:h-4 before:rounded-full before:bg-manso-cream before:transition-transform checked:before:translate-x-4 disabled:opacity-40"
+              />
+            </label>
+          ))}
+        </div>
+      </section>
+
+      <FestivalVentasAdmin />
 
       {/* ── Datos ───────────────────────────────────────────────────── */}
       <section className={CARD}>
@@ -420,7 +467,7 @@ export function FestivalAdmin() {
           />
           <p className={AYUDA}>
             Debajo del texto se arma solo un cuadro con lugar, fecha y horario (de &quot;Datos del
-            festival&quot;), y al lado la foto de Locación.
+            festival&quot;), y abajo el mosaico de fotos de Locación.
           </p>
         </div>
 
@@ -435,8 +482,9 @@ export function FestivalAdmin() {
         <div>
           <h3 className={TITULO}>Imágenes de la página</h3>
           <p className={AYUDA}>
-            Se guardan al subirlas. El banner va de fondo en la portada, oscurecido para que se lea
-            el nombre; la foto va en la página de Locación, con marco de foto revelada.
+            Se guardan al subirlas. El banner va de fondo en la portada; las fotos de Locación
+            arman el mosaico de abajo del texto, en este orden (filas de cuatro altas y tres
+            apaisadas, recortadas solas).
           </p>
         </div>
 
@@ -444,7 +492,6 @@ export function FestivalAdmin() {
           {(
             [
               ['banner_url', 'Banner (arriba)', 'Horizontal, mínimo 1920 px de ancho.'],
-              ['foto_url', 'Foto de Locación', 'Vertical (4:5).'],
             ] as const
           ).map(([campo, etiqueta, ayuda]) => (
             <div key={campo}>
@@ -479,6 +526,47 @@ export function FestivalAdmin() {
               )}
             </div>
           ))}
+        </div>
+
+        <div>
+          <label className={`${LABEL} flex items-center gap-2`}>
+            <ImageIcon size={14} />
+            Fotos de Locación ({config.locacion_fotos.length})
+          </label>
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+            {config.locacion_fotos.map((url, i) => (
+              <div key={`${i}-${url}`} className="relative group rounded-xl overflow-hidden border border-manso-cream/10">
+                <img src={url} alt="" className="w-full h-28 object-cover" />
+                <span className="absolute top-1.5 left-1.5 px-1.5 rounded bg-black/70 text-[10px] font-black text-manso-cream">
+                  {i + 1}
+                </span>
+                <div className="absolute bottom-1.5 right-1.5 flex gap-1">
+                  <button type="button" onClick={() => moverFotoLocacion(i, -1)} disabled={i === 0} className={BOTON_ICONO} title="Antes">
+                    <ArrowUp size={13} />
+                  </button>
+                  <button type="button" onClick={() => moverFotoLocacion(i, 1)} disabled={i === config.locacion_fotos.length - 1} className={BOTON_ICONO} title="Después">
+                    <ArrowDown size={13} />
+                  </button>
+                  <button type="button" onClick={() => guardarFotosLocacion(config.locacion_fotos.filter((_, k) => k !== i))} className={BOTON_ICONO} title="Quitar">
+                    <Trash2 size={13} />
+                  </button>
+                </div>
+              </div>
+            ))}
+            <CompactImageUploader
+              // Cambia la key con cada foto para que el slot vuelva a quedar vacío.
+              key={`nueva-${config.locacion_fotos.length}`}
+              bucket="flyers"
+              folder="festival"
+              maxWidth={2400}
+              height="h-28"
+              onUpload={url => guardarFotosLocacion([...config.locacion_fotos, url])}
+            />
+          </div>
+          <p className={AYUDA}>
+            Subí de a una; cada foto se suma al final. Mejor horizontales: en el mosaico casi todas
+            se ven apaisadas.
+          </p>
         </div>
       </section>
 

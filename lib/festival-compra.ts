@@ -2,10 +2,21 @@ import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { ORDEN_REDES, REDES, type EstadoPago, type RedCripto } from '@/lib/cripto-redes';
 import { leerTransferencias, normalizarHash, puntoDePartida, redesActivas, walletDe } from '@/lib/cripto-escaner';
 import { EMAIL_FROM, getResend } from '@/lib/resend';
+import { getMPPaymentClient, getMPPreferenceClient } from '@/lib/mercadopago';
+import { datosParaTransferencia, getBankConfig } from '@/lib/getBankConfig';
+import type { FestivalConfig, MedioPago } from '@/lib/types/festival';
 
 /**
- * Compra de entradas del festival en cripto, directo a la wallet de Manso.
- * Esquema y razones en `supabase/migration_festival_cripto.sql`.
+ * Compra de entradas del festival. Tres medios, cada uno con su perilla en el
+ * panel (`mediosDePago`):
+ *
+ *   - Mercado Pago: la orden arma una preferencia; el webhook
+ *     `/api/festival/mp-webhook` (y la vuelta del comprador a su compra)
+ *     confirman con `confirmarPagoMP`.
+ *   - Transferencia: la compra muestra los datos de la cuenta y Ana la confirma
+ *     desde el panel (`/api/festival/ordenes/[id]/confirmar`).
+ *   - Cripto, directo a la wallet de Manso. Esquema y razones en
+ *     `supabase/migration_festival_cripto.sql`:
  *
  *   1. `/api/festival/compra` crea la orden (sin red todavía).
  *   2. En `/festival/compra/[id]` el comprador elige red → `elegirRed` le fija
@@ -31,8 +42,12 @@ export interface OrdenFestival {
   items: ItemOrden[];
   cantidad_entradas: number;
   total_ars: number;
-  total_usd: number;
+  /** Solo seguro en cripto: en pesos se guarda si dolarapi respondió. */
+  total_usd: number | null;
   estado: 'pendiente' | 'pagada' | 'vencida';
+  metodo: MedioPago;
+  mp_preference_id: string | null;
+  mp_payment_id: string | null;
   red: RedCripto | null;
   monto_esperado: number | null;
   bloque_inicio: number | null;
@@ -79,7 +94,7 @@ export const urlCompra = (ordenId: string) => `${urlSitio()}/festival/compra/${o
 const normalizar = (o: OrdenFestival): OrdenFestival => ({
   ...o,
   total_ars: Number(o.total_ars),
-  total_usd: Number(o.total_usd),
+  total_usd: o.total_usd === null ? null : Number(o.total_usd),
   monto_esperado: o.monto_esperado === null ? null : Number(o.monto_esperado),
   bloque_inicio: o.bloque_inicio === null ? null : Number(o.bloque_inicio),
 });
@@ -89,7 +104,7 @@ export function estadoPublico(orden: OrdenFestival): EstadoPago {
   const activas = redesActivas();
   return {
     estado: orden.estado,
-    totalUsd: orden.total_usd,
+    totalUsd: orden.total_usd ?? 0,
     red: orden.red,
     monto: orden.monto_esperado,
     direccion: orden.red ? walletDe(orden.red) : null,
@@ -112,6 +127,7 @@ export async function leerOrden(supabase: SupabaseClient, id: string): Promise<O
  */
 export async function elegirRed(supabase: SupabaseClient, orden: OrdenFestival, red: RedCripto) {
   if (orden.estado === 'pagada') throw new Error('La orden ya está pagada');
+  if (orden.metodo !== 'cripto' || orden.total_usd === null) throw new Error('Esta compra no se paga en cripto');
   const bloqueInicio = await puntoDePartida(red);
 
   for (let intento = 0; intento < 20; intento++) {
@@ -275,6 +291,111 @@ export async function reclamarConHash(
     : { ok: false, mensaje: 'Esa transacción ya se usó para otra compra.' };
 }
 
+/**
+ * Marca la orden pagada, emite los tickets y manda el mail. Para Mercado Pago y
+ * transferencia; cripto pasa por `acreditar`, que además reclama la
+ * transferencia en la cadena. Devuelve false si ya estaba pagada.
+ */
+export async function emitirOrden(supabase: SupabaseClient, orden: OrdenFestival): Promise<boolean> {
+  const { data: ok, error } = await supabase.rpc('festival_emitir_orden', { p_orden: orden.id });
+  if (error) throw new Error(`No se pudo emitir la orden ${orden.id}: ${error.message}`);
+  if (ok) await enviarMailTickets(supabase, orden);
+  return Boolean(ok);
+}
+
+// ── Medios de pago ─────────────────────────────────────────────────────────
+
+/**
+ * Los que se ofrecen: prendidos en el panel y además configurados. Una perilla
+ * prendida sin el dato que la sostiene (token de MP, CBU o alias, wallets) no
+ * muestra el medio: sería un botón que falla.
+ */
+export async function mediosDePago(config: FestivalConfig): Promise<MedioPago[]> {
+  const medios: MedioPago[] = [];
+  if (config.pago_mercadopago && process.env.MP_ACCESS_TOKEN) medios.push('mercadopago');
+  if (config.pago_transferencia && datosParaTransferencia(await getBankConfig()).length > 0) {
+    medios.push('transferencia');
+  }
+  if (config.pago_cripto && redesActivas().length > 0) medios.push('cripto');
+  return medios;
+}
+
+/**
+ * `external_reference` de las preferencias del festival. El prefijo las separa
+ * de los pedidos de la tienda: si en el panel de MP hay un webhook global, la
+ * tienda también recibe estos avisos y no debe confundirlos con un pedido.
+ */
+const REF_MP = 'festival:';
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** Arma la preferencia de MP de una orden y devuelve a dónde mandar al comprador. */
+export async function crearPreferenciaMP(supabase: SupabaseClient, orden: OrdenFestival): Promise<string> {
+  const vuelta = urlCompra(orden.id);
+  const preferencia = await getMPPreferenceClient().create({
+    body: {
+      items: orden.items.map(i => ({
+        id: i.entrada_id,
+        title: `Festival — ${i.nombre}`,
+        quantity: i.cantidad,
+        unit_price: i.precio_ars,
+        currency_id: 'ARS',
+      })),
+      payer: { name: orden.nombre, email: orden.email },
+      external_reference: `${REF_MP}${orden.id}`,
+      back_urls: { success: vuelta, failure: vuelta, pending: vuelta },
+      auto_return: 'approved',
+      notification_url: `${urlSitio()}/api/festival/mp-webhook`,
+      statement_descriptor: 'MANSO FESTIVAL',
+    },
+  });
+  if (!preferencia.id || !preferencia.init_point) throw new Error('Mercado Pago no devolvió la preferencia');
+  await supabase.from('festival_ordenes').update({ mp_preference_id: preferencia.id }).eq('id', orden.id);
+  return preferencia.init_point;
+}
+
+/** El link de pago de una orden de MP que todavía no se pagó (para reintentar). */
+export async function linkPagoMP(orden: OrdenFestival): Promise<string | null> {
+  if (!orden.mp_preference_id) return null;
+  try {
+    return (await getMPPreferenceClient().get({ preferenceId: orden.mp_preference_id })).init_point ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Confirma un pago de MP leyéndolo de la API de MP con nuestro token: el aviso
+ * (webhook o el `payment_id` de la URL de vuelta) es solo el disparador y no
+ * se le cree nada, así que no depende de `MP_WEBHOOK_SECRET`. Emite si está
+ * aprobado, en pesos y por al menos el total. Devuelve la orden, o null si el
+ * pago no es de una compra del festival.
+ */
+export async function confirmarPagoMP(supabase: SupabaseClient, paymentId: string): Promise<OrdenFestival | null> {
+  const pago = await getMPPaymentClient().get({ id: paymentId });
+  const ref = pago.external_reference ?? '';
+  const ordenId = ref.slice(REF_MP.length);
+  if (!ref.startsWith(REF_MP) || !UUID.test(ordenId)) return null;
+
+  const orden = await leerOrden(supabase, ordenId);
+  if (!orden || orden.estado === 'pagada' || pago.status !== 'approved') return orden;
+
+  if (pago.currency_id !== 'ARS' || (pago.transaction_amount ?? 0) + 0.01 < orden.total_ars) {
+    await supabase
+      .from('festival_ordenes')
+      .update({
+        mp_payment_id: String(pago.id),
+        observacion: `MP aprobó ${pago.currency_id} ${pago.transaction_amount} y la compra es de ARS ${orden.total_ars}.`,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', orden.id);
+    return orden;
+  }
+
+  await supabase.from('festival_ordenes').update({ mp_payment_id: String(pago.id) }).eq('id', orden.id);
+  await emitirOrden(supabase, orden);
+  return leerOrden(supabase, orden.id);
+}
+
 /** Pasa a vencidas las pendientes cuyo plazo terminó (con un margen por la confirmación). */
 export async function vencerOrdenes(supabase: SupabaseClient) {
   const margen = new Date(Date.now() - 20 * 60_000).toISOString();
@@ -288,6 +409,8 @@ export async function vencerOrdenes(supabase: SupabaseClient) {
     .from('festival_ordenes')
     .update({ estado: 'vencida', updated_at: new Date().toISOString() })
     .eq('estado', 'pendiente')
+    // Mercado Pago y transferencia no vencen: un pago puede confirmarse tarde.
+    .eq('metodo', 'cripto')
     .is('red', null)
     .lt('created_at', new Date(Date.now() - HORAS_DE_GRACIA * 3600_000).toISOString());
 }
