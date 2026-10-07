@@ -150,9 +150,10 @@ página por sección. Todas leen por `lib/festival.ts` (cacheado por request).
   (`TITULO_HERO`) con el filtro difuso de `TituloDifuso`, no `config.nombre`,
   que sigue siendo "Subreal" y es el que sale en la pestaña y el pie. Si BLUR
   pasa a ser el nombre, cambiarlo en el panel y volver a leerlo de ahí.
-- `/vision` y `/locacion` — texto del panel por `TextoResaltado`: `*así*` va en
+- `/vision` — texto del panel por `TextoResaltado`: `*así*` va en
   `color_resalte` y `**así**` en `color_acento`. No es Markdown, a propósito.
-  `/locacion` lleva abajo un mosaico de fotos (`GaleriaLocacion`, como la
+  `/locacion` no muestra su texto del panel (repetía la barra de datos): solo
+  la barra (lugar, fecha, horario) y un mosaico de fotos (`GaleriaLocacion`, como la
   página Location de Basilar) que sale de `festival_config.locacion_fotos`
   (text[], ordenado desde el panel). `foto_url` quedó obsoleta.
 - `/line-up` — en escalera; cada nombre lleva a `/line-up/[slug]`, que copia la

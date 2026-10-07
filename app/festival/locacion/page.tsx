@@ -1,15 +1,15 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { fechaCorta, leerConfig } from '@/lib/festival';
-import { TextoResaltado } from '@/components/festival/TextoResaltado';
 import { GaleriaLocacion } from '@/components/festival/GaleriaLocacion';
 import { EscribeTexto } from '@/components/festival/Escribe';
 
 export const metadata: Metadata = { title: 'Locación' };
 
 /**
- * Como la página "Location" de Basilar: el texto del panel a lo ancho, los datos
- * duros en una grilla y abajo la galería de fotos en mosaico.
+ * Como la página "Location" de Basilar, pero sin el texto grande: los datos
+ * duros en una barra y abajo la galería de fotos en mosaico. El texto del panel
+ * (`config.locacion`) se sacó a pedido del equipo porque repetía la barra.
  */
 export default async function FestivalLocacion() {
   const config = await leerConfig();
@@ -28,17 +28,8 @@ export default async function FestivalLocacion() {
         <EscribeTexto texto="Locación" />
       </p>
 
-      {config.locacion ? (
-        <TextoResaltado
-          texto={config.locacion}
-          className="max-w-[62ch] text-[clamp(19px,1.9vw,28px)] leading-[1.38] tracking-[-0.01em]"
-        />
-      ) : (
-        <p className="fest-mono text-sm opacity-60">La locación se anuncia pronto.</p>
-      )}
-
-      {datos.length > 0 && (
-        <dl className="mt-10 max-w-4xl grid sm:grid-cols-3 border-t border-[var(--fest-texto)]/15">
+      {datos.length > 0 ? (
+        <dl className="max-w-4xl grid sm:grid-cols-3 border-t border-[var(--fest-texto)]/15">
           {datos.map(([etiqueta, valor]) => (
             <div key={etiqueta} className="py-4 pr-4 border-b border-[var(--fest-texto)]/15">
               <dt className="fest-mono text-[10px] uppercase tracking-[0.3em] opacity-55 mb-1.5">{etiqueta}</dt>
@@ -46,6 +37,8 @@ export default async function FestivalLocacion() {
             </div>
           ))}
         </dl>
+      ) : (
+        <p className="fest-mono text-sm opacity-60">La locación se anuncia pronto.</p>
       )}
 
       {config.locacion_fotos.length > 0 && (

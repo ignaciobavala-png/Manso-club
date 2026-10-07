@@ -14,6 +14,10 @@ interface Props {
  * En el celular es una grilla de tres columnas en 4:3.
  *
  * Sin filtro de color: las fotos se ven como se subieron (pedido del equipo).
+ *
+ * El alto va en cada foto y no en la fila: con `h-full` dentro de una fila de
+ * alto fijo, la grilla dimensionaba la fila por el alto natural de la imagen,
+ * la foto se salía por abajo y el pie le quedaba encima.
  */
 
 const FILAS = [
@@ -46,7 +50,7 @@ export function GaleriaLocacion({ fotos, alt }: Props) {
       {filas.map((fila, f) => (
         <div
           key={f}
-          className={`contents md:grid md:gap-4 md:[grid-template-columns:var(--cols)] ${fila.alto}`}
+          className="contents md:grid md:gap-4 md:[grid-template-columns:var(--cols)]"
           style={{ '--cols': fila.columnas } as React.CSSProperties}
         >
           {fila.fotos.map((src, j) => {
@@ -59,7 +63,7 @@ export function GaleriaLocacion({ fotos, alt }: Props) {
                 alt={alt}
                 loading="lazy"
                 decoding="async"
-                className="block w-full aspect-[4/3] md:aspect-auto md:h-full object-cover"
+                className={`block w-full aspect-[4/3] md:aspect-auto object-cover ${fila.alto}`}
               />
             );
           })}
