@@ -29,8 +29,14 @@ export interface EscenarioConArtistas extends FestivalEscenario {
   artistas: FestivalArtista[];
 }
 
-/** Escenarios visibles con sus artistas visibles, en orden. Sin artistas, el escenario no aparece. */
+/**
+ * Escenarios visibles con sus artistas visibles, en orden. Sin artistas, el
+ * escenario no aparece. Con el line-up apagado en el panel vuelve vacío: la
+ * página dice "se anuncia pronto" y la de cada artista da 404.
+ */
 export const leerLineup = cache(async (): Promise<EscenarioConArtistas[]> => {
+  const config = await leerConfig();
+  if (!config?.lineup_visible) return [];
   const supabase = await createSupabaseServer();
   const [escenarios, artistas] = await Promise.all([
     supabase.from('festival_escenarios').select('id, nombre, orden, activo').eq('activo', true).order('orden'),

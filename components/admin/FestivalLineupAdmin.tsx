@@ -46,14 +46,17 @@ export function FestivalLineupAdmin() {
   const [abiertos, setAbiertos] = useState<Set<string>>(new Set());
   const [cargando, setCargando] = useState(true);
   const [guardando, setGuardando] = useState<string | null>(null);
+  const [visible, setVisible] = useState(true);
 
   const cargar = useCallback(async () => {
-    const [esc, art] = await Promise.all([
+    const [esc, art, conf] = await Promise.all([
       supabase.from('festival_escenarios').select('id, nombre, orden, activo').order('orden'),
       supabase.from('festival_artistas').select('*').order('orden'),
+      supabase.from('festival_config').select('lineup_visible').eq('id', 1).maybeSingle(),
     ]);
     setEscenarios((esc.data as FestivalEscenario[] | null) ?? []);
     setArtistas((art.data as FestivalArtista[] | null) ?? []);
+    setVisible(conf.data?.lineup_visible ?? true);
     setCargando(false);
   }, []);
 
@@ -68,6 +71,19 @@ export function FestivalLineupAdmin() {
     setGuardando(null);
     if (error?.code === '23505') return alert('Ya hay otro artista con esa dirección. Cambiala por otra.');
     if (error) alert(error.message);
+  };
+
+  /** El interruptor general: se guarda al tocarlo. */
+  const alternarVisible = async () => {
+    const nuevo = !visible;
+    setVisible(nuevo);
+    setGuardando('lineup_visible');
+    const { error } = await supabase.from('festival_config').update({ lineup_visible: nuevo }).eq('id', 1);
+    setGuardando(null);
+    if (error) {
+      setVisible(!nuevo);
+      alert(error.message);
+    }
   };
 
   const borrarFila = async (tabla: TablaFestival, id: string, que: string) => {
@@ -176,11 +192,25 @@ export function FestivalLineupAdmin() {
             className="flex items-center gap-2 min-w-0 text-left text-xs font-bold text-manso-cream"
           >
             <ChevronDown size={13} className={`shrink-0 transition-transform ${abierto ? '' : '-rotate-90'}`} />
-            {a.b2b && <span className="text-[9px] font-black tracking-widest text-manso-olive">B2B</span>}
             <span className="truncate">{a.nombre || 'Sin nombre'}</span>
             {!a.activo && <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/30">oculto</span>}
           </button>
           <div className="flex items-center gap-1 shrink-0">
+            {/* B2B a la vista y guardado al tocarlo: dentro de la ficha costaba encontrarlo. */}
+            <button
+              type="button"
+              onClick={() => {
+                editarArtista(a.id, { b2b: !a.b2b });
+                guardarFila('festival_artistas', a.id, { b2b: !a.b2b });
+              }}
+              disabled={i === 0}
+              title={i === 0 ? 'El primero no puede ser B2B: no tiene a nadie arriba' : a.b2b ? 'Separar del de arriba' : 'Hacer B2B con el de arriba'}
+              className={`px-2 h-7 rounded-lg text-[9px] font-black tracking-widest transition-colors disabled:opacity-20 ${
+                a.b2b ? 'bg-manso-olive text-manso-black' : 'text-manso-cream/40 border border-manso-cream/15 hover:text-manso-cream'
+              }`}
+            >
+              B2B
+            </button>
             <button type="button" onClick={() => mover('festival_artistas', lista, i, -1)} disabled={i === 0} className={BOTON_ICONO} title="Subir">
               <ArrowUp size={13} />
             </button>
@@ -194,7 +224,7 @@ export function FestivalLineupAdmin() {
                 guardarFila('festival_artistas', a.id, { activo: !a.activo });
               }}
               className={BOTON_ICONO}
-              title={a.activo ? 'Ocultar' : 'Mostrar'}
+              title={a.activo ? 'Ocultar de la página' : 'Mostrar en la página'}
             >
               {a.activo ? <Eye size={13} /> : <EyeOff size={13} />}
             </button>
@@ -223,22 +253,6 @@ export function FestivalLineupAdmin() {
                 <p className={AYUDA}>/festival/line-up/{toSlug(a.slug) || toSlug(a.nombre)}</p>
               </div>
             </div>
-
-            <label className="flex items-start gap-3 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={a.b2b}
-                disabled={i === 0}
-                onChange={e => editarArtista(a.id, { b2b: e.target.checked })}
-                className="mt-0.5 accent-[#BC2915]"
-              />
-              <span className="text-xs text-manso-cream/80">
-                B2B con el de arriba
-                <span className="block text-[11px] text-manso-cream/40">
-                  Se muestran juntos en el mismo renglón del line-up; cada uno con su página.
-                </span>
-              </span>
-            </label>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div>
@@ -354,8 +368,35 @@ export function FestivalLineupAdmin() {
         <h3 className={TITULO}>Line-up</h3>
         <p className={AYUDA}>
           Los artistas aparecen en este orden, en escalera, y cada nombre lleva a su página. Para un
-          B2B, cargá a los dos por separado y tildá &quot;B2B con el de arriba&quot; en el segundo.
+          B2B, cargá a los dos por separado, uno debajo del otro, y tocá{' '}
+          <b className="text-manso-cream/70">B2B</b> en el segundo: se muestran juntos en el mismo
+          renglón. El ojito oculta a un artista solo.
         </p>
+      </div>
+
+      <div
+        className={`rounded-2xl p-4 border flex flex-wrap items-center justify-between gap-4 ${
+          visible ? 'bg-manso-olive/15 border-manso-olive/40' : 'bg-manso-cream/5 border-manso-cream/10'
+        }`}
+      >
+        <div className="space-y-1">
+          <p className="text-[10px] font-black uppercase tracking-widest text-manso-cream">
+            {visible ? 'Line-up visible en la página' : 'Line-up oculto'}
+          </p>
+          <p className="text-[11px] text-manso-cream/50 leading-relaxed max-w-md">
+            {visible
+              ? 'Se ven los escenarios y artistas no ocultos. Apagalo mientras el line-up no esté cerrado.'
+              : 'La página dice "El line-up se anuncia pronto". Podés seguir cargando y ordenando acá sin que se vea.'}
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={alternarVisible}
+          disabled={guardando === 'lineup_visible'}
+          className="px-4 py-2 rounded-xl border border-manso-cream/20 text-[9px] font-black uppercase tracking-widest text-manso-cream hover:bg-manso-cream/10 transition-colors disabled:opacity-40"
+        >
+          {visible ? 'Ocultar line-up' : 'Mostrar line-up'}
+        </button>
       </div>
 
       {escenarios.length === 0 && <p className="text-xs text-manso-cream/40">Sin escenarios todavía.</p>}

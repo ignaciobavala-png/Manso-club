@@ -41,6 +41,8 @@ export interface FestivalConfig {
   /** Color de las palabras resaltadas con *asteriscos*. */
   color_resalte: string;
   publicado: boolean;
+  /** Apagado, el line-up no se ve (todavía no está cerrado). Ver `leerLineup`. */
+  lineup_visible: boolean;
   /** Perillas de los medios de cobro. Ver `mediosDePago` en lib/festival-compra. */
   pago_mercadopago: boolean;
   pago_transferencia: boolean;
@@ -157,6 +159,7 @@ export const CONFIG_FESTIVAL_VACIA: FestivalConfig = {
   color_acento: '#E2532B',
   color_resalte: '#B9B23E',
   publicado: false,
+  lineup_visible: true,
   pago_mercadopago: true,
   pago_transferencia: true,
   pago_cripto: false,
