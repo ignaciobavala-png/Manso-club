@@ -1,5 +1,6 @@
 import Image from 'next/image';
 import { medidaImagen } from '@/lib/medida-imagen';
+import { VisorFotos } from './VisorFotos';
 
 interface Props {
   fotos: string[];
@@ -23,6 +24,7 @@ interface Props {
  * `loading="lazy"` y el navegador no carga imágenes con `display: none`.
  *
  * Sin filtro de color: las fotos se ven como se subieron (pedido del equipo).
+ * Cada una se abre entera en `VisorFotos` al tocarla. Lo usan Locación y Spots.
  */
 
 /** Ancho útil supuesto, alto ideal del renglón y separación, por pantalla. */
@@ -46,7 +48,7 @@ export async function GaleriaLocacion({ fotos, alt }: Props) {
   );
 
   return (
-    <>
+    <VisorFotos fotos={fotos} alt={alt}>
       {PANTALLAS.map(p => (
         <div key={p.clase} className={`${p.clase} flex-col`} style={{ gap: p.gap }}>
           {cortarRenglones(proporciones, p.ancho, p.alto, p.gap).map(([desde, hasta]) => {
@@ -58,9 +60,16 @@ export async function GaleriaLocacion({ fotos, alt }: Props) {
                   // Qué parte del ancho de pantalla ocupa esta foto, para el srcset.
                   const vw = Math.ceil((r / suma) * 100);
                   return (
-                    <div key={desde + k} className="relative min-w-0" style={{ flex: `${r} 1 0`, aspectRatio: r }}>
+                    <button
+                      type="button"
+                      key={desde + k}
+                      data-foto={desde + k}
+                      aria-label={`Ver foto ${desde + k + 1} de ${fotos.length}`}
+                      className="relative min-w-0 cursor-zoom-in"
+                      style={{ flex: `${r} 1 0`, aspectRatio: r }}
+                    >
                       <Image src={src} alt={alt} fill sizes={`${vw}vw`} className="object-cover" />
-                    </div>
+                    </button>
                   );
                 })}
               </div>
@@ -68,7 +77,7 @@ export async function GaleriaLocacion({ fotos, alt }: Props) {
           })}
         </div>
       ))}
-    </>
+    </VisorFotos>
   );
 }
 

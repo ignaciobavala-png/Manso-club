@@ -141,7 +141,7 @@ dos circuitos distintos.
 Sitio chico de un festival que nace de Manso pero con **identidad propia**:
 `ChromeManso` (en el root layout) le saca navbar, footer y flotantes. La
 estructura copia basilarfestival.com (pedido de Ana): un menú `> HOME > VISIÓN >
-LOCACIÓN > LINE UP > TICKETS > INFO & FAQ` en `app/festival/layout.tsx` y una
+LOCACIÓN > SPOTS > LINE UP > TICKETS > INFO & FAQ` en `app/festival/layout.tsx` y una
 página por sección. Todas leen por `lib/festival.ts` (cacheado por request).
 
 - `/festival` — solo el hero, sin pie (`FueraDelHome`): la foto `fixed` a pantalla completa y **sin filtros** (`banner_url`,
@@ -154,11 +154,19 @@ página por sección. Todas leen por `lib/festival.ts` (cacheado por request).
   `color_resalte` y `**así**` en `color_acento`. No es Markdown, a propósito.
   `/locacion` no muestra su texto del panel (repetía la barra de datos): solo
   la barra (lugar, fecha, horario) y las fotos (`GaleriaLocacion`), enteras y
-  sin recorte, todas a la misma altura: el mosaico de Basilar recortaba las
+  sin recorte, en renglones justificados: el servidor lee la proporción de cada
+  foto por su cabecera (`lib/medida-imagen.ts`) y elige dónde cortar cada
+  renglón para que llene el ancho. El mosaico de Basilar recortaba las
   verticales del celular a una franja. Salen de `festival_config.locacion_fotos`
   (text[], ordenado desde el panel). `foto_url` quedó obsoleta.
+- `/spots` — los lugares de la fiesta (`festival_spots`: título, descripción,
+  `fotos` text[]), cada uno con el mismo mosaico que Locación. No se cruza con
+  `festival_escenarios` a propósito.
+- Las fotos de Locación, Spots y del artista se amplían con `VisorFotos`. En el
+  panel, las galerías van por `GaleriaFotosAdmin` (varias de una, se reordenan).
 - `/line-up` — en escalera; cada nombre lleva a `/line-up/[slug]`, que copia la
-  estructura de `/speakers/[slug]` de la bitconf. Un B2B son dos filas de
+  estructura de `/speakers/[slug]` de la bitconf, con la foto al natural (sin
+  marco ni filtro) y un video de YouTube embebido (`youtube_url`). Un B2B son dos filas de
   `festival_artistas` y la segunda tiene `b2b = true` ("con el de arriba").
   `festival_escenarios.artistas` (text[]) quedó obsoleta.
 - `/tickets` — tabla de venta (modelo Passline): `en_venta` muestra contador; el

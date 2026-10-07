@@ -15,7 +15,7 @@ export const BOTON_GUARDAR =
 export const BOTON_AGREGAR =
   'w-full flex items-center justify-center gap-2 py-3 border border-dashed border-manso-terra/30 rounded-2xl text-[9px] font-black uppercase tracking-widest text-manso-terra/60 hover:text-manso-terra hover:border-manso-terra/60 hover:bg-manso-terra/5 transition-all';
 
-export type TablaFestival = 'festival_escenarios' | 'festival_entradas' | 'festival_artistas' | 'festival_faq';
+export type TablaFestival = 'festival_escenarios' | 'festival_entradas' | 'festival_artistas' | 'festival_faq' | 'festival_spots';
 
 /** Intercambia una fila con su vecina y renumera toda la lista desde 0. */
 export async function moverFila(tabla: TablaFestival, filas: { id: string }[], indice: number, delta: number) {

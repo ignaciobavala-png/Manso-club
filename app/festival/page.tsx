@@ -60,8 +60,7 @@ export default async function FestivalHome() {
       </div>
 
       <p className="absolute z-10 left-4 sm:left-7 bottom-5 fest-mono text-[11px] uppercase tracking-[0.3em]">
-        Presenta{' '}
-        <b className="font-sans font-black normal-case tracking-[-0.02em] text-[15px] ml-1.5">manso club</b>
+        <b className="font-sans font-black normal-case tracking-[-0.02em] text-[15px]">manso club</b>
       </p>
     </section>
   );

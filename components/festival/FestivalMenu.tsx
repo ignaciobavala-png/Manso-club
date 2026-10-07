@@ -7,6 +7,7 @@ export const SECCIONES = [
   { href: '/festival', etiqueta: 'Home' },
   { href: '/festival/vision', etiqueta: 'Visión' },
   { href: '/festival/locacion', etiqueta: 'Locación' },
+  { href: '/festival/spots', etiqueta: 'Spots' },
   { href: '/festival/line-up', etiqueta: 'Line up' },
   { href: '/festival/tickets', etiqueta: 'Tickets' },
   { href: '/festival/info', etiqueta: 'Info & FAQ' },
@@ -15,7 +16,8 @@ export const SECCIONES = [
 /**
  * Menú de Basilar (ver `.fest-menu` en festival.css), un poco más chico que
  * el original —18px en vez de 23,3 y menos aire— porque ocupaba demasiado:
- * links con chevron, y TICKETS aparte como bloque de color, sin la manito. En el celular el menú se acomoda en dos renglones y TICKETS
+ * links con chevron, y TICKETS aparte como bloque de color, sin la manito. En el celular va a 16px
+ * (a 14 quedaba chico) y se acomoda en dos o tres renglones; TICKETS
  * pasa a ser un botón fijo abajo a la derecha (salvo en la página de tickets,
  * donde sobra).
  *
@@ -33,7 +35,7 @@ export function FestivalMenu() {
   return (
     <header className="relative sm:sticky top-0 z-20 bg-[var(--fest-fondo)] flex items-start justify-between gap-4 px-4 py-3 sm:px-5 sm:py-4">
       <nav aria-label="Festival">
-        <ul className="flex flex-wrap gap-x-[0.45em] fest-menu leading-none text-[14px] sm:text-[18px]">
+        <ul className="flex flex-wrap gap-x-[0.45em] fest-menu leading-none text-[16px] sm:text-[18px]">
           {SECCIONES.map((s, i) => (
             <li key={s.href} className="fest-menu-entra" style={{ '--i': i } as React.CSSProperties}>
               <Link
@@ -51,7 +53,7 @@ export function FestivalMenu() {
       <Link
         href="/festival/tickets"
         style={{ '--i': SECCIONES.length } as React.CSSProperties}
-        className={`fest-menu fest-menu-entra fest-brillo shrink-0 bg-[var(--fest-acento)] text-[var(--fest-fondo)] hover:bg-[var(--fest-texto)] transition-colors text-[16px] sm:text-[17px] leading-[1.3] px-[0.26em] py-2 sm:py-0 fixed right-4 bottom-4 z-30 sm:relative sm:right-auto sm:bottom-auto overflow-hidden ${
+        className={`fest-menu fest-menu-entra fest-brillo shrink-0 bg-[var(--fest-acento)] text-[var(--fest-fondo)] hover:bg-[var(--fest-texto)] transition-colors text-[18px] sm:text-[17px] leading-[1.3] px-[0.26em] py-2 sm:py-0 fixed right-4 bottom-4 z-30 sm:relative sm:right-auto sm:bottom-auto overflow-hidden ${
           enTickets ? 'hidden sm:inline-block' : ''
         }`}
       >

@@ -7,6 +7,7 @@ import {
   FestivalEntrada,
   FestivalEscenario,
   FestivalFaq,
+  FestivalSpot,
 } from '@/lib/types/festival';
 
 /**
@@ -59,6 +60,13 @@ export const leerFaq = cache(async (): Promise<FestivalFaq[]> => {
   const supabase = await createSupabaseServer();
   const { data } = await supabase.from('festival_faq').select('*').eq('activo', true).order('orden');
   return (data as FestivalFaq[] | null) ?? [];
+});
+
+/** Spots visibles, en orden. */
+export const leerSpots = cache(async (): Promise<FestivalSpot[]> => {
+  const supabase = await createSupabaseServer();
+  const { data } = await supabase.from('festival_spots').select('*').eq('activo', true).order('orden');
+  return (data as FestivalSpot[] | null) ?? [];
 });
 
 /** `2026-12-11` → `11.12.2026`, sin pasar por Date para no correr el día por zona horaria. */

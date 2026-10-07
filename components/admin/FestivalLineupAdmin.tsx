@@ -152,6 +152,7 @@ export function FestivalLineupAdmin() {
       instagram: texto(a.instagram),
       soundcloud: texto(a.soundcloud),
       resident_advisor: texto(a.resident_advisor),
+      youtube_url: texto(a.youtube_url),
     });
   };
 
@@ -324,6 +325,12 @@ export function FestivalLineupAdmin() {
                 <label className={LABEL}>Resident Advisor</label>
                 <input type="text" value={a.resident_advisor ?? ''} onChange={e => editarArtista(a.id, { resident_advisor: e.target.value })} placeholder="link" className={INPUT} />
               </div>
+            </div>
+
+            <div>
+              <label className={LABEL}>Video de YouTube</label>
+              <input type="text" value={a.youtube_url ?? ''} onChange={e => editarArtista(a.id, { youtube_url: e.target.value })} placeholder="https://www.youtube.com/watch?v=…" className={INPUT} />
+              <p className={AYUDA}>Un set o un tema. Se ve embebido en su página, debajo de la bio.</p>
             </div>
 
             <div className="flex flex-wrap items-center justify-between gap-3">

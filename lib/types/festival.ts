@@ -96,6 +96,18 @@ export interface FestivalArtista {
   instagram: string | null;
   soundcloud: string | null;
   resident_advisor: string | null;
+  /** Link de YouTube tal como se pegó; la página lo muestra embebido. */
+  youtube_url: string | null;
+  orden: number;
+  activo: boolean;
+}
+
+/** Un lugar de la fiesta en /festival/spots: título, texto y fotos en orden. */
+export interface FestivalSpot {
+  id: string;
+  titulo: string;
+  descripcion: string;
+  fotos: string[];
   orden: number;
   activo: boolean;
 }

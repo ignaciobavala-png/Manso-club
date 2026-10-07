@@ -26,6 +26,8 @@ import { formatArs } from '@/lib/precios';
 import { CompactImageUploader } from './CompactImageUploader';
 import { FestivalLineupAdmin } from './FestivalLineupAdmin';
 import { FestivalVentasAdmin } from './FestivalVentasAdmin';
+import { FestivalSpotsAdmin } from './FestivalSpotsAdmin';
+import { GaleriaFotosAdmin } from './GaleriaFotosAdmin';
 import {
   AYUDA,
   BOTON_AGREGAR,
@@ -91,12 +93,6 @@ export function FestivalAdmin() {
   const guardarFotosLocacion = (fotos: string[]) => {
     editarConfig({ locacion_fotos: fotos });
     guardarConfig({ locacion_fotos: fotos }, 'locacion_fotos');
-  };
-
-  const moverFotoLocacion = (i: number, paso: -1 | 1) => {
-    const fotos = [...config.locacion_fotos];
-    [fotos[i], fotos[i + paso]] = [fotos[i + paso], fotos[i]];
-    guardarFotosLocacion(fotos);
   };
 
   const guardarDatos = () => {
@@ -483,8 +479,7 @@ export function FestivalAdmin() {
           <h3 className={TITULO}>Imágenes de la página</h3>
           <p className={AYUDA}>
             Se guardan al subirlas. El banner va de fondo en la portada; las fotos de Locación
-            arman el mosaico de abajo del texto, en este orden (filas de cuatro altas y tres
-            apaisadas, recortadas solas).
+            arman el mosaico de esa página, en este orden.
           </p>
         </div>
 
@@ -533,39 +528,10 @@ export function FestivalAdmin() {
             <ImageIcon size={14} />
             Fotos de Locación ({config.locacion_fotos.length})
           </label>
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            {config.locacion_fotos.map((url, i) => (
-              <div key={`${i}-${url}`} className="relative group rounded-xl overflow-hidden border border-manso-cream/10">
-                <img src={url} alt="" className="w-full h-28 object-cover" />
-                <span className="absolute top-1.5 left-1.5 px-1.5 rounded bg-black/70 text-[10px] font-black text-manso-cream">
-                  {i + 1}
-                </span>
-                <div className="absolute bottom-1.5 right-1.5 flex gap-1">
-                  <button type="button" onClick={() => moverFotoLocacion(i, -1)} disabled={i === 0} className={BOTON_ICONO} title="Antes">
-                    <ArrowUp size={13} />
-                  </button>
-                  <button type="button" onClick={() => moverFotoLocacion(i, 1)} disabled={i === config.locacion_fotos.length - 1} className={BOTON_ICONO} title="Después">
-                    <ArrowDown size={13} />
-                  </button>
-                  <button type="button" onClick={() => guardarFotosLocacion(config.locacion_fotos.filter((_, k) => k !== i))} className={BOTON_ICONO} title="Quitar">
-                    <Trash2 size={13} />
-                  </button>
-                </div>
-              </div>
-            ))}
-            <CompactImageUploader
-              // Cambia la key con cada foto para que el slot vuelva a quedar vacío.
-              key={`nueva-${config.locacion_fotos.length}`}
-              bucket="flyers"
-              folder="festival"
-              maxLado={2000}
-              height="h-28"
-              onUpload={url => guardarFotosLocacion([...config.locacion_fotos, url])}
-            />
-          </div>
+          <GaleriaFotosAdmin fotos={config.locacion_fotos} folder="festival" onChange={guardarFotosLocacion} />
           <p className={AYUDA}>
-            Subí de a una; cada foto se suma al final. Mejor horizontales: en el mosaico casi todas
-            se ven apaisadas.
+            Podés elegir varias a la vez. Se guardan solas; para cambiar el orden, arrastralas o
+            usá las flechas. En la página se ven enteras, sin recorte.
           </p>
         </div>
       </section>
@@ -760,6 +726,8 @@ export function FestivalAdmin() {
           Agregar entrada
         </button>
       </section>
+
+      <FestivalSpotsAdmin />
 
       <FestivalLineupAdmin />
 
