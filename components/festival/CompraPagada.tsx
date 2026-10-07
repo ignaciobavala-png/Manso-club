@@ -1,5 +1,6 @@
 import QRCode from 'qrcode';
 import { REDES, type RedCripto } from '@/lib/cripto-redes';
+import { EscribeTexto } from './Escribe';
 
 /**
  * Piezas de /festival/compra/[id] que comparte con la demo
@@ -79,7 +80,9 @@ export function CompraPagada({
 export function Marco({ children }: { children: React.ReactNode }) {
   return (
     <div className="px-4 sm:px-7 pt-6 sm:pt-10 pb-20 sm:pb-24 fest-entra max-w-[980px]">
-      <p className="fest-rotulo mb-8">Tu compra</p>
+      <p className="fest-rotulo mb-8">
+        <EscribeTexto texto="Tu compra" />
+      </p>
       {children}
     </div>
   );

@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import { leerConfig, leerLineup } from '@/lib/festival';
 import { FestivalArtista } from '@/lib/types/festival';
 import { NombreArtista } from '@/components/festival/NombreArtista';
+import { EscribeTexto } from '@/components/festival/Escribe';
 
 export const metadata: Metadata = { title: 'Line up' };
 
@@ -25,13 +26,17 @@ export default async function FestivalLineup() {
     <div className="px-4 sm:px-7 pt-6 sm:pt-10 pb-20 sm:pb-24 fest-entra">
       {lineup.length === 0 ? (
         <>
-          <p className="fest-rotulo mb-8">Line up</p>
+          <p className="fest-rotulo mb-8">
+            <EscribeTexto texto="Line up" />
+          </p>
           <p className="fest-mono text-sm opacity-60">El line-up se anuncia pronto.</p>
         </>
       ) : (
         lineup.map((escenario, e) => (
           <section key={escenario.id} className="mb-20 last:mb-0">
-            <h2 className="fest-rotulo mb-8">{escenario.nombre}</h2>
+            <h2 className="fest-rotulo mb-8">
+              <EscribeTexto texto={escenario.nombre} />
+            </h2>
             <ul>
               {renglones(escenario.artistas).map((grupo, i) => {
                 const off = CORRIMIENTOS[(i + e * 3) % CORRIMIENTOS.length];

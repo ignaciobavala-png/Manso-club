@@ -144,7 +144,7 @@ estructura copia basilarfestival.com (pedido de Ana): un menú `> HOME > VISIÓN
 LOCACIÓN > LINE UP > TICKETS > INFO & FAQ` en `app/festival/layout.tsx` y una
 página por sección. Todas leen por `lib/festival.ts` (cacheado por request).
 
-- `/festival` — solo el hero: la foto `fixed` a pantalla completa y **sin filtros** (`banner_url`,
+- `/festival` — solo el hero, sin pie (`FueraDelHome`): la foto `fixed` a pantalla completa y **sin filtros** (`banner_url`,
   o `public/festival/hero-cabina.jpg` si el panel no tiene banner), el título y
   dos cajitas (fecha + horario, `lema`). El título es el logo **BLUR** de la
   diseñadora (`public/festival/blur-logo.png`, `LOGO_HERO`), no `config.nombre`, que sigue siendo "Subreal" y es

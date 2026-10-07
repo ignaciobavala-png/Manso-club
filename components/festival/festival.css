@@ -101,6 +101,87 @@
   }
 }
 
+/* Cursor de `Escribe`: una barra fina que titila mientras se escribe. */
+@keyframes fest-cursor {
+  50% { opacity: 0; }
+}
+.fest-cursor {
+  display: inline-block;
+  width: 0.08em;
+  min-width: 2px;
+  height: 0.95em;
+  margin: 0 0.04em -0.12em;
+  background: currentColor;
+  animation: fest-cursor 0.8s steps(1) infinite;
+}
+
+/* ── Menú: movimiento ──────────────────────────────────────────────────────
+   Entrada escalonada (cada ítem trae su índice en --i), el chevron que avanza
+   y una línea que se dibuja de izquierda a derecha al pasar el mouse, y un
+   brillo que cruza TICKETS cada 4,5 s. */
+@keyframes fest-menu-entra {
+  from { opacity: 0; transform: translateY(-0.6em); }
+  to   { opacity: 1; transform: none; }
+}
+.fest-menu-entra {
+  animation: fest-menu-entra 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(var(--i, 0) * 70ms + 80ms);
+}
+
+.fest-menu-link {
+  position: relative;
+  display: inline-block;
+}
+.fest-menu-link::before {
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.fest-menu-link:hover::before {
+  transform: translateX(0.22em);
+}
+.fest-menu-link::after {
+  content: '';
+  position: absolute;
+  left: 1.05em;
+  right: 0;
+  bottom: -0.05em;
+  height: 2px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.fest-menu-link:hover::after {
+  transform: scaleX(1);
+}
+
+@keyframes fest-brillo {
+  0%, 70% { transform: translateX(-120%) skewX(-20deg); }
+  100%    { transform: translateX(220%) skewX(-20deg); }
+}
+.fest-brillo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  width: 45%;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.45), transparent);
+  animation: fest-brillo 4.5s ease-in-out 1.2s infinite;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fest-menu-entra,
+  .fest-brillo::after {
+    animation: none;
+  }
+  .fest-brillo::after {
+    display: none;
+  }
+  .fest-menu-link::before,
+  .fest-menu-link::after {
+    transition: none;
+  }
+}
+
 /* ── Menú: medidas de basilarfestival.com ───────────────────────────────────
    Basilar usa Space Grotesk; acá va Space Mono Bold (pedido del equipo) con el
    resto de sus medidas: 23,328px fijo en escritorio (no escala con la

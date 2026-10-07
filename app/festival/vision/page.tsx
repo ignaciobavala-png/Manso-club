@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { leerConfig } from '@/lib/festival';
 import { TextoResaltado } from '@/components/festival/TextoResaltado';
+import { EscribeTexto } from '@/components/festival/Escribe';
 
 export const metadata: Metadata = { title: 'Visión' };
 
@@ -12,7 +13,9 @@ export default async function FestivalVision() {
 
   return (
     <div className="px-4 sm:px-7 pt-6 sm:pt-10 pb-20 sm:pb-24 fest-entra">
-      <p className="fest-rotulo mb-8">Visión</p>
+      <p className="fest-rotulo mb-8">
+        <EscribeTexto texto="Visión" />
+      </p>
       {config.vision ? (
         <TextoResaltado
           texto={config.vision}

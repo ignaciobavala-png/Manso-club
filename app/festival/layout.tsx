@@ -4,6 +4,7 @@ import { Archivo, IBM_Plex_Mono, Space_Mono } from 'next/font/google';
 import '@/components/festival/festival.css';
 import { leerConfig } from '@/lib/festival';
 import { FestivalMenu } from '@/components/festival/FestivalMenu';
+import { FueraDelHome } from '@/components/festival/FueraDelHome';
 
 /**
  * Subreal (/festival) — sitio chico con identidad propia, sin el navbar de
@@ -75,10 +76,12 @@ export default async function FestivalLayout({ children }: { children: React.Rea
 
       <FestivalMenu />
 
-      {/* Flex para que el hero del home ocupe justo el alto que dejan el menú y
-          el pie, sin scroll. Las otras páginas crecen normal. */}
+      {/* Flex para que el hero del home ocupe todo el alto debajo del menú, sin
+          scroll. Las otras páginas crecen normal. */}
       <main className="flex-1 flex flex-col">{children}</main>
 
+      {/* En el home no hay pie: la foto va a pantalla completa. */}
+      <FueraDelHome>
       <footer className="relative z-10 bg-[var(--fest-fondo)] border-t border-[var(--fest-texto)]/15 px-4 sm:px-7 pt-4 pb-20 sm:pb-4 flex flex-wrap justify-between gap-x-8 gap-y-2.5 fest-mono text-[11px] uppercase tracking-[0.2em]">
         <nav className="flex flex-wrap gap-x-[22px] gap-y-1.5 text-[var(--fest-acento)]">
           {config.email && (
@@ -102,6 +105,7 @@ export default async function FestivalLayout({ children }: { children: React.Rea
           <b className="font-sans font-black normal-case tracking-[-0.02em] text-[13px]">manso club</b>
         </a>
       </footer>
+      </FueraDelHome>
     </div>
   );
 }
