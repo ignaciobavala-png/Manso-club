@@ -12,6 +12,8 @@ interface Props {
  * hueco, así una foto sola no se estira a todo el ancho.
  *
  * En el celular es una grilla de tres columnas en 4:3.
+ *
+ * Sin filtro de color: las fotos se ven como se subieron (pedido del equipo).
  */
 
 const FILAS = [
@@ -57,7 +59,7 @@ export function GaleriaLocacion({ fotos, alt }: Props) {
                 alt={alt}
                 loading="lazy"
                 decoding="async"
-                className="block w-full aspect-[4/3] md:aspect-auto md:h-full object-cover [filter:sepia(0.3)_saturate(0.8)_contrast(0.9)]"
+                className="block w-full aspect-[4/3] md:aspect-auto md:h-full object-cover"
               />
             );
           })}
