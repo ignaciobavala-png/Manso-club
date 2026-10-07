@@ -1,4 +1,4 @@
-import { Escribe, type Trozo } from './Escribe';
+import type { Trozo } from './Escribe';
 
 /**
  * Texto corrido de Visión y Locación, como en Basilar: párrafos normales con
@@ -10,7 +10,8 @@ import { Escribe, type Trozo } from './Escribe';
  * Un renglón en blanco separa párrafos. No es Markdown: no hay links ni
  * títulos, para que no se pueda romper el diseño desde el panel.
  *
- * Se escribe solo al entrar en pantalla (`Escribe`), en no más de 3,5 s.
+ * Sin animación: antes se escribía solo al entrar (`Escribe`) y el equipo
+ * pidió que el párrafo aparezca entero.
  */
 export function TextoResaltado({ texto, className }: { texto: string; className?: string }) {
   const parrafos: Trozo[][] = texto
@@ -30,7 +31,11 @@ export function TextoResaltado({ texto, className }: { texto: string; className?
 
   return (
     <div className={className}>
-      <Escribe parrafos={parrafos} claseParrafo="mb-[1.1em] last:mb-0 whitespace-pre-line" ritmo={18} maximo={3500} retraso={350} />
+      {parrafos.map((trozos, i) => (
+        <p key={i} className="mb-[1.1em] last:mb-0 whitespace-pre-line">
+          {trozos.map((t, j) => (t.clase ? <span key={j} className={t.clase}>{t.texto}</span> : t.texto))}
+        </p>
+      ))}
     </div>
   );
 }

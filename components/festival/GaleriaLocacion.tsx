@@ -1,4 +1,5 @@
 import Image from 'next/image';
+import { medidaImagen } from '@/lib/medida-imagen';
 
 interface Props {
   fotos: string[];
@@ -6,38 +7,99 @@ interface Props {
 }
 
 /**
- * Fotos de /festival/locacion: todas a la misma altura y cada una con el
- * ancho que le da su proporción, en renglones que se acomodan solos.
+ * Mosaico de /festival/locacion: cada renglón llena el ancho justo y las fotos
+ * se ven enteras, sin recorte y sin huecos.
  *
- * Se ven enteras, sin recorte. Antes era un mosaico copiado de Basilar que
- * recortaba con `object-cover` a cajas apaisadas, y como las fotos que se
- * suben son verticales (del celular, 3:4) de cada una quedaba una franja.
+ * Antes eran todas a la misma altura en un `flex-wrap`, y en el celular una
+ * foto apaisada no entraba a 200px de alto, se aplastaba contra el borde, y
+ * cada renglón terminaba con un blanco distinto. Ahora el servidor lee la
+ * proporción de cada foto (`medidaImagen`, solo la cabecera) y elige dónde
+ * cortar los renglones para que todos queden cerca de un alto ideal: dentro
+ * del renglón cada foto crece según su proporción, así que suman el ancho
+ * exacto. Respeta el orden del panel; lo que se elige es el corte.
+ *
+ * El corte depende del ancho de pantalla, así que se arman tres mosaicos y
+ * el CSS muestra uno. Los ocultos no bajan nada: `next/image` va con
+ * `loading="lazy"` y el navegador no carga imágenes con `display: none`.
  *
  * Sin filtro de color: las fotos se ven como se subieron (pedido del equipo).
- *
- * Pasan por `next/image` porque los originales son de 2400×3200 y hasta 3 MB
- * (el uploader solo limita el ancho) y acá se ven a 460px de alto como mucho:
- * con `<img>` la página bajaba ~17 MB. Como no sabemos la proporción de cada
- * foto, va `width/height = 0` y el alto lo fija el CSS; `sizes` alcanza para
- * que el navegador elija una versión chica del srcset.
  */
-export function GaleriaLocacion({ fotos, alt }: Props) {
+
+/** Ancho útil supuesto, alto ideal del renglón y separación, por pantalla. */
+const PANTALLAS = [
+  { clase: 'flex sm:hidden', ancho: 343, alto: 230, gap: 8 },
+  { clase: 'hidden sm:flex lg:hidden', ancho: 700, alto: 300, gap: 16 },
+  { clase: 'hidden lg:flex', ancho: 1300, alto: 400, gap: 16 },
+] as const;
+
+/** Proporción para una foto que no se pudo medir: la vertical de celular. */
+const PROPORCION_POR_DEFECTO = 3 / 4;
+
+export async function GaleriaLocacion({ fotos, alt }: Props) {
   if (fotos.length === 0) return null;
 
-  return (
-    <div className="flex flex-wrap gap-2 sm:gap-4">
-      {fotos.map((src, i) => (
-        <Image
-          // Índice: la misma foto subida dos veces no choca en la key.
-          key={i}
-          src={src}
-          alt={alt}
-          width={0}
-          height={0}
-          sizes="(min-width: 640px) 460px, 60vw"
-          className="block h-[clamp(200px,32vw,460px)] w-auto max-w-full"
-        />
-      ))}
-    </div>
+  const proporciones = await Promise.all(
+    fotos.map(async src => {
+      const medida = await medidaImagen(src);
+      return medida ? medida[0] / medida[1] : PROPORCION_POR_DEFECTO;
+    })
   );
+
+  return (
+    <>
+      {PANTALLAS.map(p => (
+        <div key={p.clase} className={`${p.clase} flex-col`} style={{ gap: p.gap }}>
+          {cortarRenglones(proporciones, p.ancho, p.alto, p.gap).map(([desde, hasta]) => {
+            const suma = proporciones.slice(desde, hasta).reduce((a, r) => a + r, 0);
+            return (
+              <div key={desde} className="flex" style={{ gap: p.gap }}>
+                {fotos.slice(desde, hasta).map((src, k) => {
+                  const r = proporciones[desde + k];
+                  // Qué parte del ancho de pantalla ocupa esta foto, para el srcset.
+                  const vw = Math.ceil((r / suma) * 100);
+                  return (
+                    <div key={desde + k} className="relative min-w-0" style={{ flex: `${r} 1 0`, aspectRatio: r }}>
+                      <Image src={src} alt={alt} fill sizes={`${vw}vw`} className="object-cover" />
+                    </div>
+                  );
+                })}
+              </div>
+            );
+          })}
+        </div>
+      ))}
+    </>
+  );
+}
+
+/**
+ * Divide las fotos en renglones consecutivos minimizando cuánto se aleja cada
+ * renglón del alto ideal (el mismo criterio que usan Flickr o Google Fotos).
+ * Programación dinámica: `mejor[j]` es el costo mínimo de acomodar las
+ * primeras `j` fotos. Devuelve pares `[desde, hasta)`.
+ */
+function cortarRenglones(proporciones: number[], ancho: number, ideal: number, gap: number): [number, number][] {
+  const n = proporciones.length;
+  const mejor = new Array<number>(n + 1).fill(Infinity);
+  const corte = new Array<number>(n + 1).fill(0);
+  mejor[0] = 0;
+
+  for (let j = 1; j <= n; j++) {
+    let suma = 0;
+    for (let i = j - 1; i >= 0; i--) {
+      suma += proporciones[i];
+      const alto = (ancho - gap * (j - i - 1)) / suma;
+      // Un renglón tan lleno que las fotos quedan como estampillas no sirve.
+      if (alto < ideal * 0.4 && j - i > 1) break;
+      const costo = mejor[i] + ((alto - ideal) / ideal) ** 2;
+      if (costo < mejor[j]) {
+        mejor[j] = costo;
+        corte[j] = i;
+      }
+    }
+  }
+
+  const renglones: [number, number][] = [];
+  for (let j = n; j > 0; j = corte[j]) renglones.unshift([corte[j], j]);
+  return renglones;
 }
