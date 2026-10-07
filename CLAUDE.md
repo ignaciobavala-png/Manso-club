@@ -146,10 +146,10 @@ página por sección. Todas leen por `lib/festival.ts` (cacheado por request).
 
 - `/festival` — solo el hero, sin pie (`FueraDelHome`): la foto `fixed` a pantalla completa y **sin filtros** (`banner_url`,
   o `public/festival/hero-cabina.jpg` si el panel no tiene banner), el título y
-  dos cajitas (fecha + horario, `lema`). El título es el logo **BLUR** de la
-  diseñadora (`public/festival/blur-logo.png`, `LOGO_HERO`), no `config.nombre`, que sigue siendo "Subreal" y es
-  el que sale en la pestaña y el pie. Si BLUR pasa a ser el nombre, cambiarlo
-  en el panel y volver a leerlo de ahí.
+  dos cajitas (fecha + horario, `lema`). El título dice **BLUR**
+  (`TITULO_HERO`) con el filtro difuso de `TituloDifuso`, no `config.nombre`,
+  que sigue siendo "Subreal" y es el que sale en la pestaña y el pie. Si BLUR
+  pasa a ser el nombre, cambiarlo en el panel y volver a leerlo de ahí.
 - `/vision` y `/locacion` — texto del panel por `TextoResaltado`: `*así*` va en
   `color_resalte` y `**así**` en `color_acento`. No es Markdown, a propósito.
   `/locacion` lleva abajo un mosaico de fotos (`GaleriaLocacion`, como la
@@ -173,9 +173,11 @@ El menú y el botón TICKETS van en **Space Mono** Bold (`.fest-menu`), con el
 estilo del menú de Basilar (chevron dibujado con una máscara SVG en
 `.fest-chevron`) pero más chico: 18px en escritorio en vez de sus 23,3px. Basilar en realidad usa Space Grotesk; el
 equipo eligió la Mono.
-El título del hero es una imagen que entregó la diseñadora (PNG blanco sobre
-transparente). Antes se imitaba el logo de Basilar con Archivo y un filtro SVG
-(`TituloDifuso`); se sacó al llegar el logo.
+El título del hero imita el logo de Basilar con Archivo y un filtro SVG
+(`TituloDifuso`). Se probó el logo PNG de la diseñadora
+(`public/festival/blur-logo.png`) y no gustó: volvió el filtro.
+COMPRAR y los botones de pago van en la tipografía de TICKETS (`.fest-menu`),
+un poco más grandes que él, no en Archivo a 24px.
 
 **No publicada por RLS, no por código**: mientras `festival_config.publicado`
 sea false, las tablas del festival (`supabase/migration_festival*.sql`) solo las lee un

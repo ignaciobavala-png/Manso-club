@@ -164,7 +164,7 @@ export function TablaTickets({
           type="button"
           disabled={total === 0 || !metodo}
           onClick={() => setDatosAbiertos(true)}
-          className="fest-angosta text-2xl px-10 py-3 bg-[var(--fest-acento)] text-[var(--fest-fondo)] enabled:hover:bg-[var(--fest-texto)] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          className="fest-menu text-[16px] sm:text-[18px] leading-[1.3] px-6 py-2.5 bg-[var(--fest-acento)] text-[var(--fest-fondo)] enabled:hover:bg-[var(--fest-texto)] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
         >
           Comprar
         </button>
@@ -225,7 +225,7 @@ export function TablaTickets({
           <button
             type="submit"
             disabled={enviando}
-            className="fest-angosta text-2xl py-3 bg-[var(--fest-acento)] text-[var(--fest-fondo)] enabled:hover:bg-[var(--fest-texto)] transition-colors disabled:opacity-50"
+            className="fest-menu text-[16px] sm:text-[18px] leading-[1.3] py-2.5 bg-[var(--fest-acento)] text-[var(--fest-fondo)] enabled:hover:bg-[var(--fest-texto)] transition-colors disabled:opacity-50"
           >
             {enviando ? 'Preparando…' : MEDIOS_PAGO[metodo].boton}
           </button>

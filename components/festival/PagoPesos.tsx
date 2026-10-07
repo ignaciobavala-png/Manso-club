@@ -57,7 +57,7 @@ export function PagoTransferencia({
           href={`https://wa.me/${whatsapp}?text=${encodeURIComponent(mensaje)}`}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-block mt-8 fest-angosta text-2xl px-8 py-3 bg-[var(--fest-acento)] text-[var(--fest-fondo)] hover:bg-[var(--fest-texto)] transition-colors"
+          className="inline-block mt-8 fest-menu text-[16px] sm:text-[18px] leading-[1.3] px-6 py-2.5 bg-[var(--fest-acento)] text-[var(--fest-fondo)] hover:bg-[var(--fest-texto)] transition-colors"
         >
           Mandar comprobante
         </a>
@@ -96,7 +96,7 @@ export function EsperandoMP({ link, rechazado }: { link: string | null; rechazad
       {link && (
         <a
           href={link}
-          className="inline-block mt-8 fest-angosta text-2xl px-8 py-3 bg-[var(--fest-acento)] text-[var(--fest-fondo)] hover:bg-[var(--fest-texto)] transition-colors"
+          className="inline-block mt-8 fest-menu text-[16px] sm:text-[18px] leading-[1.3] px-6 py-2.5 bg-[var(--fest-acento)] text-[var(--fest-fondo)] hover:bg-[var(--fest-texto)] transition-colors"
         >
           {rechazado ? 'Intentar de nuevo' : 'Ir a pagar'}
         </a>
