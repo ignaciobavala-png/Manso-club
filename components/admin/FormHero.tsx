@@ -235,7 +235,7 @@ export function FormHero() {
                   key={`desktop-${imageKey}`}
                   bucket="hero-media"
                   folder="slides/desktop"
-                  maxWidth={1920}
+                  maxLado={1920}
                   initialPreview={formData.media_url_desktop || null}
                   onUpload={(url) => setFormData({...formData, media_url_desktop: url})} 
                 />
@@ -256,7 +256,7 @@ export function FormHero() {
                   key={`mobile-${imageKey}`}
                   bucket="hero-media"
                   folder="slides/mobile"
-                  maxWidth={800}
+                  maxLado={800}
                   initialPreview={formData.media_url_mobile || null}
                   onUpload={(url) => setFormData({...formData, media_url_mobile: url})} 
                 />

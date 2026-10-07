@@ -283,7 +283,7 @@ export function FestivalLineupAdmin() {
                   key={a.foto_url ?? `sin-foto-${a.id}`}
                   bucket="flyers"
                   folder="festival/artistas"
-                  maxWidth={1200}
+                  maxLado={1200}
                   height="h-40"
                   initialPreview={a.foto_url}
                   onUpload={url => {

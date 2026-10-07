@@ -225,7 +225,7 @@ export function FormArtista() {
             key={imageKey}
             bucket="artist" 
             folder="profiles"
-            maxWidth={1200}
+            maxLado={1200}
             initialPreview={formData.imagen_url || null}
             onUpload={(url) => setFormData({...formData, imagen_url: url})} 
           />

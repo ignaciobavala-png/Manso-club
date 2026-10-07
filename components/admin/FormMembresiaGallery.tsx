@@ -65,7 +65,7 @@ export function FormMembresiaGallery() {
             key={imageKey}
             bucket="membresias-gallery"
             folder="photos"
-            maxWidth={1920}
+            maxLado={1920}
             initialPreview={photoUrl || null}
             onUpload={setPhotoUrl}
           />

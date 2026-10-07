@@ -168,7 +168,7 @@ export function GalleryList({ refreshTrigger }: GalleryListProps) {
                   <ImageUploader
                     bucket="gallery-images"
                     folder="photos"
-                    maxWidth={1200}
+                    maxLado={1200}
                     onUpload={async (url) => {
                       const { error } = await supabase
                         .from('gallery_images')

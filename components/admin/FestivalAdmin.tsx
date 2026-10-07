@@ -292,7 +292,7 @@ export function FestivalAdmin() {
               key={config.flyer_url ?? 'sin-flyer'}
               bucket="flyers"
               folder="festival"
-              maxWidth={2000}
+              maxLado={2000}
               height="h-40"
               initialPreview={config.flyer_url}
               onUpload={url => {
@@ -503,7 +503,7 @@ export function FestivalAdmin() {
                 key={config[campo] ?? `sin-${campo}`}
                 bucket="flyers"
                 folder="festival"
-                maxWidth={2400}
+                maxLado={2000}
                 height="h-40"
                 initialPreview={config[campo]}
                 onUpload={url => {
@@ -558,7 +558,7 @@ export function FestivalAdmin() {
               key={`nueva-${config.locacion_fotos.length}`}
               bucket="flyers"
               folder="festival"
-              maxWidth={2400}
+              maxLado={2000}
               height="h-28"
               onUpload={url => guardarFotosLocacion([...config.locacion_fotos, url])}
             />

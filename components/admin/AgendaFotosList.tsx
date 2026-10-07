@@ -118,7 +118,7 @@ export function AgendaFotosList({ agendaId, tallerTitulo, refreshTrigger }: Prop
           key={uploaderKey}
           bucket="agenda-gallery"
           folder="gallery"
-          maxWidth={1920}
+          maxLado={1920}
           onUpload={handleUpload}
         />
       </div>

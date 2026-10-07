@@ -117,7 +117,7 @@ export function ArtistaFotosList({ artistaId, artistaNombre, refreshTrigger }: P
           key={uploaderKey}
           bucket="artist"
           folder="gallery"
-          maxWidth={1600}
+          maxLado={1600}
           onUpload={handleUpload}
         />
       </div>

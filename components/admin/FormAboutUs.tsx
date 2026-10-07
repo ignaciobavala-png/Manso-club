@@ -272,7 +272,7 @@ export function FormAboutUs() {
                     key={imageKeys.main}
                     bucket="team-photos"
                     folder="about-main"
-                    maxWidth={1200}
+                    maxLado={1200}
                     onUpload={handleMainPhotoUpload}
                     height="h-20"
                   />
@@ -346,7 +346,7 @@ export function FormAboutUs() {
                           key={`${imageKeys.gallery}-${i}`}
                           bucket="team-photos"
                           folder="about-gallery"
-                          maxWidth={800}
+                          maxLado={800}
                           onUpload={handleGalleryPhotoUpload}
                           height="h-14"
                         />

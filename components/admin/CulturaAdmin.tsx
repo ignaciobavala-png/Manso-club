@@ -281,7 +281,7 @@ export function CulturaAdmin() {
               <ImageUploader
                 bucket={BUCKET}
                 folder="cultura/banners"
-                maxWidth={2400}
+                maxLado={2000}
                 initialPreview={banner.imagen_url || null}
                 onUpload={url => {
                   editarBanner(banner.id, { imagen_url: url });
@@ -429,7 +429,7 @@ export function CulturaAdmin() {
                 <ImageUploader
                   bucket={BUCKET}
                   folder="cultura/frases"
-                  maxWidth={1400}
+                  maxLado={1400}
                   initialPreview={bloque.foto_izquierda_url}
                   onUpload={url => {
                     editarBloque(bloque.id, { foto_izquierda_url: url });
@@ -442,7 +442,7 @@ export function CulturaAdmin() {
                 <ImageUploader
                   bucket={BUCKET}
                   folder="cultura/frases"
-                  maxWidth={1400}
+                  maxLado={1400}
                   initialPreview={bloque.foto_derecha_url}
                   onUpload={url => {
                     editarBloque(bloque.id, { foto_derecha_url: url });

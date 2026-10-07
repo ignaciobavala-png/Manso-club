@@ -89,7 +89,7 @@ export function FormGallery() {
             key={imageKey}
             bucket="gallery-images"
             folder="gallery"
-            maxWidth={1920}
+            maxLado={1920}
             initialPreview={formData.photo_url || null}
             onUpload={(url) => setFormData({...formData, photo_url: url})} 
           />

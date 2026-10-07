@@ -3,12 +3,14 @@
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Upload, Loader2, CheckCircle2 } from 'lucide-react';
+import { codificarFoto, medidaConTope } from '@/lib/comprimir-imagen';
 
 interface Props {
   onUpload: (url: string) => void;
   bucket?: string;
   folder?: string;
-  maxWidth?: number;
+  /** Lado más largo en px (no el ancho: las fotos de celular son verticales). */
+  maxLado?: number;
   className?: string;
   height?: string;
   /**
@@ -29,7 +31,7 @@ export function CompactImageUploader({
   onUpload,
   bucket = 'flyers',
   folder,
-  maxWidth = 1920,
+  maxLado = 1920,
   className = "",
   height = "h-16",
   recortarAlfa = false,
@@ -73,15 +75,10 @@ export function CompactImageUploader({
         reject(new Error('No se pudo leer la imagen'));
       };
 
-      img.onload = () => {
+      img.onload = async () => {
         URL.revokeObjectURL(objectUrl);
 
-        let w = img.width;
-        let h = img.height;
-        if (w > maxWidth) {
-          h = Math.round(h * (maxWidth / w));
-          w = maxWidth;
-        }
+        const [w, h] = medidaConTope(img.width, img.height, maxLado);
 
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d')!;
@@ -124,11 +121,23 @@ export function CompactImageUploader({
           salida = recortado;
         }
 
-        const [mime, ext, calidad] = esParaEmail
-          ? tieneAlfa
-            ? ['image/png', 'png', undefined]
-            : ['image/jpeg', 'jpg', 0.92]
-          : ['image/webp', 'webp', 0.85];
+        // Fuera del mail, la foto pasa por el tope de peso del plan free.
+        if (!esParaEmail) {
+          try {
+            const { blob, ext, mime } = await codificarFoto(salida);
+            resolve({
+              file: new File([blob], file.name.replace(/\.[^/.]+$/, `.${ext}`), { type: mime }),
+              ext,
+            });
+          } catch (e) {
+            reject(e);
+          }
+          return;
+        }
+
+        const [mime, ext, calidad] = tieneAlfa
+          ? ['image/png', 'png', undefined]
+          : ['image/jpeg', 'jpg', 0.92];
 
         salida.toBlob(
           (blob) => {

@@ -315,7 +315,7 @@ export function EspacioAdmin() {
                           key={url ?? `vacio-${slot}-${fotos.length}`}
                           bucket={BUCKET}
                           folder="espacio/salas"
-                          maxWidth={1800}
+                          maxLado={1800}
                           height="h-20"
                           initialPreview={url}
                           onUpload={nueva => cambiarFoto(sala, slot, nueva)}

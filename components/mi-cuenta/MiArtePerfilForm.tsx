@@ -116,7 +116,7 @@ export function MiArtePerfilForm({ artista: initialArtista }: Props) {
               key={imageKey}
               bucket="artist"
               folder="profiles"
-              maxWidth={1200}
+              maxLado={1200}
               initialPreview={formData.imagen_url || null}
               onUpload={(url) => setFormData(f => ({ ...f, imagen_url: url }))}
             />

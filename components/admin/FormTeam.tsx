@@ -100,7 +100,7 @@ export function FormTeam() {
             key={imageKey}
             bucket="team-photos"
             folder="members"
-            maxWidth={800}
+            maxLado={800}
             initialPreview={formData.photo_url || null}
             onUpload={(url) => setFormData({...formData, photo_url: url})} 
           />

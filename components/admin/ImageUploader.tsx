@@ -3,49 +3,52 @@
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { Upload, Loader2, CheckCircle2 } from 'lucide-react';
+import { codificarFoto, medidaConTope } from '@/lib/comprimir-imagen';
 
 interface Props {
   onUpload: (url: string) => void;
   bucket?: string;
   folder?: string;
-  maxWidth?: number;
+  /** Lado más largo en px (no el ancho: las fotos de celular son verticales). */
+  maxLado?: number;
   initialPreview?: string | null;
 }
 
-export function ImageUploader({ onUpload, bucket = 'flyers', folder, maxWidth = 1920, initialPreview = null }: Props) {
+export function ImageUploader({ onUpload, bucket = 'flyers', folder, maxLado = 1920, initialPreview = null }: Props) {
   const [isUploading, setIsUploading] = useState(false);
   const [preview, setPreview] = useState<string | null>(initialPreview);
 
-  const convertToWebP = (file: File): Promise<File> => {
-    return new Promise((resolve) => {
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d')!;
+  const comprimir = (file: File): Promise<{ file: File; ext: string }> =>
+    new Promise((resolve, reject) => {
       const img = new Image();
-      
-      img.onload = () => {
-        let w = img.width;
-        let h = img.height;
+      const objectUrl = URL.createObjectURL(file);
 
-        if (w > maxWidth) {
-          h = Math.round(h * (maxWidth / w));
-          w = maxWidth;
-        }
+      img.onerror = () => {
+        URL.revokeObjectURL(objectUrl);
+        reject(new Error('No se pudo leer la imagen'));
+      };
 
+      img.onload = async () => {
+        URL.revokeObjectURL(objectUrl);
+        const [w, h] = medidaConTope(img.width, img.height, maxLado);
+        const canvas = document.createElement('canvas');
         canvas.width = w;
         canvas.height = h;
-        ctx.drawImage(img, 0, 0, w, h);
-        
-        canvas.toBlob((blob) => {
-          const webpFile = new File([blob!], file.name.replace(/\.[^/.]+$/, '.webp'), {
-            type: 'image/webp'
+        canvas.getContext('2d')!.drawImage(img, 0, 0, w, h);
+
+        try {
+          const { blob, ext, mime } = await codificarFoto(canvas);
+          resolve({
+            file: new File([blob], file.name.replace(/\.[^/.]+$/, `.${ext}`), { type: mime }),
+            ext,
           });
-          resolve(webpFile);
-        }, 'image/webp', 0.85);
+        } catch (e) {
+          reject(e);
+        }
       };
-      
-      img.src = URL.createObjectURL(file);
+
+      img.src = objectUrl;
     });
-  };
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     try {
@@ -53,17 +56,16 @@ export function ImageUploader({ onUpload, bucket = 'flyers', folder, maxWidth = 
       const file = e.target.files?.[0];
       if (!file) return;
 
-      // Convertir a WebP antes de subir
-      const webpFile = await convertToWebP(file);
+      // Achicar y comprimir antes de subir (ver lib/comprimir-imagen.ts)
+      const { file: comprimida, ext } = await comprimir(file);
 
-      // Crear un nombre único para el archivo WebP
-      const fileName = `${Math.random().toString(36).substring(2)}.webp`;
+      const fileName = `${Math.random().toString(36).substring(2)}.${ext}`;
       const filePath = folder ? `${folder}/${fileName}` : fileName;
 
       // 1. Subir al Storage
       const { error: uploadError } = await supabase.storage
         .from(bucket)
-        .upload(filePath, webpFile);
+        .upload(filePath, comprimida);
 
       if (uploadError) throw uploadError;
 
@@ -79,7 +81,8 @@ export function ImageUploader({ onUpload, bucket = 'flyers', folder, maxWidth = 
       onUpload(data.publicUrl);
 
     } catch (error) {
-      alert('Error al subir la imagen');
+      console.error('Error uploading image:', error);
+      alert(error instanceof Error ? error.message : 'Error al subir la imagen');
     } finally {
       setIsUploading(false);
     }
@@ -104,7 +107,7 @@ export function ImageUploader({ onUpload, bucket = 'flyers', folder, maxWidth = 
               <>
                 <Upload className="w-8 h-8 text-zinc-400 mb-2 group-hover:text-orange-500 transition-colors" />
                 <p className="text-xs font-bold text-zinc-500 tracking-tighter uppercase">Soltá el arte acá</p>
-                <p className="text-[9px] text-zinc-400 font-medium">Se convertirá a WebP automáticamente</p>
+                <p className="text-[9px] text-zinc-400 font-medium">Se comprime automáticamente</p>
               </>
             )}
           </div>
@@ -126,7 +129,7 @@ export function ImageUploader({ onUpload, bucket = 'flyers', folder, maxWidth = 
           </p>
           <p className="text-[9px] text-zinc-500 font-medium flex items-center gap-1">
             <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-            Optimizada a WebP (85% calidad)
+            Optimizada para web
           </p>
         </div>
       )}
