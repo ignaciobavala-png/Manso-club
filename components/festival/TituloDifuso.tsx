@@ -30,7 +30,7 @@ export function TituloDifuso({ texto }: { texto: string }) {
           <feGaussianBlur in="redondo" stdDeviation="0.0017 0.011" />
         </filter>
       </svg>
-      <h1 className="fest-titulo inline-block leading-[0.95] text-[clamp(2.4rem,13.2vw,9.5rem)] [filter:url(#fest-titulo-difuso)]">
+      <h1 className="fest-titulo inline-block leading-[0.95] text-[clamp(2.4rem,13.2vw,9.5rem)] sm:text-[clamp(2.4rem,7.2vw,7rem)] [filter:url(#fest-titulo-difuso)]">
         {texto}
       </h1>
     </>

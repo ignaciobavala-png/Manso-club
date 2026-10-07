@@ -37,11 +37,11 @@ export default async function FestivalHome() {
         decoding="async"
         className="fixed inset-0 w-full h-full object-cover object-[50%_70%]"
       />
-      <div className="relative z-10 px-4 pb-6 fest-entra">
+      <div className="relative z-10 px-4 pb-[22svh] fest-entra">
         <TituloDifuso texto={TITULO_HERO} />
 
         {(fecha || config.lema) && (
-          <div className="mt-6 sm:mt-8 flex flex-col items-center gap-3 fest-mono text-[clamp(12px,1.3vw,17px)] tracking-[0.04em] uppercase text-[#2a1d18]">
+          <div className="mt-1 sm:mt-2 flex flex-col items-center gap-3 fest-mono text-[clamp(12px,1.3vw,17px)] tracking-[0.04em] uppercase text-[#2a1d18]">
             {fecha && (
               <span className="px-2 py-0.5 bg-[color-mix(in_srgb,var(--fest-acento)_55%,transparent)]">{fecha}</span>
             )}
