@@ -1,3 +1,5 @@
+import Image from 'next/image';
+
 interface Props {
   src: string;
   alt: string;
@@ -16,12 +18,13 @@ interface Props {
 export function FotoRevelada({ src, alt, pie, cuadrada, prioridad }: Props) {
   return (
     <figure className="relative bg-[var(--fest-texto)]/[0.06] p-2.5 pb-[34px]">
-      <img
+      <Image
         src={src}
         alt={alt}
-        loading={prioridad ? 'eager' : 'lazy'}
-        fetchPriority={prioridad ? 'high' : undefined}
-        decoding="async"
+        width={0}
+        height={0}
+        sizes="(min-width: 768px) 380px, 100vw"
+        priority={prioridad}
         className={`block w-full object-cover [filter:sepia(0.3)_saturate(0.8)_contrast(0.9)] ${
           cuadrada ? 'aspect-square' : 'aspect-[4/5]'
         }`}

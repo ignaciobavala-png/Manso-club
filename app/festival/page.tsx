@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { fechaCorta, leerConfig } from '@/lib/festival';
 import { TituloDifuso } from '@/components/festival/TituloDifuso';
@@ -30,13 +31,17 @@ export default async function FestivalHome() {
 
   return (
     <section className="relative flex-1 min-h-[440px] flex flex-col items-center justify-center text-center">
-      <img
-        src={config.banner_url || BANNER_POR_DEFECTO}
-        alt=""
-        fetchPriority="high"
-        decoding="async"
-        className="fixed inset-0 w-full h-full object-cover object-[50%_70%]"
-      />
+      {/* `fill` pone la foto en absolute: el `fixed` lo lleva el contenedor. */}
+      <div className="fixed inset-0">
+        <Image
+          src={config.banner_url || BANNER_POR_DEFECTO}
+          alt=""
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-[50%_70%]"
+        />
+      </div>
       <div className="relative z-10 px-4 pb-[22svh] fest-entra">
         <TituloDifuso texto={TITULO_HERO} />
 
