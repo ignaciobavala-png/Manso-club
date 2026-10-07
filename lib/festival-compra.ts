@@ -186,7 +186,7 @@ export async function sincronizarRed(supabase: SupabaseClient, red: RedCripto, {
   // cursor viejo (semanas sin ventas) no obliga a leer todo lo del medio.
   const inicioMasViejo = Math.min(...abiertas.map(o => o.bloque_inicio ?? Infinity));
   const cursor = reclamada.cursor === null ? null : Number(reclamada.cursor);
-  const desde = Math.max(cursor === null ? -Infinity : cursor + (red === 'tron' ? 0 : 1), inicioMasViejo);
+  const desde = Math.max(cursor === null ? -Infinity : cursor + 1, inicioMasViejo);
   if (!Number.isFinite(desde)) return;
 
   const { transferencias, hasta } = await leerTransferencias(red, desde);
@@ -251,7 +251,7 @@ export async function reclamarConHash(
     return { ok: false, mensaje: 'Primero elegí la red en la que pagaste.' };
   }
   const red = orden.red;
-  const hash = normalizarHash(red, hashPegado);
+  const hash = normalizarHash(hashPegado);
   if (!hash) return { ok: false, mensaje: `Ese no parece un hash de ${REDES[red].nombre}.` };
 
   await sincronizarRed(supabase, red, { forzar: true });

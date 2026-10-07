@@ -199,20 +199,24 @@ por persona) y el mismo mail con el link a `/festival/compra/[id]`.
 - **Transferencia**: la compra muestra alias/CBU y un botón de WhatsApp con el
   código (8 primeros caracteres de la orden). Ana confirma en Festival → Ventas
   (`/api/festival/ordenes/[id]/confirmar`). No vencen.
-- **Cripto** (apagado hasta tener wallets), directo a la wallet de Manso (USDT / USDC), verificado
+- **Cripto** (apagado hasta tener wallet), directo a la wallet de Manso. **Solo
+USDT, en BNB Smart Chain (BEP20) y Ethereum (ERC20)**: Ana pidió una sola forma
+para no marear (07/10). Ethereum está porque Bitso saca USDT solo por ERC20 o
+TRC20; BEP20 porque es la barata y Lemon/Binance la tienen. Verificado
 leyendo la blockchain: sin pasarela, sin servidor propio y sin comisiones
 (Bitcart se descartó porque necesita un VPS). Esquema y razones en
-`supabase/migration_festival_cripto.sql`.
+`supabase/migration_festival_cripto.sql` (y `_cripto_dos_redes.sql`, que sacó
+Tron, Polygon, Base y USDC).
 
 1. COMPRAR pide nombre y mail → `/api/festival/compra` arma la orden en
    `festival_ordenes` (pesos del panel ÷ blue, resuelto en el servidor).
-2. `/festival/compra/[id]` (`PagoCripto`): el comprador elige red (Tron, BSC,
-   Polygon, Base) y recibe un **monto único** —total + 1 a 99 centavos— que no
+2. `/festival/compra/[id]` (`PagoCripto`): el comprador elige red (BSC o
+   Ethereum) y recibe un **monto único** —total + 1 a 99 centavos— que no
    comparte con ninguna otra pendiente de esa red (índice único). Es lo que
    permite reconocer el pago sin pedirle nada.
 3. `sincronizarRed` (`lib/festival-compra.ts`) lee las transferencias que
-   entraron a la wallet (`lib/cripto-escaner.ts`: `eth_getLogs` en las EVM,
-   TronGrid en Tron, sin librerías) y acredita la de monto exacto. La disparan
+   entraron a la wallet (`lib/cripto-escaner.ts`: `eth_getLogs`, sin
+   librerías) y acredita la de monto exacto. La disparan
    la pantalla de pago (cada 8 s, con freno de 10 s por red) y el cron
    `/api/festival/conciliar` (cada 10 min).
 4. Si el monto no coincide (el exchange descontó la comisión), el comprador
@@ -224,8 +228,8 @@ leyendo la blockchain: sin pasarela, sin servidor propio y sin comisiones
 - Los contratos de `lib/cripto-redes.ts` están verificados contra la cadena.
   **No editarlos de memoria**: el de USDC en Base se escribió mal de memoria
   (`4a71` por `4f71`) y apuntaba a una dirección vacía.
-- Sin `FESTIVAL_WALLET_TRON` / `FESTIVAL_WALLET_EVM` cripto no se ofrece
-  aunque la perilla esté prendida. Cada red aparece solo si su wallet está.
+- Sin `FESTIVAL_WALLET_EVM` cripto no se ofrece aunque la perilla esté
+  prendida. La misma dirección 0x sirve en las dos redes.
 - `/festival/compra/demo` muestra la pantalla con datos inventados (sin API ni
   cadena, y con una "dirección" que no es una dirección) para enseñarla sin
   wallets; `?estado=pagada` muestra las entradas.

@@ -252,7 +252,7 @@ export function FestivalAdmin() {
             [
               ['pago_mercadopago', 'Mercado Pago', 'Se confirma solo. Usa la cuenta de MP de la tienda.'],
               ['pago_transferencia', 'Transferencia', 'Toma el CBU/alias de la config del checkout. Se confirma a mano en Ventas.'],
-              ['pago_cripto', 'Cripto (USDT / USDC)', 'Necesita las wallets cargadas en Vercel (FESTIVAL_WALLET_TRON / _EVM). Sin ellas no aparece aunque esté prendido.'],
+              ['pago_cripto', 'Cripto (USDT en BEP20 o ERC20)', 'Necesita la wallet cargada en Vercel (FESTIVAL_WALLET_EVM). Sin ella no aparece aunque esté prendido.'],
             ] as const
           ).map(([campo, etiqueta, ayuda]) => (
             <label key={campo} className="flex items-start justify-between gap-4 py-3 cursor-pointer">

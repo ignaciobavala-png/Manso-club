@@ -89,12 +89,12 @@ export function PagoCripto({ ordenId, inicial, demo = false }: { ordenId: string
       <p className="mt-4 text-[15px] opacity-75 max-w-[560px]">
         {estado.estado === 'vencida'
           ? 'No recibimos el pago a tiempo. Si ya lo mandaste, pegá el hash más abajo; si no, generá el pago de nuevo.'
-          : 'USDT o USDC, directo a la wallet de Manso. Las entradas aparecen acá y te llegan por mail apenas se confirma la transferencia.'}
+          : 'USDT, directo a la wallet de Manso. Las entradas aparecen acá y te llegan por mail apenas se confirma la transferencia.'}
       </p>
 
       {mostrarSelector && (
         <Paso numero="01" titulo={estado.estado === 'vencida' ? 'Elegí la red para pagar de nuevo' : 'Elegí la red'}>
-          <ul className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <ul className="grid sm:grid-cols-2 gap-3 max-w-[620px]">
             {estado.redes.map(red => {
               const actual = red === estado.red && estado.estado === 'pendiente';
               return (
@@ -120,7 +120,7 @@ export function PagoCripto({ ordenId, inicial, demo = false }: { ordenId: string
             })}
           </ul>
           <p className="mt-4 fest-mono text-[11px] uppercase tracking-[0.15em] opacity-60 leading-relaxed">
-            ¿Pagás desde Binance u otro exchange? Elegí acá la misma red que vas a usar para retirar.
+            Desde Lemon o Binance: BNB Smart Chain, que cobra menos comisión. Desde Bitso: Ethereum (Bitso no saca USDT por BEP20). Elegí acá la misma red que vas a usar para retirar.
           </p>
           {error && (
             <p role="alert" className="mt-3 fest-mono text-[11px] uppercase tracking-[0.2em] text-[var(--fest-acento)]">
@@ -293,7 +293,7 @@ function ReclamoHash({
             <input
               value={hash}
               onChange={e => setHash(e.target.value)}
-              placeholder={red === 'tron' ? 'a1b2c3…' : '0xa1b2c3…'}
+              placeholder="0xa1b2c3…"
               spellCheck={false}
               className="flex-1 min-w-0 bg-transparent border border-[var(--fest-texto)]/40 px-3 py-2.5 fest-mono text-[13px] placeholder:opacity-40 focus:outline-none focus:border-[var(--fest-acento)]"
             />
