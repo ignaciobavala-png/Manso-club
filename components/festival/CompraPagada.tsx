@@ -3,8 +3,8 @@ import { REDES, type RedCripto } from '@/lib/cripto-redes';
 import { EscribeTexto } from './Escribe';
 
 /**
- * Piezas de /festival/compra/[id] que comparte con la demo
- * (/festival/compra/demo): el marco de la página, una fila del resumen y la
+ * Piezas de /blur/compra/[id] que comparte con la demo
+ * (/blur/compra/demo): el marco de la página, una fila del resumen y la
  * vista de la compra pagada con un QR por entrada.
  */
 

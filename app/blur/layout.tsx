@@ -7,7 +7,7 @@ import { FestivalMenu } from '@/components/festival/FestivalMenu';
 import { FueraDelHome } from '@/components/festival/FueraDelHome';
 
 /**
- * Subreal (/festival) — sitio chico con identidad propia, sin el navbar de
+ * Subreal (/blur) — sitio chico con identidad propia, sin el navbar de
  * Manso (ver `ChromeManso`). Estructura de basilarfestival.com: un menú arriba
  * y una página por sección.
  *

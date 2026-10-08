@@ -84,8 +84,8 @@ export default async function DemoPagoCripto({
   if (nombre) base.set('nombre', nombre);
   const conEstado = new URLSearchParams(base);
   conEstado.set('estado', 'pagada');
-  const urlPago = `/festival/compra/demo${base.size ? `?${base}` : ''}`;
-  const urlPagada = `/festival/compra/demo?${conEstado}`;
+  const urlPago = `/blur/compra/demo${base.size ? `?${base}` : ''}`;
+  const urlPagada = `/blur/compra/demo?${conEstado}`;
 
   const resumen = (
     <dl className="mt-12 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 fest-mono text-[13px] max-w-[620px]">

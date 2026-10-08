@@ -7,5 +7,5 @@ import { usePathname } from 'next/navigation';
  * (hoy, el pie). El layout es de servidor y no sabe en qué página está.
  */
 export function FueraDelHome({ children }: { children: React.ReactNode }) {
-  return usePathname() === '/festival' ? null : <>{children}</>;
+  return usePathname() === '/blur' ? null : <>{children}</>;
 }

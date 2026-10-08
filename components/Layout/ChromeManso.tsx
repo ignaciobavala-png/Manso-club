@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
  * propia, así que no llevan navbar, footer ni los flotantes (player, WhatsApp,
  * calendario, vinilo, cursor).
  */
-const RUTAS_SIN_CHROME = ['/festival'];
+const RUTAS_SIN_CHROME = ['/blur'];
 
 export function ChromeManso({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

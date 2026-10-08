@@ -1,5 +1,5 @@
 /**
- * Contenido de /festival — la sección "Festival" del panel.
+ * Contenido de /blur — la sección "Festival" del panel.
  *
  * Es un sitio chico con identidad propia (no usa el navbar de Manso): hero,
  * visión, locación, line-up con una página por artista, tickets e info. Mientras
@@ -21,15 +21,15 @@ export interface FestivalConfig {
   banner_url: string | null;
   /** Obsoleta: la reemplazó `locacion_fotos`. Queda en la tabla, nadie la lee. */
   foto_url: string | null;
-  /** Galería de /festival/locacion, en el orden en que se muestra. */
+  /** Galería de /blur/locacion, en el orden en que se muestra. */
   locacion_fotos: string[];
   /** Línea destacada debajo de la tabla, ej. "solo para mayores de 18". */
   aviso: string | null;
   /** Segunda cajita del hero, debajo de la fecha. */
   lema: string | null;
-  /** Texto de /festival/vision. Ver `TextoResaltado` para la marca de color. */
+  /** Texto de /blur/vision. Ver `TextoResaltado` para la marca de color. */
   vision: string | null;
-  /** Texto de /festival/locacion. */
+  /** Texto de /blur/locacion. */
   locacion: string | null;
   /** Usuario de Instagram, sin @. */
   instagram: string | null;
@@ -77,7 +77,7 @@ export interface FestivalEscenario {
   activo: boolean;
 }
 
-/** Un artista del line-up, con página propia en /festival/line-up/[slug]. */
+/** Un artista del line-up, con página propia en /blur/line-up/[slug]. */
 export interface FestivalArtista {
   id: string;
   slug: string;
@@ -102,7 +102,7 @@ export interface FestivalArtista {
   activo: boolean;
 }
 
-/** Un lugar de la fiesta en /festival/spots: título, texto y fotos en orden. */
+/** Un lugar de la fiesta en /blur/spots: título, texto y fotos en orden. */
 export interface FestivalSpot {
   id: string;
   titulo: string;
@@ -112,7 +112,7 @@ export interface FestivalSpot {
   activo: boolean;
 }
 
-/** Una pregunta de /festival/info. */
+/** Una pregunta de /blur/info. */
 export interface FestivalFaq {
   id: string;
   titulo: string;

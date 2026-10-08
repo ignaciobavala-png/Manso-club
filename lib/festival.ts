@@ -11,7 +11,7 @@ import {
 } from '@/lib/types/festival';
 
 /**
- * Lecturas de /festival. Todas con el cliente con cookies y no el anónimo: el
+ * Lecturas de /blur. Todas con el cliente con cookies y no el anónimo: el
  * RLS es lo que esconde el festival mientras no esté publicado (para cualquiera
  * que no sea admin las tablas vuelven vacías), así que no hay chequeo de rol acá.
  *

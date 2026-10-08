@@ -34,7 +34,7 @@ import {
 
 /**
  * Line-up de Subreal: escenarios y, adentro de cada uno, sus artistas. Cada
- * artista tiene página propia en /festival/line-up/[slug]; en el listado se
+ * artista tiene página propia en /blur/line-up/[slug]; en el listado se
  * muestra en el orden de acá, y "B2B con el de arriba" lo pega al anterior.
  *
  * Las fichas de artista arrancan cerradas: con diez artistas y doce campos
@@ -251,7 +251,7 @@ export function FestivalLineupAdmin() {
                   placeholder={toSlug(a.nombre)}
                   className={`${INPUT} font-mono`}
                 />
-                <p className={AYUDA}>/festival/line-up/{toSlug(a.slug) || toSlug(a.nombre)}</p>
+                <p className={AYUDA}>/blur/line-up/{toSlug(a.slug) || toSlug(a.nombre)}</p>
               </div>
             </div>
 
@@ -340,7 +340,7 @@ export function FestivalLineupAdmin() {
                   Guardar
                 </button>
                 <a
-                  href={`/festival/line-up/${a.slug}`}
+                  href={`/blur/line-up/${a.slug}`}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-manso-cream/40 hover:text-manso-cream transition-colors"

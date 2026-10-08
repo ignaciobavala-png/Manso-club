@@ -10,7 +10,7 @@ import { formatArs } from '@/lib/precios';
  *
  * COMPRAR pide nombre, mail y medio de pago (los que estén prendidos y
  * configurados, ver `mediosDePago`); `/api/festival/compra` arma la orden y
- * devuelve a dónde ir: el checkout de Mercado Pago, o `/festival/compra/[id]`
+ * devuelve a dónde ir: el checkout de Mercado Pago, o `/blur/compra/[id]`
  * con los datos de la transferencia o la elección de red en cripto. Sin
  * ningún medio disponible, la tabla se ve pero no se puede comprar.
  */

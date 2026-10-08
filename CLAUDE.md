@@ -136,16 +136,16 @@ dos circuitos distintos.
   / registrado / membresía activa). Otorgar reusa `UsuarioDrawer`; si la persona
   no tiene cuenta, el botón ofrece copiar el link de registro.
 
-### Festival — Subreal (`/festival`)
+### Festival — Subreal (`/blur`)
 
 Sitio chico de un festival que nace de Manso pero con **identidad propia**:
 `ChromeManso` (en el root layout) le saca navbar, footer y flotantes. La
 estructura copia basilarfestival.com (pedido de Ana): un menú `> HOME > VISIÓN >
-LOCACIÓN > SPOTS > LINE UP > TICKETS > INFO & FAQ` en `app/festival/layout.tsx` y una
+LOCACIÓN > SPOTS > LINE UP > TICKETS > INFO & FAQ` en `app/blur/layout.tsx` y una
 página por sección. Todas leen por `lib/festival.ts` (cacheado por request).
 
-- `/festival` — solo el hero, sin pie (`FueraDelHome`): la foto `fixed` a pantalla completa y **sin filtros** (`banner_url`,
-  o `public/festival/hero-cabina.jpg` si el panel no tiene banner), el título y
+- `/blur` — solo el hero, sin pie (`FueraDelHome`): la foto `fixed` a pantalla completa y **sin filtros** (`banner_url`,
+  o `public/blur/hero-cabina.jpg` si el panel no tiene banner), el título y
   dos cajitas (fecha + horario, `lema`). El título dice **BLUR**
   (`TITULO_HERO`) con el filtro difuso de `TituloDifuso`, no `config.nombre`,
   que sigue siendo "Subreal" y es el que sale en la pestaña y el pie. Si BLUR
@@ -185,7 +185,7 @@ estilo del menú de Basilar (chevron dibujado con una máscara SVG en
 equipo eligió la Mono.
 El título del hero imita el logo de Basilar con Archivo y un filtro SVG
 (`TituloDifuso`). Se probó el logo PNG de la diseñadora
-(`public/festival/blur-logo.png`) y no gustó: volvió el filtro.
+(`public/blur/blur-logo.png`) y no gustó: volvió el filtro.
 COMPRAR y los botones de pago van en la tipografía de TICKETS (`.fest-menu`),
 un poco más grandes que él, no en Archivo a 24px.
 
@@ -199,7 +199,7 @@ panel (Festival → Cobro). Se ofrece un medio solo si está prendido *y*
 configurado (`mediosDePago` en `lib/festival-compra.ts`): MP necesita
 `MP_ACCESS_TOKEN`, transferencia un CBU o alias en `checkout_config`, cripto las
 wallets. Los tres terminan en `festival_emitir_orden` (marca pagada + un ticket
-por persona) y el mismo mail con el link a `/festival/compra/[id]`.
+por persona) y el mismo mail con el link a `/blur/compra/[id]`.
 
 - **Mercado Pago**: la API crea la preferencia con `external_reference =
   festival:<orden>` (el prefijo la separa de los pedidos de la tienda). Confirman
@@ -220,7 +220,7 @@ Tron, Polygon, Base y USDC).
 
 1. COMPRAR pide nombre y mail → `/api/festival/compra` arma la orden en
    `festival_ordenes` (pesos del panel ÷ blue, resuelto en el servidor).
-2. `/festival/compra/[id]` (`PagoCripto`): el comprador elige red (BSC o
+2. `/blur/compra/[id]` (`PagoCripto`): el comprador elige red (BSC o
    Ethereum) y recibe un **monto único** —total + 1 a 99 centavos— que no
    comparte con ninguna otra pendiente de esa red (índice único). Es lo que
    permite reconocer el pago sin pedirle nada.
@@ -240,7 +240,7 @@ Tron, Polygon, Base y USDC).
   (`4a71` por `4f71`) y apuntaba a una dirección vacía.
 - Sin `FESTIVAL_WALLET_EVM` cripto no se ofrece aunque la perilla esté
   prendida. La misma dirección 0x sirve en las dos redes.
-- `/festival/compra/demo` muestra la pantalla con datos inventados (sin API ni
+- `/blur/compra/demo` muestra la pantalla con datos inventados (sin API ni
   cadena, y con una "dirección" que no es una dirección) para enseñarla sin
   wallets; `?estado=pagada` muestra las entradas.
 - Una orden vence a los 60 min de elegir red, pero un pago exacto que llegue

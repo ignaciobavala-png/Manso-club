@@ -70,7 +70,7 @@ export default async function FestivalArtistaPage({ params }: { params: Promise<
   return (
     <div className="px-4 sm:px-7 pt-6 sm:pt-10 pb-20 sm:pb-24 fest-entra">
       <Link
-        href="/festival/line-up"
+        href="/blur/line-up"
         className="fest-angosta text-base opacity-55 hover:opacity-100 hover:text-[var(--fest-acento)] transition"
       >
         ← Todo el line up
@@ -166,7 +166,7 @@ export default async function FestivalArtistaPage({ params }: { params: Promise<
         >
           {anterior ? (
             <Link
-              href={`/festival/line-up/${anterior.slug}`}
+              href={`/blur/line-up/${anterior.slug}`}
               className="fest-angosta text-[clamp(20px,2.4vw,32px)] leading-tight hover:text-[var(--fest-acento)] transition-colors"
             >
               <small className="block fest-mono text-[10px] tracking-[0.3em] font-normal opacity-55">← Anterior</small>
@@ -177,7 +177,7 @@ export default async function FestivalArtistaPage({ params }: { params: Promise<
           )}
           {siguiente && (
             <Link
-              href={`/festival/line-up/${siguiente.slug}`}
+              href={`/blur/line-up/${siguiente.slug}`}
               className="fest-angosta text-right text-[clamp(20px,2.4vw,32px)] leading-tight hover:text-[var(--fest-acento)] transition-colors"
             >
               <small className="block fest-mono text-[10px] tracking-[0.3em] font-normal opacity-55">Siguiente →</small>

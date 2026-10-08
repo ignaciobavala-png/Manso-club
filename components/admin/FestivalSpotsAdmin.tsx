@@ -19,7 +19,7 @@ import {
 } from './festivalComun';
 
 /**
- * Spots de /festival/spots: los lugares de la fiesta, cada uno con título,
+ * Spots de /blur/spots: los lugares de la fiesta, cada uno con título,
  * descripción y fotos. Título y texto se guardan con el botón; las fotos, al
  * subirlas o moverlas, igual que las de Locación.
  */
@@ -76,7 +76,7 @@ export function FestivalSpotsAdmin() {
       <div>
         <h3 className={TITULO}>Spots</h3>
         <p className={AYUDA}>
-          Los lugares de la fiesta, en /festival/spots: un bloque por escenario o rincón, con su
+          Los lugares de la fiesta, en /blur/spots: un bloque por escenario o rincón, con su
           nombre, una descripción y fotos. Se muestran en este orden.
         </p>
       </div>

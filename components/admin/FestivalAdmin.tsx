@@ -43,7 +43,7 @@ import {
 } from './festivalComun';
 
 /**
- * Sección "Festival": Subreal, el sitio chico de /festival (hero, visión,
+ * Sección "Festival": Subreal, el sitio chico de /blur (hero, visión,
  * locación, line-up con página por artista, tickets e info).
  *
  * Tiene identidad propia —sin navbar de Manso— y mientras no se publique solo
@@ -125,7 +125,7 @@ export function FestivalAdmin() {
     const publicado = !config.publicado;
     if (
       publicado &&
-      !confirm('¿Publicar el festival? La página /festival pasa a verse para cualquiera que tenga el link.')
+      !confirm('¿Publicar el festival? La página /blur pasa a verse para cualquiera que tenga el link.')
     ) {
       return;
     }
@@ -209,13 +209,13 @@ export function FestivalAdmin() {
           </p>
           <p className="text-[11px] text-manso-cream/50 leading-relaxed max-w-md">
             {config.publicado
-              ? 'Cualquiera con el link ve /festival. No está enlazado desde el sitio de Manso.'
-              : 'Solo los admins pueden ver /festival. Para el resto la página no existe.'}
+              ? 'Cualquiera con el link ve /blur. No está enlazado desde el sitio de Manso.'
+              : 'Solo los admins pueden ver /blur. Para el resto la página no existe.'}
           </p>
         </div>
         <div className="flex items-center gap-4">
           <a
-            href="/festival"
+            href="/blur"
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-manso-terra hover:text-manso-cream transition-colors"
@@ -736,7 +736,7 @@ export function FestivalAdmin() {
         <div>
           <h3 className={TITULO}>Info &amp; FAQ</h3>
           <p className={AYUDA}>
-            Cada pregunta es un bloque de /festival/info: título corto en mayúsculas y un párrafo.
+            Cada pregunta es un bloque de /blur/info: título corto en mayúsculas y un párrafo.
             Se acomodan en tres columnas en este orden.
           </p>
         </div>

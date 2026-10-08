@@ -6,12 +6,12 @@ import { TituloDifuso } from '@/components/festival/TituloDifuso';
 /**
  * Lo que dice el hero. Por ahora no es el nombre del panel (`config.nombre`),
  * que sigue siendo "Subreal". El logo de la diseñadora
- * (`public/festival/blur-logo.png`) se probó y no gustó: volvió el filtro.
+ * (`public/blur/blur-logo.png`) se probó y no gustó: volvió el filtro.
  */
 const TITULO_HERO = 'Blur';
 
 /** Foto de fondo mientras no se cargue un banner desde el panel. */
-const BANNER_POR_DEFECTO = '/festival/hero-cabina.jpg';
+const BANNER_POR_DEFECTO = '/blur/hero-cabina.jpg';
 
 /**
  * Home de Subreal: como la de Basilar, solo el hero. La foto a sangre tal cual,

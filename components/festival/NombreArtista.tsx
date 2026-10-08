@@ -5,7 +5,7 @@ import { FestivalArtista } from '@/lib/types/festival';
 export function NombreArtista({ artista }: { artista: FestivalArtista }) {
   return (
     <Link
-      href={`/festival/line-up/${artista.slug}`}
+      href={`/blur/line-up/${artista.slug}`}
       className="fest-angostisima inline-block hover:text-[var(--fest-acento)] transition-colors duration-200"
     >
       {artista.nombre}

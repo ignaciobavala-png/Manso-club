@@ -18,6 +18,15 @@ const nextConfig: NextConfig = {
   // casi enteramente imágenes, así que la señal pesa. El rewrite hace de proxy
   // hacia el bucket público "emails": la URL que ve el cliente de correo es del
   // dominio propio, el archivo sigue viviendo en Supabase Storage.
+  // El festival se mudó de /festival a /blur cuando se confirmó el nombre. Los
+  // mails de compra ya enviados y las vueltas de Mercado Pago de preferencias
+  // viejas apuntan a /festival/compra/<orden>: siguen andando por acá.
+  async redirects() {
+    return [
+      { source: "/festival", destination: "/blur", permanent: true },
+      { source: "/festival/:path*", destination: "/blur/:path*", permanent: true },
+    ];
+  },
   async rewrites() {
     return [
       {
