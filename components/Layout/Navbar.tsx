@@ -22,6 +22,7 @@ const sidebarLinks: { name: string; href: string; external?: boolean }[] = [
   { name: 'Manifiesto',           href: '/manifiesto' },
   { name: 'Nuestro espacio',      href: '/nuestro-espacio' },
   { name: 'Multimedia',           href: '/multimedia' },
+  { name: 'Tienda',               href: '/tienda' },
   { name: 'Presentá tu proyecto', href: '/presenta-tu-proyecto' },
   { name: 'Trabajá con nosotros', href: '/trabaja-con-nosotros' },
 ];
@@ -72,7 +73,7 @@ export const Navbar = () => {
     { name: 'agenda',     href: '/agenda' },
     { name: 'artistas',   href: '/artistas' },
     { name: 'comunidad',  href: '/foro' },
-    { name: 'tienda',     href: '/tienda' },
+    { name: 'festival',   href: '/blur' },
   ];
 
   const getTextColor = (light: boolean) =>

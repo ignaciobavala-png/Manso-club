@@ -200,7 +200,9 @@ un poco más grandes que él, no en Archivo a 24px.
 **No publicada por RLS, no por código**: mientras `festival_config.publicado`
 sea false, las tablas del festival (`supabase/migration_festival*.sql`) solo las lee un
 admin, así que la página —que usa el cliente con cookies— da 404 a cualquier
-otro. No está enlazada desde el sitio ni en el sitemap, y va `noindex`.
+otro. Desde el 08/10 está publicada y el navbar principal la enlaza como
+`festival` (en el lugar de `tienda`, que pasó al menú "más"); sigue fuera del
+sitemap y con `noindex`.
 
 **Cobro: Mercado Pago, transferencia y cripto**, cada uno con su perilla en el
 panel (Festival → Cobro). Se ofrece un medio solo si está prendido *y*
