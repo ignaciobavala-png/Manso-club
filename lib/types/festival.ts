@@ -23,6 +23,8 @@ export interface FestivalConfig {
   foto_url: string | null;
   /** Galería de /blur/locacion, en el orden en que se muestra. */
   locacion_fotos: string[];
+  /** Fotos que el home muestra después de las de Locación. */
+  home_fotos: string[];
   /** Línea destacada debajo de la tabla, ej. "solo para mayores de 18". */
   aviso: string | null;
   /** Segunda cajita del hero, debajo de la fecha. */
@@ -160,6 +162,7 @@ export const CONFIG_FESTIVAL_VACIA: FestivalConfig = {
   banner_url: null,
   foto_url: null,
   locacion_fotos: [],
+  home_fotos: [],
   aviso: null,
   lema: null,
   vision: null,

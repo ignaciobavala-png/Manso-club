@@ -95,6 +95,11 @@ export function FestivalAdmin() {
     guardarConfig({ locacion_fotos: fotos }, 'locacion_fotos');
   };
 
+  const guardarFotosHome = (fotos: string[]) => {
+    editarConfig({ home_fotos: fotos });
+    guardarConfig({ home_fotos: fotos }, 'home_fotos');
+  };
+
   const guardarDatos = () => {
     const { nombre, bajada, fecha, horario, lugar, direccion, aviso, lema, instagram, email } = config;
     guardarConfig({
@@ -532,6 +537,19 @@ export function FestivalAdmin() {
           <p className={AYUDA}>
             Podés elegir varias a la vez. Se guardan solas; para cambiar el orden, arrastralas o
             usá las flechas. En la página se ven enteras, sin recorte.
+          </p>
+        </div>
+
+        <div>
+          <label className={`${LABEL} flex items-center gap-2`}>
+            <ImageIcon size={14} />
+            Fotos extra del home ({config.home_fotos.length})
+          </label>
+          <GaleriaFotosAdmin fotos={config.home_fotos} folder="festival" onChange={guardarFotosHome} />
+          <p className={AYUDA}>
+            El home muestra, debajo del hero, las fotos de Locación y después estas. Sirven para sumar
+            fotos que no son del lugar (fiestas anteriores, el equipo). Si no cargás ninguna, se ven
+            solo las de Locación.
           </p>
         </div>
       </section>

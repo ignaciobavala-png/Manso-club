@@ -220,3 +220,42 @@
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 105 70'%3E%3Cpath d='M33 3 L72 35 L33 67' fill='none' stroke='black' stroke-width='6'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
   mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 105 70'%3E%3Cpath d='M33 3 L72 35 L33 67' fill='none' stroke='black' stroke-width='6'/%3E%3C/svg%3E") center / 100% 100% no-repeat;
 }
+
+/*
+ * Line-up a la soundit.es (`LineupCorrido`): Helvetica bold grande, en
+ * minúsculas y mayúsculas como se cargan. Al pasar por un nombre, los otros se
+ * apagan y la página cambia de color.
+ */
+.fest-lineup li {
+  font-weight: 700;
+  font-size: clamp(2.1rem, 6.2vw, 6rem);
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+}
+.fest-lineup-b2b {
+  font-weight: 400;
+}
+.fest-lineup-nombre {
+  transition: opacity 0.25s ease;
+}
+.fest-lineup:has(.fest-lineup-nombre:hover) .fest-lineup-nombre:not(:hover) {
+  opacity: 0.32;
+}
+
+/* El cambio de color del line-up: fondo y texto de la página, el menú y el pie. */
+[data-fest-raiz],
+[data-fest-raiz] header,
+[data-fest-raiz] footer,
+[data-fest-raiz] .fest-fondo {
+  transition:
+    background-color 0.45s ease,
+    color 0.45s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-fest-raiz],
+  [data-fest-raiz] header,
+  [data-fest-raiz] footer,
+  [data-fest-raiz] .fest-fondo {
+    transition: none;
+  }
+}

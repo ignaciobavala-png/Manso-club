@@ -144,12 +144,16 @@ estructura copia basilarfestival.com (pedido de Ana): un menú `> HOME > VISIÓN
 LOCACIÓN > SPOTS > LINE UP > TICKETS > INFO & FAQ` en `app/blur/layout.tsx` y una
 página por sección. Todas leen por `lib/festival.ts` (cacheado por request).
 
-- `/blur` — solo el hero, sin pie (`FueraDelHome`): la foto `fixed` a pantalla completa y **sin filtros** (`banner_url`,
-  o `public/blur/hero-cabina.jpg` si el panel no tiene banner), el título y
-  dos cajitas (fecha + horario, `lema`). El título dice **BLUR**
-  (`TITULO_HERO`) con el filtro difuso de `TituloDifuso`, no `config.nombre`,
-  que sigue siendo "Subreal" y es el que sale en la pestaña y el pie. Si BLUR
-  pasa a ser el nombre, cambiarlo en el panel y volver a leerlo de ahí.
+- `/blur` — el hero a pantalla completa (la foto `fixed` y **sin filtros**:
+  `banner_url`, o `public/blur/hero-cabina.jpg` si el panel no tiene banner;
+  el título y dos cajitas, fecha + horario y `lema`) y después scrollea por un
+  adelanto de secciones, cada una con su link: fotos (`locacion_fotos` +
+  `home_fotos`, las extra que Ana sume desde el panel), Visión y line-up. Las
+  secciones tienen fondo propio y suben por encima de la foto. El título dice
+  **BLUR** (`TITULO_HERO`) con el filtro difuso de `TituloDifuso`, no
+  `config.nombre`, que sigue siendo "Subreal" y es el que sale en la pestaña y
+  el pie. Si BLUR pasa a ser el nombre, cambiarlo en el panel y volver a leerlo
+  de ahí.
 - `/vision` — texto del panel por `TextoResaltado`: `*así*` va en
   `color_resalte` y `**así**` en `color_acento`. No es Markdown, a propósito.
   `/locacion` no muestra su texto del panel (repetía la barra de datos): solo
@@ -164,7 +168,11 @@ página por sección. Todas leen por `lib/festival.ts` (cacheado por request).
   `festival_escenarios` a propósito.
 - Las fotos de Locación, Spots y del artista se amplían con `VisorFotos`. En el
   panel, las galerías van por `GaleriaFotosAdmin` (varias de una, se reordenan).
-- `/line-up` — en escalera; cada nombre lleva a `/line-up/[slug]`, que copia la
+- `/line-up` (y el home) — `LineupCorrido`, a la soundit.es: Helvetica bold
+  grande, un nombre (o un B2B) por renglón, sin fecha ni símbolos. Al pasar el
+  mouse por un nombre toda la página sortea un color de la paleta (pisa las
+  `--fest-*` del `[data-fest-raiz]` del layout) y vuelve al salir o al
+  navegar. Cada nombre lleva a `/line-up/[slug]`, que copia la
   estructura de `/speakers/[slug]` de la bitconf, con la foto al natural (sin
   marco ni filtro) y un video de YouTube embebido (`youtube_url`). Un B2B son dos filas de
   `festival_artistas` y la segunda tiene `b2b = true` ("con el de arriba").
