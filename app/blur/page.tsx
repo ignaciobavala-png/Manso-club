@@ -79,7 +79,7 @@ export default async function FestivalHome() {
     )}
 
     {config.vision && (
-      <Seccion rotulo="Visión" href="/blur/vision" ver="Leer visión">
+      <Seccion rotulo="Visión">
         <TextoResaltado
           texto={config.vision}
           className="text-[clamp(17px,1.6vw,24px)] leading-[1.4] tracking-[-0.01em]"
@@ -96,7 +96,11 @@ export default async function FestivalHome() {
   );
 }
 
-/** Un adelanto de sección: rótulo, contenido y el link a la página entera. */
+/**
+ * Un adelanto de sección: rótulo, contenido y el link a la página entera.
+ * Sin `href` no hay link ni aire abajo (Visión ya se muestra completa, y así
+ * la sección siguiente queda más cerca del texto).
+ */
 function Seccion({
   rotulo,
   href,
@@ -104,22 +108,24 @@ function Seccion({
   children,
 }: {
   rotulo: string;
-  href: string;
-  ver: string;
+  href?: string;
+  ver?: string;
   children: React.ReactNode;
 }) {
   return (
-    <section className="relative z-10 bg-[var(--fest-fondo)] fest-fondo px-4 sm:px-7 pt-14 sm:pt-20 pb-6 sm:pb-10">
+    <section className={`relative z-10 bg-[var(--fest-fondo)] fest-fondo px-4 sm:px-7 pt-14 sm:pt-20 ${href ? 'pb-6 sm:pb-10' : ''}`}>
       <p className="fest-rotulo mb-8">
         <EscribeTexto texto={rotulo} />
       </p>
       {children}
-      <Link
-        href={href}
-        className="fest-chevron fest-menu inline-block mt-8 sm:mt-10 text-[16px] sm:text-[18px] text-[var(--fest-acento)] hover:text-[var(--fest-texto)] transition-colors"
-      >
-        {ver}
-      </Link>
+      {href && (
+        <Link
+          href={href}
+          className="fest-chevron fest-menu inline-block mt-8 sm:mt-10 text-[16px] sm:text-[18px] text-[var(--fest-acento)] hover:text-[var(--fest-texto)] transition-colors"
+        >
+          {ver}
+        </Link>
+      )}
     </section>
   );
 }
