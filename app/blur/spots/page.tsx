@@ -26,7 +26,7 @@ export default async function FestivalSpots() {
       ) : (
         spots.map(spot => (
           <section key={spot.id} className="mb-16 sm:mb-24 last:mb-0">
-            <h2 className="fest-ancha leading-[0.9] text-[clamp(2.2rem,6vw,5.5rem)] break-words">{spot.titulo}</h2>
+            <h2 className="fest-ancha leading-[0.9] text-[clamp(1.75rem,3.6vw,3.25rem)] break-words">{spot.titulo}</h2>
             {spot.descripcion && (
               <p className="mt-5 max-w-[62ch] text-[clamp(16px,1.35vw,19px)] leading-[1.6] opacity-85 whitespace-pre-line">
                 {spot.descripcion}

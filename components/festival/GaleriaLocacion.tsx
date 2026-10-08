@@ -23,6 +23,12 @@ interface Props {
  * el CSS muestra uno. Los ocultos no bajan nada: `next/image` va con
  * `loading="lazy"` y el navegador no carga imágenes con `display: none`.
  *
+ * Un renglón con pocas fotos (una sola apaisada, por ejemplo) no llega a
+ * llenar el ancho sin pasarse de alto: se estiraba a 1300×870 en escritorio.
+ * Por eso el alto tiene tope (`TOPE` × el ideal); si el renglón lo supera, se
+ * angosta con `maxWidth` y queda alineado a la izquierda, con las fotos
+ * enteras igual.
+ *
  * Sin filtro de color: las fotos se ven como se subieron (pedido del equipo).
  * Cada una se abre entera en `VisorFotos` al tocarla. Lo usan Locación y Spots.
  */
@@ -36,6 +42,9 @@ const PANTALLAS = [
 
 /** Proporción para una foto que no se pudo medir: la vertical de celular. */
 const PROPORCION_POR_DEFECTO = 3 / 4;
+
+/** Cuánto puede pasarse un renglón del alto ideal antes de dejar de estirarse. */
+const TOPE = 1.2;
 
 export async function GaleriaLocacion({ fotos, alt }: Props) {
   if (fotos.length === 0) return null;
@@ -53,12 +62,15 @@ export async function GaleriaLocacion({ fotos, alt }: Props) {
         <div key={p.clase} className={`${p.clase} flex-col`} style={{ gap: p.gap }}>
           {cortarRenglones(proporciones, p.ancho, p.alto, p.gap).map(([desde, hasta]) => {
             const suma = proporciones.slice(desde, hasta).reduce((a, r) => a + r, 0);
+            // Ancho que ocuparía el renglón al alto máximo, como fracción del útil.
+            const gaps = p.gap * (hasta - desde - 1);
+            const fraccion = Math.min(1, (suma * p.alto * TOPE + gaps) / p.ancho);
             return (
-              <div key={desde} className="flex" style={{ gap: p.gap }}>
+              <div key={desde} className="flex" style={{ gap: p.gap, maxWidth: `${fraccion * 100}%` }}>
                 {fotos.slice(desde, hasta).map((src, k) => {
                   const r = proporciones[desde + k];
                   // Qué parte del ancho de pantalla ocupa esta foto, para el srcset.
-                  const vw = Math.ceil((r / suma) * 100);
+                  const vw = Math.ceil((r / suma) * fraccion * 100);
                   return (
                     <button
                       type="button"
