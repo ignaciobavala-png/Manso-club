@@ -525,7 +525,7 @@ export async function enviarMailTickets(supabase: SupabaseClient, orden: Pick<Or
       from: EMAIL_FROM,
       to: orden.email,
       subject: tickets.length > 0 ? `Tus entradas — ${tickets.length === 1 ? '1 QR' : `${tickets.length} QR`}` : 'Tus entradas del festival',
-      html: tickets.length > 0 ? htmlMailConQr(orden.nombre, tickets, link) : htmlMailConLink(orden, link),
+      html: tickets.length > 0 ? htmlMailConQr(orden.nombre, tickets) : htmlMailConLink(orden, link),
       attachments: tickets.map((t, i) => ({
         content: qrs[i].toString('base64'),
         filename: `entrada-${i + 1}.png`,
@@ -549,7 +549,7 @@ function htmlMailConLink(orden: Pick<OrdenFestival, 'nombre' | 'cantidad_entrada
 }
 
 /** Una pieza sola, en tablas e inline como piden los clientes de mail. */
-function htmlMailConQr(nombre: string, tickets: TicketFestival[], link: string) {
+function htmlMailConQr(nombre: string, tickets: TicketFestival[]) {
   const fondo = '#1C1410';
   const texto = '#FFFCDC';
   const filas = tickets
@@ -566,11 +566,16 @@ function htmlMailConQr(nombre: string, tickets: TicketFestival[], link: string) 
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px">
 <tr><td style="padding:0 0 8px;font:700 32px Helvetica,Arial,sans-serif;letter-spacing:4px;color:${texto}" align="center">BLUR</td></tr>
 <tr><td style="padding:0 0 32px;font:15px/1.5 Helvetica,Arial,sans-serif;color:${texto}" align="center">
-  Hola ${escapar(nombre)}, recibimos el pago.<br>Cada QR es una entrada: mostralo en la puerta desde el celular.
+  <span style="font-weight:700;font-size:20px">${escapar(nombre)}</span><br>¡Compra realizada con éxito!
 </td></tr>
 ${filas}
-<tr><td style="padding:8px 0 0;font:13px/1.5 Helvetica,Arial,sans-serif;color:${texto};opacity:.7" align="center">
-  También están en <a href="${link}" style="color:${texto}">tu compra</a>.
+<tr><td style="padding:8px 0 0;font:14px/1.5 Helvetica,Arial,sans-serif;color:${texto}">
+  <p style="margin:0 0 12px;font-weight:700;font-size:16px" align="center">Algunos consejos</p>
+  <ul style="margin:0;padding:0 0 0 20px">
+    <li style="margin:0 0 8px">Presentá tu entrada en el acceso del evento con tu teléfono.</li>
+    <li style="margin:0 0 8px">Guardá este mail: cada QR es una entrada.</li>
+    <li>Llevá tus entradas abiertas en el celular.</li>
+  </ul>
 </td></tr>
 </table></td></tr></table></body></html>`;
 }
