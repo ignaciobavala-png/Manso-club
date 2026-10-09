@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { ORDEN_REDES } from '@/lib/cripto-redes';
-import { adminFestival, enviarMailTickets, sincronizarRed, vencerOrdenes } from '@/lib/festival-compra';
+import { adminFestival, confirmarGestion, enviarMailTickets, sincronizarRed, vencerOrdenes } from '@/lib/festival-compra';
 
 export const maxDuration = 60;
 
@@ -8,7 +8,9 @@ export const maxDuration = 60;
  * Cron del cobro en cripto. La pantalla de pago ya lee la cadena mientras el
  * comprador la tiene abierta; esto cubre al que la cerró apenas mandó la
  * transferencia: lee cada red con órdenes abiertas, vence las que pasaron su
- * plazo y reintenta los mails que fallaron.
+ * plazo y reintenta los mails que fallaron. También reintenta las órdenes
+ * pagadas que Manso Gestión no llegó a confirmar (sin eso el lector de la
+ * puerta las rechaza).
  */
 export async function GET(request: Request) {
   if (request.headers.get('authorization') !== `Bearer ${process.env.CRON_SECRET}`) {
@@ -29,6 +31,15 @@ export async function GET(request: Request) {
 
   await vencerOrdenes(supabase);
 
+  const { data: sinConfirmar } = await supabase
+    .from('festival_ordenes')
+    .select('id, gestion_event_id, gestion_confirmada')
+    .eq('estado', 'pagada')
+    .not('gestion_event_id', 'is', null)
+    .eq('gestion_confirmada', false)
+    .limit(20);
+  for (const orden of sinConfirmar ?? []) await confirmarGestion(supabase, orden);
+
   const { data: sinMail } = await supabase
     .from('festival_ordenes')
     .select('id, nombre, email, cantidad_entradas')
@@ -37,5 +48,5 @@ export async function GET(request: Request) {
     .limit(20);
   for (const orden of sinMail ?? []) await enviarMailTickets(supabase, orden);
 
-  return NextResponse.json({ ok: true, redes, mails: sinMail?.length ?? 0 });
+  return NextResponse.json({ ok: true, redes, gestion: sinConfirmar?.length ?? 0, mails: sinMail?.length ?? 0 });
 }

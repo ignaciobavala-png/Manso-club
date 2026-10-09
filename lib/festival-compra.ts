@@ -4,6 +4,8 @@ import { leerTransferencias, normalizarHash, puntoDePartida, redesActivas, walle
 import { EMAIL_FROM, getResend } from '@/lib/resend';
 import { getMPPaymentClient, getMPPreferenceClient } from '@/lib/mercadopago';
 import { datosParaTransferencia, getBankConfig } from '@/lib/getBankConfig';
+import { confirmarEnGestion, liberarEnGestion } from '@/lib/gestion-entradas';
+import QRCode from 'qrcode';
 import type { FestivalConfig, MedioPago } from '@/lib/types/festival';
 
 /**
@@ -54,14 +56,45 @@ export interface OrdenFestival {
   vence_at: string | null;
   observacion: string | null;
   mail_enviado: boolean;
+  /** Reservada en Manso Gestión (ver `lib/gestion-entradas`); null = venta anterior a conectarlo. */
+  gestion_event_id: string | null;
+  gestion_confirmada: boolean;
   created_at: string;
 }
 
 export interface TicketFestival {
   id: string;
   entrada_nombre: string;
+  /** El token de Gestión si `en_gestion`; si no, el código propio de 12 caracteres. */
   codigo: string;
   usado: boolean;
+  en_gestion: boolean;
+  pack_pos: number | null;
+  pack_size: number | null;
+}
+
+/** Lo que va adentro del QR: el formato del lector de Gestión, o el código pelado de las ventas viejas. */
+export const contenidoQr = (t: Pick<TicketFestival, 'codigo' | 'en_gestion'>) =>
+  t.en_gestion ? `manso-ticket|${t.codigo}` : t.codigo;
+
+/** Lo que se lee al lado del QR: el token entero de Gestión es largo, alcanza con el principio. */
+export const codigoVisible = (t: Pick<TicketFestival, 'codigo' | 'en_gestion'>) =>
+  t.en_gestion ? t.codigo.replace(/-/g, '').slice(0, 10).toUpperCase() : t.codigo;
+
+/** "Pack x3 · 2/3", o el nombre solo. */
+export const nombreTicket = (t: Pick<TicketFestival, 'entrada_nombre' | 'pack_pos' | 'pack_size'>) =>
+  t.pack_pos && t.pack_size ? `${t.entrada_nombre} · ${t.pack_pos}/${t.pack_size}` : t.entrada_nombre;
+
+const COLUMNAS_TICKET = 'id, entrada_nombre, codigo, usado, en_gestion, pack_pos, pack_size';
+
+export async function leerTickets(supabase: SupabaseClient, ordenId: string): Promise<TicketFestival[]> {
+  const { data } = await supabase
+    .from('festival_tickets')
+    .select(COLUMNAS_TICKET)
+    .eq('orden_id', ordenId)
+    .order('posicion', { nullsFirst: false })
+    .order('created_at');
+  return (data as TicketFestival[] | null) ?? [];
 }
 
 interface PagoCripto {
@@ -229,7 +262,7 @@ async function acreditarCoincidencias(supabase: SupabaseClient, red: RedCripto, 
 async function acreditar(supabase: SupabaseClient, pagoId: string, orden: OrdenFestival): Promise<boolean> {
   const { data: ok, error } = await supabase.rpc('festival_acreditar_pago', { p_pago: pagoId, p_orden: orden.id });
   if (error) throw new Error(`No se pudo acreditar ${pagoId} a ${orden.id}: ${error.message}`);
-  if (ok) await enviarMailTickets(supabase, orden);
+  if (ok) await alCobrar(supabase, orden);
   return Boolean(ok);
 }
 
@@ -299,8 +332,58 @@ export async function reclamarConHash(
 export async function emitirOrden(supabase: SupabaseClient, orden: OrdenFestival): Promise<boolean> {
   const { data: ok, error } = await supabase.rpc('festival_emitir_orden', { p_orden: orden.id });
   if (error) throw new Error(`No se pudo emitir la orden ${orden.id}: ${error.message}`);
-  if (ok) await enviarMailTickets(supabase, orden);
+  if (ok) await alCobrar(supabase, orden);
   return Boolean(ok);
+}
+
+/** Lo que sigue a emitir: avisar a Gestión que la orden se pagó y mandar el mail. */
+async function alCobrar(supabase: SupabaseClient, orden: OrdenFestival) {
+  await confirmarGestion(supabase, orden);
+  await enviarMailTickets(supabase, orden);
+}
+
+/**
+ * Pasa a pagadas las entradas de la orden en Gestión: desde ahí el lector de
+ * la puerta las acepta. Si Gestión no responde, la orden queda pagada acá con
+ * `gestion_confirmada = false` y el cron lo reintenta (`web_confirmar` es
+ * idempotente). Un pago que llegó con la reserva vencida se confirma igual; si
+ * eso pasó el aforo, queda anotado para Ana.
+ */
+export async function confirmarGestion(
+  supabase: SupabaseClient,
+  orden: Pick<OrdenFestival, 'id' | 'gestion_event_id' | 'gestion_confirmada'>
+) {
+  if (!orden.gestion_event_id || orden.gestion_confirmada) return;
+  try {
+    const { excede_cupo } = await confirmarEnGestion(orden.id);
+    await supabase
+      .from('festival_ordenes')
+      .update({
+        gestion_confirmada: true,
+        ...(excede_cupo && {
+          observacion: 'El pago llegó con la reserva vencida y, al confirmarla, el evento quedó por encima del aforo en Gestión.',
+        }),
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', orden.id);
+  } catch (e) {
+    console.error(`No se pudo confirmar en Gestión la orden ${orden.id}:`, e);
+  }
+}
+
+/**
+ * Ana descarta una orden que no se va a pagar (una transferencia que nunca
+ * llegó): queda vencida y, si reservó en Gestión, libera el cupo. Si después
+ * aparece el pago, todavía se puede confirmar.
+ */
+export async function descartarOrden(supabase: SupabaseClient, orden: OrdenFestival) {
+  if (orden.estado === 'pagada') throw new Error('La orden ya está pagada');
+  if (orden.gestion_event_id) await liberarEnGestion(orden.id);
+  await supabase
+    .from('festival_ordenes')
+    .update({ estado: 'vencida', updated_at: new Date().toISOString() })
+    .eq('id', orden.id)
+    .neq('estado', 'pagada');
 }
 
 // ── Medios de pago ─────────────────────────────────────────────────────────
@@ -416,9 +499,11 @@ export async function vencerOrdenes(supabase: SupabaseClient) {
 }
 
 /**
- * Mail con el link a la compra. Se reclama `mail_enviado` antes de mandarlo
- * para no duplicarlo si dos acreditaciones corren a la vez; si Resend falla
- * se libera, y el cron lo vuelve a intentar.
+ * Mail con las entradas. Si la orden pasó por Gestión, cada QR va adentro como
+ * imagen adjunta (`cid:`: Gmail bloquea los `data:`), que es lo que se escanea
+ * en la puerta; si no, solo el link a la compra. Se reclama `mail_enviado`
+ * antes de mandarlo para no duplicarlo si dos acreditaciones corren a la vez;
+ * si Resend falla se libera, y el cron lo vuelve a intentar.
  */
 export async function enviarMailTickets(supabase: SupabaseClient, orden: Pick<OrdenFestival, 'id' | 'nombre' | 'email' | 'cantidad_entradas'>) {
   const { data: reclamada } = await supabase
@@ -432,20 +517,62 @@ export async function enviarMailTickets(supabase: SupabaseClient, orden: Pick<Or
 
   try {
     const link = urlCompra(orden.id);
-    const entradas = orden.cantidad_entradas === 1 ? 'tu entrada' : `tus ${orden.cantidad_entradas} entradas`;
-    await getResend().emails.send({
+    const tickets = (await leerTickets(supabase, orden.id)).filter(t => t.en_gestion);
+    const qrs = await Promise.all(
+      tickets.map(t => QRCode.toBuffer(contenidoQr(t), { width: 360, margin: 2, errorCorrectionLevel: 'M' }))
+    );
+    const { error } = await getResend().emails.send({
       from: EMAIL_FROM,
       to: orden.email,
-      subject: 'Tus entradas del festival',
-      html: `<p>Hola ${escapar(orden.nombre)},</p>
-<p>Recibimos el pago. Acá está ${entradas}, cada una con su QR:</p>
-<p><a href="${link}">${link}</a></p>
-<p>Guardá este mail: el link es tu entrada.</p>`,
+      subject: tickets.length > 0 ? `Tus entradas — ${tickets.length === 1 ? '1 QR' : `${tickets.length} QR`}` : 'Tus entradas del festival',
+      html: tickets.length > 0 ? htmlMailConQr(orden.nombre, tickets, link) : htmlMailConLink(orden, link),
+      attachments: tickets.map((t, i) => ({
+        content: qrs[i].toString('base64'),
+        filename: `entrada-${i + 1}.png`,
+        contentType: 'image/png',
+        contentId: `qr-${i}`,
+      })),
     });
+    if (error) throw new Error(error.message);
   } catch (e) {
     await supabase.from('festival_ordenes').update({ mail_enviado: false }).eq('id', orden.id);
     console.error(`No se pudo mandar el mail de la orden ${orden.id}:`, e);
   }
+}
+
+function htmlMailConLink(orden: Pick<OrdenFestival, 'nombre' | 'cantidad_entradas'>, link: string) {
+  const entradas = orden.cantidad_entradas === 1 ? 'tu entrada' : `tus ${orden.cantidad_entradas} entradas`;
+  return `<p>Hola ${escapar(orden.nombre)},</p>
+<p>Recibimos el pago. Acá está ${entradas}, cada una con su QR:</p>
+<p><a href="${link}">${link}</a></p>
+<p>Guardá este mail: el link es tu entrada.</p>`;
+}
+
+/** Una pieza sola, en tablas e inline como piden los clientes de mail. */
+function htmlMailConQr(nombre: string, tickets: TicketFestival[], link: string) {
+  const fondo = '#1C1410';
+  const texto = '#FFFCDC';
+  const filas = tickets
+    .map(
+      (t, i) => `<tr><td style="padding:0 0 28px" align="center">
+  <img src="cid:qr-${i}" width="220" height="220" alt="QR de la entrada ${i + 1}" style="display:block;border:0;background:#fff">
+  <p style="margin:12px 0 0;font:700 15px Helvetica,Arial,sans-serif;color:${texto}">${escapar(nombreTicket(t))}</p>
+  <p style="margin:4px 0 0;font:12px 'Courier New',monospace;letter-spacing:2px;color:${texto};opacity:.6">${i + 1} de ${tickets.length} · ${codigoVisible(t)}</p>
+</td></tr>`
+    )
+    .join('');
+  return `<!doctype html><html><body style="margin:0;background:${fondo}">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${fondo}"><tr><td align="center" style="padding:40px 16px">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px">
+<tr><td style="padding:0 0 8px;font:700 32px Helvetica,Arial,sans-serif;letter-spacing:4px;color:${texto}" align="center">BLUR</td></tr>
+<tr><td style="padding:0 0 32px;font:15px/1.5 Helvetica,Arial,sans-serif;color:${texto}" align="center">
+  Hola ${escapar(nombre)}, recibimos el pago.<br>Cada QR es una entrada: mostralo en la puerta desde el celular.
+</td></tr>
+${filas}
+<tr><td style="padding:8px 0 0;font:13px/1.5 Helvetica,Arial,sans-serif;color:${texto};opacity:.7" align="center">
+  También están en <a href="${link}" style="color:${texto}">tu compra</a>.
+</td></tr>
+</table></td></tr></table></body></html>`;
 }
 
 const escapar = (s: string) =>

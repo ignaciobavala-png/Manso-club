@@ -256,6 +256,25 @@ Tron, Polygon, Base y USDC).
 - Una orden vence a los 60 min de elegir red, pero un pago exacto que llegue
   dentro de las 24 h igual la acredita.
 
+**Entradas contra Manso Gestión** (`lib/gestion-entradas.ts`,
+`supabase/migration_festival_gestion.sql`). La puerta usa el lector de
+Gestión, que solo acepta `manso-ticket|<token>` de su `ticket_registrations`.
+Por eso, con las tres variables `GESTION_*` / `FESTIVAL_GESTION_EVENT_ID`, el
+evento, los tipos y el stock salen de Gestión (contrato en
+`manso-gestion/docs/WEB-API-ENTRADAS.md`) y `festival_entradas` deja de usarse:
+el panel muestra los tipos de Gestión sin editarlos.
+
+- Al armar la orden, `web_reservar` con `order_ref` = id de la orden; los
+  tokens quedan en `festival_ordenes.gestion_tickets`. MP y cripto reservan
+  60 min; la transferencia no vence hasta que Ana la confirme o la
+  **descarte** en Ventas (`web_liberar`). Si no entra, la orden se borra.
+- Al cobrar, `festival_emitir_orden` crea los tickets con esos tokens
+  (`en_gestion`) y después `web_confirmar`. Si Gestión no responde, la orden
+  queda con `gestion_confirmada = false` y la reintenta el cron de conciliar.
+- El mail lleva los QR adentro como adjuntos `cid:`.
+- Una orden sin `gestion_event_id` es de antes de conectarlo: QR con el código
+  pelado, que el lector no reconoce. Esas se cargaron a mano en Gestión.
+
 ### Precios de la tienda
 
 Cada producto guarda su **moneda de referencia** en `productos.moneda`

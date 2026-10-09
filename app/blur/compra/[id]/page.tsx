@@ -3,12 +3,15 @@ import { notFound } from 'next/navigation';
 import type { RedCripto } from '@/lib/cripto-redes';
 import {
   adminFestival,
+  codigoVisible,
   confirmarPagoMP,
+  contenidoQr,
   estadoPublico,
   leerOrden,
+  leerTickets,
   linkPagoMP,
+  nombreTicket,
   type OrdenFestival,
-  type TicketFestival,
 } from '@/lib/festival-compra';
 import { datosParaTransferencia, getBankConfig } from '@/lib/getBankConfig';
 import { createSupabaseAnon } from '@/lib/supabase';
@@ -78,14 +81,17 @@ export default async function CompraFestival({
     );
   }
 
-  const [{ data: filas }, { data: pago }] = await Promise.all([
-    supabase.from('festival_tickets').select('id, entrada_nombre, codigo, usado').eq('orden_id', id).order('created_at'),
+  const [filas, { data: pago }] = await Promise.all([
+    leerTickets(supabase, id),
     supabase.from('festival_cripto_pagos').select('red, token, monto, tx_hash').eq('orden_id', id).maybeSingle(),
   ]);
   const tickets = await Promise.all(
-    ((filas as TicketFestival[] | null) ?? []).map(async t => ({
-      ...t,
-      qr: await qrDeEntrada(t.codigo),
+    filas.map(async t => ({
+      id: t.id,
+      entrada_nombre: nombreTicket(t),
+      codigo: codigoVisible(t),
+      usado: t.usado,
+      qr: await qrDeEntrada(contenidoQr(t)),
     }))
   );
 

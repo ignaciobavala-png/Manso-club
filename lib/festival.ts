@@ -9,6 +9,7 @@ import {
   FestivalFaq,
   FestivalSpot,
 } from '@/lib/types/festival';
+import { comoEntrada, tiposGestion, ventaEnGestion } from '@/lib/gestion-entradas';
 
 /**
  * Lecturas de /blur. Todas con el cliente con cookies y no el anónimo: el
@@ -50,7 +51,20 @@ export const leerLineup = cache(async (): Promise<EscenarioConArtistas[]> => {
     .filter(e => e.artistas.length > 0);
 });
 
+/**
+ * La tabla de venta. Conectada a Manso Gestión, los tipos, precios y lo que
+ * queda salen de allá (ver `lib/gestion-entradas`); si Gestión no responde,
+ * la tabla queda vacía ("se anuncian pronto") antes que vender a ciegas.
+ */
 export const leerEntradas = cache(async (): Promise<FestivalEntrada[]> => {
+  if (ventaEnGestion()) {
+    try {
+      return (await tiposGestion()).map(comoEntrada);
+    } catch (e) {
+      console.error('No se pudieron leer los tipos de entrada de Gestión:', e);
+      return [];
+    }
+  }
   const supabase = await createSupabaseServer();
   const { data } = await supabase.from('festival_entradas').select('*').eq('activo', true).order('orden');
   return ((data as FestivalEntrada[] | null) ?? []).map(e => ({ ...e, precio: Number(e.precio) }));

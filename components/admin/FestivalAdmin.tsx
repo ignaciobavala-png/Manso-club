@@ -26,6 +26,7 @@ import { formatArs } from '@/lib/precios';
 import { CompactImageUploader } from './CompactImageUploader';
 import { FestivalLineupAdmin } from './FestivalLineupAdmin';
 import { FestivalVentasAdmin } from './FestivalVentasAdmin';
+import { FestivalEntradasGestion } from './FestivalEntradasGestion';
 import { FestivalSpotsAdmin } from './FestivalSpotsAdmin';
 import { GaleriaFotosAdmin } from './GaleriaFotosAdmin';
 import {
@@ -601,149 +602,151 @@ export function FestivalAdmin() {
       </section>
 
       {/* ── Entradas ────────────────────────────────────────────────── */}
-      <section className="space-y-4">
-        <div>
-          <h3 className={TITULO}>Entradas</h3>
-          <p className={AYUDA}>
-            Cada una es una fila de la tabla de venta, en este orden. Solo las que están{' '}
-            <em>en venta</em> dejan elegir cantidad; el resto muestra su estado en lugar del
-            selector. Para un pack, poné el precio del pack entero y cuántas entradas trae.
-          </p>
-        </div>
-
-        {entradas.length === 0 && <p className="text-xs text-manso-cream/40">Sin entradas todavía.</p>}
-
-        {entradas.map((entrada, i) => (
-          <div key={entrada.id} className={CARD}>
-            <div className="flex items-center justify-between gap-2">
-              <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40 truncate">
-                {entrada.nombre || `Entrada ${i + 1}`}
-                {entrada.precio > 0 && ` · ${formatArs(entrada.precio)}`}
-              </span>
-              <div className="flex items-center gap-1 shrink-0">
-                <button type="button" onClick={() => mover('festival_entradas', entradas, i, -1)} disabled={i === 0} className={BOTON_ICONO} title="Subir">
-                  <ArrowUp size={13} />
-                </button>
-                <button type="button" onClick={() => mover('festival_entradas', entradas, i, 1)} disabled={i === entradas.length - 1} className={BOTON_ICONO} title="Bajar">
-                  <ArrowDown size={13} />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    editarEntrada(entrada.id, { activo: !entrada.activo });
-                    guardarFila('festival_entradas', entrada.id, { activo: !entrada.activo });
-                  }}
-                  className={BOTON_ICONO}
-                  title={entrada.activo ? 'Ocultar' : 'Mostrar'}
-                >
-                  {entrada.activo ? <Eye size={13} /> : <EyeOff size={13} />}
-                </button>
-                <button type="button" onClick={() => borrarFila('festival_entradas', entrada.id, 'la entrada')} className={`${BOTON_ICONO} hover:text-manso-terra`} title="Borrar">
-                  <Trash2 size={13} />
-                </button>
-              </div>
-            </div>
-
-            {!entrada.activo && (
-              <p className="text-[10px] font-black uppercase tracking-widest text-manso-cream/30">
-                Oculta — no aparece en la tabla
-              </p>
-            )}
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="sm:col-span-2">
-                <label className={LABEL}>Nombre</label>
-                <input
-                  type="text"
-                  value={entrada.nombre}
-                  onChange={e => editarEntrada(entrada.id, { nombre: e.target.value })}
-                  placeholder="Ej: Entrada general - Etapa 1"
-                  className={INPUT}
-                />
-              </div>
-              <div>
-                <label className={LABEL}>Precio (ARS)</label>
-                <input
-                  type="number"
-                  min={0}
-                  step={500}
-                  value={entrada.precio}
-                  onChange={e => editarEntrada(entrada.id, { precio: Number(e.target.value) || 0 })}
-                  className={INPUT}
-                />
-              </div>
-              <div>
-                <label className={LABEL}>Estado</label>
-                <select
-                  value={entrada.estado}
-                  onChange={e => editarEntrada(entrada.id, { estado: e.target.value as EstadoEntrada })}
-                  className={`${INPUT} [color-scheme:dark]`}
-                >
-                  {ESTADOS_ENTRADA.map(e => (
-                    <option key={e.valor} value={e.valor}>
-                      {e.etiqueta}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className={LABEL}>Entradas que trae</label>
-                <input
-                  type="number"
-                  min={1}
-                  value={entrada.entradas_por_unidad}
-                  onChange={e => editarEntrada(entrada.id, { entradas_por_unidad: Math.max(1, Number(e.target.value) || 1) })}
-                  className={INPUT}
-                />
-              </div>
-              <div>
-                <label className={LABEL}>Máximo por compra</label>
-                <input
-                  type="number"
-                  min={1}
-                  value={entrada.max_por_compra}
-                  onChange={e => editarEntrada(entrada.id, { max_por_compra: Math.max(1, Number(e.target.value) || 1) })}
-                  className={INPUT}
-                />
-              </div>
-              <div className="sm:col-span-2">
-                <label className={LABEL}>Descripción (opcional)</label>
-                <input
-                  type="text"
-                  value={entrada.descripcion ?? ''}
-                  onChange={e => editarEntrada(entrada.id, { descripcion: e.target.value })}
-                  placeholder="Una línea chica debajo del nombre."
-                  className={INPUT}
-                />
-              </div>
-            </div>
-
-            <button
-              type="button"
-              onClick={() =>
-                guardarFila('festival_entradas', entrada.id, {
-                  nombre: entrada.nombre,
-                  descripcion: entrada.descripcion || null,
-                  precio: entrada.precio,
-                  estado: entrada.estado,
-                  entradas_por_unidad: entrada.entradas_por_unidad,
-                  max_por_compra: entrada.max_por_compra,
-                })
-              }
-              disabled={guardando === entrada.id}
-              className={BOTON_GUARDAR}
-            >
-              {iconoGuardar(entrada.id)}
-              Guardar
-            </button>
+      <FestivalEntradasGestion>
+        <section className="space-y-4">
+          <div>
+            <h3 className={TITULO}>Entradas</h3>
+            <p className={AYUDA}>
+              Cada una es una fila de la tabla de venta, en este orden. Solo las que están{' '}
+              <em>en venta</em> dejan elegir cantidad; el resto muestra su estado en lugar del
+              selector. Para un pack, poné el precio del pack entero y cuántas entradas trae.
+            </p>
           </div>
-        ))}
 
-        <button type="button" onClick={agregarEntrada} className={BOTON_AGREGAR}>
-          <Plus size={12} />
-          Agregar entrada
-        </button>
-      </section>
+          {entradas.length === 0 && <p className="text-xs text-manso-cream/40">Sin entradas todavía.</p>}
+
+          {entradas.map((entrada, i) => (
+            <div key={entrada.id} className={CARD}>
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40 truncate">
+                  {entrada.nombre || `Entrada ${i + 1}`}
+                  {entrada.precio > 0 && ` · ${formatArs(entrada.precio)}`}
+                </span>
+                <div className="flex items-center gap-1 shrink-0">
+                  <button type="button" onClick={() => mover('festival_entradas', entradas, i, -1)} disabled={i === 0} className={BOTON_ICONO} title="Subir">
+                    <ArrowUp size={13} />
+                  </button>
+                  <button type="button" onClick={() => mover('festival_entradas', entradas, i, 1)} disabled={i === entradas.length - 1} className={BOTON_ICONO} title="Bajar">
+                    <ArrowDown size={13} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      editarEntrada(entrada.id, { activo: !entrada.activo });
+                      guardarFila('festival_entradas', entrada.id, { activo: !entrada.activo });
+                    }}
+                    className={BOTON_ICONO}
+                    title={entrada.activo ? 'Ocultar' : 'Mostrar'}
+                  >
+                    {entrada.activo ? <Eye size={13} /> : <EyeOff size={13} />}
+                  </button>
+                  <button type="button" onClick={() => borrarFila('festival_entradas', entrada.id, 'la entrada')} className={`${BOTON_ICONO} hover:text-manso-terra`} title="Borrar">
+                    <Trash2 size={13} />
+                  </button>
+                </div>
+              </div>
+
+              {!entrada.activo && (
+                <p className="text-[10px] font-black uppercase tracking-widest text-manso-cream/30">
+                  Oculta — no aparece en la tabla
+                </p>
+              )}
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="sm:col-span-2">
+                  <label className={LABEL}>Nombre</label>
+                  <input
+                    type="text"
+                    value={entrada.nombre}
+                    onChange={e => editarEntrada(entrada.id, { nombre: e.target.value })}
+                    placeholder="Ej: Entrada general - Etapa 1"
+                    className={INPUT}
+                  />
+                </div>
+                <div>
+                  <label className={LABEL}>Precio (ARS)</label>
+                  <input
+                    type="number"
+                    min={0}
+                    step={500}
+                    value={entrada.precio}
+                    onChange={e => editarEntrada(entrada.id, { precio: Number(e.target.value) || 0 })}
+                    className={INPUT}
+                  />
+                </div>
+                <div>
+                  <label className={LABEL}>Estado</label>
+                  <select
+                    value={entrada.estado}
+                    onChange={e => editarEntrada(entrada.id, { estado: e.target.value as EstadoEntrada })}
+                    className={`${INPUT} [color-scheme:dark]`}
+                  >
+                    {ESTADOS_ENTRADA.map(e => (
+                      <option key={e.valor} value={e.valor}>
+                        {e.etiqueta}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className={LABEL}>Entradas que trae</label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={entrada.entradas_por_unidad}
+                    onChange={e => editarEntrada(entrada.id, { entradas_por_unidad: Math.max(1, Number(e.target.value) || 1) })}
+                    className={INPUT}
+                  />
+                </div>
+                <div>
+                  <label className={LABEL}>Máximo por compra</label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={entrada.max_por_compra}
+                    onChange={e => editarEntrada(entrada.id, { max_por_compra: Math.max(1, Number(e.target.value) || 1) })}
+                    className={INPUT}
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <label className={LABEL}>Descripción (opcional)</label>
+                  <input
+                    type="text"
+                    value={entrada.descripcion ?? ''}
+                    onChange={e => editarEntrada(entrada.id, { descripcion: e.target.value })}
+                    placeholder="Una línea chica debajo del nombre."
+                    className={INPUT}
+                  />
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() =>
+                  guardarFila('festival_entradas', entrada.id, {
+                    nombre: entrada.nombre,
+                    descripcion: entrada.descripcion || null,
+                    precio: entrada.precio,
+                    estado: entrada.estado,
+                    entradas_por_unidad: entrada.entradas_por_unidad,
+                    max_por_compra: entrada.max_por_compra,
+                  })
+                }
+                disabled={guardando === entrada.id}
+                className={BOTON_GUARDAR}
+              >
+                {iconoGuardar(entrada.id)}
+                Guardar
+              </button>
+            </div>
+          ))}
+
+          <button type="button" onClick={agregarEntrada} className={BOTON_AGREGAR}>
+            <Plus size={12} />
+            Agregar entrada
+          </button>
+        </section>
+      </FestivalEntradasGestion>
 
       <FestivalSpotsAdmin />
 

@@ -54,6 +54,19 @@ SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 NEXT_PUBLIC_SITE_URL=https://mansoclub.com.ar
 ```
 
+## 🎟️ Festival — entradas en Manso Gestión
+
+La venta del festival reserva y confirma contra Manso Gestión (otro proyecto
+de Supabase), que tiene el stock y el lector de QR de la puerta. Hacen falta
+las tres; con alguna vacía la web vende con `festival_entradas` y códigos
+propios, que el lector de Gestión **no** reconoce.
+
+```bash
+GESTION_SUPABASE_URL=https://<ref>.supabase.co   # el proyecto de Manso Gestión
+GESTION_SERVICE_ROLE_KEY=...                      # service role de Gestión: solo servidor
+FESTIVAL_GESTION_EVENT_ID=<uuid>                  # el evento BLUR en Gestión
+```
+
 ## 🪙 Festival — cobro en cripto (directo a la wallet)
 
 Solo direcciones **públicas**: la frase semilla de la wallet no va en ningún
