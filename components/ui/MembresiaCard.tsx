@@ -38,19 +38,17 @@ export const MembresiaCard = ({ membresia, currency, rate, posicion }: Membresia
   }, [membresia.id, cultural]);
 
   // La cultural va en color pleno y sin precio; el resto en crema. Al pasar
-  // el mouse por SELECCIONAR, la card se llena con su color de acento y queda
-  // igual que la cultural (texto crema, botón crema): el hover se dispara
-  // desde el botón y no desde toda la card porque el resto de la card lleva al
-  // detalle, no al formulario.
+  // el mouse por cualquier parte de la card (Ana lo pidió así, no solo por
+  // SELECCIONAR), se llena con su color de hover y el texto pasa a crema.
   const cText = cultural
     ? 'text-manso-cream'
-    : 'text-manso-black group-has-[[data-seleccionar]:hover]/card:text-manso-cream';
+    : 'text-manso-black group-hover/card:text-manso-cream';
   const cMuted = cultural
     ? 'text-manso-cream/70'
-    : 'text-manso-black/55 group-has-[[data-seleccionar]:hover]/card:text-manso-cream/70';
+    : 'text-manso-black/55 group-hover/card:text-manso-cream/70';
   const cBorde = cultural
     ? 'border-transparent'
-    : 'border-manso-black/20 has-[[data-seleccionar]:hover]:border-transparent';
+    : 'border-manso-black/20 hover:border-transparent';
   const cFondo = cultural
     ? fondoAcento(membresia.color_acento)
     : `bg-manso-cream ${
@@ -106,7 +104,7 @@ export const MembresiaCard = ({ membresia, currency, rate, posicion }: Membresia
         <div className="flex-1 flex flex-col min-w-0 p-2.5 pl-0 sm:p-6 sm:pl-0">
           {/* El slot va siempre, con o sin badge: si no, el título de la card
               destacada baja y queda desalineado del de las vecinas. */}
-          <span className="h-3 sm:h-4 text-[7px] sm:text-[9px] font-black uppercase tracking-[0.15em] sm:tracking-[0.3em] text-manso-terra group-has-[[data-seleccionar]:hover]/card:text-manso-cream transition-colors duration-300">
+          <span className="h-3 sm:h-4 text-[7px] sm:text-[9px] font-black uppercase tracking-[0.15em] sm:tracking-[0.3em] text-manso-terra group-hover/card:text-manso-cream transition-colors duration-300">
             {membresia.destacado ? 'Más popular' : ''}
           </span>
 

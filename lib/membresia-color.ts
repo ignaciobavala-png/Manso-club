@@ -21,15 +21,14 @@ export const fondoAcento = (color: ColorAcento | null) =>
   FONDOS[color ?? ACENTO_POR_DEFECTO] ?? FONDOS[ACENTO_POR_DEFECTO];
 
 /**
- * Mismo fondo, pero solo mientras el mouse está sobre el botón SELECCIONAR de
- * la card (marcado con `data-seleccionar`). Va en la propia card con `has-`,
+ * Mismo fondo, pero solo mientras el mouse está sobre la card. Es CSS puro,
  * así que no hace falta estado de React.
  */
 const FONDOS_HOVER_BOTON: Record<ColorAcento, string> = {
-  terra: 'has-[[data-seleccionar]:hover]:bg-manso-terra',
-  olive: 'has-[[data-seleccionar]:hover]:bg-manso-olive',
-  blue: 'has-[[data-seleccionar]:hover]:bg-manso-blue',
-  brown: 'has-[[data-seleccionar]:hover]:bg-manso-brown',
+  terra: 'hover:bg-manso-terra',
+  olive: 'hover:bg-manso-olive',
+  blue: 'hover:bg-manso-blue',
+  brown: 'hover:bg-manso-brown',
 };
 
 export const fondoAcentoHoverBoton = (color: ColorAcento | null) =>
@@ -42,9 +41,9 @@ export const fondoAcentoHoverBoton = (color: ColorAcento | null) =>
  * acento. Escritas enteras por lo mismo que arriba.
  */
 const HOVER_POR_POSICION = [
-  'has-[[data-seleccionar]:hover]:bg-[#010044]',
-  'has-[[data-seleccionar]:hover]:bg-[#3d2314]',
-  'has-[[data-seleccionar]:hover]:bg-[#dc2865]',
+  'hover:bg-[#010044]',
+  'hover:bg-[#3d2314]',
+  'hover:bg-[#dc2865]',
 ];
 
 export const fondoHoverPorPosicion = (posicion: number) =>
