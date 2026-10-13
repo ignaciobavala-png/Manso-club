@@ -34,3 +34,18 @@ const FONDOS_HOVER_BOTON: Record<ColorAcento, string> = {
 
 export const fondoAcentoHoverBoton = (color: ColorAcento | null) =>
   FONDOS_HOVER_BOTON[color ?? ACENTO_POR_DEFECTO] ?? FONDOS_HOVER_BOTON[ACENTO_POR_DEFECTO];
+
+/**
+ * Colores de hover que pidió Ana, por posición de la card dentro del grupo
+ * (azul marino, marrón y rosa; tomados con cuentagotas de su referencia). Pisan
+ * al `color_acento` solo en el hover de la card: el detalle sigue usando el
+ * acento. Escritas enteras por lo mismo que arriba.
+ */
+const HOVER_POR_POSICION = [
+  'has-[[data-seleccionar]:hover]:bg-[#010044]',
+  'has-[[data-seleccionar]:hover]:bg-[#3d2314]',
+  'has-[[data-seleccionar]:hover]:bg-[#dc2865]',
+];
+
+export const fondoHoverPorPosicion = (posicion: number) =>
+  HOVER_POR_POSICION[posicion % HOVER_POR_POSICION.length];

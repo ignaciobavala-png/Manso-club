@@ -93,12 +93,13 @@ export const MembresiasHome = () => {
                   </div>
 
                   <div className={`mx-auto grid gap-3 sm:gap-5 items-stretch ${gridMembresias(grupos[categoria].length)}`}>
-                    {grupos[categoria].map((membresia) => (
+                    {grupos[categoria].map((membresia, i) => (
                       <MembresiaCard
                         key={membresia.id}
                         membresia={membresia}
                         currency={currency}
                         rate={rate}
+                        posicion={i}
                       />
                     ))}
                   </div>

@@ -3,13 +3,15 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Membresia } from '@/lib/types/membresia';
-import { fondoAcento, fondoAcentoHoverBoton } from '@/lib/membresia-color';
+import { fondoAcento, fondoAcentoHoverBoton, fondoHoverPorPosicion } from '@/lib/membresia-color';
 import { CoworkModal, PARAM_FORM } from './CoworkModal';
 
 interface MembresiaCardProps {
   membresia: Membresia;
   currency: string;
   rate: number | null;
+  /** Lugar de la card entre los planes: decide el color del hover. */
+  posicion?: number;
 }
 
 /**
@@ -23,7 +25,7 @@ interface MembresiaCardProps {
  * "descripción de la tarjetita" y los beneficios viven en el bloque INCLUYE de
  * la página de detalle.
  */
-export const MembresiaCard = ({ membresia, currency, rate }: MembresiaCardProps) => {
+export const MembresiaCard = ({ membresia, currency, rate, posicion }: MembresiaCardProps) => {
   const [formAbierto, setFormAbierto] = useState(false);
   const cultural = membresia.es_cultural;
 
@@ -51,7 +53,11 @@ export const MembresiaCard = ({ membresia, currency, rate }: MembresiaCardProps)
     : 'border-manso-black/20 has-[[data-seleccionar]:hover]:border-transparent';
   const cFondo = cultural
     ? fondoAcento(membresia.color_acento)
-    : `bg-manso-cream ${fondoAcentoHoverBoton(membresia.color_acento)}`;
+    : `bg-manso-cream ${
+        posicion === undefined
+          ? fondoAcentoHoverBoton(membresia.color_acento)
+          : fondoHoverPorPosicion(posicion)
+      }`;
   const cBoton = cultural
     ? 'bg-manso-cream text-manso-black'
     : 'bg-manso-black text-manso-cream hover:bg-manso-cream hover:text-manso-black';
@@ -150,13 +156,13 @@ export const MembresiaCard = ({ membresia, currency, rate }: MembresiaCardProps)
 
             {/* SELECCIONAR abre el formulario de inscripción, no el checkout: el
                 alta al cowork pasa primero por una solicitud que Ana aprueba.
-                Redondo como el resto de los botones del sitio; la cultural
-                queda cuadrada a propósito. La cultural no se solicita: su botón es parte del link que
+                Redondo como el resto de los botones del sitio (la cultural también,
+                pero en blanco para diferenciarse). La cultural no se solicita: su botón es parte del link que
                 envuelve la card, así que va como <span> —un <a> dentro de otro
                 <a> no es HTML válido— y el click lo toma la capa de abajo. */}
             {cultural ? (
               <span
-                className={`flex items-center justify-center w-full px-[7px] sm:px-[14px] min-h-[40px] text-[7px] sm:text-[9px] font-black uppercase tracking-[0.1em] sm:tracking-[0.25em] transition-opacity duration-200 group-hover:opacity-80 ${cBoton}`}
+                className={`flex items-center justify-center w-full px-[7px] sm:px-[14px] min-h-[40px] rounded-full text-[7px] sm:text-[9px] font-black uppercase tracking-[0.1em] sm:tracking-[0.25em] transition-opacity duration-200 group-hover:opacity-80 ${cBoton}`}
               >
                 Conocer más
               </span>
