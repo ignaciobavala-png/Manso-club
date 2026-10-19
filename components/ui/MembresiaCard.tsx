@@ -147,7 +147,7 @@ export const MembresiaCard = ({ membresia, currency, rate, posicion }: Membresia
 
           <div className="mt-auto pt-4 sm:pt-8">
             {descripcion && (
-              <p className={`text-[10px] sm:text-xs leading-relaxed whitespace-pre-line mb-2.5 sm:mb-4 transition-colors duration-300 ${cMuted}`}>
+              <p className={`text-[10px] sm:text-xs leading-relaxed whitespace-pre-line mb-4 sm:mb-6 transition-colors duration-300 ${cMuted}`}>
                 {descripcion}
               </p>
             )}
@@ -160,7 +160,7 @@ export const MembresiaCard = ({ membresia, currency, rate, posicion }: Membresia
                 <a> no es HTML válido— y el click lo toma la capa de abajo. */}
             {cultural ? (
               <span
-                className={`flex items-center justify-center w-full px-[7px] sm:px-[14px] min-h-[40px] rounded-full text-[7px] sm:text-[9px] font-black uppercase tracking-[0.1em] sm:tracking-[0.25em] transition-opacity duration-200 group-hover:opacity-80 ${cBoton}`}
+                className={`flex items-center justify-center w-full px-[7px] sm:px-[14px] min-h-[32px] sm:min-h-[36px] rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-[0.1em] sm:tracking-[0.25em] transition-opacity duration-200 group-hover:opacity-80 ${cBoton}`}
               >
                 Conocer más
               </span>
@@ -169,7 +169,7 @@ export const MembresiaCard = ({ membresia, currency, rate, posicion }: Membresia
                 type="button"
                 data-seleccionar
                 onClick={() => setFormAbierto(true)}
-                className={`pointer-events-auto flex items-center justify-center w-full px-[7px] sm:px-[14px] min-h-[40px] rounded-full text-[7px] sm:text-[9px] font-black uppercase tracking-[0.1em] sm:tracking-[0.25em] transition-colors duration-300 active:scale-[0.98] ${cBoton}`}
+                className={`pointer-events-auto flex items-center justify-center w-full px-[7px] sm:px-[14px] min-h-[32px] sm:min-h-[36px] rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-[0.1em] sm:tracking-[0.25em] transition-colors duration-300 active:scale-[0.98] ${cBoton}`}
               >
                 Seleccionar
               </button>
