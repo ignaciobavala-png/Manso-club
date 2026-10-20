@@ -22,8 +22,10 @@ export const MembresiaDetalleCTA = ({ membresiaId, membresiaNombre, precio, peri
   const [formAbierto, setFormAbierto] = useState(false);
   const { currency, rate } = useCurrency();
 
+  // Sin cotización el número es el de dólares: la etiqueta no puede decir ARS.
+  const enPesos = currency === 'ARS' && !!rate;
   const monto =
-    currency === 'ARS' && rate
+    enPesos && rate
       ? Math.round(precio * rate).toLocaleString('es-AR')
       : precio.toLocaleString('es-AR');
 
@@ -32,7 +34,7 @@ export const MembresiaDetalleCTA = ({ membresiaId, membresiaNombre, precio, peri
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <CurrencyToggle />
         <span className="text-lg font-bold text-manso-cream">
-          {currency} {monto}{' '}
+          {enPesos ? 'ARS' : 'USD'} {monto}{' '}
           <span className="text-xs font-normal text-manso-cream/70">/ {periodo}</span>
         </span>
       </div>

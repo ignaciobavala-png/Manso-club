@@ -60,8 +60,10 @@ export const MembresiaCard = ({ membresia, currency, rate, posicion }: Membresia
     ? 'bg-manso-cream text-manso-black'
     : 'bg-manso-black text-manso-cream hover:bg-manso-cream hover:text-manso-black';
 
+  // Sin cotización el número es el de dólares: la etiqueta no puede decir ARS.
+  const enPesos = currency === 'ARS' && !!rate;
   const precio =
-    currency === 'ARS' && rate
+    enPesos && rate
       ? Math.round(membresia.precio * rate).toLocaleString('es-AR')
       : membresia.precio.toLocaleString('es-AR');
 
@@ -96,7 +98,7 @@ export const MembresiaCard = ({ membresia, currency, rate, posicion }: Membresia
             <span
               className={`[writing-mode:vertical-rl] rotate-180 whitespace-nowrap text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.1em] sm:tracking-[0.2em] transition-colors duration-300 ${cMuted}`}
             >
-              {currency} {precio} / {membresia.periodo}
+              {enPesos ? 'ARS' : 'USD'} {precio} / {membresia.periodo}
             </span>
           )}
         </div>

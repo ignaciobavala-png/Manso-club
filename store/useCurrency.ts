@@ -9,7 +9,7 @@ interface CurrencyStore {
 }
 
 export const useCurrency = create<CurrencyStore>((set, get) => ({
-  currency: 'USD',
+  currency: 'ARS',
   rate: null,
   fetched: false,
 
