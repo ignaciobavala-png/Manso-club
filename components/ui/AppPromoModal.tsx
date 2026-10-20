@@ -10,6 +10,10 @@ const APP_URL = 'https://app.mansoclub.com.ar';
 /** Milisegundos desde que se abre la página hasta que aparece el popup. */
 const DEMORA_MS = 4000;
 
+/** Capturas de la web app que rotan dentro del celular. */
+const PANTALLAS = ['/app-promo/home.webp', '/app-promo/eventos.webp', '/app-promo/carta.webp'];
+const ROTA_MS = 3000;
+
 /**
  * Quien lo cierra no lo vuelve a ver por una semana. Guardamos el momento del
  * cierre y no un booleano para poder mover la ventana sin invalidar la clave.
@@ -30,12 +34,19 @@ function fueCerradoRecientemente() {
 
 export function AppPromoModal() {
   const [abierto, setAbierto] = useState(false);
+  const [pantalla, setPantalla] = useState(0);
 
   useEffect(() => {
     if (fueCerradoRecientemente()) return;
     const timer = setTimeout(() => setAbierto(true), DEMORA_MS);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (!abierto) return;
+    const id = setInterval(() => setPantalla((p) => (p + 1) % PANTALLAS.length), ROTA_MS);
+    return () => clearInterval(id);
+  }, [abierto]);
 
   const cerrar = () => {
     setAbierto(false);
@@ -66,7 +77,7 @@ export function AppPromoModal() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ duration: 0.25 }}
-          className="fixed inset-0 z-[110] flex items-center justify-center p-4 sm:p-8"
+          className="fixed inset-0 z-[110] flex items-end sm:items-center justify-center p-4 sm:p-8"
         >
           <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={cerrar} aria-hidden="true" />
 
@@ -74,49 +85,73 @@ export function AppPromoModal() {
             role="dialog"
             aria-modal="true"
             aria-labelledby="app-promo-titulo"
-            initial={{ opacity: 0, y: 24, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 16, scale: 0.98 }}
-            transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="relative w-full sm:max-w-md bg-manso-black border border-manso-cream/15 rounded-3xl p-7 sm:p-9 text-center"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 24 }}
+            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+            className="relative w-full sm:max-w-md bg-manso-black border border-manso-cream/15 rounded-3xl overflow-hidden text-center"
           >
             <button
               onClick={cerrar}
               aria-label="Cerrar"
-              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-manso-cream/40 hover:text-manso-cream hover:bg-manso-cream/10 transition-colors"
+              className="absolute top-4 right-4 z-10 w-8 h-8 flex items-center justify-center rounded-full bg-black/50 backdrop-blur text-manso-cream/80 hover:text-manso-cream transition-colors"
             >
               <X size={16} />
             </button>
 
-            <p className="text-[9px] font-black uppercase tracking-[0.6em] text-manso-terra mb-4">
-              Manso Club
-            </p>
-            <h2
-              id="app-promo-titulo"
-              className="text-3xl sm:text-4xl font-black uppercase italic tracking-tighter leading-none text-manso-cream"
-            >
-              Manso en tu celular
-            </h2>
-            <p className="mt-5 text-manso-cream/55 text-sm font-light leading-relaxed">
-              Agenda, membresía, eventos y comunidad en un solo lugar.
-            </p>
+            {/* Foto del club de fondo y un solo celular con la app en loop. */}
+            <div className="relative h-[300px] sm:h-[320px] overflow-hidden">
+              <img
+                src="/app-promo/fondo.webp"
+                alt=""
+                className="absolute inset-0 w-full h-full object-cover object-[50%_18%]"
+              />
+              <div className="absolute inset-0 bg-gradient-to-b from-transparent from-35% via-black/85 via-90% to-black" />
+              <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(188,41,21,0.35),transparent_60%)]" />
 
-            <a
-              href={APP_URL}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={cerrar}
-              className="mt-8 inline-flex w-full items-center justify-center px-6 py-4 rounded-full bg-manso-cream text-manso-black text-[11px] font-black uppercase tracking-[0.2em] hover:bg-manso-terra hover:text-manso-cream transition-colors"
-            >
-              Abrir web app
-            </a>
+              <div className="absolute left-1/2 top-8 w-[158px] aspect-[9/19.5] -translate-x-1/2 -rotate-[4deg] overflow-hidden rounded-[26px] border-[5px] border-[#161616] bg-black shadow-[0_20px_50px_rgba(0,0,0,0.7)]">
+                {PANTALLAS.map((src, i) => (
+                  <img
+                    key={src}
+                    src={src}
+                    alt=""
+                    className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-700 ${
+                      i === pantalla ? 'opacity-100' : 'opacity-0'
+                    }`}
+                  />
+                ))}
+                <div className="absolute top-1.5 left-1/2 h-3 w-11 -translate-x-1/2 rounded-full bg-black" />
+              </div>
+            </div>
 
-            <button
-              onClick={cerrar}
-              className="mt-4 text-[11px] uppercase tracking-[0.2em] text-manso-cream/35 hover:text-manso-cream/70 transition-colors"
-            >
-              Ahora no
-            </button>
+            <div className="px-7 sm:px-9 pb-7 sm:pb-9 pt-2">
+              <h2
+                id="app-promo-titulo"
+                className="text-3xl sm:text-4xl font-black uppercase italic tracking-tighter leading-none text-manso-cream"
+              >
+                Manso en tu celular
+              </h2>
+              <p className="mt-5 text-manso-cream/55 text-sm font-light leading-relaxed">
+                Agenda, membresía, eventos y comunidad en un solo lugar.
+              </p>
+
+              <a
+                href={APP_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={cerrar}
+                className="mt-8 inline-flex w-full items-center justify-center px-6 py-4 rounded-full bg-manso-cream text-manso-black text-[11px] font-black uppercase tracking-[0.2em] hover:bg-manso-terra hover:text-manso-cream transition-colors"
+              >
+                Abrir web app
+              </a>
+
+              <button
+                onClick={cerrar}
+                className="mt-4 text-[11px] uppercase tracking-[0.2em] text-manso-cream/35 hover:text-manso-cream/70 transition-colors"
+              >
+                Ahora no
+              </button>
+            </div>
           </motion.div>
         </motion.div>
       )}
