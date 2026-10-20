@@ -8,6 +8,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { Users, Lock, CalendarDays } from 'lucide-react';
 import { ShareButton } from '@/components/ShareButton';
+import { WhatsAppShareButton } from '@/components/WhatsAppShareButton';
 
 type Nivel = 'publico' | 'registrado' | 'miembro';
 
@@ -323,6 +324,14 @@ export default function AgendaPage() {
                           className="flex items-center justify-center w-11 h-11 bg-manso-cream/5 border border-manso-cream/10 rounded-full text-manso-cream hover:bg-manso-cream/10 hover:border-manso-cream/20 transition-all"
                           label=""
                         />
+                        {item.slug && (
+                          <WhatsAppShareButton
+                            title={`${item.titulo} | Manso Club`}
+                            path={`/agenda/${item.slug}`}
+                            label=""
+                            className="flex items-center justify-center w-11 h-11 bg-manso-cream/5 border border-manso-cream/10 rounded-full text-manso-cream hover:bg-manso-cream/10 hover:border-manso-cream/20 transition-all"
+                          />
+                        )}
                         <a
                           href={`/agenda/pagar?titulo=${encodeURIComponent(item.titulo)}&precio=${item.precio || 0}&frecuencia=${encodeURIComponent(item.frecuencia || '')}&categoria=${encodeURIComponent(item.categoria || '')}`}
                           className="bg-manso-cream text-manso-black hover:bg-white px-5 py-2.5 rounded-full text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap min-h-[44px] flex items-center"
@@ -383,12 +392,12 @@ export default function AgendaPage() {
             </div>
             <div className="flex gap-[10px] overflow-x-auto snap-x snap-mandatory scrollbar-none -mx-6 md:-mx-12 px-6 md:px-12">
               {eventosFecha.map((evento) => (
+                <div key={evento.id} className="relative flex-shrink-0 w-[220px] sm:w-[260px] lg:w-[300px] aspect-[3/4] snap-start">
                 <a
-                  key={evento.id}
                   href={evento.link_tickets || undefined}
                   target={evento.link_tickets ? '_blank' : undefined}
                   rel={evento.link_tickets ? 'noopener noreferrer' : undefined}
-                  className="group relative flex-shrink-0 w-[220px] sm:w-[260px] lg:w-[300px] aspect-[3/4] snap-start overflow-hidden"
+                  className="group absolute inset-0 overflow-hidden"
                 >
                   <div className="absolute inset-0 bg-manso-blue/30">
                     {evento.imagen_url ? (
@@ -420,6 +429,14 @@ export default function AgendaPage() {
                     )}
                   </div>
                 </a>
+                {/* Va fuera del <a>: un enlace dentro de otro no es HTML válido. */}
+                <WhatsAppShareButton
+                  title={`${evento.titulo} | Manso Club`}
+                  path={`/eventos/${evento.id}`}
+                  label=""
+                  className="absolute bottom-3 left-3 z-20 flex items-center justify-center w-9 h-9 rounded-full bg-black/60 backdrop-blur text-white/90 hover:bg-[#25D366] hover:text-black transition-colors"
+                />
+                </div>
               ))}
             </div>
           </div>

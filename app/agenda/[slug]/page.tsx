@@ -6,6 +6,7 @@ import { ArrowLeft } from 'lucide-react';
 import { TallerCarousel } from '@/components/Home/TallerCarousel';
 import { ContenidoDetalle } from '@/components/Home/ContenidoDetalle';
 import { ShareButton } from '@/components/ShareButton';
+import { WhatsAppShareButton } from '@/components/WhatsAppShareButton';
 import { og, descripcion, LUGAR, ORG_ID } from '@/lib/seo';
 import { SITE_URL } from '@/lib/constants';
 import { JsonLd } from '@/components/SEO/JsonLd';
@@ -92,7 +93,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   }
 
   const desc = descripcion(taller.descripcion) ?? `${taller.titulo} en Manso Club.`;
-  const [foto] = await getTallerFotos(taller.id);
 
   return {
     title: `${taller.titulo} | Manso Club`,
@@ -100,8 +100,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     openGraph: og({
       title: `${taller.titulo} | Manso Club`,
       description: desc,
-      ...(foto && { images: [{ url: foto.url }] }),
+      // La arma ./og: el flyer entero en 1200×630 (WhatsApp recorta lo vertical).
+      images: [{ url: `/agenda/${taller.slug}/og`, width: 1200, height: 630, alt: taller.titulo }],
     }),
+    twitter: { card: 'summary_large_image', title: taller.titulo, description: desc, images: [`/agenda/${taller.slug}/og`] },
   };
 }
 
@@ -260,6 +262,10 @@ export default async function TallerPage({ params }: Props) {
               >
                 Inscribirme
               </a>
+              <WhatsAppShareButton
+                title={`${taller.titulo} | Manso Club`}
+                path={`/agenda/${taller.slug}`}
+              />
               <ShareButton
                 title={`${taller.titulo} | Manso Club`}
                 url={`/agenda/${taller.slug}`}
