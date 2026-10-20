@@ -10,6 +10,8 @@ import { WhatsAppShareButton } from '@/components/WhatsAppShareButton';
 import { og, descripcion, LUGAR, ORG_ID } from '@/lib/seo';
 import { SITE_URL } from '@/lib/constants';
 import { JsonLd } from '@/components/SEO/JsonLd';
+import { AgregarCalendario } from '@/components/AgregarCalendario';
+import { inicioDesdeFechaYHora } from '@/lib/calendario';
 
 export const dynamic = 'force-dynamic';
 
@@ -271,6 +273,22 @@ export default async function TallerPage({ params }: Props) {
                 url={`/agenda/${taller.slug}`}
               />
             </div>
+
+            {/* Sólo si tiene fecha y no pasó: el cowork y lo recurrente quedan afuera. */}
+            {taller.fecha_inicio && taller.fecha_inicio >= hoy && taller.visibilidad === 'publico' && (
+              <div className="flex flex-wrap items-center gap-3 mt-3">
+                <AgregarCalendario
+                  evento={{
+                    titulo: taller.titulo,
+                    descripcion: taller.descripcion,
+                    inicio: inicioDesdeFechaYHora(taller.fecha_inicio, taller.horario),
+                    todoElDia: !taller.horario,
+                    path: `/agenda/${taller.slug}`,
+                  }}
+                  icsPath={`/agenda/${taller.slug}/ics`}
+                />
+              </div>
+            )}
           </div>
 
           {/* Columna derecha: contenido largo, se desplaza con el scroll de la página */}

@@ -8,6 +8,7 @@ import { og, descripcion } from '@/lib/seo';
 import { fechaParaOg } from '@/lib/og-evento';
 import { ShareButton } from '@/components/ShareButton';
 import { WhatsAppShareButton } from '@/components/WhatsAppShareButton';
+import { AgregarCalendario } from '@/components/AgregarCalendario';
 
 export const revalidate = 60;
 
@@ -120,6 +121,15 @@ export default async function EventoPage({ params }: Props) {
             <WhatsAppShareButton title={`${evento.titulo} | Manso Club`} path={ruta} />
             <ShareButton title={`${evento.titulo} | Manso Club`} url={ruta} />
           </div>
+
+          {evento.fecha && new Date(evento.fecha) > new Date() && (
+            <div className="flex flex-wrap items-center gap-3 mt-4">
+              <AgregarCalendario
+                evento={{ titulo: evento.titulo, descripcion: evento.descripcion, inicio: new Date(evento.fecha), path: ruta }}
+                icsPath={`${ruta}/ics`}
+              />
+            </div>
+          )}
         </div>
       </section>
     </main>
