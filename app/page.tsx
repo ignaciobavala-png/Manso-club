@@ -4,7 +4,6 @@ import { AboutUsPreview } from "@/components/Home/AboutUsPreview";
 import { EventosHome } from "@/components/Home/EventosHome";
 import { MembresiasHome } from "@/components/Home/MembresiasHome";
 import { PorQueManso } from "@/components/Home/PorQueManso";
-import { SponsorBelt } from "@/components/Home/SponsorBelt";
 import { RandomGalleryPlaceholders } from "@/components/Home/RandomGalleryPlaceholders";
 import { Newsletter } from "@/components/Home/Newsletter";
 import { AppPromoModal } from "@/components/ui/AppPromoModal";
@@ -49,9 +48,6 @@ export default function Home() {
 
       {/* Newsletter */}
       <Newsletter />
-
-      {/* Cinturón de confianza — sponsors */}
-      <SponsorBelt />
 
       {/* Promo de la app: se abre solo a los 4s de entrar al home */}
       <AppPromoModal />
