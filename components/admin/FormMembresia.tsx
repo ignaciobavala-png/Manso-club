@@ -22,6 +22,7 @@ export function FormMembresia() {
   const [formData, setFormData] = useState<MembresiaForm>({
     nombre: '',
     precio: 0,
+    moneda: 'ARS',
     periodo: 'mes',
     descripcion: '',
     destacado: false,
@@ -44,6 +45,7 @@ export function FormMembresia() {
       setFormData({
         nombre: item.nombre || '',
         precio: item.precio || 0,
+        moneda: item.moneda === 'ARS' ? 'ARS' : 'USD',
         periodo: item.periodo || 'mes',
         descripcion: item.descripcion || '',
         destacado: item.destacado || false,
@@ -71,6 +73,7 @@ export function FormMembresia() {
     setFormData({
       nombre: '',
       precio: 0,
+      moneda: 'ARS',
       periodo: 'mes',
       descripcion: '',
       destacado: false,
@@ -133,6 +136,7 @@ export function FormMembresia() {
     const payload = {
       nombre: formData.nombre,
       precio: parseFloat(String(formData.precio)) || 0,
+      moneda: formData.moneda,
       periodo: formData.periodo,
       descripcion: formData.descripcion,
       destacado: formData.destacado,
@@ -260,21 +264,45 @@ export function FormMembresia() {
       {/* Precio */}
       <div>
         <label className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/60 mb-2 block">
-          Precio
+          Precio de referencia
         </label>
+        <div className="flex gap-2 mb-2">
+          {([
+            { id: 'ARS' as const, label: 'Pesos' },
+            { id: 'USD' as const, label: 'Dólares' },
+          ]).map(op => (
+            <button
+              key={op.id}
+              type="button"
+              onClick={() => setFormData({ ...formData, moneda: op.id })}
+              className={`flex-1 px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${
+                formData.moneda === op.id
+                  ? 'bg-manso-terra text-manso-cream border-manso-terra'
+                  : 'bg-manso-cream/5 text-manso-cream/60 border-manso-cream/10 hover:border-manso-cream/40'
+              }`}
+            >
+              {op.label}
+            </button>
+          ))}
+        </div>
         <div className="relative">
           <DollarSign size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-manso-cream/40" />
           <input
             type="number"
             value={formData.precio}
             onChange={(e) => setFormData({ ...formData, precio: e.target.value })}
-            placeholder="0.00"
+            placeholder={formData.moneda === 'ARS' ? 'PRECIO EN PESOS' : 'PRECIO EN DÓLARES'}
             min="0"
             step="0.01"
             required
             className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 pl-10 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra/50 transition-colors"
           />
         </div>
+        <p className="text-[10px] text-manso-cream/30 mt-2 leading-relaxed">
+          {formData.moneda === 'ARS'
+            ? 'Los pesos quedan fijos y los dólares se recalculan con el blue.'
+            : 'Los dólares quedan fijos y los pesos se recalculan con el blue.'}
+        </p>
       </div>
 
       {/* Periodo */}

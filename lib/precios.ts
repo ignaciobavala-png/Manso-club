@@ -111,3 +111,19 @@ export function totalEn(
   }
   return moneda === 'ARS' ? Math.round(total) : total;
 }
+
+/**
+ * Precio de un plan para mostrar: cantidad y moneda reales. Sin cotización
+ * devuelve el número tal cual se cargó, con su moneda de origen.
+ */
+export function precioParaMostrar(
+  producto: PrecioDeProducto,
+  moneda: Moneda,
+  cotizacion: number | null,
+): { monto: number; moneda: Moneda } {
+  const origen = monedaDe(producto);
+  const monto = convertir(Number(producto.precio), origen, moneda, cotizacion);
+  return monto === null
+    ? { monto: Number(producto.precio), moneda: origen }
+    : { monto, moneda };
+}

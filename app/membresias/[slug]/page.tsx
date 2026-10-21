@@ -78,11 +78,11 @@ export default async function MembresiaDetallePage({ params }: Props) {
             offers: {
               '@type': 'Offer',
               price: membresia.precio,
-              priceCurrency: 'USD',
+              priceCurrency: membresia.moneda === 'ARS' ? 'ARS' : 'USD',
               priceSpecification: {
                 '@type': 'UnitPriceSpecification',
                 price: membresia.precio,
-                priceCurrency: 'USD',
+                priceCurrency: membresia.moneda === 'ARS' ? 'ARS' : 'USD',
                 unitText: membresia.periodo,
               },
             },
@@ -136,6 +136,7 @@ export default async function MembresiaDetallePage({ params }: Props) {
           membresiaId={membresia.id}
           membresiaNombre={membresia.nombre}
           precio={membresia.precio}
+          moneda={membresia.moneda}
           periodo={membresia.periodo}
         />
       </div>

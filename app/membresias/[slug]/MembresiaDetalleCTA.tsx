@@ -3,12 +3,14 @@
 import { useState } from 'react';
 import { useCurrency } from '@/store/useCurrency';
 import { CurrencyToggle } from '@/components/ui/CurrencyToggle';
+import { precioParaMostrar, type Moneda } from '@/lib/precios';
 import { CoworkModal } from '@/components/ui/CoworkModal';
 
 interface Props {
   membresiaId: string;
   membresiaNombre: string;
   precio: number;
+  moneda?: Moneda;
   periodo: string;
 }
 
@@ -18,23 +20,27 @@ interface Props {
  * precio depende del toggle de moneda y el botón abre el formulario — las dos
  * cosas son de cliente, y el detalle en sí se renderiza en el servidor.
  */
-export const MembresiaDetalleCTA = ({ membresiaId, membresiaNombre, precio, periodo }: Props) => {
+export const MembresiaDetalleCTA = ({ membresiaId, membresiaNombre, precio, moneda: monedaPlan, periodo }: Props) => {
   const [formAbierto, setFormAbierto] = useState(false);
   const { currency, rate } = useCurrency();
 
-  // Sin cotización el número es el de dólares: la etiqueta no puede decir ARS.
-  const enPesos = currency === 'ARS' && !!rate;
+  // Sin cotización queda el número y la moneda en que se cargó.
+  const { monto: cantidad, moneda } = precioParaMostrar(
+    { precio, moneda: monedaPlan },
+    currency === 'ARS' ? 'ARS' : 'USD',
+    rate,
+  );
   const monto =
-    enPesos && rate
-      ? Math.round(precio * rate).toLocaleString('es-AR')
-      : precio.toLocaleString('es-AR');
+    moneda === 'ARS'
+      ? Math.round(cantidad).toLocaleString('es-AR')
+      : cantidad.toLocaleString('es-AR', { maximumFractionDigits: 2 });
 
   return (
     <div className="mt-10">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <CurrencyToggle />
         <span className="text-lg font-bold text-manso-cream">
-          {enPesos ? 'ARS' : 'USD'} {monto}{' '}
+          {moneda} {monto}{' '}
           <span className="text-xs font-normal text-manso-cream/70">/ {periodo}</span>
         </span>
       </div>

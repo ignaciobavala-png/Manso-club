@@ -19,7 +19,7 @@ export async function GET() {
   const [{ data: membresias }, { data: agenda }, { data: artistas }] = await Promise.all([
     supabase
       .from('membresias')
-      .select('nombre, slug, precio, periodo, descripcion_corta, descripcion, membresia_beneficios (texto, incluido)')
+      .select('nombre, slug, precio, moneda, periodo, descripcion_corta, descripcion, membresia_beneficios (texto, incluido)')
       .eq('activo', true)
       // Cultural Manso vive en la tabla pero no es un plan: va en "Más".
       .eq('es_cultural', false)
@@ -38,7 +38,7 @@ export async function GET() {
   ]);
 
   const planes = (membresias ?? []).map((m) => {
-    const precio = Number(m.precio) > 0 ? `USD ${m.precio} por ${m.periodo}` : 'sin costo';
+    const precio = Number(m.precio) > 0 ? `${m.moneda === 'ARS' ? 'ARS' : 'USD'} ${m.precio} por ${m.periodo}` : 'sin costo';
     const incluye = (m.membresia_beneficios ?? [])
       .filter((b: { incluido: boolean; texto: string }) => b.incluido && b.texto?.trim())
       .map((b: { texto: string }) => b.texto.trim().replace(/\.+$/, ''))

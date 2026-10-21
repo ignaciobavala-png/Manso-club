@@ -14,6 +14,7 @@ type Beneficio = { texto: string; incluido: boolean };
 type Membresia = {
   nombre: string;
   precio: number;
+  moneda: 'USD' | 'ARS';
   periodo: string;
   vencimiento: string;
   incluye_streaming: boolean;
@@ -265,7 +266,7 @@ export default function MiCuentaTabs({ userId, displayName, email, telefono, ava
                       <p className="text-[9px] font-black uppercase tracking-[0.5em] text-manso-terra mb-1">Plan activo</p>
                       <h2 className="text-2xl font-black uppercase italic tracking-tight text-manso-cream">{membresia.nombre}</h2>
                       <p className="text-manso-cream/40 text-sm mt-1">
-                        USD ${membresia.precio} / {membresia.periodo}
+                        {membresia.moneda} {membresia.precio} / {membresia.periodo}
                       </p>
                     </div>
                     <span className="px-3 py-1 rounded-full bg-green-500/20 border border-green-500/30 text-green-400 text-[9px] font-black uppercase tracking-widest">

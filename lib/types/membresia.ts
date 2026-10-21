@@ -6,6 +6,8 @@ export interface Membresia {
   id: string;
   nombre: string;
   precio: number;
+  /** Moneda en la que se cargó `precio`; ausente = USD (planes viejos). */
+  moneda?: 'USD' | 'ARS';
   periodo: 'mes' | 'año';
   /** Histórico. Sigue siendo el fallback de `descripcion_corta`. */
   descripcion: string;
@@ -38,6 +40,7 @@ export interface MembresiaBeneficio {
 export interface MembresiaForm {
   nombre: string;
   precio: number | string;
+  moneda: 'USD' | 'ARS';
   periodo: 'mes' | 'año';
   descripcion: string;
   destacado: boolean;

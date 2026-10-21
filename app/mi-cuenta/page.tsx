@@ -26,7 +26,7 @@ export default async function MiCuentaPage() {
 
     supabase
       .from('user_membresias_activas')
-      .select('vencimiento, membresias(nombre, precio, periodo, incluye_streaming, membresia_beneficios(texto, incluido, orden))')
+      .select('vencimiento, membresias(nombre, precio, moneda, periodo, incluye_streaming, membresia_beneficios(texto, incluido, orden))')
       .eq('user_id', user.id)
       .eq('estado', 'activa')
       .gt('vencimiento', new Date().toISOString())
@@ -50,6 +50,7 @@ export default async function MiCuentaPage() {
 
   const membresiaData = membresiaRaw?.membresias as {
     nombre: string;
+    moneda?: string;
     precio: number;
     periodo: string;
     incluye_streaming: boolean;
@@ -60,6 +61,7 @@ export default async function MiCuentaPage() {
     ? {
         nombre: membresiaData.nombre,
         precio: membresiaData.precio,
+        moneda: (membresiaData.moneda === 'ARS' ? 'ARS' : 'USD') as 'ARS' | 'USD',
         periodo: membresiaData.periodo,
         incluye_streaming: membresiaData.incluye_streaming,
         vencimiento: membresiaRaw!.vencimiento,

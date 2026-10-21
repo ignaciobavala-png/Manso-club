@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Membresia } from '@/lib/types/membresia';
 import { fondoAcento, fondoAcentoHoverBoton, fondoHoverPorPosicion } from '@/lib/membresia-color';
+import { precioParaMostrar } from '@/lib/precios';
 import { CoworkModal, PARAM_FORM } from './CoworkModal';
 
 interface MembresiaCardProps {
@@ -60,12 +61,16 @@ export const MembresiaCard = ({ membresia, currency, rate, posicion }: Membresia
     ? 'bg-manso-cream text-manso-black'
     : 'bg-manso-black text-manso-cream hover:bg-manso-cream hover:text-manso-black';
 
-  // Sin cotización el número es el de dólares: la etiqueta no puede decir ARS.
-  const enPesos = currency === 'ARS' && !!rate;
+  // Sin cotización queda el número y la moneda en que se cargó.
+  const { monto, moneda } = precioParaMostrar(
+    membresia,
+    currency === 'ARS' ? 'ARS' : 'USD',
+    rate,
+  );
   const precio =
-    enPesos && rate
-      ? Math.round(membresia.precio * rate).toLocaleString('es-AR')
-      : membresia.precio.toLocaleString('es-AR');
+    moneda === 'ARS'
+      ? Math.round(monto).toLocaleString('es-AR')
+      : monto.toLocaleString('es-AR', { maximumFractionDigits: 2 });
 
   const descripcion = membresia.descripcion_corta?.trim() || membresia.descripcion?.trim();
   // Cultural Manso tiene página propia —y su propia sección en el panel—, así
@@ -98,7 +103,7 @@ export const MembresiaCard = ({ membresia, currency, rate, posicion }: Membresia
             <span
               className={`[writing-mode:vertical-rl] rotate-180 whitespace-nowrap text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.1em] sm:tracking-[0.2em] transition-colors duration-300 ${cMuted}`}
             >
-              {enPesos ? 'ARS' : 'USD'} {precio} / {membresia.periodo}
+              {moneda} {precio} / {membresia.periodo}
             </span>
           )}
         </div>
