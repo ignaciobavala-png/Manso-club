@@ -42,9 +42,10 @@ export async function GET(request: Request) {
 
   const { data: sinMail } = await supabase
     .from('festival_ordenes')
-    .select('id, nombre, email, cantidad_entradas')
+    .select('id, nombre, email, cantidad_entradas, total_ars')
     .eq('estado', 'pagada')
     .eq('mail_enviado', false)
+    .gt('total_ars', 0)
     .limit(20);
   for (const orden of sinMail ?? []) await enviarMailTickets(supabase, orden);
 

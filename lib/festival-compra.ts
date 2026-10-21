@@ -505,7 +505,10 @@ export async function vencerOrdenes(supabase: SupabaseClient) {
  * antes de mandarlo para no duplicarlo si dos acreditaciones corren a la vez;
  * si Resend falla se libera, y el cron lo vuelve a intentar.
  */
-export async function enviarMailTickets(supabase: SupabaseClient, orden: Pick<OrdenFestival, 'id' | 'nombre' | 'email' | 'cantidad_entradas'>) {
+export async function enviarMailTickets(supabase: SupabaseClient, orden: Pick<OrdenFestival, 'id' | 'nombre' | 'email' | 'cantidad_entradas'> & { total_ars?: number }) {
+  // Las entradas gratis no llevan mail (pedido de Ana, para cuidar los 100/día
+  // de Resend); las pagas sí. Se ven igual en /blur/compra/[id].
+  if (orden.total_ars !== undefined && Number(orden.total_ars) <= 0) return;
   const { data: reclamada } = await supabase
     .from('festival_ordenes')
     .update({ mail_enviado: true })
