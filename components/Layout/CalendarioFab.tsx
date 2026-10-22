@@ -18,6 +18,7 @@ export function CalendarioFab() {
   if (
     pathname?.startsWith('/calendario') ||
     pathname?.startsWith('/mansoadm') ||
+    pathname?.startsWith('/mansochat') ||
     pathname?.startsWith('/login')
   ) {
     return null;

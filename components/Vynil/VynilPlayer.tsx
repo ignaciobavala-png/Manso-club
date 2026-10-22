@@ -43,6 +43,16 @@ export function VynilPlayer() {
 
   const actual = temas[indice];
 
+  // Otras pantallas (el chat) abren el panel sin ser dueñas de su estado.
+  useEffect(() => {
+    const abrir = () => {
+      setMotorActivo(true);
+      setAbierto(true);
+    };
+    window.addEventListener('vynil:abrir', abrir);
+    return () => window.removeEventListener('vynil:abrir', abrir);
+  }, []);
+
   // ── La playlist general ───────────────────────────────────────────────────
   useEffect(() => {
     cargar();
@@ -180,7 +190,8 @@ export function VynilPlayer() {
       )}
 
       {/* El disco flotante: el reproductor cerrado */}
-      {!abierto && (
+      {/* En /mansochat el disco vive dentro de la pantalla y no flota, porque taparía el botón de enviar */}
+      {!abierto && !pathname?.startsWith('/mansochat') && (
         <div className={`fixed right-4 z-50 ${bottom}`}>
           <button
             onClick={() => {
