@@ -1,7 +1,6 @@
 import { redirect } from 'next/navigation'
 import { createSupabaseServer } from '@/lib/supabase'
 import ChatApp from '@/components/Chat/ChatApp'
-import type { ChatConversacion, ChatSala } from '@/lib/types/chat'
 
 export const dynamic = 'force-dynamic'
 
@@ -17,7 +16,7 @@ export default async function ChatPage({
 }: {
   searchParams: Promise<{ dm?: string; sala?: string }>
 }) {
-  const { dm, sala: salaParam } = await searchParams
+  const { dm, sala } = await searchParams
   const supabase = await createSupabaseServer()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
@@ -28,42 +27,18 @@ export default async function ChatPage({
     if (salaId) redirect(`/mansochat?sala=${salaId}`)
   }
 
-  const [{ data: perfil }, { data: salas }, { data: miembros }] = await Promise.all([
+  const [{ data: perfil }, { data: esAdmin }] = await Promise.all([
     supabase.from('user_profiles').select('display_name, chat_baneado').eq('id', user.id).single(),
-    supabase.from('chat_salas').select('id, tipo, nombre').order('created_at'),
-    supabase.from('chat_miembros').select('sala_id, user_id').neq('user_id', user.id),
+    supabase.rpc('is_admin'),
   ])
-
-  const otroDeSala = new Map((miembros ?? []).map(m => [m.sala_id as string, m.user_id as string]))
-  const idsOtros = [...new Set(otroDeSala.values())]
-  const { data: perfiles } = idsOtros.length
-    ? await supabase.from('user_profiles_publico').select('id, display_name, avatar_url').in('id', idsOtros)
-    : { data: [] }
-  const porId = new Map((perfiles ?? []).map(p => [p.id as string, p]))
-
-  const conversaciones: ChatConversacion[] = ((salas ?? []) as ChatSala[]).map(sala => {
-    const otroId = otroDeSala.get(sala.id)
-    const p = otroId ? porId.get(otroId) : null
-    return {
-      sala,
-      otro: otroId
-        ? { id: otroId, nombre: p?.display_name ?? 'Usuario', avatar: p?.avatar_url ?? null }
-        : null,
-    }
-  })
-  // la general siempre primero
-  conversaciones.sort((a, b) => Number(b.sala.tipo === 'general') - Number(a.sala.tipo === 'general'))
-
-  const esAdmin = (await supabase.rpc('is_admin')).data === true
 
   return (
     <ChatApp
       userId={user.id}
       userNombre={perfil?.display_name ?? 'Usuario'}
       baneado={perfil?.chat_baneado ?? false}
-      esAdmin={esAdmin}
-      conversaciones={conversaciones}
-      salaInicial={conversaciones.find(c => c.sala.id === salaParam)?.sala.id ?? conversaciones[0]?.sala.id ?? null}
+      esAdmin={esAdmin === true}
+      salaInicial={sala && UUID.test(sala) ? sala : null}
     />
   )
 }

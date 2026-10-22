@@ -41,17 +41,18 @@ import { PropuestasList } from './PropuestasList';
 import { FormManifiesto } from './FormManifiesto';
 import { FormOfertaEmpleo } from './FormOfertaEmpleo';
 import { OfertasEmpleoList } from './OfertasEmpleoList';
-import { LogOut, ShoppingBag, User, Home, Calendar, Music, Crown, Settings, Star, Users, Image, Layout, FileText, CreditCard, Package, Video, BookOpen, Calculator, Briefcase, Mail, Network, BarChart2, Search, Sparkles, DoorOpen, Ticket } from 'lucide-react';
+import { LogOut, ShoppingBag, User, Home, Calendar, Music, Crown, Settings, Star, Users, Image, Layout, FileText, CreditCard, Package, Video, BookOpen, Calculator, Briefcase, Mail, Network, MessageSquare, BarChart2, Search, Sparkles, DoorOpen, Ticket } from 'lucide-react';
 import { CotizadorConfigAdmin } from './CotizadorConfigAdmin';
 import { CotizacionesList } from './CotizacionesList';
 import { MailingAdmin } from './MailingAdmin';
 import { ComunidadAdmin } from './ComunidadAdmin';
+import { ChatAdmin } from './ChatAdmin';
 import { AsignarMembresia } from './AsignarMembresia';
 import { MembresiaActivasList } from './MembresiaActivasList';
 import { CRMAdmin } from './CRMAdmin';
 
 export function Dashboard() {
-  const [tab, setTab] = useState<'crm' | 'home' | 'tienda' | 'artistas' | 'agenda' | 'eventos' | 'musica' | 'membresias' | 'cultura' | 'espacio' | 'festival' | 'team' | 'hero' | 'galeria' | 'why' | 'about' | 'contenidos' | 'manifiesto' | 'cotizador' | 'streaming' | 'empleos' | 'newsletter' | 'comunidad'>('crm');
+  const [tab, setTab] = useState<'crm' | 'home' | 'tienda' | 'artistas' | 'agenda' | 'eventos' | 'musica' | 'membresias' | 'cultura' | 'espacio' | 'festival' | 'team' | 'hero' | 'galeria' | 'why' | 'about' | 'contenidos' | 'manifiesto' | 'cotizador' | 'streaming' | 'empleos' | 'newsletter' | 'comunidad' | 'chat'>('crm');
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
@@ -135,6 +136,10 @@ export function Dashboard() {
           <button onClick={() => setTab('comunidad')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'comunidad' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
             <Network size={12} className="sm:size-14" />
             <span className="hidden sm:inline">Comunidad</span>
+          </button>
+          <button onClick={() => setTab('chat')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'chat' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
+            <MessageSquare size={12} className="sm:size-14" />
+            <span className="hidden sm:inline">Chat</span>
           </button>
           <button onClick={() => setTab('membresias')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'membresias' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
             <Crown size={12} className="sm:size-14" />
@@ -225,6 +230,7 @@ export function Dashboard() {
         {/* Módulos full-width */}
         {tab === 'crm'       && <div className="mb-8"><CRMAdmin /></div>}
         {tab === 'comunidad' && <div className="mb-8"><ComunidadAdmin /></div>}
+        {tab === 'chat' && <div className="mb-8"><ChatAdmin /></div>}
         {tab === 'streaming' && <div className="mb-8"><StreamingAdmin refreshTrigger={refreshTrigger} /></div>}
         {tab === 'membresias' && <div className="mb-8"><MembresiasAdmin refreshTrigger={refreshTrigger} /></div>}
         {tab === 'cultura' && <div className="mb-8"><CulturaAdmin /></div>}
@@ -234,7 +240,7 @@ export function Dashboard() {
         {tab === 'newsletter' && <div className="mb-8"><MailingAdmin /></div>}
 
         {/* Contenido Principal — grid dos columnas */}
-        {tab !== 'crm' && tab !== 'comunidad' && tab !== 'streaming' && tab !== 'membresias' && tab !== 'cultura' && tab !== 'espacio' && tab !== 'festival' && tab !== 'tienda' && tab !== 'newsletter' && <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-12">
+        {tab !== 'crm' && tab !== 'comunidad' && tab !== 'chat' && tab !== 'streaming' && tab !== 'membresias' && tab !== 'cultura' && tab !== 'espacio' && tab !== 'festival' && tab !== 'tienda' && tab !== 'newsletter' && <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-12">
             {/* Columna Izquierda: Formularios de Creación */}
             <div className="xl:col-span-5">
               <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">

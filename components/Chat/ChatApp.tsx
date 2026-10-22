@@ -1,144 +1,155 @@
 'use client'
 
-import { useEffect, useMemo, useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { ArrowLeft, Search } from 'lucide-react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { MessageCircle } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
-import type { ChatConversacion } from '@/lib/types/chat'
+import { useChatInbox } from '@/hooks/useChatInbox'
 import Conversacion from './Conversacion'
-import ChatVynil from './ChatVynil'
+import ModalSala, { type ModoModal } from './ModalSala'
+import Sidebar from './Sidebar'
 
 interface Props {
   userId: string
   userNombre: string
   baneado: boolean
   esAdmin: boolean
-  conversaciones: ChatConversacion[]
+  /** Sala pedida por la URL (?sala=...), si hay */
   salaInicial: string | null
 }
 
-interface Resultado {
-  id: string
-  display_name: string | null
-}
+export default function ChatApp({ userId, userNombre, baneado, esAdmin, salaInicial }: Props) {
+  const { conversaciones, noLeidos, enLinea, retencionGlobal, cargando, recargar, setActiva, marcarLeida } =
+    useChatInbox(userId, userNombre)
 
-export default function ChatApp({ userId, userNombre, baneado, esAdmin, conversaciones, salaInicial }: Props) {
-  const router = useRouter()
-  const [salaId, setSalaId] = useState<string | null>(salaInicial)
-  // en mobile se ve la lista o la conversación, no las dos
-  const [verConversacion, setVerConversacion] = useState(salaInicial !== null && salaInicial !== conversaciones[0]?.sala.id)
-  const [busqueda, setBusqueda] = useState('')
-  const [resultados, setResultados] = useState<Resultado[]>([])
+  const [elegida, setElegida] = useState<string | null>(salaInicial)
+  // en el celular se ve la lista o la conversación, no las dos
+  const [verConversacion, setVerConversacion] = useState(salaInicial !== null)
+  const [modal, setModal] = useState<ModoModal | null>(null)
+  const [aviso, setAviso] = useState('')
 
-  const activa = useMemo(() => conversaciones.find(c => c.sala.id === salaId) ?? null, [conversaciones, salaId])
+  // Si no eligió nada (o la sala ya no existe), arranca en la general
+  const salaId = useMemo(() => {
+    if (elegida && conversaciones.some(c => c.sala.id === elegida)) return elegida
+    return conversaciones[0]?.sala.id ?? null
+  }, [elegida, conversaciones])
+
+  const activa = conversaciones.find(c => c.sala.id === salaId) ?? null
 
   useEffect(() => {
-    const q = busqueda.trim()
-    if (q.length < 2) return
-    const t = setTimeout(async () => {
-      const literal = q.replace(/[\\%_]/g, c => `\\${c}`)
-      const { data } = await supabase
-        .from('user_profiles_publico')
-        .select('id, display_name')
-        .ilike('display_name', `%${literal}%`)
-        .neq('id', userId)
-        .limit(8)
-      setResultados((data ?? []) as Resultado[])
-    }, 250)
-    return () => clearTimeout(t)
-  }, [busqueda, userId])
+    setActiva(salaId)
+  }, [salaId, setActiva])
+
+  // El título de la pestaña avisa de lo que no se leyó
+  const totalNoLeidos = Object.values(noLeidos).reduce((a, b) => a + b, 0)
+  useEffect(() => {
+    document.title = `${totalNoLeidos > 0 ? `(${totalNoLeidos}) ` : ''}Manso Chat`
+    return () => {
+      document.title = 'Chat | Manso Club'
+    }
+  }, [totalNoLeidos])
+
+  const irA = useCallback(
+    async (id: string) => {
+      await recargar()
+      setElegida(id)
+      setVerConversacion(true)
+      setModal(null)
+    },
+    [recargar],
+  )
+
+  const abrirDm = useCallback(
+    async (otroId: string) => {
+      const { data, error } = await supabase.rpc('chat_abrir_dm', { p_otro: otroId })
+      if (error || !data) {
+        setAviso('No se pudo abrir la conversación')
+        return
+      }
+      await irA(data as string)
+    },
+    [irA],
+  )
+
+  const accion = useCallback(
+    async (rpc: 'chat_salir' | 'chat_eliminar_sala') => {
+      if (!salaId) return
+      const { error } = await supabase.rpc(rpc, { p_sala: salaId })
+      if (error) {
+        setAviso(error.message)
+        return
+      }
+      setElegida(null)
+      setVerConversacion(false)
+      await recargar()
+    },
+    [salaId, recargar],
+  )
+
+  const leer = useCallback(() => {
+    if (salaId) marcarLeida(salaId)
+  }, [salaId, marcarLeida])
 
   return (
-    <div className="min-h-screen bg-manso-black pt-24 pb-6 px-0 md:px-8">
-      <div className="mx-auto flex h-[calc(100vh-7rem)] max-w-5xl overflow-hidden border border-manso-cream/10">
-        <aside className={`${verConversacion ? 'hidden' : 'flex'} w-full flex-col border-r border-manso-cream/10 md:flex md:w-72`}>
-          <div className="border-b border-manso-cream/10 px-4 pb-1 pt-4">
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-manso-olive">En vivo</p>
-            <h2 className="text-lg font-black uppercase tracking-tight text-manso-cream">Manso Chat</h2>
-          </div>
-          <div className="border-b border-manso-cream/10 p-3">
-            <label className="flex items-center gap-2 bg-manso-cream/5 px-3 py-2">
-              <Search size={14} className="text-manso-cream/40" />
-              <input
-                value={busqueda}
-                onChange={e => setBusqueda(e.target.value)}
-                placeholder="Buscar a alguien…"
-                className="w-full bg-transparent text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none"
-              />
-            </label>
-            {busqueda.trim().length >= 2 && resultados.length > 0 && (
-              <ul className="mt-2 border border-manso-cream/10">
-                {resultados.map(r => (
-                  <li key={r.id}>
-                    <button
-                      onClick={() => router.push(`/mansochat?dm=${r.id}`)}
-                      className="w-full px-3 py-2 text-left text-sm text-manso-cream hover:bg-manso-cream/10"
-                    >
-                      {r.display_name ?? 'Usuario'}
-                    </button>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-          <ul className="flex-1 overflow-y-auto">
-            {conversaciones.map(c => (
-              <li key={c.sala.id}>
-                <button
-                  onClick={() => {
-                    setSalaId(c.sala.id)
-                    setVerConversacion(true)
-                  }}
-                  className={`flex w-full items-center gap-3 px-4 py-3 text-left transition-colors hover:bg-manso-cream/5 ${
-                    c.sala.id === salaId ? 'bg-manso-cream/10' : ''
-                  }`}
-                >
-                  <span className="flex h-9 w-9 shrink-0 items-center justify-center overflow-hidden rounded-full bg-manso-blue text-sm font-bold text-manso-cream">
-                    {c.otro?.avatar ? (
-                      <img src={c.otro.avatar} alt="" loading="lazy" className="h-full w-full object-cover" />
-                    ) : (
-                      (c.otro?.nombre ?? '#')[0].toUpperCase()
-                    )}
-                  </span>
-                  <span className="truncate text-sm text-manso-cream">
-                    {c.sala.tipo === 'general' ? 'Sala general' : c.otro?.nombre}
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
-          <ChatVynil />
+    <div className="min-h-screen bg-manso-black px-0 pb-4 pt-20 sm:px-6 sm:pb-8 sm:pt-24">
+      <div className="mx-auto flex h-[calc(100dvh-5.5rem)] max-w-6xl overflow-hidden bg-manso-cream shadow-[0_30px_80px_rgba(0,0,0,0.6)] ring-1 ring-manso-cream/25 sm:h-[calc(100dvh-8rem)] sm:rounded-3xl">
+        <aside
+          className={`${verConversacion ? 'hidden' : 'flex'} w-full flex-col bg-manso-blue md:flex md:w-80 md:shrink-0 lg:w-96`}
+        >
+          <Sidebar
+            conversaciones={conversaciones}
+            cargando={cargando}
+            salaId={salaId}
+            noLeidos={noLeidos}
+            enLinea={enLinea}
+            userId={userId}
+            onElegir={id => {
+              setElegida(id)
+              setVerConversacion(true)
+            }}
+            onAbrirDm={abrirDm}
+            onNuevaSala={() => setModal('crear')}
+            onEntrarConClave={() => setModal('clave')}
+          />
         </aside>
 
         <section className={`${verConversacion ? 'flex' : 'hidden'} min-w-0 flex-1 flex-col md:flex`}>
           {activa ? (
-            <>
-              <header className="flex items-center gap-3 border-b border-manso-cream/10 px-4 py-3">
-                <button
-                  onClick={() => setVerConversacion(false)}
-                  className="text-manso-cream/60 hover:text-manso-cream md:hidden"
-                  aria-label="Volver a la lista"
-                >
-                  <ArrowLeft size={18} />
-                </button>
-                <h1 className="truncate text-sm font-bold uppercase tracking-wider text-manso-cream">
-                  {activa.sala.tipo === 'general' ? 'Sala general' : activa.otro?.nombre}
-                </h1>
-              </header>
-              <Conversacion
-                key={activa.sala.id}
-                salaId={activa.sala.id}
-                userId={userId}
-                userNombre={userNombre}
-                baneado={baneado}
-                esAdmin={esAdmin}
-              />
-            </>
+            <Conversacion
+              key={activa.sala.id}
+              conv={activa}
+              userId={userId}
+              userNombre={userNombre}
+              baneado={baneado}
+              esAdmin={esAdmin}
+              enLinea={enLinea}
+              retencionDias={activa.sala.retencion_dias ?? retencionGlobal}
+              onVolver={() => setVerConversacion(false)}
+              onLeer={leer}
+              onSalir={() => accion('chat_salir')}
+              onEliminar={() => accion('chat_eliminar_sala')}
+            />
           ) : (
-            <p className="m-auto text-sm text-manso-cream/40">No hay conversaciones todavía.</p>
+            <div className="m-auto flex flex-col items-center gap-3 px-6 text-center text-manso-black/50">
+              <MessageCircle size={44} strokeWidth={1.5} />
+              <p className="text-sm">{cargando ? 'Cargando…' : 'Elegí una conversación para empezar.'}</p>
+            </div>
           )}
         </section>
       </div>
+
+      {aviso && (
+        <div
+          role="alert"
+          className="fixed bottom-6 left-1/2 z-[70] -translate-x-1/2 rounded-full bg-manso-black px-5 py-2.5 text-xs font-semibold text-manso-cream shadow-xl ring-1 ring-manso-cream/20"
+        >
+          {aviso}
+          <button onClick={() => setAviso('')} className="ml-3 underline">
+            Cerrar
+          </button>
+        </div>
+      )}
+
+      {modal && <ModalSala modo={modal} onCambiarModo={setModal} onCerrar={() => setModal(null)} onListo={irA} />}
     </div>
   )
 }
