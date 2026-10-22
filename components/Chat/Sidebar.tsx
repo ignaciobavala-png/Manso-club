@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { Hash, KeyRound, Lock, Plus, Search } from 'lucide-react'
 import { supabase } from '@/lib/supabase'
 import { fechaCorta } from '@/lib/chat-utils'
@@ -61,27 +62,40 @@ export default function Sidebar(p: Props) {
   const salas = filtradas.filter(c => c.sala.tipo !== 'dm')
   const directos = filtradas.filter(c => c.sala.tipo === 'dm')
 
-  const fila = (c: ChatConversacion) => {
+  const fila = (c: ChatConversacion, i: number) => {
     const dm = c.sala.tipo === 'dm'
     const nombre = dm ? c.otro?.nombre : c.sala.nombre
     const n = p.noLeidos[c.sala.id] ?? 0
     const activa = c.sala.id === p.salaId
     return (
-      <li key={c.sala.id}>
-        <button
+      <motion.li
+        key={c.sala.id}
+        layout="position"
+        initial={{ opacity: 0, x: -24 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ type: 'spring', stiffness: 260, damping: 24, delay: Math.min(i, 8) * 0.045 }}
+      >
+        <motion.button
           onClick={() => p.onElegir(c.sala.id)}
-          className={`flex w-full items-center gap-3 border-l-4 px-4 py-2.5 text-left transition-colors ${
-            activa ? 'border-manso-terra bg-manso-cream/15' : 'border-transparent hover:bg-manso-cream/10'
-          }`}
+          whileHover={{ x: 3 }}
+          whileTap={{ scale: 0.98 }}
+          className="relative flex w-full items-center gap-3 px-4 py-2.5 text-left transition-colors hover:bg-manso-cream/10"
         >
+          {activa && (
+            <motion.span
+              layoutId="chat-sala-activa"
+              className="absolute inset-0 border-l-4 border-manso-terra bg-manso-cream/15"
+              transition={{ type: 'spring', stiffness: 380, damping: 32 }}
+            />
+          )}
           {dm && c.otro ? (
-            <Avatar id={c.otro.id} nombre={c.otro.nombre} url={c.otro.avatar} tamano={40} enLinea={p.enLinea.has(c.otro.id)} />
+            <span className="relative"><Avatar id={c.otro.id} nombre={c.otro.nombre} url={c.otro.avatar} tamano={40} enLinea={p.enLinea.has(c.otro.id)} /></span>
           ) : (
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-manso-cream/15 text-manso-cream">
+            <span className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-manso-cream/15 text-manso-cream">
               {c.sala.tipo === 'privada' ? <Lock size={16} /> : <Hash size={18} />}
             </span>
           )}
-          <span className="min-w-0 flex-1">
+          <span className="relative min-w-0 flex-1">
             <span className="flex items-baseline justify-between gap-2">
               <span className={`truncate text-sm ${n > 0 ? 'font-black' : 'font-semibold'} text-manso-cream`}>
                 {c.sala.tipo === 'general' ? 'Sala general' : nombre}
@@ -92,15 +106,24 @@ export default function Sidebar(p: Props) {
               <span className={`truncate text-xs ${n > 0 ? 'text-manso-cream' : 'text-manso-cream/60'}`}>
                 {c.ultimo ? (dm ? '' : `${c.ultimo.autor_nombre ?? 'Usuario'}: `) + c.ultimo.cuerpo : 'Sin mensajes todavía'}
               </span>
-              {n > 0 && (
-                <span className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-manso-terra px-1.5 text-[11px] font-black text-manso-cream">
-                  {n > 99 ? '99+' : n}
-                </span>
-              )}
+              <AnimatePresence initial={false}>
+                {n > 0 && (
+                  <motion.span
+                    key={n}
+                    initial={{ scale: 1.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0, opacity: 0 }}
+                    transition={{ type: 'spring', stiffness: 500, damping: 18 }}
+                    className="flex h-5 min-w-5 shrink-0 items-center justify-center rounded-full bg-manso-terra px-1.5 text-[11px] font-black text-manso-cream shadow-[0_0_12px_rgba(188,41,21,0.7)]"
+                  >
+                    {n > 99 ? '99+' : n}
+                  </motion.span>
+                )}
+              </AnimatePresence>
             </span>
           </span>
-        </button>
-      </li>
+        </motion.button>
+      </motion.li>
     )
   }
 
@@ -111,26 +134,36 @@ export default function Sidebar(p: Props) {
   return (
     <>
       <div className="px-4 pb-3 pt-4">
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-manso-olive">En vivo</p>
+        <p className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-[0.3em] text-manso-olive">
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-manso-terra opacity-75" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-manso-terra" />
+          </span>
+          En vivo
+        </p>
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-black uppercase tracking-tight text-manso-cream">Manso Chat</h2>
           <div className="flex gap-1">
-            <button
+            <motion.button
               onClick={p.onEntrarConClave}
-              className="rounded-full bg-manso-cream/10 p-2 text-manso-cream transition hover:bg-manso-cream/20"
+              whileHover={{ scale: 1.12, rotate: -12 }}
+              whileTap={{ scale: 0.9 }}
+              className="rounded-full bg-manso-cream/10 p-2 text-manso-cream transition-colors hover:bg-manso-cream/20"
               aria-label="Entrar a una sala con clave"
               title="Entrar con clave"
             >
               <KeyRound size={16} />
-            </button>
-            <button
+            </motion.button>
+            <motion.button
               onClick={p.onNuevaSala}
-              className="rounded-full bg-manso-terra p-2 text-manso-cream transition hover:scale-105"
+              whileHover={{ scale: 1.12, rotate: 90 }}
+              whileTap={{ scale: 0.9 }}
+              className="rounded-full bg-manso-terra p-2 text-manso-cream shadow-[0_0_14px_rgba(188,41,21,0.55)]"
               aria-label="Crear una sala"
               title="Nueva sala"
             >
               <Plus size={16} />
-            </button>
+            </motion.button>
           </div>
         </div>
       </div>
@@ -150,7 +183,7 @@ export default function Sidebar(p: Props) {
 
       <div className="min-h-0 flex-1 overflow-y-auto pb-2">
         {q.length >= 2 && personas.length > 0 && (
-          <>
+          <motion.div initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }}>
             {titulo('Personas')}
             <ul>
               {personas.map(pe => (
@@ -169,7 +202,7 @@ export default function Sidebar(p: Props) {
                 </li>
               ))}
             </ul>
-          </>
+          </motion.div>
         )}
 
         {p.cargando && (
@@ -186,13 +219,13 @@ export default function Sidebar(p: Props) {
         {salas.length > 0 && (
           <>
             {titulo('Salas')}
-            <ul>{salas.map(fila)}</ul>
+            <ul>{salas.map((c, i) => fila(c, i))}</ul>
           </>
         )}
         {directos.length > 0 && (
           <>
             {titulo('Mensajes directos')}
-            <ul>{directos.map(fila)}</ul>
+            <ul>{directos.map((c, i) => fila(c, i))}</ul>
           </>
         )}
         {!p.cargando && filtradas.length === 0 && q.length > 0 && personas.length === 0 && (

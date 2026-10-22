@@ -44,7 +44,7 @@ export function trocear(texto: string): Trozo[] {
     .filter(t => t.texto !== '')
 }
 
-const COLORES_NOMBRE = ['text-manso-terra', 'text-manso-blue', 'text-manso-brown', 'text-manso-olive'] as const
+const COLORES_NOMBRE = ['text-[#ff8a6b]', 'text-[#c9c34a]', 'text-[#8fa2ff]', 'text-[#7fd6c2]'] as const
 const COLORES_AVATAR = ['bg-manso-terra', 'bg-manso-blue', 'bg-manso-brown', 'bg-manso-olive'] as const
 
 function indiceDe(semilla: string, n: number) {

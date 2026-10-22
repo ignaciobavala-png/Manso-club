@@ -21,7 +21,10 @@ export default function Avatar({ id, nombre, url, tamano = 36, enLinea }: Props)
         {url ? <img src={url} alt="" loading="lazy" decoding="async" className="h-full w-full object-cover" /> : inicial}
       </span>
       {enLinea && (
-        <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-emerald-400 ring-2 ring-manso-blue" />
+        <span className="absolute -bottom-0.5 -right-0.5 flex h-3 w-3">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
+          <span className="relative inline-flex h-3 w-3 rounded-full bg-emerald-400 ring-2 ring-manso-blue" />
+        </span>
       )}
     </span>
   )

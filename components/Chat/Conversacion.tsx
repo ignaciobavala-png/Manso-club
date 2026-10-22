@@ -1,6 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { ArrowDown, ArrowLeft, Hash, Lock, LogOut, MoreVertical, Trash2 } from 'lucide-react'
 import { useChat } from '@/hooks/useChat'
 import { etiquetaDia, mismoDia } from '@/lib/chat-utils'
@@ -127,22 +128,34 @@ export default function Conversacion({
 
   return (
     <>
-      <header className="relative flex items-center gap-3 border-b border-black/10 bg-white px-4 py-3">
-        <button onClick={onVolver} className="text-manso-black/60 hover:text-manso-black md:hidden" aria-label="Volver a la lista">
+      <header className="relative z-10 flex items-center gap-3 border-b border-white/10 bg-white/[0.05] px-4 py-3 backdrop-blur-xl">
+        <button onClick={onVolver} className="text-manso-cream/60 hover:text-manso-cream md:hidden" aria-label="Volver a la lista">
           <ArrowLeft size={20} />
         </button>
         {sala.tipo === 'dm' && otro ? (
           <Avatar id={otro.id} nombre={otro.nombre} url={otro.avatar} tamano={38} />
         ) : (
-          <span className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-full bg-manso-blue text-manso-cream">
+          <motion.span
+            initial={{ scale: 0, rotate: -90 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: 'spring', stiffness: 300, damping: 16 }}
+            className="flex h-[38px] w-[38px] shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-[#1f1b9a] to-manso-blue text-manso-cream shadow-md"
+          >
             {sala.tipo === 'privada' ? <Lock size={16} /> : <Hash size={18} />}
-          </span>
+          </motion.span>
         )}
         <div className="min-w-0 flex-1">
-          <h1 className="truncate text-sm font-black uppercase tracking-wide text-manso-black">{titulo}</h1>
-          <p className="flex items-center gap-1.5 truncate text-xs text-manso-black/55">
+          <motion.h1
+            initial={{ opacity: 0, x: -12 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ type: 'spring', stiffness: 260, damping: 22, delay: 0.05 }}
+            className="truncate text-sm font-black uppercase tracking-wide text-manso-cream"
+          >
+            {titulo}
+          </motion.h1>
+          <p className="flex items-center gap-1.5 truncate text-xs text-manso-cream/55">
             {sala.tipo === 'dm' && (
-              <span className={`h-2 w-2 rounded-full ${otroEnLinea ? 'bg-emerald-500' : 'bg-manso-black/25'}`} />
+              <span className={`h-2 w-2 rounded-full ${otroEnLinea ? 'bg-emerald-400' : 'bg-manso-cream/25'}`} />
             )}
             {subtitulo}
           </p>
@@ -155,13 +168,22 @@ export default function Conversacion({
                 setMenu(v => !v)
                 setConfirmando(null)
               }}
-              className="rounded-full p-2 text-manso-black/60 hover:bg-black/5 hover:text-manso-black"
+              className="rounded-full p-2 text-manso-cream/60 hover:bg-white/10 hover:text-manso-cream"
               aria-label="Opciones de la sala"
             >
               <MoreVertical size={18} />
             </button>
+            <AnimatePresence>
             {menu && (
-              <div className="absolute right-0 top-full z-30 mt-1 w-56 rounded-2xl bg-white p-1.5 shadow-xl ring-1 ring-black/10">
+              <motion.div
+                key="menu"
+                initial={{ opacity: 0, scale: 0.85, y: -8 }}
+                animate={{ opacity: 1, scale: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9, y: -6 }}
+                transition={{ type: 'spring', stiffness: 420, damping: 26 }}
+                style={{ transformOrigin: 'top right' }}
+                className="absolute right-0 top-full z-30 mt-1 w-56 rounded-2xl bg-black/70 p-1.5 shadow-2xl ring-1 ring-white/15 backdrop-blur-2xl"
+              >
                 {sala.tipo === 'privada' &&
                   (confirmando === 'salir' ? (
                     <button onClick={onSalir} className="w-full rounded-xl bg-manso-terra px-3 py-2 text-left text-sm font-bold text-manso-cream">
@@ -170,7 +192,7 @@ export default function Conversacion({
                   ) : (
                     <button
                       onClick={() => setConfirmando('salir')}
-                      className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm text-manso-black hover:bg-black/5"
+                      className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm text-manso-cream hover:bg-white/10"
                     >
                       <LogOut size={15} /> Salir de la sala
                     </button>
@@ -183,13 +205,14 @@ export default function Conversacion({
                   ) : (
                     <button
                       onClick={() => setConfirmando('eliminar')}
-                      className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm text-manso-terra hover:bg-manso-terra/10"
+                      className="flex w-full items-center gap-2 rounded-xl px-3 py-2 text-left text-sm text-[#ff8a6b] hover:bg-manso-terra/20"
                     >
                       <Trash2 size={15} /> Eliminar sala
                     </button>
                   ))}
-              </div>
+              </motion.div>
             )}
+            </AnimatePresence>
           </div>
         )}
       </header>
@@ -204,24 +227,31 @@ export default function Conversacion({
           }}
           className="h-full overflow-y-auto px-3 pb-2 pt-3 sm:px-5"
         >
-          <p className="mx-auto mb-2 w-fit rounded-full bg-manso-black/5 px-3 py-1 text-center text-[11px] text-manso-black/55">
+          <p className="mx-auto mb-2 w-fit rounded-full bg-white/10 px-3 py-1 text-center text-[11px] text-manso-cream/55 backdrop-blur">
             Los mensajes se borran solos a los {retencionDias} días
           </p>
 
           {hayMas && (
             <button
               onClick={cargarMas}
-              className="mx-auto my-2 block rounded-full bg-white px-4 py-1.5 text-xs font-semibold text-manso-black/70 shadow-sm ring-1 ring-black/10 hover:text-manso-black"
+              className="mx-auto my-2 block rounded-full bg-white/10 px-4 py-1.5 text-xs font-semibold text-manso-cream/80 ring-1 ring-white/15 backdrop-blur hover:bg-white/15"
             >
               Ver mensajes anteriores
             </button>
           )}
-          {cargando && <p className="py-6 text-center text-xs text-manso-black/50">Cargando…</p>}
+          {cargando && <p className="py-6 text-center text-xs text-manso-cream/50">Cargando…</p>}
           {!cargando && mensajes.length === 0 && (
             <div className="py-16 text-center">
-              <p className="text-3xl">👋</p>
-              <p className="mt-2 text-sm font-semibold text-manso-black">Acá todavía no hay nada</p>
-              <p className="text-xs text-manso-black/55">Escribí el primer mensaje.</p>
+              <motion.p
+                className="inline-block text-4xl"
+                animate={{ rotate: [0, 18, -10, 18, 0] }}
+                transition={{ repeat: Infinity, repeatDelay: 1.5, duration: 1.2 }}
+                style={{ transformOrigin: '70% 70%' }}
+              >
+                👋
+              </motion.p>
+              <p className="mt-2 text-sm font-semibold text-manso-cream">Acá todavía no hay nada</p>
+              <p className="text-xs text-manso-cream/55">Escribí el primer mensaje.</p>
             </div>
           )}
 
@@ -236,11 +266,16 @@ export default function Conversacion({
             return (
               <div key={m.id}>
                 {cambiaDia && (
-                  <div className="my-3 flex justify-center">
-                    <span className="rounded-full bg-white px-3 py-1 text-[11px] font-semibold text-manso-black/60 shadow-sm ring-1 ring-black/5">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ type: 'spring', stiffness: 300, damping: 20 }}
+                    className="my-3 flex justify-center"
+                  >
+                    <span className="rounded-full bg-white/10 px-3 py-1 text-[11px] font-semibold text-manso-cream/70 ring-1 ring-white/15 backdrop-blur">
                       {etiquetaDia(m.created_at)}
                     </span>
-                  </div>
+                  </motion.div>
                 )}
                 <Burbuja
                   m={m}
@@ -273,36 +308,59 @@ export default function Conversacion({
             )
           })}
 
+          <AnimatePresence>
           {escribiendo.length > 0 && (
-            <div className="mt-3 flex items-center gap-2 text-xs text-manso-black/60" aria-live="polite">
-              <span className="flex gap-1 rounded-full bg-white px-3 py-2 shadow-sm ring-1 ring-black/5">
+            <motion.div
+              key="escribiendo"
+              initial={{ opacity: 0, y: 12, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 6, scale: 0.9 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 26 }}
+              className="mt-3 flex items-center gap-2 text-xs text-manso-cream/60"
+              aria-live="polite"
+            >
+              <span className="flex gap-1 rounded-full bg-white/10 px-3 py-2 ring-1 ring-white/15 backdrop-blur">
                 {[0, 1, 2].map(i => (
                   <span
                     key={i}
-                    className="h-1.5 w-1.5 animate-bounce rounded-full bg-manso-black/40"
+                    className="h-1.5 w-1.5 animate-bounce rounded-full bg-manso-cream/60"
                     style={{ animationDelay: `${i * 150}ms` }}
                   />
                 ))}
               </span>
               {escribiendo.join(', ')} {escribiendo.length > 1 ? 'están escribiendo' : 'está escribiendo'}
-            </div>
+            </motion.div>
           )}
+          </AnimatePresence>
         </div>
 
-        {!pegado && (
-          <button
-            onClick={irAbajo}
-            className="absolute bottom-3 right-4 flex items-center gap-1.5 rounded-full bg-manso-black px-3.5 py-2 text-xs font-bold text-manso-cream shadow-lg transition hover:scale-105"
-            aria-label="Ir al último mensaje"
-          >
-            <ArrowDown size={14} />
-            {nuevos > 0 ? `${nuevos} nuevo${nuevos > 1 ? 's' : ''}` : 'Ir al final'}
-          </button>
-        )}
+        <AnimatePresence>
+          {!pegado && (
+            <motion.button
+              key="abajo"
+              onClick={irAbajo}
+              initial={{ opacity: 0, y: 24, scale: 0.8 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 24, scale: 0.8 }}
+              whileHover={{ scale: 1.07 }}
+              whileTap={{ scale: 0.92 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 22 }}
+              className={`absolute bottom-3 right-4 flex items-center gap-1.5 rounded-full px-3.5 py-2 text-xs font-bold text-manso-cream shadow-lg ${
+                nuevos > 0 ? 'bg-manso-terra shadow-[0_0_18px_rgba(188,41,21,0.6)]' : 'bg-white/15 ring-1 ring-white/20 backdrop-blur-xl'
+              }`}
+              aria-label="Ir al último mensaje"
+            >
+              <motion.span animate={{ y: [0, 3, 0] }} transition={{ repeat: Infinity, duration: 1.1 }} className="flex">
+                <ArrowDown size={14} />
+              </motion.span>
+              {nuevos > 0 ? `${nuevos} nuevo${nuevos > 1 ? 's' : ''}` : 'Ir al final'}
+            </motion.button>
+          )}
+        </AnimatePresence>
       </div>
 
       {error && (
-        <p role="alert" className="border-t border-red-200 bg-red-50 px-4 py-1.5 text-xs text-red-700">
+        <p role="alert" className="border-t border-red-400/30 bg-red-500/15 px-4 py-1.5 text-xs text-red-200">
           {error}
         </p>
       )}
