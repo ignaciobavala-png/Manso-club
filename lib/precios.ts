@@ -127,3 +127,13 @@ export function precioParaMostrar(
     ? { monto: Number(producto.precio), moneda: origen }
     : { monto, moneda };
 }
+
+/**
+ * Precio de un plan tal como lo pidió Ana: pesos con "$" y sin la sigla
+ * ("$160.000"), dólares con "USD $" ("USD $100").
+ */
+export function formatPrecioPlan(monto: number, moneda: Moneda): string {
+  return moneda === 'ARS'
+    ? `$${Math.round(monto).toLocaleString('es-AR')}`
+    : formatUsd(monto);
+}

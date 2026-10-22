@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Membresia } from '@/lib/types/membresia';
 import { fondoAcento, fondoAcentoHoverBoton, fondoHoverPorPosicion } from '@/lib/membresia-color';
-import { precioParaMostrar } from '@/lib/precios';
+import { formatPrecioPlan, precioParaMostrar } from '@/lib/precios';
 import { CoworkModal, PARAM_FORM } from './CoworkModal';
 
 interface MembresiaCardProps {
@@ -67,10 +67,7 @@ export const MembresiaCard = ({ membresia, currency, rate, posicion }: Membresia
     currency === 'ARS' ? 'ARS' : 'USD',
     rate,
   );
-  const precio =
-    moneda === 'ARS'
-      ? Math.round(monto).toLocaleString('es-AR')
-      : monto.toLocaleString('es-AR', { maximumFractionDigits: 2 });
+  const precio = formatPrecioPlan(monto, moneda);
 
   const descripcion = membresia.descripcion_corta?.trim() || membresia.descripcion?.trim();
   // Cultural Manso tiene página propia —y su propia sección en el panel—, así
@@ -103,7 +100,7 @@ export const MembresiaCard = ({ membresia, currency, rate, posicion }: Membresia
             <span
               className={`[writing-mode:vertical-rl] rotate-180 whitespace-nowrap text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.1em] sm:tracking-[0.2em] transition-colors duration-300 ${cMuted}`}
             >
-              {moneda} {precio} / {membresia.periodo}
+              {precio} / {membresia.periodo}
             </span>
           )}
         </div>

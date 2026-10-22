@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useCurrency } from '@/store/useCurrency';
 import { CurrencyToggle } from '@/components/ui/CurrencyToggle';
-import { precioParaMostrar, type Moneda } from '@/lib/precios';
+import { formatPrecioPlan, precioParaMostrar, type Moneda } from '@/lib/precios';
 import { CoworkModal } from '@/components/ui/CoworkModal';
 
 interface Props {
@@ -30,17 +30,14 @@ export const MembresiaDetalleCTA = ({ membresiaId, membresiaNombre, precio, mone
     currency === 'ARS' ? 'ARS' : 'USD',
     rate,
   );
-  const monto =
-    moneda === 'ARS'
-      ? Math.round(cantidad).toLocaleString('es-AR')
-      : cantidad.toLocaleString('es-AR', { maximumFractionDigits: 2 });
+  const monto = formatPrecioPlan(cantidad, moneda);
 
   return (
     <div className="mt-10">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <CurrencyToggle />
         <span className="text-lg font-bold text-manso-cream">
-          {moneda} {monto}{' '}
+          {monto}{' '}
           <span className="text-xs font-normal text-manso-cream/70">/ {periodo}</span>
         </span>
       </div>
