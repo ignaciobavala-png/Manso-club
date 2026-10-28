@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { Check, ExternalLink, Loader2, RefreshCw, X } from 'lucide-react';
+import { Check, ExternalLink, Loader2, RefreshCw, Trash2, X } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { formatArs } from '@/lib/precios';
 import { MEDIOS_PAGO, type MedioPago } from '@/lib/types/festival';
@@ -61,11 +61,13 @@ export function FestivalVentasAdmin() {
     cargar();
   }, [cargar]);
 
-  const accion = async (venta: Venta, que: 'confirmar' | 'descartar') => {
+  const accion = async (venta: Venta, que: 'confirmar' | 'descartar' | 'borrar') => {
     const pregunta =
       que === 'confirmar'
         ? `¿Confirmar el pago de ${venta.nombre} (${formatArs(venta.total_ars)})? Se emiten ${venta.cantidad_entradas} entrada(s) y le llega el mail a ${venta.email}.`
-        : `¿Descartar la compra de ${venta.nombre}? Se liberan sus ${venta.cantidad_entradas} lugar(es). Si después aparece el pago, se puede confirmar igual.`;
+        : que === 'borrar'
+          ? `¿Borrar la compra de ${venta.nombre} (${formatArs(venta.total_ars)})? Se elimina del listado y se liberan sus ${venta.cantidad_entradas} lugar(es). No se puede deshacer; si después llegara el pago, no se podrá confirmar.`
+          : `¿Descartar la compra de ${venta.nombre}? Se liberan sus ${venta.cantidad_entradas} lugar(es). Si después aparece el pago, se puede confirmar igual.`;
     if (!confirm(pregunta)) return;
     setOcupada(venta.id);
     const res = await fetch(`/api/festival/ordenes/${venta.id}/${que}`, { method: 'POST' });
@@ -167,6 +169,18 @@ export function FestivalVentasAdmin() {
                 <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40">
                   {v.estado === 'vencida' ? 'Vencida' : 'Esperando pago'}
                 </span>
+              )}
+              {v.estado !== 'pagada' && (
+                <button
+                  type="button"
+                  onClick={() => accion(v, 'borrar')}
+                  disabled={ocupada === v.id}
+                  title="Borrar esta compra (una prueba, un carrito sin pagar)"
+                  aria-label={`Borrar la compra de ${v.nombre}`}
+                  className={BOTON_ICONO}
+                >
+                  <Trash2 size={13} />
+                </button>
               )}
             </li>
           ))}

@@ -125,3 +125,50 @@ export async function liberarEnGestion(ordenId: string): Promise<void> {
   // Liberar dos veces no falla (`liberadas: 0`); una pagada da `orden_confirmada`.
   if (error) throw fallo('web_liberar', error);
 }
+
+/** Un tipo tal como se edita en el panel: incluye inactivos, el cupo propio y cuántas entradas ocupa. */
+export interface TipoGestionAdmin {
+  id: string;
+  nombre: string;
+  descripcion: string | null;
+  precio: number;
+  entradas_por_unidad: number;
+  cupo: number | null;
+  max_por_compra: number | null;
+  estado: EstadoEntrada;
+  activo: boolean;
+  orden: number;
+  /** Vendidas + reservadas: con ocupadas no se borra, se desactiva. */
+  ocupadas: number;
+}
+
+export type TipoGuardar = Omit<TipoGestionAdmin, 'id' | 'orden' | 'ocupadas'> & { id?: string };
+
+// Las tres RPC siguientes son de la migración 043 de Gestión (solo service_role).
+export async function tiposAdminGestion(): Promise<TipoGestionAdmin[]> {
+  const { data, error } = await gestion().rpc('web_tipos_admin', { p_event_id: eventoGestion() });
+  if (error) throw fallo('web_tipos_admin', error);
+  return ((data as TipoGestionAdmin[] | null) ?? []).map(t => ({ ...t, precio: Number(t.precio) }));
+}
+
+export async function guardarTipoGestion(t: TipoGuardar): Promise<string> {
+  const { data, error } = await gestion().rpc('web_guardar_tipo', {
+    p_event_id: eventoGestion(),
+    p_id: t.id ?? null,
+    p_nombre: t.nombre,
+    p_descripcion: t.descripcion,
+    p_precio: t.precio,
+    p_entradas_por_unidad: t.entradas_por_unidad,
+    p_cupo: t.cupo,
+    p_max_por_compra: t.max_por_compra,
+    p_estado: t.estado,
+    p_activo: t.activo,
+  });
+  if (error) throw fallo('web_guardar_tipo', error);
+  return data as string;
+}
+
+export async function borrarTipoGestion(id: string): Promise<void> {
+  const { error } = await gestion().rpc('web_borrar_tipo', { p_event_id: eventoGestion(), p_id: id });
+  if (error) throw fallo('web_borrar_tipo', error);
+}

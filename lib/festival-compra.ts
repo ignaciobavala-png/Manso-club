@@ -386,6 +386,18 @@ export async function descartarOrden(supabase: SupabaseClient, orden: OrdenFesti
     .neq('estado', 'pagada');
 }
 
+/**
+ * Ana borra una orden que no es una venta (una prueba, un carrito abandonado):
+ * libera el cupo en Gestión y elimina la fila. Una orden pagada no se borra
+ * nunca: es plata que entró y tiene entradas emitidas.
+ */
+export async function borrarOrden(supabase: SupabaseClient, orden: OrdenFestival) {
+  if (orden.estado === 'pagada') throw new Error('La orden ya está pagada');
+  if (orden.gestion_event_id) await liberarEnGestion(orden.id);
+  const { error } = await supabase.from('festival_ordenes').delete().eq('id', orden.id).neq('estado', 'pagada');
+  if (error) throw error;
+}
+
 // ── Medios de pago ─────────────────────────────────────────────────────────
 
 /**
