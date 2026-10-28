@@ -106,11 +106,7 @@ export function TablaTickets({
                 <h3 className={`fest-angosta text-2xl leading-none ${cerrada ? 'line-through' : ''}`}>
                   {entrada.nombre}
                 </h3>
-                {(entrada.descripcion || entrada.entradas_por_unidad > 1) && (
-                  <p className="text-[13px] opacity-55 mt-1.5">
-                    {entrada.descripcion || t.tickets.incluye(entrada.entradas_por_unidad)}
-                  </p>
-                )}
+                {entrada.descripcion && <p className="text-[13px] opacity-55 mt-1.5">{entrada.descripcion}</p>}
               </div>
 
               <p className="fest-mono text-base row-start-2 sm:row-start-auto">
