@@ -2,12 +2,16 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { leerConfig, leerFaq } from '@/lib/festival';
 import { Escribe, EscribeTexto } from '@/components/festival/Escribe';
+import { leerTextos } from '@/lib/festival-idioma-servidor';
 
-export const metadata: Metadata = { title: 'Info & FAQ' };
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await leerTextos();
+  return { title: t.info.titulo };
+}
 
 /** Preguntas frecuentes en tres columnas, como "Info & FAQ" de Basilar. */
 export default async function FestivalInfo() {
-  const [config, faq] = await Promise.all([leerConfig(), leerFaq()]);
+  const [config, faq, { t }] = await Promise.all([leerConfig(), leerFaq(), leerTextos()]);
   if (!config) notFound();
 
   return (
@@ -15,9 +19,9 @@ export default async function FestivalInfo() {
       {faq.length === 0 ? (
         <>
           <p className="fest-rotulo mb-8">
-            <EscribeTexto texto="Info & FAQ" />
+            <EscribeTexto texto={t.info.titulo} />
           </p>
-          <p className="fest-mono text-sm opacity-60">Muy pronto.</p>
+          <p className="fest-mono text-sm opacity-60">{t.muyPronto}</p>
         </>
       ) : (
         <div className="columns-1 md:columns-2 lg:columns-3 [column-gap:56px]">
@@ -35,7 +39,7 @@ export default async function FestivalInfo() {
       )}
       {config.email && faq.length > 0 && (
         <p className="mt-6 fest-mono text-[11px] uppercase tracking-[0.25em] opacity-60">
-          ¿Otra duda?{' '}
+          {t.info.otraDuda}{' '}
           <a href={`mailto:${config.email}`} className="text-[var(--fest-acento)] normal-case tracking-normal">
             {config.email}
           </a>

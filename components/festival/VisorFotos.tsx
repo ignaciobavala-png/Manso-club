@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import Image from 'next/image';
+import { useTextos } from './Idioma';
 
 interface Props {
   fotos: string[];
@@ -22,6 +23,7 @@ interface Props {
  * cerrar.
  */
 export function VisorFotos({ fotos, alt, className, children }: Props) {
+  const t = useTextos();
   const [abierta, setAbierta] = useState<number | null>(null);
   const toqueX = useRef<number | null>(null);
 
@@ -89,14 +91,14 @@ export function VisorFotos({ fotos, alt, className, children }: Props) {
             onClick={() => setAbierta(null)}
             className="absolute top-3 right-4 fest-menu text-[var(--fest-texto)] text-[15px] p-2 hover:text-[var(--fest-acento)]"
           >
-            Cerrar ✕
+            {t.galeria.cerrar} ✕
           </button>
 
           {fotos.length > 1 && (
             <>
               <button
                 type="button"
-                aria-label="Anterior"
+                aria-label={t.galeria.anterior}
                 onClick={e => {
                   e.stopPropagation();
                   pasar(-1);
@@ -107,7 +109,7 @@ export function VisorFotos({ fotos, alt, className, children }: Props) {
               </button>
               <button
                 type="button"
-                aria-label="Siguiente"
+                aria-label={t.galeria.siguiente}
                 onClick={e => {
                   e.stopPropagation();
                   pasar(1);

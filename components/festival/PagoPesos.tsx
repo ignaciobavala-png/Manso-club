@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { formatArs } from '@/lib/precios';
 import type { DatoBancario } from '@/lib/datos-bancarios';
 import { Copiar } from './PagoCripto';
+import { useTextos } from './Idioma';
 
 /**
  * Pantallas de pago en pesos de /blur/compra/[id], mientras la orden no
@@ -24,31 +25,31 @@ export function PagoTransferencia({
   datos: DatoBancario[];
   whatsapp: string | null;
 }) {
-  const mensaje = `Hola! Te mando el comprobante de la compra ${codigo} del festival (${formatArs(totalArs)}).`;
+  const t = useTextos();
+  const mensaje = t.transferencia.wsp(codigo, formatArs(totalArs));
   return (
     <>
-      <h1 className="fest-angosta text-4xl sm:text-5xl leading-none">Pagá por transferencia</h1>
+      <h1 className="fest-angosta text-4xl sm:text-5xl leading-none">{t.transferencia.titulo}</h1>
       <p className="mt-4 text-[15px] opacity-75 max-w-[56ch]">
-        Transferí exactamente {formatArs(totalArs)} y mandanos el comprobante. Cuando lo confirmamos te llegan las
-        entradas por mail, y también aparecen en esta página.
+        {t.transferencia.texto(formatArs(totalArs))}
       </p>
 
       <dl className="mt-10 grid grid-cols-[auto_1fr] gap-x-6 gap-y-3 items-center max-w-[620px] border-t border-[var(--fest-texto)]/15 pt-6">
-        <dt className="fest-mono opacity-55 uppercase tracking-[0.2em] text-[10px]">Monto</dt>
+        <dt className="fest-mono opacity-55 uppercase tracking-[0.2em] text-[10px]">{t.transferencia.monto}</dt>
         <dd className="flex flex-wrap items-center gap-3">
           <span className="fest-angosta text-3xl tabular-nums">{formatArs(totalArs)}</span>
-          <Copiar valor={String(totalArs)} etiqueta="Copiar" />
+          <Copiar valor={String(totalArs)} etiqueta={t.transferencia.copiar} />
         </dd>
         {datos.map(d => (
           <div key={d.label} className="contents">
             <dt className="fest-mono opacity-55 uppercase tracking-[0.2em] text-[10px]">{d.label}</dt>
             <dd className="flex flex-wrap items-center gap-3 fest-mono text-[15px] break-all">
               {d.value}
-              {(d.label === 'CBU' || d.label === 'Alias') && <Copiar valor={d.value} etiqueta="Copiar" />}
+              {(d.label === 'CBU' || d.label === 'Alias') && <Copiar valor={d.value} etiqueta={t.transferencia.copiar} />}
             </dd>
           </div>
         ))}
-        <dt className="fest-mono opacity-55 uppercase tracking-[0.2em] text-[10px]">Tu código</dt>
+        <dt className="fest-mono opacity-55 uppercase tracking-[0.2em] text-[10px]">{t.transferencia.tuCodigo}</dt>
         <dd className="fest-mono text-[15px] tracking-[0.15em]">{codigo}</dd>
       </dl>
 
@@ -59,7 +60,7 @@ export function PagoTransferencia({
           rel="noopener noreferrer"
           className="inline-block mt-8 fest-menu text-[16px] sm:text-[18px] leading-[1.3] px-6 py-2.5 bg-[var(--fest-acento)] text-[var(--fest-fondo)] hover:bg-[var(--fest-texto)] transition-colors"
         >
-          Mandar comprobante
+          {t.transferencia.mandarComprobante}
         </a>
       )}
     </>
@@ -72,6 +73,7 @@ export function PagoTransferencia({
  * Recarga sola un rato por si el aviso está en camino.
  */
 export function EsperandoMP({ link, rechazado }: { link: string | null; rechazado: boolean }) {
+  const t = useTextos();
   const router = useRouter();
   useEffect(() => {
     if (rechazado) return;
@@ -86,19 +88,17 @@ export function EsperandoMP({ link, rechazado }: { link: string | null; rechazad
   return (
     <>
       <h1 className="fest-angosta text-4xl sm:text-5xl leading-none">
-        {rechazado ? 'El pago no se aprobó' : 'Esperando a Mercado Pago'}
+        {rechazado ? t.mp.rechazadoTitulo : t.mp.esperandoTitulo}
       </h1>
       <p className="mt-4 text-[15px] opacity-75 max-w-[56ch]">
-        {rechazado
-          ? 'Mercado Pago rechazó el pago. Podés intentar de nuevo con otro medio.'
-          : 'Si ya pagaste, en unos segundos esta página muestra tus entradas y te llegan por mail. Si el pago quedó pendiente (por ejemplo, en efectivo), aparecen cuando se acredite.'}
+        {rechazado ? t.mp.rechazadoTexto : t.mp.esperandoTexto}
       </p>
       {link && (
         <a
           href={link}
           className="inline-block mt-8 fest-menu text-[16px] sm:text-[18px] leading-[1.3] px-6 py-2.5 bg-[var(--fest-acento)] text-[var(--fest-fondo)] hover:bg-[var(--fest-texto)] transition-colors"
         >
-          {rechazado ? 'Intentar de nuevo' : 'Ir a pagar'}
+          {rechazado ? t.mp.reintentar : t.mp.ir}
         </a>
       )}
     </>

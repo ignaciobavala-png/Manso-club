@@ -4,6 +4,7 @@ import { FormEvent, useCallback, useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import QRCode from 'qrcode';
 import { REDES, monedasDe, type EstadoPago, type RedCripto } from '@/lib/cripto-redes';
+import { useTextos } from './Idioma';
 
 /**
  * Pantalla de pago en cripto: elegir red → monto exacto + dirección + QR →
@@ -25,6 +26,7 @@ const CADA_MS = 8000;
 
 export function PagoCripto({ ordenId, inicial, demo = false }: { ordenId: string; inicial: EstadoPago; demo?: boolean }) {
   const router = useRouter();
+  const t = useTextos();
   const [estado, setEstado] = useState(inicial);
   const [eligiendo, setEligiendo] = useState<RedCripto | null>(null);
   const [cambiarRed, setCambiarRed] = useState(false);
@@ -68,11 +70,11 @@ export function PagoCripto({ ordenId, inicial, demo = false }: { ordenId: string
         body: JSON.stringify({ red }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error ?? 'No pudimos preparar el pago.');
+      if (!res.ok) throw new Error(data.error ?? t.cripto.errorPreparar);
       setEstado(data);
       setCambiarRed(false);
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'No pudimos preparar el pago.');
+      setError(e instanceof Error ? e.message : t.cripto.errorPreparar);
     } finally {
       setEligiendo(null);
     }
@@ -84,16 +86,14 @@ export function PagoCripto({ ordenId, inicial, demo = false }: { ordenId: string
   return (
     <div>
       <h1 className="fest-angosta text-4xl sm:text-5xl leading-none">
-        {estado.estado === 'vencida' ? 'El plazo para pagar venció' : 'Pagá con cripto'}
+        {estado.estado === 'vencida' ? t.cripto.vencidoTitulo : t.cripto.titulo}
       </h1>
       <p className="mt-4 text-[15px] opacity-75 max-w-[560px]">
-        {estado.estado === 'vencida'
-          ? 'No recibimos el pago a tiempo. Si ya lo mandaste, pegá el hash más abajo; si no, generá el pago de nuevo.'
-          : 'USDT, directo a la wallet de Manso. Las entradas aparecen acá y te llegan por mail apenas se confirma la transferencia.'}
+        {estado.estado === 'vencida' ? t.cripto.vencidoTexto : t.cripto.texto}
       </p>
 
       {mostrarSelector && (
-        <Paso numero="01" titulo={estado.estado === 'vencida' ? 'Elegí la red para pagar de nuevo' : 'Elegí la red'}>
+        <Paso numero="01" titulo={estado.estado === 'vencida' ? t.cripto.elegiRedDeNuevo : t.cripto.elegiRed}>
           <ul className="grid sm:grid-cols-2 gap-3 max-w-[620px]">
             {estado.redes.map(red => {
               const actual = red === estado.red && estado.estado === 'pendiente';
@@ -112,7 +112,7 @@ export function PagoCripto({ ordenId, inicial, demo = false }: { ordenId: string
                   >
                     <span className="fest-angosta text-2xl leading-none block">{REDES[red].nombre}</span>
                     <span className="fest-mono text-[11px] uppercase tracking-[0.2em] opacity-70 block mt-2">
-                      {eligiendo === red ? 'Preparando…' : `${monedasDe(red)} · ${REDES[red].estandar}`}
+                      {eligiendo === red ? t.tickets.preparando : `${monedasDe(red)} · ${REDES[red].estandar}`}
                     </span>
                   </button>
                 </li>
@@ -120,7 +120,7 @@ export function PagoCripto({ ordenId, inicial, demo = false }: { ordenId: string
             })}
           </ul>
           <p className="mt-4 fest-mono text-[11px] uppercase tracking-[0.15em] opacity-60 leading-relaxed">
-            Desde Lemon o Binance: BNB Smart Chain, que cobra menos comisión. Desde Bitso: Ethereum (Bitso no saca USDT por BEP20). Elegí acá la misma red que vas a usar para retirar.
+            {t.cripto.ayudaRed}
           </p>
           {error && (
             <p role="alert" className="mt-3 fest-mono text-[11px] uppercase tracking-[0.2em] text-[var(--fest-acento)]">
@@ -140,13 +140,14 @@ export function PagoCripto({ ordenId, inicial, demo = false }: { ordenId: string
 }
 
 function Instrucciones({ estado, onCambiarRed }: { estado: EstadoPago; onCambiarRed: () => void }) {
+  const t = useTextos();
   const red = REDES[estado.red!];
   const monto = estado.monto!.toFixed(2);
   const monedas = monedasDe(red.id);
 
   return (
     <>
-      <Paso numero="01" titulo="Red">
+      <Paso numero="01" titulo={t.cripto.red}>
         <div className="flex flex-wrap items-baseline gap-x-5 gap-y-2">
           <p className="fest-angosta text-2xl leading-none">
             {red.nombre} <span className="fest-mono text-[11px] tracking-[0.2em] opacity-60 ml-2">{red.estandar}</span>
@@ -156,34 +157,32 @@ function Instrucciones({ estado, onCambiarRed }: { estado: EstadoPago; onCambiar
             onClick={onCambiarRed}
             className="fest-mono text-[11px] uppercase tracking-[0.25em] underline opacity-70 hover:opacity-100"
           >
-            Cambiar de red
+            {t.cripto.cambiarRed}
           </button>
         </div>
       </Paso>
 
-      <Paso numero="02" titulo="Mandá exactamente">
+      <Paso numero="02" titulo={t.cripto.mandaExactamente}>
         <div className="flex flex-wrap items-end gap-x-5 gap-y-3">
           <p className="fest-ancha text-5xl sm:text-7xl leading-[0.85] tabular-nums">{monto}</p>
           <p className="fest-angosta text-2xl leading-none pb-1">{monedas}</p>
-          <Copiar valor={monto} etiqueta="Copiar monto" />
+          <Copiar valor={monto} etiqueta={t.cripto.copiarMonto} />
         </div>
         <p className="mt-5 text-[14px] text-[var(--fest-resalte)] max-w-[620px] leading-snug">
-          Los centavos identifican tu compra: con otro monto no la podemos reconocer sola. Si el exchange cobra
-          comisión de retiro, sumala para que lleguen {monto} justos.
+          {t.cripto.centavos(monto)}
         </p>
       </Paso>
 
-      <Paso numero="03" titulo={`A esta dirección · ${red.nombre}`}>
+      <Paso numero="03" titulo={t.cripto.aEstaDireccion(red.nombre)}>
         <div className="flex flex-col sm:flex-row gap-6 sm:items-center">
           <QR valor={estado.direccion!} />
           <div className="min-w-0">
             <p className="fest-mono text-[15px] sm:text-lg break-all leading-snug">{estado.direccion}</p>
             <div className="mt-3">
-              <Copiar valor={estado.direccion!} etiqueta="Copiar dirección" />
+              <Copiar valor={estado.direccion!} etiqueta={t.cripto.copiarDireccion} />
             </div>
             <p className="mt-4 text-[13px] opacity-70 leading-snug max-w-[460px]">
-              Solo {monedas} en la red {red.nombre} ({red.estandar}). Otra moneda u otra red no llega y no se puede
-              recuperar.
+              {t.cripto.soloEnRed(monedas, red.nombre, red.estandar)}
             </p>
           </div>
         </div>
@@ -195,6 +194,7 @@ function Instrucciones({ estado, onCambiarRed }: { estado: EstadoPago; onCambiar
 }
 
 function Esperando({ venceAt }: { venceAt: string | null }) {
+  const t = useTextos();
   // Arranca en null para que el HTML del servidor y el primer render del
   // navegador coincidan; el reloj empieza recién en el navegador.
   const [ahora, setAhora] = useState<number | null>(null);
@@ -219,15 +219,15 @@ function Esperando({ venceAt }: { venceAt: string | null }) {
           <span className="absolute inset-0 rounded-full bg-[var(--fest-acento)] animate-ping opacity-60" />
           <span className="relative w-2.5 h-2.5 rounded-full bg-[var(--fest-acento)]" />
         </span>
-        Esperando el pago
+        {t.cripto.esperando}
       </span>
       {mm !== null && (
         <span className="fest-mono text-[12px] uppercase tracking-[0.2em] opacity-60 tabular-nums">
-          {restante === 0 ? 'Plazo vencido: si ya pagaste, igual se acredita' : `Tenés ${mm}:${ss} para mandarlo`}
+          {restante === 0 ? t.cripto.plazoVencido : t.cripto.tenes(`${mm}:${ss}`)}
         </span>
       )}
       <span className="fest-mono text-[11px] opacity-50 basis-full">
-        La confirmación tarda de unos segundos a un par de minutos según la red. No hace falta recargar.
+        {t.cripto.tarda}
       </span>
     </div>
   );
@@ -244,6 +244,7 @@ function ReclamoHash({
   onAcreditado: () => void;
   demo: boolean;
 }) {
+  const t = useTextos();
   const [abierto, setAbierto] = useState(false);
   const [hash, setHash] = useState('');
   const [enviando, setEnviando] = useState(false);
@@ -252,7 +253,7 @@ function ReclamoHash({
   const verificar = async (ev: FormEvent) => {
     ev.preventDefault();
     if (demo) {
-      setMensaje('Vista de ejemplo: acá se buscaría esa transacción en la red y, si llegó lo pedido, se acreditaría.');
+      setMensaje(t.cripto.demoHash);
       return;
     }
     setEnviando(true);
@@ -265,9 +266,9 @@ function ReclamoHash({
       });
       const data = await res.json();
       if (data.ok) onAcreditado();
-      else setMensaje(data.mensaje ?? 'No pudimos verificar la transacción.');
+      else setMensaje(data.mensaje ?? t.cripto.errorVerificar);
     } catch {
-      setMensaje('No pudimos verificar la transacción.');
+      setMensaje(t.cripto.errorVerificar);
     } finally {
       setEnviando(false);
     }
@@ -281,13 +282,12 @@ function ReclamoHash({
         aria-expanded={abierto}
         className="fest-flecha fest-mono text-[11px] uppercase tracking-[0.25em] opacity-70 hover:opacity-100"
       >
-        ¿Ya pagaste y no se acredita?
+        {t.cripto.yaPagaste}
       </button>
       {abierto && (
         <form onSubmit={verificar} className="mt-4 grid gap-3 max-w-[620px]">
           <p className="text-[13px] opacity-70 leading-snug">
-            Pegá el hash (o el link) de la transacción en {REDES[red].nombre}. Lo encontrás en el historial de tu
-            wallet o, en Binance, en el detalle del retiro como &quot;TxID&quot;.
+            {t.cripto.pegaHash(REDES[red].nombre)}
           </p>
           <div className="flex flex-col sm:flex-row gap-3">
             <input
@@ -302,7 +302,7 @@ function ReclamoHash({
               disabled={enviando || !hash.trim()}
               className="fest-angosta text-xl px-6 py-2.5 border border-[var(--fest-texto)]/60 enabled:hover:bg-[var(--fest-texto)] enabled:hover:text-[var(--fest-fondo)] transition-colors disabled:opacity-40"
             >
-              {enviando ? 'Buscando…' : 'Verificar'}
+              {enviando ? t.cripto.buscando : t.cripto.verificar}
             </button>
           </div>
           {mensaje && (
@@ -328,6 +328,7 @@ function Paso({ numero, titulo, children }: { numero: string; titulo: string; ch
 }
 
 export function Copiar({ valor, etiqueta }: { valor: string; etiqueta: string }) {
+  const t = useTextos();
   const [listo, setListo] = useState(false);
   return (
     <button
@@ -343,12 +344,13 @@ export function Copiar({ valor, etiqueta }: { valor: string; etiqueta: string })
       }}
       className="fest-mono text-[11px] uppercase tracking-[0.2em] border border-[var(--fest-texto)]/40 px-3 py-2 hover:border-[var(--fest-acento)] hover:text-[var(--fest-acento)] transition-colors"
     >
-      {listo ? 'Copiado' : etiqueta}
+      {listo ? t.cripto.copiado : etiqueta}
     </button>
   );
 }
 
 function QR({ valor }: { valor: string }) {
+  const t = useTextos();
   const [src, setSrc] = useState<string | null>(null);
   useEffect(() => {
     QRCode.toDataURL(valor, { width: 360, margin: 2, color: { dark: '#000000', light: '#FFFCDC' } })
@@ -357,7 +359,7 @@ function QR({ valor }: { valor: string }) {
   }, [valor]);
   return (
     <div className="w-[168px] h-[168px] shrink-0 bg-[#FFFCDC]">
-      {src && <img src={src} alt="QR de la dirección de pago" width={168} height={168} />}
+      {src && <img src={src} alt={t.cripto.qrAlt} width={168} height={168} />}
     </div>
   );
 }

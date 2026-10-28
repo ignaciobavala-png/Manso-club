@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { leerConfig, leerLineup } from '@/lib/festival';
 import Image from 'next/image';
 import { VisorFotos } from '@/components/festival/VisorFotos';
+import { leerTextos } from '@/lib/festival-idioma-servidor';
 
 /**
  * Página de un artista. Estructura de /speakers/[slug] de la bitconf: volver,
@@ -50,15 +51,15 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function FestivalArtistaPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const [config, encontrado] = await Promise.all([leerConfig(), buscar(slug)]);
+  const [config, encontrado, { t }] = await Promise.all([leerConfig(), buscar(slug), leerTextos()]);
   if (!config || !encontrado) notFound();
 
   const { artista, anterior, siguiente } = encontrado;
   const video = idYoutube(artista.youtube_url);
 
   const set = [
-    ['Día', artista.dia],
-    ['Set', artista.horario],
+    [t.lineup.dia, artista.dia],
+    [t.lineup.set, artista.horario],
   ].filter((d): d is [string, string] => Boolean(d[1]));
 
   const redes = [
@@ -73,7 +74,7 @@ export default async function FestivalArtistaPage({ params }: { params: Promise<
         href="/blur/line-up"
         className="fest-angosta text-base opacity-55 hover:opacity-100 hover:text-[var(--fest-acento)] transition"
       >
-        ← Todo el line up
+        {t.lineup.todo}
       </Link>
 
       <div
@@ -83,7 +84,7 @@ export default async function FestivalArtistaPage({ params }: { params: Promise<
       >
         {artista.foto_url && (
           <VisorFotos fotos={[artista.foto_url]} alt={artista.nombre} className="max-w-[300px] md:max-w-none">
-            <button type="button" data-foto={0} aria-label={`Ampliar la foto de ${artista.nombre}`} className="block w-full cursor-zoom-in">
+            <button type="button" data-foto={0} aria-label={t.lineup.ampliar(artista.nombre)} className="block w-full cursor-zoom-in">
               <Image
                 src={artista.foto_url}
                 alt={artista.nombre}
@@ -132,7 +133,7 @@ export default async function FestivalArtistaPage({ params }: { params: Promise<
             <div className="mt-8 max-w-[720px] aspect-video bg-[var(--fest-texto)]/[0.06]">
               <iframe
                 src={`https://www.youtube-nocookie.com/embed/${video}`}
-                title={`${artista.nombre} en YouTube`}
+                title={t.lineup.youtube(artista.nombre)}
                 loading="lazy"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
@@ -161,7 +162,7 @@ export default async function FestivalArtistaPage({ params }: { params: Promise<
 
       {(anterior || siguiente) && (
         <nav
-          aria-label="Otros artistas"
+          aria-label={t.lineup.otros}
           className="mt-16 pt-5 border-t border-[var(--fest-texto)]/15 flex justify-between gap-5"
         >
           {anterior ? (
@@ -169,7 +170,7 @@ export default async function FestivalArtistaPage({ params }: { params: Promise<
               href={`/blur/line-up/${anterior.slug}`}
               className="fest-angosta text-[clamp(20px,2.4vw,32px)] leading-tight hover:text-[var(--fest-acento)] transition-colors"
             >
-              <small className="block fest-mono text-[10px] tracking-[0.3em] font-normal opacity-55">← Anterior</small>
+              <small className="block fest-mono text-[10px] tracking-[0.3em] font-normal opacity-55">{t.lineup.anterior}</small>
               {anterior.nombre}
             </Link>
           ) : (
@@ -180,7 +181,7 @@ export default async function FestivalArtistaPage({ params }: { params: Promise<
               href={`/blur/line-up/${siguiente.slug}`}
               className="fest-angosta text-right text-[clamp(20px,2.4vw,32px)] leading-tight hover:text-[var(--fest-acento)] transition-colors"
             >
-              <small className="block fest-mono text-[10px] tracking-[0.3em] font-normal opacity-55">Siguiente →</small>
+              <small className="block fest-mono text-[10px] tracking-[0.3em] font-normal opacity-55">{t.lineup.siguiente}</small>
               {siguiente.nombre}
             </Link>
           )}

@@ -19,9 +19,13 @@ import { WHATSAPP_NUMBER } from '@/lib/constants';
 import { formatArs, formatUsd } from '@/lib/precios';
 import { PagoCripto } from '@/components/festival/PagoCripto';
 import { EsperandoMP, PagoTransferencia } from '@/components/festival/PagoPesos';
+import { leerTextos } from '@/lib/festival-idioma-servidor';
 import { CompraPagada, Dato, Marco, qrDeEntrada } from '@/components/festival/CompraPagada';
 
-export const metadata: Metadata = { title: 'Tu compra', robots: { index: false, follow: false } };
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await leerTextos();
+  return { title: t.compra.marco, robots: { index: false, follow: false } };
+}
 export const dynamic = 'force-dynamic';
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -42,6 +46,7 @@ export default async function CompraFestival({
   const [{ id }, query] = await Promise.all([params, searchParams]);
   if (!UUID.test(id)) notFound();
 
+  const { t } = await leerTextos();
   const supabase = adminFestival();
   let orden = await leerOrden(supabase, id);
   if (!orden) notFound();
@@ -58,12 +63,12 @@ export default async function CompraFestival({
 
   const resumen = (
     <dl className="mt-12 grid grid-cols-[auto_1fr] gap-x-6 gap-y-2 fest-mono text-[13px] max-w-[620px]">
-      <Dato titulo="A nombre de">{orden.nombre}</Dato>
-      <Dato titulo="Entradas">{orden.items.map(i => `${i.cantidad} × ${i.nombre}`).join(' · ')}</Dato>
-      <Dato titulo="Total">
+      <Dato titulo={t.compra.aNombreDe}>{orden.nombre}</Dato>
+      <Dato titulo={t.compra.entradas}>{orden.items.map(i => `${i.cantidad} × ${i.nombre}`).join(' · ')}</Dato>
+      <Dato titulo={t.compra.total}>
         {orden.metodo === 'cripto' && orden.total_usd !== null ? (
           <>
-            {formatUsd(orden.total_usd)} <span className="opacity-55">({formatArs(orden.total_ars)} al blue)</span>
+            {formatUsd(orden.total_usd)} <span className="opacity-55">{t.compra.alBlue(formatArs(orden.total_ars))}</span>
           </>
         ) : (
           formatArs(orden.total_ars)
@@ -101,7 +106,7 @@ export default async function CompraFestival({
         email={orden.email}
         tickets={tickets}
         pago={pago ? { ...pago, red: pago.red as RedCripto, monto: Number(pago.monto) } : null}
-        medio={orden.metodo === 'mercadopago' ? 'Mercado Pago' : orden.metodo === 'transferencia' ? 'transferencia' : undefined}
+        medio={orden.metodo === 'mercadopago' ? t.compra.medioMP : orden.metodo === 'transferencia' ? t.compra.medioTransferencia : undefined}
       >
         {resumen}
       </CompraPagada>

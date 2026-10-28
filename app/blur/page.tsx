@@ -7,6 +7,7 @@ import { GaleriaLocacion } from '@/components/festival/GaleriaLocacion';
 import { TextoResaltado } from '@/components/festival/TextoResaltado';
 import { LineupCorrido } from '@/components/festival/LineupCorrido';
 import { EscribeTexto } from '@/components/festival/Escribe';
+import { leerTextos } from '@/lib/festival-idioma-servidor';
 
 /**
  * Lo que dice el hero. Por ahora no es el nombre del panel (`config.nombre`),
@@ -29,7 +30,7 @@ const BANNER_POR_DEFECTO = '/blur/hero-cabina.jpg';
  * suben por encima de ella al scrollear.
  */
 export default async function FestivalHome() {
-  const [config, lineup] = await Promise.all([leerConfig(), leerLineup()]);
+  const [config, lineup, { t }] = await Promise.all([leerConfig(), leerLineup(), leerTextos()]);
   if (!config) notFound();
 
   const fecha = [fechaCorta(config.fecha), config.horario].filter(Boolean).join(' — ');
@@ -38,8 +39,10 @@ export default async function FestivalHome() {
   return (
     <>
     {/* Alto de pantalla menos el menú, que en el celular ocupa dos o tres renglones. */}
-    <section className="relative min-h-[calc(100svh-6rem)] sm:min-h-[calc(100svh-3.25rem)] flex flex-col items-center justify-center text-center">
-      {/* `fill` pone la foto en absolute: el `fixed` lo lleva el contenedor. */}
+    <section className="relative [clip-path:inset(0)] min-h-[calc(100svh-6rem)] sm:min-h-[calc(100svh-3.25rem)] flex flex-col items-center justify-center text-center">
+      {/* `fill` pone la foto en absolute: el `fixed` lo lleva el contenedor. El `clip-path` de la
+          sección recorta la foto a su propia caja: con el scroll rápido el navegador pinta la capa
+          fija antes que las secciones de abajo y la foto se asomaba por ahí. */}
       <div className="fixed inset-0">
         <Image
           src={config.banner_url || BANNER_POR_DEFECTO}
@@ -73,13 +76,13 @@ export default async function FestivalHome() {
     </section>
 
     {fotos.length > 0 && (
-      <Seccion rotulo="Locación" href="/blur/locacion" ver="Ver locación">
-        <GaleriaLocacion fotos={fotos} alt={config.lugar ?? 'Fotos del festival'} />
+      <Seccion rotulo={t.home.locacion} href="/blur/locacion" ver={t.home.verLocacion}>
+        <GaleriaLocacion fotos={fotos} alt={config.lugar ?? t.home.fotosAlt} />
       </Seccion>
     )}
 
     {config.vision && (
-      <Seccion rotulo="Visión">
+      <Seccion rotulo={t.home.vision}>
         <TextoResaltado
           texto={config.vision}
           className="text-[clamp(17px,1.6vw,24px)] leading-[1.4] tracking-[-0.01em]"
@@ -88,7 +91,7 @@ export default async function FestivalHome() {
     )}
 
     {lineup.length > 0 && (
-      <Seccion rotulo="Line up" href="/blur/line-up" ver="Ver line up">
+      <Seccion rotulo={t.home.lineup} href="/blur/line-up" ver={t.home.verLineup}>
         <LineupCorrido escenarios={lineup} />
       </Seccion>
     )}

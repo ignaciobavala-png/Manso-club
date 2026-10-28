@@ -1,6 +1,7 @@
 import QRCode from 'qrcode';
 import { REDES, type RedCripto } from '@/lib/cripto-redes';
 import { EscribeTexto } from './Escribe';
+import { leerTextos } from '@/lib/festival-idioma-servidor';
 
 /**
  * Piezas de /blur/compra/[id] que comparte con la demo
@@ -19,7 +20,7 @@ export interface EntradaConQr {
 export const qrDeEntrada = (codigo: string) =>
   QRCode.toDataURL(codigo, { width: 220, margin: 1, color: { dark: '#000000', light: '#FFFCDC' } });
 
-export function CompraPagada({
+export async function CompraPagada({
   email,
   tickets,
   pago,
@@ -35,39 +36,38 @@ export function CompraPagada({
   /** El resumen de la compra (a nombre de, entradas, total). */
   children: React.ReactNode;
 }) {
+  const { t: L } = await leerTextos();
   return (
     <>
-      <h1 className="fest-angosta text-4xl sm:text-5xl leading-none">Pago confirmado</h1>
-      <p className="mt-4 text-[15px] opacity-75">
-        Cada QR es una entrada. Guardá este link: también te lo mandamos a {email}.
-      </p>
+      <h1 className="fest-angosta text-4xl sm:text-5xl leading-none">{L.compra.pagoConfirmado}</h1>
+      <p className="mt-4 text-[15px] opacity-75">{L.compra.qrIntro(email)}</p>
 
       <ul className="mt-12 grid gap-6 sm:grid-cols-2">
         {tickets.map((t, i) => (
           <li key={t.id} className="border border-[var(--fest-texto)]/25 p-5 flex gap-5 items-center">
-            <img src={t.qr} alt={`QR de la entrada ${t.codigo}`} width={120} height={120} className="shrink-0" />
+            <img src={t.qr} alt={L.compra.qrAlt(t.codigo)} width={120} height={120} className="shrink-0" />
             <div className="min-w-0">
               <p className="fest-mono text-[10px] uppercase tracking-[0.25em] opacity-55">
-                Entrada {i + 1} de {tickets.length}
+                {L.compra.entradaN(i + 1, tickets.length)}
               </p>
               <p className="fest-angosta text-2xl leading-none mt-1.5">{t.entrada_nombre}</p>
               <p className="fest-mono text-sm mt-2 tracking-[0.15em]">{t.codigo}</p>
-              {t.usado && <p className="fest-mono text-[10px] uppercase mt-1 text-[var(--fest-acento)]">Usada</p>}
+              {t.usado && <p className="fest-mono text-[10px] uppercase mt-1 text-[var(--fest-acento)]">{L.compra.usada}</p>}
             </div>
           </li>
         ))}
       </ul>
 
       {children}
-      {!pago && medio && <p className="mt-3 fest-mono text-[12px] opacity-60">Pagado con {medio}</p>}
+      {!pago && medio && <p className="mt-3 fest-mono text-[12px] opacity-60">{L.compra.pagadoCon(medio)}</p>}
       {pago && (
         <p className="mt-3 fest-mono text-[12px] opacity-60">
-          Pagado con {pago.monto} {pago.token} en {REDES[pago.red].nombre}
+          {L.compra.pagadoConCripto(pago.monto, pago.token, REDES[pago.red].nombre)}
           {pago.tx_hash && (
             <>
               {' · '}
               <a href={REDES[pago.red].explorador(pago.tx_hash)} target="_blank" rel="noreferrer" className="underline">
-                ver transacción
+                {L.compra.verTransaccion}
               </a>
             </>
           )}
@@ -77,11 +77,12 @@ export function CompraPagada({
   );
 }
 
-export function Marco({ children }: { children: React.ReactNode }) {
+export async function Marco({ children }: { children: React.ReactNode }) {
+  const { t } = await leerTextos();
   return (
     <div className="px-4 sm:px-7 pt-6 sm:pt-10 pb-20 sm:pb-24 fest-entra max-w-[980px]">
       <p className="fest-rotulo mb-8">
-        <EscribeTexto texto="Tu compra" />
+        <EscribeTexto texto={t.compra.marco} />
       </p>
       {children}
     </div>

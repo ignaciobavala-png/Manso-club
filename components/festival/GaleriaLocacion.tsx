@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import { medidaImagen } from '@/lib/medida-imagen';
 import { VisorFotos } from './VisorFotos';
+import { leerTextos } from '@/lib/festival-idioma-servidor';
 
 interface Props {
   fotos: string[];
@@ -47,6 +48,7 @@ const PROPORCION_POR_DEFECTO = 3 / 4;
 const TOPE = 1.2;
 
 export async function GaleriaLocacion({ fotos, alt }: Props) {
+  const { t } = await leerTextos();
   if (fotos.length === 0) return null;
 
   const proporciones = await Promise.all(
@@ -76,7 +78,7 @@ export async function GaleriaLocacion({ fotos, alt }: Props) {
                       type="button"
                       key={desde + k}
                       data-foto={desde + k}
-                      aria-label={`Ver foto ${desde + k + 1} de ${fotos.length}`}
+                      aria-label={t.galeria.ver(desde + k + 1, fotos.length)}
                       className="relative min-w-0 cursor-zoom-in"
                       style={{ flex: `${r} 1 0`, aspectRatio: r }}
                     >

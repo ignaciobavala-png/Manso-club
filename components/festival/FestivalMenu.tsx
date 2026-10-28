@@ -2,15 +2,17 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { SelectorIdioma, useTextos } from '@/components/festival/Idioma';
 
+/** Las etiquetas salen de `TEXTOS[idioma].menu`, indexadas por href. */
 export const SECCIONES = [
-  { href: '/blur', etiqueta: 'Home' },
-  { href: '/blur/vision', etiqueta: 'Visión' },
-  { href: '/blur/locacion', etiqueta: 'Locación' },
-  { href: '/blur/spots', etiqueta: 'Spots' },
-  { href: '/blur/line-up', etiqueta: 'Line up' },
-  { href: '/blur/tickets', etiqueta: 'Tickets' },
-  { href: '/blur/info', etiqueta: 'Info & FAQ' },
+  '/blur',
+  '/blur/vision',
+  '/blur/locacion',
+  '/blur/spots',
+  '/blur/line-up',
+  '/blur/tickets',
+  '/blur/info',
 ] as const;
 
 /**
@@ -27,6 +29,7 @@ export const SECCIONES = [
  */
 export function FestivalMenu() {
   const pathname = usePathname();
+  const t = useTextos();
   // La página de un artista cuenta como "Line up".
   const actual = (href: string) =>
     href === '/blur' ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
@@ -36,20 +39,22 @@ export function FestivalMenu() {
     <header className="relative sm:sticky top-0 z-20 bg-[var(--fest-fondo)] flex items-start justify-between gap-4 px-4 py-3 sm:px-5 sm:py-4">
       <nav aria-label="Festival">
         <ul className="flex flex-wrap gap-x-[0.45em] fest-menu leading-none text-[16px] sm:text-[18px]">
-          {SECCIONES.map((s, i) => (
-            <li key={s.href} className="fest-menu-entra" style={{ '--i': i } as React.CSSProperties}>
+          {SECCIONES.map((href, i) => (
+            <li key={href} className="fest-menu-entra" style={{ '--i': i } as React.CSSProperties}>
               <Link
-                href={s.href}
-                aria-current={actual(s.href) ? 'page' : undefined}
+                href={href}
+                aria-current={actual(href) ? 'page' : undefined}
                 className="fest-chevron fest-menu-link pb-[0.1em] text-[var(--fest-acento)] hover:text-[var(--fest-texto)] aria-[current=page]:text-[var(--fest-texto)]/55 transition-colors"
               >
-                {s.etiqueta}
+                {t.menu[href]}
               </Link>
             </li>
           ))}
         </ul>
       </nav>
 
+      <div className="flex items-start gap-5 shrink-0">
+      <SelectorIdioma />
       <Link
         href="/blur/tickets"
         style={{ '--i': SECCIONES.length } as React.CSSProperties}
@@ -57,8 +62,9 @@ export function FestivalMenu() {
           enTickets ? 'hidden sm:inline-block' : ''
         }`}
       >
-        Tickets
+        {t.menu['/blur/tickets']}
       </Link>
+      </div>
     </header>
   );
 }

@@ -4,6 +4,8 @@ import { Archivo, IBM_Plex_Mono, Space_Mono } from 'next/font/google';
 import '@/components/festival/festival.css';
 import { leerConfig } from '@/lib/festival';
 import { FestivalMenu } from '@/components/festival/FestivalMenu';
+import { IdiomaProvider } from '@/components/festival/Idioma';
+import { leerTextos } from '@/lib/festival-idioma-servidor';
 
 /**
  * Subreal (/blur) — sitio chico con identidad propia, sin el navbar de
@@ -48,7 +50,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function FestivalLayout({ children }: { children: React.ReactNode }) {
   // Sin publicar, el RLS no le devuelve la fila a nadie que no sea admin.
-  const config = await leerConfig();
+  const [config, { idioma, t }] = await Promise.all([leerConfig(), leerTextos()]);
   if (!config) notFound();
 
   const estilo = {
@@ -61,6 +63,7 @@ export default async function FestivalLayout({ children }: { children: React.Rea
   const instagram = config.instagram?.replace(/^@/, '');
 
   return (
+    <IdiomaProvider idioma={idioma}>
     <div
       data-fest-raiz
       style={estilo}
@@ -70,7 +73,7 @@ export default async function FestivalLayout({ children }: { children: React.Rea
 
       {!config.publicado && (
         <div className="bg-[var(--fest-acento)] text-[var(--fest-fondo)] text-center fest-mono text-[10px] uppercase tracking-[0.3em] py-1.5 px-4">
-          Borrador — sin publicar, solo lo ven los admins
+          {t.borrador}
         </div>
       )}
 
@@ -82,7 +85,7 @@ export default async function FestivalLayout({ children }: { children: React.Rea
         <nav className="flex flex-wrap gap-x-[22px] gap-y-1.5 text-[var(--fest-acento)]">
           {config.email && (
             <a href={`mailto:${config.email}`} className="fest-flecha hover:text-[var(--fest-texto)] transition-colors">
-              Contacto
+              {t.contacto}
             </a>
           )}
           {instagram && (
@@ -102,5 +105,6 @@ export default async function FestivalLayout({ children }: { children: React.Rea
         </a>
       </footer>
     </div>
+    </IdiomaProvider>
   );
 }

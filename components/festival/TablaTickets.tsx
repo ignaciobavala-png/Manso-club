@@ -1,7 +1,8 @@
 'use client';
 
 import { FormEvent, useMemo, useState } from 'react';
-import { FestivalEntrada, MEDIOS_PAGO, MedioPago, etiquetaEstado } from '@/lib/types/festival';
+import { FestivalEntrada, MedioPago } from '@/lib/types/festival';
+import { useTextos } from './Idioma';
 import { formatArs } from '@/lib/precios';
 
 /**
@@ -23,6 +24,7 @@ export function TablaTickets({
   aviso: string | null;
   medios: MedioPago[];
 }) {
+  const t = useTextos();
   const [cantidades, setCantidades] = useState<Record<string, number>>({});
   const [datosAbiertos, setDatosAbiertos] = useState(false);
   const [nombre, setNombre] = useState('');
@@ -68,24 +70,24 @@ export function TablaTickets({
         }),
       });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data.url) throw new Error(data.error ?? 'No pudimos iniciar la compra.');
+      if (!res.ok || !data.url) throw new Error(data.error ?? t.tickets.errorCompra);
       window.location.href = data.url;
     } catch (e) {
-      setError(e instanceof Error ? e.message : 'No pudimos iniciar la compra.');
+      setError(e instanceof Error ? e.message : t.tickets.errorCompra);
       setEnviando(false);
     }
   };
 
   if (entradas.length === 0) {
-    return <p className="text-sm opacity-60">Las entradas se anuncian pronto.</p>;
+    return <p className="text-sm opacity-60">{t.tickets.pronto}</p>;
   }
 
   return (
     <div className="max-w-[980px]">
       <div className="hidden sm:grid grid-cols-[1fr_160px_130px] gap-4 pb-3 border-b border-[var(--fest-texto)]/35 fest-mono text-[10px] uppercase tracking-[0.3em] opacity-60">
-        <span>Tipo de ticket</span>
-        <span>Valor</span>
-        <span className="justify-self-end">Cantidad</span>
+        <span>{t.tickets.tipo}</span>
+        <span>{t.tickets.valor}</span>
+        <span className="justify-self-end">{t.tickets.cantidad}</span>
       </div>
 
       <ul>
@@ -106,7 +108,7 @@ export function TablaTickets({
                 </h3>
                 {(entrada.descripcion || entrada.entradas_por_unidad > 1) && (
                   <p className="text-[13px] opacity-55 mt-1.5">
-                    {entrada.descripcion || `Incluye ${entrada.entradas_por_unidad} entradas`}
+                    {entrada.descripcion || t.tickets.incluye(entrada.entradas_por_unidad)}
                   </p>
                 )}
               </div>
@@ -122,7 +124,7 @@ export function TablaTickets({
                       type="button"
                       onClick={() => cambiar(entrada, -1)}
                       disabled={n === 0}
-                      aria-label={`Una ${entrada.nombre} menos`}
+                      aria-label={t.tickets.menos(entrada.nombre)}
                       className="w-9 h-[38px] text-lg enabled:hover:text-[var(--fest-acento)] disabled:opacity-30"
                     >
                       −
@@ -137,7 +139,7 @@ export function TablaTickets({
                       type="button"
                       onClick={() => cambiar(entrada, 1)}
                       disabled={n >= entrada.max_por_compra}
-                      aria-label={`Una ${entrada.nombre} más`}
+                      aria-label={t.tickets.mas(entrada.nombre)}
                       className="w-9 h-[38px] text-lg enabled:hover:text-[var(--fest-acento)] disabled:opacity-30"
                     >
                       +
@@ -145,7 +147,7 @@ export function TablaTickets({
                   </div>
                 ) : (
                   <span className="inline-block w-[120px] text-center border border-[var(--fest-texto)]/15 px-2.5 py-2 fest-mono text-[10px] uppercase tracking-[0.2em]">
-                    {etiquetaEstado(entrada.estado)}
+                    {t.estados[entrada.estado]}
                   </span>
                 )}
               </div>
@@ -157,7 +159,7 @@ export function TablaTickets({
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-3.5 sm:gap-8 mt-9">
         {total > 0 && (
           <p className="fest-mono text-[13px] uppercase tracking-[0.15em]">
-            {unidades} {unidades === 1 ? 'entrada' : 'entradas'} · <span className="tabular-nums">{formatArs(total)}</span>
+            {unidades} {unidades === 1 ? t.tickets.entrada : t.tickets.entradas} · <span className="tabular-nums">{formatArs(total)}</span>
           </p>
         )}
         <button
@@ -166,13 +168,13 @@ export function TablaTickets({
           onClick={() => setDatosAbiertos(true)}
           className="fest-menu text-[16px] sm:text-[18px] leading-[1.3] px-6 py-2.5 bg-[var(--fest-acento)] text-[var(--fest-fondo)] enabled:hover:bg-[var(--fest-texto)] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
         >
-          Comprar
+          {t.tickets.comprar}
         </button>
       </div>
 
       {!metodo && (
         <p className="mt-4 sm:text-right fest-mono text-[11px] uppercase tracking-[0.2em] opacity-60">
-          La venta online abre pronto.
+          {t.tickets.ventaAbrePronto}
         </p>
       )}
 
@@ -180,7 +182,7 @@ export function TablaTickets({
         <form onSubmit={comprar} className="mt-8 sm:ml-auto sm:max-w-[420px] grid gap-3">
           {medios.length > 1 && (
             <fieldset className="grid gap-2 mb-2">
-              <legend className="fest-mono text-[10px] uppercase tracking-[0.3em] opacity-60 mb-2">Medio de pago</legend>
+              <legend className="fest-mono text-[10px] uppercase tracking-[0.3em] opacity-60 mb-2">{t.tickets.medioDePago}</legend>
               {medios.map(m => (
                 <label
                   key={m}
@@ -196,19 +198,19 @@ export function TablaTickets({
                     onChange={() => setMetodo(m)}
                     className="accent-[var(--fest-acento)]"
                   />
-                  <span className="fest-angosta text-xl leading-none">{MEDIOS_PAGO[m].nombre}</span>
+                  <span className="fest-angosta text-xl leading-none">{t.medios[m].nombre}</span>
                 </label>
               ))}
             </fieldset>
           )}
           <p className="fest-mono text-[11px] uppercase tracking-[0.2em] opacity-70 leading-relaxed">
-            {MEDIOS_PAGO[metodo].detalle}
+            {t.medios[metodo].detalle}
           </p>
           <input
             required
             value={nombre}
             onChange={e => setNombre(e.target.value)}
-            placeholder="Nombre y apellido"
+            placeholder={t.tickets.nombre}
             autoComplete="name"
             maxLength={120}
             className="bg-transparent border border-[var(--fest-texto)]/40 px-3 py-2.5 text-[15px] placeholder:opacity-50 focus:outline-none focus:border-[var(--fest-acento)]"
@@ -218,7 +220,7 @@ export function TablaTickets({
             type="email"
             value={email}
             onChange={e => setEmail(e.target.value)}
-            placeholder="Mail"
+            placeholder={t.tickets.mail}
             autoComplete="email"
             className="bg-transparent border border-[var(--fest-texto)]/40 px-3 py-2.5 text-[15px] placeholder:opacity-50 focus:outline-none focus:border-[var(--fest-acento)]"
           />
@@ -227,7 +229,7 @@ export function TablaTickets({
             disabled={enviando}
             className="fest-menu text-[16px] sm:text-[18px] leading-[1.3] py-2.5 bg-[var(--fest-acento)] text-[var(--fest-fondo)] enabled:hover:bg-[var(--fest-texto)] transition-colors disabled:opacity-50"
           >
-            {enviando ? 'Preparando…' : MEDIOS_PAGO[metodo].boton}
+            {enviando ? t.tickets.preparando : t.medios[metodo].boton}
           </button>
           {error && (
             <p role="alert" className="fest-mono text-[11px] uppercase tracking-[0.2em] text-[var(--fest-acento)]">

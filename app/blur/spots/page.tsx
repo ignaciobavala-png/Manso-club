@@ -3,8 +3,12 @@ import { notFound } from 'next/navigation';
 import { leerConfig, leerSpots } from '@/lib/festival';
 import { GaleriaLocacion } from '@/components/festival/GaleriaLocacion';
 import { EscribeTexto } from '@/components/festival/Escribe';
+import { leerTextos } from '@/lib/festival-idioma-servidor';
 
-export const metadata: Metadata = { title: 'Spots' };
+export async function generateMetadata(): Promise<Metadata> {
+  const { t } = await leerTextos();
+  return { title: t.spots.titulo };
+}
 
 /**
  * Los lugares de la fiesta (escenarios, rincones), uno debajo del otro: el
@@ -12,17 +16,17 @@ export const metadata: Metadata = { title: 'Spots' };
  * enteras y ampliables. Se cargan en el panel (Festival → Spots).
  */
 export default async function FestivalSpots() {
-  const [config, spots] = await Promise.all([leerConfig(), leerSpots()]);
+  const [config, spots, { t }] = await Promise.all([leerConfig(), leerSpots(), leerTextos()]);
   if (!config) notFound();
 
   return (
     <div className="px-4 sm:px-7 pt-6 sm:pt-10 pb-20 sm:pb-24 fest-entra">
       <p className="fest-rotulo mb-8">
-        <EscribeTexto texto="Spots" />
+        <EscribeTexto texto={t.spots.titulo} />
       </p>
 
       {spots.length === 0 ? (
-        <p className="fest-mono text-sm opacity-60">Los spots se anuncian pronto.</p>
+        <p className="fest-mono text-sm opacity-60">{t.spots.pronto}</p>
       ) : (
         spots.map(spot => (
           <section key={spot.id} className="mb-16 sm:mb-24 last:mb-0">
