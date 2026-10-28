@@ -131,7 +131,11 @@ export function FestivalSpotsAdmin() {
               className={INPUT}
             />
           </div>
+
           <div>
+            <label className={LABEL}>Nombre (English)</label>
+            <input type="text" value={spot.titulo_en ?? ''} onChange={e => editar(spot.id, { titulo_en: e.target.value })} className={INPUT} />
+          </div>          <div>
             <label className={LABEL}>Descripción</label>
             <textarea
               value={spot.descripcion}
@@ -141,9 +145,24 @@ export function FestivalSpotsAdmin() {
               className={`${INPUT} resize-y`}
             />
           </div>
-          <button
+
+          <div>
+            <label className={LABEL}>Descripción (English)</label>
+            <textarea
+              value={spot.descripcion_en ?? ''}
+              onChange={e => editar(spot.id, { descripcion_en: e.target.value })}
+              placeholder=""
+              rows={4}
+              className={`${INPUT} resize-y`}
+            />
+          </div>          <button
             type="button"
-            onClick={() => guardar(spot.id, { titulo: spot.titulo.trim(), descripcion: spot.descripcion.trim() })}
+            onClick={() => guardar(spot.id, {
+                titulo: spot.titulo.trim(),
+                descripcion: spot.descripcion.trim(),
+                titulo_en: spot.titulo_en?.trim() || null,
+                descripcion_en: spot.descripcion_en?.trim() || null,
+              })}
             disabled={guardando === spot.id}
             className={BOTON_GUARDAR}
           >

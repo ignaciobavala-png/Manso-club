@@ -22,6 +22,20 @@ export const idiomaDeNavegador = (acceptLanguage: string | null): Idioma => {
   return primero.startsWith('es') ? 'es' : 'en';
 };
 
+/**
+ * Para los textos del panel: en inglés, cada campo con su `<campo>_en` cargado
+ * lo reemplaza; vacío o ausente, queda el castellano.
+ */
+export function enIdioma<T extends object>(fila: T, idioma: Idioma, campos: (keyof T & string)[]): T {
+  if (idioma !== 'en') return fila;
+  const r = { ...fila } as Record<string, unknown>;
+  for (const c of campos) {
+    const v = r[`${c}_en`];
+    if (typeof v === 'string' && v.trim()) r[c] = v;
+  }
+  return r as T;
+}
+
 const es = {
   menu: {
     '/blur': 'Home',

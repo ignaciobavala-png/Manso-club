@@ -102,24 +102,30 @@ export function FestivalAdmin() {
   };
 
   const guardarDatos = () => {
-    const { nombre, bajada, fecha, horario, lugar, direccion, aviso, lema, instagram, email } = config;
+    const { nombre, bajada, bajada_en, fecha, horario, lugar, direccion, aviso, aviso_en, lema, lema_en, instagram, email } = config;
     guardarConfig({
       nombre,
       bajada,
+      bajada_en: bajada_en?.trim() || null,
       fecha: fecha || null,
       horario,
       lugar,
       direccion,
       aviso,
+      aviso_en: aviso_en?.trim() || null,
       lema,
+      lema_en: lema_en?.trim() || null,
       instagram: instagram?.trim().replace(/^@/, '') || null,
       email: email?.trim() || null,
     });
   };
 
   const guardarTextos = () => {
-    const { vision, locacion } = config;
-    guardarConfig({ vision: vision?.trim() || null, locacion: locacion?.trim() || null }, 'textos');
+    const { vision, vision_en, locacion } = config;
+    guardarConfig(
+      { vision: vision?.trim() || null, vision_en: vision_en?.trim() || null, locacion: locacion?.trim() || null },
+      'textos'
+    );
   };
 
   const guardarColores = () => {
@@ -341,6 +347,16 @@ export function FestivalAdmin() {
           />
         </div>
 
+        <div>
+          <label className={LABEL}>Bajada (English)</label>
+          <textarea
+            value={config.bajada_en ?? ''}
+            onChange={e => editarConfig({ bajada_en: e.target.value })}
+            placeholder=""
+            rows={3}
+            className={`${INPUT} resize-y`}
+          />
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className={LABEL}>Fecha</label>
@@ -395,6 +411,10 @@ export function FestivalAdmin() {
         </div>
 
         <div>
+          <label className={LABEL}>Aviso (English)</label>
+          <input type="text" value={config.aviso_en ?? ''} onChange={e => editarConfig({ aviso_en: e.target.value })} className={INPUT} />
+        </div>
+        <div>
           <label className={LABEL}>Segunda línea del hero (opcional)</label>
           <input
             type="text"
@@ -406,6 +426,10 @@ export function FestivalAdmin() {
           <p className={AYUDA}>Va en una cajita debajo de la fecha, en la portada.</p>
         </div>
 
+        <div>
+          <label className={LABEL}>Segunda línea del hero (English)</label>
+          <input type="text" value={config.lema_en ?? ''} onChange={e => editarConfig({ lema_en: e.target.value })} className={INPUT} />
+        </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className={LABEL}>Instagram del festival</label>
@@ -458,6 +482,16 @@ export function FestivalAdmin() {
           />
         </div>
 
+        <div>
+          <label className={LABEL}>Visión (English)</label>
+          <textarea
+            value={config.vision_en ?? ''}
+            onChange={e => editarConfig({ vision_en: e.target.value })}
+            placeholder=""
+            rows={8}
+            className={`${INPUT} resize-y`}
+          />
+        </div>
         <div>
           <label className={LABEL}>Locación</label>
           <textarea
@@ -816,9 +850,28 @@ export function FestivalAdmin() {
               />
             </div>
 
+            <div>
+              <label className={LABEL}>Título (English)</label>
+              <input type="text" value={p.titulo_en ?? ''} onChange={e => editarPregunta(p.id, { titulo_en: e.target.value })} className={INPUT} />
+            </div>
+            <div>
+              <label className={LABEL}>Texto (English)</label>
+              <textarea
+                value={p.texto_en ?? ''}
+                onChange={e => editarPregunta(p.id, { texto_en: e.target.value })}
+                placeholder=""
+                rows={4}
+                className={`${INPUT} resize-y`}
+              />
+            </div>
             <button
               type="button"
-              onClick={() => guardarFila('festival_faq', p.id, { titulo: p.titulo.trim(), texto: p.texto.trim() })}
+              onClick={() => guardarFila('festival_faq', p.id, {
+                titulo: p.titulo.trim(),
+                texto: p.texto.trim(),
+                titulo_en: p.titulo_en?.trim() || null,
+                texto_en: p.texto_en?.trim() || null,
+              })}
               disabled={guardando === p.id}
               className={BOTON_GUARDAR}
             >

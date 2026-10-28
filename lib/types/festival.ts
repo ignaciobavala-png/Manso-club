@@ -11,6 +11,11 @@ export interface FestivalConfig {
   id: number;
   nombre: string;
   bajada: string | null;
+  /** Versiones en inglés (opcionales) de los textos de abajo: ver `enIdioma`. */
+  bajada_en: string | null;
+  aviso_en: string | null;
+  lema_en: string | null;
+  vision_en: string | null;
   /** `YYYY-MM-DD`, sin hora: el horario va aparte como texto libre. */
   fecha: string | null;
   horario: string | null;
@@ -91,6 +96,9 @@ export interface FestivalArtista {
   pais: string | null;
   /** Línea debajo del nombre: "Berlín — Techno / Dub". */
   origen: string | null;
+  origen_en: string | null;
+  bio_en: string | null;
+  dia_en: string | null;
   foto_url: string | null;
   bio: string | null;
   dia: string | null;
@@ -109,6 +117,8 @@ export interface FestivalSpot {
   id: string;
   titulo: string;
   descripcion: string;
+  titulo_en: string | null;
+  descripcion_en: string | null;
   fotos: string[];
   orden: number;
   activo: boolean;
@@ -119,6 +129,8 @@ export interface FestivalFaq {
   id: string;
   titulo: string;
   texto: string;
+  titulo_en: string | null;
+  texto_en: string | null;
   orden: number;
   activo: boolean;
 }
@@ -154,6 +166,10 @@ export const CONFIG_FESTIVAL_VACIA: FestivalConfig = {
   id: 1,
   nombre: 'Subreal',
   bajada: null,
+  bajada_en: null,
+  aviso_en: null,
+  lema_en: null,
+  vision_en: null,
   fecha: null,
   horario: null,
   lugar: null,

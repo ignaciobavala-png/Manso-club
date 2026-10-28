@@ -9,6 +9,8 @@ import {
   FestivalFaq,
   FestivalSpot,
 } from '@/lib/types/festival';
+import { enIdioma } from '@/lib/festival-idioma';
+import { leerIdioma } from '@/lib/festival-idioma-servidor';
 import { comoEntrada, tiposGestion, ventaEnGestion } from '@/lib/gestion-entradas';
 
 /**
@@ -24,7 +26,9 @@ import { comoEntrada, tiposGestion, ventaEnGestion } from '@/lib/gestion-entrada
 export const leerConfig = cache(async (): Promise<FestivalConfig | null> => {
   const supabase = await createSupabaseServer();
   const { data } = await supabase.from('festival_config').select('*').eq('id', 1).maybeSingle();
-  return data ? { ...CONFIG_FESTIVAL_VACIA, ...(data as FestivalConfig) } : null;
+  if (!data) return null;
+  const config = { ...CONFIG_FESTIVAL_VACIA, ...(data as FestivalConfig) };
+  return enIdioma(config, await leerIdioma(), ['bajada', 'aviso', 'lema', 'vision']);
 });
 
 export interface EscenarioConArtistas extends FestivalEscenario {
@@ -45,7 +49,10 @@ export const leerLineup = cache(async (): Promise<EscenarioConArtistas[]> => {
     supabase.from('festival_artistas').select('*').eq('activo', true).order('orden'),
   ]);
 
-  const todos = (artistas.data as FestivalArtista[] | null) ?? [];
+  const idioma = await leerIdioma();
+  const todos = ((artistas.data as FestivalArtista[] | null) ?? []).map(a =>
+    enIdioma(a, idioma, ['origen', 'bio', 'dia'])
+  );
   return ((escenarios.data as FestivalEscenario[] | null) ?? [])
     .map(e => ({ ...e, artistas: todos.filter(a => a.escenario_id === e.id) }))
     .filter(e => e.artistas.length > 0);
@@ -73,14 +80,16 @@ export const leerEntradas = cache(async (): Promise<FestivalEntrada[]> => {
 export const leerFaq = cache(async (): Promise<FestivalFaq[]> => {
   const supabase = await createSupabaseServer();
   const { data } = await supabase.from('festival_faq').select('*').eq('activo', true).order('orden');
-  return (data as FestivalFaq[] | null) ?? [];
+  const idioma = await leerIdioma();
+  return ((data as FestivalFaq[] | null) ?? []).map(p => enIdioma(p, idioma, ['titulo', 'texto']));
 });
 
 /** Spots visibles, en orden. */
 export const leerSpots = cache(async (): Promise<FestivalSpot[]> => {
   const supabase = await createSupabaseServer();
   const { data } = await supabase.from('festival_spots').select('*').eq('activo', true).order('orden');
-  return (data as FestivalSpot[] | null) ?? [];
+  const idioma = await leerIdioma();
+  return ((data as FestivalSpot[] | null) ?? []).map(s => enIdioma(s, idioma, ['titulo', 'descripcion']));
 });
 
 /** `2026-12-11` → `11.12.2026`, sin pasar por Date para no correr el día por zona horaria. */

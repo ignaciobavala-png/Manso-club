@@ -146,8 +146,11 @@ export function FestivalLineupAdmin() {
       b2b: a.b2b,
       pais: texto(a.pais)?.toUpperCase() ?? null,
       origen: texto(a.origen),
+      origen_en: texto(a.origen_en),
       bio: texto(a.bio),
+      bio_en: texto(a.bio_en),
       dia: texto(a.dia),
+      dia_en: texto(a.dia_en),
       horario: texto(a.horario),
       instagram: texto(a.instagram),
       soundcloud: texto(a.soundcloud),
@@ -264,9 +267,17 @@ export function FestivalLineupAdmin() {
                 <label className={LABEL}>Origen y género</label>
                 <input type="text" value={a.origen ?? ''} onChange={e => editarArtista(a.id, { origen: e.target.value })} placeholder="Berlín — Techno / Dub" className={INPUT} />
               </div>
+              <div className="col-span-2 sm:col-span-3">
+                <label className={LABEL}>Origen y género (English)</label>
+                <input type="text" value={a.origen_en ?? ''} onChange={e => editarArtista(a.id, { origen_en: e.target.value })} className={INPUT} />
+              </div>
               <div className="col-span-2">
                 <label className={LABEL}>Día</label>
                 <input type="text" value={a.dia ?? ''} onChange={e => editarArtista(a.id, { dia: e.target.value })} placeholder="Sáb 12.12" className={INPUT} />
+              </div>
+              <div className="col-span-2">
+                <label className={LABEL}>Día (English)</label>
+                <input type="text" value={a.dia_en ?? ''} onChange={e => editarArtista(a.id, { dia_en: e.target.value })} placeholder="Sat 12.12" className={INPUT} />
               </div>
               <div className="col-span-2">
                 <label className={LABEL}>Horario del set</label>
@@ -309,6 +320,10 @@ export function FestivalLineupAdmin() {
               <div>
                 <label className={LABEL}>Bio</label>
                 <textarea value={a.bio ?? ''} onChange={e => editarArtista(a.id, { bio: e.target.value })} rows={7} className={`${INPUT} resize-y`} />
+              </div>
+              <div>
+                <label className={LABEL}>Bio (English)</label>
+                <textarea value={a.bio_en ?? ''} onChange={e => editarArtista(a.id, { bio_en: e.target.value })} rows={7} className={`${INPUT} resize-y`} />
               </div>
             </div>
 
