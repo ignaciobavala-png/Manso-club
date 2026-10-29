@@ -59,6 +59,12 @@ export interface OrdenFestival {
   /** Reservada en Manso Gestión (ver `lib/gestion-entradas`); null = venta anterior a conectarlo. */
   gestion_event_id: string | null;
   gestion_confirmada: boolean;
+  /** Comprobante de la transferencia, en el bucket privado `festival-comprobantes`. */
+  comprobante_path: string | null;
+  comprobante_at: string | null;
+  comprobante_aviso_at: string | null;
+  /** La persona apretó "Ya transferí": una declaración, no un pago. */
+  transferencia_declarada_at: string | null;
   created_at: string;
 }
 
@@ -111,6 +117,8 @@ interface PagoCripto {
 const MINUTOS_PARA_PAGAR = 60;
 /** Una orden vencida todavía se acredita si el pago llega dentro de este plazo. */
 const HORAS_DE_GRACIA = 24;
+/** Una transferencia que no avisó pago en este plazo vence y libera el cupo. */
+const HORAS_TRANSFERENCIA_SIN_AVISO = 48;
 /** La pantalla de pago consulta seguido; la cadena se lee como mucho cada tanto. */
 const SEGUNDOS_ENTRE_LECTURAS = 10;
 
@@ -396,6 +404,123 @@ export async function borrarOrden(supabase: SupabaseClient, orden: OrdenFestival
   if (orden.gestion_event_id) await liberarEnGestion(orden.id);
   const { error } = await supabase.from('festival_ordenes').delete().eq('id', orden.id).neq('estado', 'pagada');
   if (error) throw error;
+  // Un comprobante trae datos personales: si la orden se borra, el archivo también.
+  if (orden.comprobante_path) await supabase.storage.from(BUCKET_COMPROBANTES).remove([orden.comprobante_path]);
+}
+
+// ── Comprobante de la transferencia ────────────────────────────────────────
+
+export const BUCKET_COMPROBANTES = 'festival-comprobantes';
+/** Vercel corta el cuerpo de una función en 4,5 MB; el bucket también lo limita a 4. */
+export const TOPE_COMPROBANTE_BYTES = 4 * 1024 * 1024;
+export const TIPOS_COMPROBANTE: Record<string, string> = {
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+  'application/pdf': 'pdf',
+};
+
+/**
+ * Guarda el comprobante de una transferencia pendiente. Si la persona lo
+ * reemplaza, se borra el archivo anterior. No avisa a Ana: eso lo hace
+ * `declararTransferencia`. Tira `Error` con un mensaje para mostrar si la orden
+ * no admite comprobante.
+ */
+export async function guardarComprobante(
+  supabase: SupabaseClient,
+  orden: OrdenFestival,
+  archivo: { bytes: Buffer; tipo: string }
+) {
+  if (orden.metodo !== 'transferencia') throw new Error('Esta compra no se paga por transferencia');
+  if (orden.estado === 'pagada') throw new Error('La compra ya está pagada');
+  if (orden.estado === 'vencida') throw new Error('La reserva venció');
+  const ext = TIPOS_COMPROBANTE[archivo.tipo];
+  if (!ext) throw new Error('El comprobante tiene que ser una imagen o un PDF');
+  if (archivo.bytes.length === 0 || archivo.bytes.length > TOPE_COMPROBANTE_BYTES) {
+    throw new Error('El comprobante pesa demasiado (máximo 4 MB)');
+  }
+
+  const ruta = `${orden.id}/${crypto.randomUUID()}.${ext}`;
+  const { error: errSubida } = await supabase.storage
+    .from(BUCKET_COMPROBANTES)
+    .upload(ruta, archivo.bytes, { contentType: archivo.tipo });
+  if (errSubida) throw new Error(`No se pudo guardar el comprobante: ${errSubida.message}`);
+
+  const { error } = await supabase
+    .from('festival_ordenes')
+    .update({ comprobante_path: ruta, comprobante_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+    .eq('id', orden.id);
+  if (error) {
+    await supabase.storage.from(BUCKET_COMPROBANTES).remove([ruta]);
+    throw new Error(`No se pudo guardar el comprobante: ${error.message}`);
+  }
+
+  // El anterior ya no se usa.
+  if (orden.comprobante_path) await supabase.storage.from(BUCKET_COMPROBANTES).remove([orden.comprobante_path]);
+}
+
+/**
+ * "Ya transferí": la persona declara que pagó. Exige el comprobante subido y una
+ * reserva viva. No confirma nada: pasa la orden a "Por confirmar" de Ana y le
+ * manda el mail. Declarar dos veces no repite el mail.
+ */
+export async function declararTransferencia(supabase: SupabaseClient, orden: OrdenFestival) {
+  if (orden.metodo !== 'transferencia') throw new Error('Esta compra no se paga por transferencia');
+  if (orden.estado === 'pagada') throw new Error('La compra ya está pagada');
+  if (orden.estado === 'vencida') throw new Error('La reserva venció');
+  if (!orden.comprobante_path) throw new Error('Primero subí el comprobante');
+  if (orden.transferencia_declarada_at) return;
+
+  const { data: marcada, error } = await supabase
+    .from('festival_ordenes')
+    .update({ transferencia_declarada_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+    .eq('id', orden.id)
+    .eq('estado', 'pendiente')
+    .select('id')
+    .maybeSingle();
+  if (error) throw new Error(`No se pudo registrar el aviso: ${error.message}`);
+  // Si el cron la venció (o Ana la resolvió) justo en este instante, no hay nada que avisar.
+  if (!marcada) throw new Error('La reserva venció');
+
+  await avisarComprobante(supabase, orden);
+}
+
+/**
+ * Mail a Ana: una persona declaró que transfirió. Se reclama `comprobante_aviso_at` antes de
+ * mandar (una sola vez por orden, aunque dos subidas coincidan); si Resend
+ * falla se libera para que la próxima subida lo reintente. Un fallo del mail
+ * nunca hace fallar el aviso: la orden ya quedó declarada y Ana la ve en el
+ * panel igual.
+ */
+async function avisarComprobante(supabase: SupabaseClient, orden: Pick<OrdenFestival, 'id' | 'nombre' | 'email' | 'total_ars'>) {
+  const { data: reclamada } = await supabase
+    .from('festival_ordenes')
+    .update({ comprobante_aviso_at: new Date().toISOString() })
+    .eq('id', orden.id)
+    .is('comprobante_aviso_at', null)
+    .select('id')
+    .maybeSingle();
+  if (!reclamada) return;
+
+  try {
+    const { data } = await supabase.from('checkout_config').select('value').eq('key', 'email_notificaciones').maybeSingle();
+    const destino = (data?.value as string | undefined)?.trim();
+    if (!destino) throw new Error('Falta el email para notificaciones (Checkout → Email para notificaciones)');
+
+    const codigo = orden.id.slice(0, 8).toUpperCase();
+    const { error } = await getResend().emails.send({
+      from: EMAIL_FROM,
+      to: destino,
+      subject: `Dice que ya transfirió: ${orden.nombre} — ${codigo}`,
+      html: `<p><b>${escapar(orden.nombre)}</b> (${escapar(orden.email)}) marcó que ya transfirió y subió el comprobante.</p>
+<p>Orden <b>${codigo}</b> · ${escapar(new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS', maximumFractionDigits: 0 }).format(orden.total_ars))}</p>
+<p>Fijate que el monto haya entrado en la cuenta y confirmá el pago desde el panel (en "Por confirmar", con el comprobante a un clic): <a href="${urlSitio()}/mansoadm">${urlSitio()}/mansoadm</a> → Festival → Ventas.</p>`,
+    });
+    if (error) throw new Error(error.message);
+  } catch (e) {
+    console.error(`No se pudo avisar del comprobante de la orden ${orden.id}:`, e);
+    await supabase.from('festival_ordenes').update({ comprobante_aviso_at: null }).eq('id', orden.id);
+  }
 }
 
 // ── Medios de pago ─────────────────────────────────────────────────────────
@@ -491,8 +616,33 @@ export async function confirmarPagoMP(supabase: SupabaseClient, paymentId: strin
   return leerOrden(supabase, orden.id);
 }
 
+/**
+ * Las que eligieron transferencia y nunca apretaron "Ya transferí" (carritos
+ * abandonados) vencen a las 48 h y devuelven el cupo a Gestión. Si el pago
+ * aparece después, Ana todavía puede confirmarlas. Con un tope por corrida para
+ * no demorar el cron: el resto sale en la siguiente.
+ */
+async function vencerTransferenciasSinAviso(supabase: SupabaseClient) {
+  const { data } = await supabase
+    .from('festival_ordenes')
+    .select('*')
+    .eq('estado', 'pendiente')
+    .eq('metodo', 'transferencia')
+    .is('transferencia_declarada_at', null)
+    .lt('created_at', new Date(Date.now() - HORAS_TRANSFERENCIA_SIN_AVISO * 3600_000).toISOString())
+    .limit(20);
+  for (const fila of data ?? []) {
+    try {
+      await descartarOrden(supabase, normalizar(fila as OrdenFestival));
+    } catch (e) {
+      console.error(`No se pudo vencer la transferencia ${fila.id}:`, e);
+    }
+  }
+}
+
 /** Pasa a vencidas las pendientes cuyo plazo terminó (con un margen por la confirmación). */
 export async function vencerOrdenes(supabase: SupabaseClient) {
+  await vencerTransferenciasSinAviso(supabase);
   const margen = new Date(Date.now() - 20 * 60_000).toISOString();
   await supabase
     .from('festival_ordenes')
@@ -504,7 +654,8 @@ export async function vencerOrdenes(supabase: SupabaseClient) {
     .from('festival_ordenes')
     .update({ estado: 'vencida', updated_at: new Date().toISOString() })
     .eq('estado', 'pendiente')
-    // Mercado Pago y transferencia no vencen: un pago puede confirmarse tarde.
+    // Mercado Pago no vence: un pago puede confirmarse tarde. La transferencia
+    // sin aviso vence aparte, en `vencerTransferenciasSinAviso`.
     .eq('metodo', 'cripto')
     .is('red', null)
     .lt('created_at', new Date(Date.now() - HORAS_DE_GRACIA * 3600_000).toISOString());

@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { Check, ExternalLink, Loader2, RefreshCw, Trash2, X } from 'lucide-react';
+import { Check, ExternalLink, FileImage, Loader2, RefreshCw, Trash2, X } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { formatArs } from '@/lib/precios';
 import { MEDIOS_PAGO, type MedioPago } from '@/lib/types/festival';
@@ -16,22 +16,28 @@ interface Venta {
   cantidad_entradas: number;
   total_ars: number;
   observacion: string | null;
+  /** Cuándo subió el comprobante de la transferencia; null si no lo subió. */
+  comprobante_at: string | null;
+  /** Cuándo apretó "Ya transferí"; null si no avisó. */
+  transferencia_declarada_at: string | null;
   created_at: string;
 }
 
-type Filtro = 'por_confirmar' | 'pagadas' | 'todas';
+type Filtro = 'por_confirmar' | 'sin_avisar' | 'pagadas' | 'todas';
 
 const FILTROS: [Filtro, string][] = [
   ['por_confirmar', 'Por confirmar'],
+  ['sin_avisar', 'Sin avisar'],
   ['pagadas', 'Pagadas'],
   ['todas', 'Todas'],
 ];
 
 /**
  * Las compras del festival. Lo que pide acción son las transferencias: la
- * persona manda el comprobante por WhatsApp con el código (los primeros 8
- * caracteres de la orden) y acá se confirma, lo que emite las entradas y les
- * manda el mail. Mercado Pago y cripto se confirman solos. Una transferencia
+ * persona sube el comprobante en su compra y aprieta "Ya transferí" (o lo
+ * manda por WhatsApp con el código, los primeros 8 caracteres de la orden) y acá
+ * se confirma contra el banco, lo que emite las entradas y les manda el mail.
+ * Al avisar le llega un mail a Ana. Las que no avisan vencen solas a las 48 h. Mercado Pago y cripto se confirman solos. Una transferencia
  * que no llega se descarta: con la venta conectada a Manso Gestión reserva
  * cupo sin vencimiento, y descartarla lo libera.
  */
@@ -45,14 +51,22 @@ export function FestivalVentasAdmin() {
     setCargando(true);
     let consulta = supabase
       .from('festival_ordenes')
-      .select('id, nombre, email, metodo, estado, cantidad_entradas, total_ars, observacion, created_at')
+      .select('id, nombre, email, metodo, estado, cantidad_entradas, total_ars, observacion, comprobante_at, transferencia_declarada_at, created_at')
       .order('created_at', { ascending: false })
       .limit(200);
     // Las descartadas (vencidas) salen de acá; siguen en "Todas" por si aparece el pago.
-    if (filtro === 'por_confirmar') consulta = consulta.eq('metodo', 'transferencia').eq('estado', 'pendiente');
+    // "Por confirmar" es solo lo que tiene algo para verificar en el banco: la persona avisó que
+    // transfirió. Las que eligieron transferencia y se fueron van aparte, en "Sin avisar".
+    if (filtro === 'por_confirmar') {
+      consulta = consulta.eq('metodo', 'transferencia').eq('estado', 'pendiente').not('transferencia_declarada_at', 'is', null);
+    }
+    if (filtro === 'sin_avisar') {
+      consulta = consulta.eq('metodo', 'transferencia').eq('estado', 'pendiente').is('transferencia_declarada_at', null);
+    }
     if (filtro === 'pagadas') consulta = consulta.eq('estado', 'pagada');
     const { data } = await consulta;
-    setVentas(((data as Venta[] | null) ?? []).map(v => ({ ...v, total_ars: Number(v.total_ars) })));
+    const filas = ((data as Venta[] | null) ?? []).map(v => ({ ...v, total_ars: Number(v.total_ars) }));
+    setVentas(filas);
     setCargando(false);
   }, [filtro]);
 
@@ -114,7 +128,11 @@ export function FestivalVentasAdmin() {
         <Loader2 size={16} className="animate-spin text-manso-cream/40" />
       ) : ventas.length === 0 ? (
         <p className="text-[11px] text-manso-cream/40">
-          {filtro === 'por_confirmar' ? 'No hay transferencias esperando confirmación.' : 'Todavía no hay ventas.'}
+          {filtro === 'por_confirmar'
+            ? 'Ninguna transferencia avisó pago: no hay nada para confirmar.'
+            : filtro === 'sin_avisar'
+              ? 'No hay transferencias sin avisar.'
+              : 'Todavía no hay ventas.'}
         </p>
       ) : (
         <ul className="divide-y divide-manso-cream/10">
@@ -124,6 +142,15 @@ export function FestivalVentasAdmin() {
                 <p className="text-sm text-manso-cream truncate">
                   <span className="font-mono text-manso-cream/50 mr-2">{v.id.slice(0, 8).toUpperCase()}</span>
                   {v.nombre}
+                  {v.metodo === 'transferencia' && v.estado === 'pendiente' && (
+                    <span
+                      className={`ml-2 align-middle px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${
+                        v.transferencia_declarada_at ? 'bg-manso-olive/20 text-manso-olive' : 'bg-manso-cream/10 text-manso-cream/45'
+                      }`}
+                    >
+                      {v.transferencia_declarada_at ? 'Avisó pago' : v.comprobante_at ? 'Subió comprobante, sin avisar' : 'Sin avisar'}
+                    </span>
+                  )}
                 </p>
                 <p className="text-[11px] text-manso-cream/40 truncate">
                   {v.email} · {v.cantidad_entradas} entrada(s) · {MEDIOS_PAGO[v.metodo].nombre} ·{' '}
@@ -143,6 +170,17 @@ export function FestivalVentasAdmin() {
                 </a>
               ) : v.metodo === 'transferencia' ? (
                 <span className="flex items-center gap-2">
+                  {v.comprobante_at && (
+                    <a
+                      href={`/api/festival/ordenes/${v.id}/comprobante`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-manso-olive/60 text-manso-olive text-[9px] font-black uppercase tracking-widest hover:text-manso-cream"
+                    >
+                      <FileImage size={11} />
+                      Ver comprobante
+                    </a>
+                  )}
                   {v.estado === 'pendiente' && (
                     <button
                       type="button"

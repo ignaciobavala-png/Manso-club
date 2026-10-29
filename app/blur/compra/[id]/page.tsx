@@ -128,6 +128,10 @@ async function PagoPendiente({ orden, rechazado }: { orden: OrdenFestival; recha
     const whatsapp = (data?.value as string | undefined)?.replace(/\D/g, '') || WHATSAPP_NUMBER;
     return (
       <PagoTransferencia
+        ordenId={orden.id}
+        comprobanteAt={orden.comprobante_at}
+        declaradaAt={orden.transferencia_declarada_at}
+        vencida={orden.estado === 'vencida'}
         codigo={orden.id.slice(0, 8).toUpperCase()}
         totalArs={orden.total_ars}
         datos={datosParaTransferencia(await getBankConfig())}
