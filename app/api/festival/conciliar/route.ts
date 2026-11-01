@@ -31,6 +31,10 @@ export async function GET(request: Request) {
 
   await vencerOrdenes(supabase);
 
+  // Conteo de visitas: borra lo que pasó la retención del panel.
+  const { error: errorConteo } = await supabase.rpc('festival_conteo_purgar');
+  if (errorConteo) console.error('Limpieza del conteo:', errorConteo.message);
+
   const { data: sinConfirmar } = await supabase
     .from('festival_ordenes')
     .select('id, gestion_event_id, gestion_confirmada')

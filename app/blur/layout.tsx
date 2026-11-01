@@ -6,6 +6,8 @@ import { leerConfig } from '@/lib/festival';
 import { FestivalMenu } from '@/components/festival/FestivalMenu';
 import { IdiomaProvider } from '@/components/festival/Idioma';
 import { leerTextos } from '@/lib/festival-idioma-servidor';
+import { leerConteo } from '@/lib/festival-conteo';
+import { ConteoVisitas } from '@/components/festival/ConteoVisitas';
 
 /**
  * Subreal (/blur) — sitio chico con identidad propia, sin el navbar de
@@ -50,7 +52,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function FestivalLayout({ children }: { children: React.ReactNode }) {
   // Sin publicar, el RLS no le devuelve la fila a nadie que no sea admin.
-  const [config, { idioma, t }] = await Promise.all([leerConfig(), leerTextos()]);
+  const [config, { idioma, t }, conteo] = await Promise.all([leerConfig(), leerTextos(), leerConteo()]);
   if (!config) notFound();
 
   const estilo = {
@@ -76,6 +78,9 @@ export default async function FestivalLayout({ children }: { children: React.Rea
           {t.borrador}
         </div>
       )}
+
+      {/* Borrador: solo lo ven admins, no se mide. */}
+      {config.publicado && !conteo.omitir && <ConteoVisitas config={conteo.config} idioma={idioma} />}
 
       <FestivalMenu />
 
