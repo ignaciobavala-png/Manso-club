@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import QRCode from 'qrcode';
 import { REDES, monedasDe, type EstadoPago, type RedCripto } from '@/lib/cripto-redes';
 import { useTextos } from './Idioma';
+import { GuiaUsdt } from './GuiaUsdt';
 
 /**
  * Pantalla de pago en cripto: elegir red → monto exacto + dirección + QR →
@@ -92,6 +93,8 @@ export function PagoCripto({ ordenId, inicial, demo = false }: { ordenId: string
         {estado.estado === 'vencida' ? t.cripto.vencidoTexto : t.cripto.texto}
       </p>
 
+      {estado.estado !== 'pagada' && <GuiaUsdt />}
+
       {mostrarSelector && (
         <Paso numero="01" titulo={estado.estado === 'vencida' ? t.cripto.elegiRedDeNuevo : t.cripto.elegiRed}>
           <ul className="grid sm:grid-cols-2 gap-3 max-w-[620px]">
@@ -119,9 +122,14 @@ export function PagoCripto({ ordenId, inicial, demo = false }: { ordenId: string
               );
             })}
           </ul>
-          <p className="mt-4 fest-mono text-[11px] uppercase tracking-[0.15em] opacity-60 leading-relaxed">
-            {t.cripto.ayudaRed}
-          </p>
+          <div className="mt-5 max-w-[620px] border-l-2 border-[var(--fest-resalte)] pl-4 text-[14px] leading-snug">
+            <p className="fest-angosta text-lg leading-none mb-2">{t.cripto.ayudaRedTitulo}</p>
+            <ul className="grid gap-1">
+              <li>{t.cripto.ayudaRedLemon}</li>
+              <li>{t.cripto.ayudaRedBitso}</li>
+            </ul>
+            <p className="mt-2 opacity-70">{t.cripto.ayudaRedNota}</p>
+          </div>
           {error && (
             <p role="alert" className="mt-3 fest-mono text-[11px] uppercase tracking-[0.2em] text-[var(--fest-acento)]">
               {error}
@@ -168,9 +176,11 @@ function Instrucciones({ estado, onCambiarRed }: { estado: EstadoPago; onCambiar
           <p className="fest-angosta text-2xl leading-none pb-1">{monedas}</p>
           <Copiar valor={monto} etiqueta={t.cripto.copiarMonto} />
         </div>
-        <p className="mt-5 text-[14px] text-[var(--fest-resalte)] max-w-[620px] leading-snug">
-          {t.cripto.centavos(monto)}
-        </p>
+        <p className="mt-5 text-[14px] opacity-75 max-w-[620px] leading-snug">{t.cripto.centavos}</p>
+        <div role="note" className="mt-4 max-w-[620px] border border-[var(--fest-resalte)] px-4 py-3">
+          <p className="fest-angosta text-lg leading-none text-[var(--fest-resalte)]">{t.cripto.comisionTitulo}</p>
+          <p className="mt-2 text-[14px] leading-snug">{t.cripto.comision(`${monto} ${monedas}`)}</p>
+        </div>
       </Paso>
 
       <Paso numero="03" titulo={t.cripto.aEstaDireccion(red.nombre)}>

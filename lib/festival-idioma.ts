@@ -102,6 +102,7 @@ const es = {
     entradas: 'entradas',
     comprar: 'Comprar',
     ventaAbrePronto: 'La venta online abre pronto.',
+    equivale: (usdt: string) => `≈ ${usdt} USDT al dólar blue de hoy. El monto exacto lo ves en el siguiente paso.`,
     medioDePago: 'Medio de pago',
     nombre: 'Nombre y apellido',
     mail: 'Mail',
@@ -128,7 +129,7 @@ const es = {
     cripto: {
       nombre: 'Cripto',
       boton: 'Pagar con cripto',
-      detalle: 'USDT o USDC en la red que elijas, al dólar blue del momento.',
+      detalle: 'USDT en la red que elijas, al dólar blue del momento. Si nunca usaste cripto, en el próximo paso te explicamos cómo conseguir USDT.',
     },
   } satisfies Record<MedioPago, { nombre: string; boton: string; detalle: string }>,
 
@@ -198,14 +199,18 @@ const es = {
       'USDT, directo a la wallet de Manso. Las entradas aparecen acá y te llegan por mail apenas se confirma la transferencia.',
     elegiRedDeNuevo: 'Elegí la red para pagar de nuevo',
     elegiRed: 'Elegí la red',
-    ayudaRed:
-      'Desde Lemon o Binance: BNB Smart Chain, que cobra menos comisión. Desde Bitso: Ethereum (Bitso no saca USDT por BEP20). Elegí acá la misma red que vas a usar para retirar.',
+    ayudaRedTitulo: '¿Qué red elijo?',
+    ayudaRedLemon: 'Lemon o Binance → BNB Smart Chain (cobra menos comisión).',
+    ayudaRedBitso: 'Bitso → Ethereum (Bitso no retira USDT por BEP20).',
+    ayudaRedNota: 'Elegí acá la misma red que vas a usar al retirar. Con otra red el dinero se pierde.',
     red: 'Red',
     cambiarRed: 'Cambiar de red',
     mandaExactamente: 'Mandá exactamente',
     copiarMonto: 'Copiar monto',
-    centavos: (monto: string) =>
-      `Los centavos identifican tu compra: con otro monto no la podemos reconocer sola. Si el exchange cobra comisión de retiro, sumala para que lleguen ${monto} justos.`,
+    centavos: 'Los centavos identifican tu compra: con otro monto no la podemos reconocer sola.',
+    comisionTitulo: 'Ojo con la comisión de retiro',
+    comision: (monto: string) =>
+      `Los exchanges descuentan una comisión al retirar. Antes de confirmar, fijate cuánto "recibe" la dirección: tiene que decir ${monto}. Si dice menos, subí el monto a enviar hasta que llegue justo.`,
     aEstaDireccion: (red: string) => `A esta dirección · ${red}`,
     copiarDireccion: 'Copiar dirección',
     soloEnRed: (monedas: string, red: string, estandar: string) =>
@@ -225,6 +230,40 @@ const es = {
       'Vista de ejemplo: acá se buscaría esa transacción en la red y, si llegó lo pedido, se acreditaría.',
     errorPreparar: 'No pudimos preparar el pago.',
     errorVerificar: 'No pudimos verificar la transacción.',
+    guia: {
+      abrir: '¿No tenés USDT? Te explicamos cómo conseguirlo',
+      cerrar: 'Cerrar la guía',
+      titulo: 'De pesos a USDT, paso a paso',
+      intro:
+        'USDT es un dólar digital: 1 USDT vale 1 dólar. Si nunca usaste cripto, necesitás una cuenta en un exchange argentino. Los nombres de los botones cambian según la app: buscá "Retirar" o "Enviar".',
+      pasos: [
+        {
+          titulo: 'Abrí una cuenta y verificá tu identidad',
+          texto:
+            'Lemon, Belo, Bitso o Binance. Te piden DNI y una selfie. Puede tardar desde minutos hasta un día: hacelo cuanto antes, es lo que más demora.',
+        },
+        {
+          titulo: 'Cargá pesos',
+          texto:
+            'Transferí desde tu banco o billetera a la cuenta del exchange. Cargá un poco más que el total de las entradas: el retiro tiene una comisión.',
+        },
+        {
+          titulo: 'Comprá USDT',
+          texto: 'Dentro del exchange, cambiá esos pesos por USDT. Es una compra directa, como cambiar de moneda.',
+        },
+        {
+          titulo: 'Retirá los USDT a esta página',
+          texto:
+            'Elegí "Retirar" o "Enviar" USDT. Pegá la dirección de abajo, elegí la misma red que marcaste acá y poné el monto exacto. Revisá la comisión antes de confirmar.',
+        },
+        {
+          titulo: 'Esperá, no hace falta hacer nada más',
+          texto: 'Esta página detecta el pago sola, en general en un par de minutos. Después te llegan las entradas por mail.',
+        },
+      ],
+      consejo:
+        'Mejor probá con tiempo: la verificación de identidad y el primer retiro son lo que más tarda. Si algo no te cierra, escribinos antes de enviar dinero.',
+    },
   },
 };
 
@@ -296,6 +335,7 @@ const en: Textos = {
     entradas: 'tickets',
     comprar: 'Buy',
     ventaAbrePronto: 'Online sales open soon.',
+    equivale: usdt => `≈ ${usdt} USDT at today's blue dollar rate. You'll see the exact amount on the next step.`,
     medioDePago: 'Payment method',
     nombre: 'Full name',
     mail: 'Email',
@@ -322,7 +362,7 @@ const en: Textos = {
     cripto: {
       nombre: 'Crypto',
       boton: 'Pay with crypto',
-      detalle: 'USDT on the network of your choice, at the current blue dollar rate.',
+      detalle: 'USDT on the network of your choice, at the current blue dollar rate. New to crypto? The next step explains how to get USDT.',
     },
   },
 
@@ -391,14 +431,18 @@ const en: Textos = {
       "USDT, straight to Manso's wallet. Your tickets show up here and are emailed to you as soon as the transfer is confirmed.",
     elegiRedDeNuevo: 'Choose the network to pay again',
     elegiRed: 'Choose the network',
-    ayudaRed:
-      "From Lemon or Binance: BNB Smart Chain, which has lower fees. From Bitso: Ethereum (Bitso doesn't withdraw USDT over BEP20). Pick here the same network you'll use to withdraw.",
+    ayudaRedTitulo: 'Which network do I pick?',
+    ayudaRedLemon: 'Lemon or Binance → BNB Smart Chain (lower fees).',
+    ayudaRedBitso: "Bitso → Ethereum (Bitso doesn't withdraw USDT over BEP20).",
+    ayudaRedNota: "Pick here the same network you'll use to withdraw. On a different network the funds are lost.",
     red: 'Network',
     cambiarRed: 'Change network',
     mandaExactamente: 'Send exactly',
     copiarMonto: 'Copy amount',
-    centavos: monto =>
-      `The cents identify your purchase: with any other amount we can't match it automatically. If your exchange charges a withdrawal fee, add it so that exactly ${monto} arrives.`,
+    centavos: "The cents identify your purchase: with any other amount we can't match it automatically.",
+    comisionTitulo: 'Watch the withdrawal fee',
+    comision: monto =>
+      `Exchanges deduct a fee when you withdraw. Before confirming, check how much the address will "receive": it must say ${monto}. If it says less, raise the amount you send until exactly that arrives.`,
     aEstaDireccion: red => `To this address · ${red}`,
     copiarDireccion: 'Copy address',
     soloEnRed: (monedas, red, estandar) =>
@@ -418,6 +462,40 @@ const en: Textos = {
       'Example view: here the transaction would be looked up on the network and, if the requested amount arrived, credited.',
     errorPreparar: 'We could not prepare the payment.',
     errorVerificar: 'We could not verify the transaction.',
+    guia: {
+      abrir: "Don't have USDT? Here's how to get it",
+      cerrar: 'Close the guide',
+      titulo: 'From pesos to USDT, step by step',
+      intro:
+        'USDT is a digital dollar: 1 USDT is worth 1 dollar. If you have never used crypto, you need an account at an Argentine exchange. Button names vary by app: look for "Withdraw" or "Send".',
+      pasos: [
+        {
+          titulo: 'Open an account and verify your identity',
+          texto:
+            'Lemon, Belo, Bitso or Binance. They ask for your ID and a selfie. It can take from minutes to a day: do it early, it is the slowest part.',
+        },
+        {
+          titulo: 'Add pesos',
+          texto:
+            'Transfer from your bank or wallet to the exchange account. Add a bit more than the ticket total: withdrawing has a fee.',
+        },
+        {
+          titulo: 'Buy USDT',
+          texto: 'Inside the exchange, swap those pesos for USDT. It is a direct purchase, like changing currency.',
+        },
+        {
+          titulo: 'Withdraw the USDT to this page',
+          texto:
+            'Choose "Withdraw" or "Send" USDT. Paste the address below, pick the same network you chose here and enter the exact amount. Check the fee before confirming.',
+        },
+        {
+          titulo: 'Wait, nothing else to do',
+          texto: 'This page detects the payment by itself, usually within a couple of minutes. Your tickets then arrive by email.',
+        },
+      ],
+      consejo:
+        'Try it ahead of time: identity verification and the first withdrawal are the slowest parts. If something is unclear, write to us before sending money.',
+    },
   },
 };
 

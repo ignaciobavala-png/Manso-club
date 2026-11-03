@@ -19,10 +19,13 @@ export function TablaTickets({
   entradas,
   aviso,
   medios,
+  cotizacion = null,
 }: {
   entradas: FestivalEntrada[];
   aviso: string | null;
   medios: MedioPago[];
+  /** Dólar blue, solo para mostrar el equivalente aproximado en USDT: el cobro lo resuelve el servidor. */
+  cotizacion?: number | null;
 }) {
   const t = useTextos();
   const [cantidades, setCantidades] = useState<Record<string, number>>({});
@@ -202,6 +205,11 @@ export function TablaTickets({
           <p className="fest-mono text-[11px] uppercase tracking-[0.2em] opacity-70 leading-relaxed">
             {t.medios[metodo].detalle}
           </p>
+          {metodo === 'cripto' && cotizacion && (
+            <p className="fest-mono text-[12px] tracking-[0.1em] text-[var(--fest-resalte)] leading-relaxed">
+              {t.tickets.equivale((total / cotizacion).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))}
+            </p>
+          )}
           <input
             required
             value={nombre}
