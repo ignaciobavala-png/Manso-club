@@ -1,7 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse, after } from 'next/server';
 import { esRed } from '@/lib/cripto-redes';
 import { walletDe } from '@/lib/cripto-escaner';
-import { adminFestival, elegirRed, estadoPublico, leerOrden, sincronizarRed } from '@/lib/festival-compra';
+import { adminFestival, elegirRed, estadoPublico, leerOrden, sincronizarRed, urlCompra } from '@/lib/festival-compra';
+import { enviarMailPagoPendiente } from '@/lib/festival-mail-pendiente';
 
 /**
  * La pantalla de pago de una orden. El id (UUID) es la llave, como el link de
@@ -58,5 +59,27 @@ export async function POST(request: NextRequest, { params }: { params: Promise<{
   }
 
   const actualizada = await leerOrden(supabase, id);
+
+  // Un mail por orden con lo necesario para volver del exchange. Va después de
+  // responder: el comprador no espera a Resend.
+  const direccion = walletDe(red);
+  if (actualizada && actualizada.red && actualizada.monto_esperado !== null && direccion) {
+    after(() =>
+      enviarMailPagoPendiente(
+        supabase,
+        {
+          id: actualizada.id,
+          email: actualizada.email,
+          nombre: actualizada.nombre,
+          red: actualizada.red!,
+          monto: actualizada.monto_esperado!,
+          direccion,
+          venceAt: actualizada.vence_at,
+        },
+        urlCompra(actualizada.id)
+      )
+    );
+  }
+
   return NextResponse.json(estadoPublico(actualizada!));
 }
