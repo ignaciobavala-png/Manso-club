@@ -20,12 +20,12 @@ export type TemaMarca = keyof typeof TEMAS;
 
 /** Los recursos de la diseñadora (`public/blur/marca/`), con su tamaño real. */
 export const RECURSOS = {
-  figuras: { src: '/blur/marca/ilus-bailando.webp', w: 1100, h: 717 },
-  figurasBlancas: { src: '/blur/marca/ilus-bailando-b.webp', w: 1100, h: 717 },
-  nota: { src: '/blur/marca/ilus-nota-1.webp', w: 700, h: 556 },
-  notas: { src: '/blur/marca/ilus-notas-2.webp', w: 700, h: 538 },
-  texturaNaranja: { src: '/blur/marca/textura_1_color.svg', w: 900, h: 800, svg: true },
-  texturaBlanca: { src: '/blur/marca/textura_1_b.svg', w: 900, h: 800, svg: true },
+  figuras: { src: '/blur/marca/ilus-bailando.webp', w: 1100, h: 717, anim: 'fest-baila' },
+  figurasBlancas: { src: '/blur/marca/ilus-bailando-b.webp', w: 1100, h: 717, anim: 'fest-baila' },
+  nota: { src: '/blur/marca/ilus-nota-1.webp', w: 700, h: 556, anim: 'fest-flota' },
+  notas: { src: '/blur/marca/ilus-notas-2.webp', w: 700, h: 538, anim: 'fest-flota' },
+  texturaNaranja: { src: '/blur/marca/textura_1_color.svg', w: 900, h: 800, svg: true, anim: 'fest-brisa' },
+  texturaBlanca: { src: '/blur/marca/textura_1_b.svg', w: 900, h: 800, svg: true, anim: 'fest-brisa' },
 } as const;
 
 type Recurso = (typeof RECURSOS)[keyof typeof RECURSOS];
@@ -67,12 +67,18 @@ export function SeccionMarca({
   children: React.ReactNode;
 }) {
   const t = TEMAS[tema];
-  const estilo = {
-    '--fest-fondo': t.fondo,
-    '--fest-texto': t.texto,
-    '--fest-acento': t.acento,
-    '--fest-resalte': t.resalte,
-  } as React.CSSProperties;
+  // El verde es el del panel: no se fija acá sino que se hereda de la raíz
+  // (`data-fest-raiz`), porque el line-up cambia esas variables al pasar el
+  // mouse y una franja que las fijara se quedaría quieta.
+  const estilo =
+    tema === 'verde'
+      ? undefined
+      : ({
+          '--fest-fondo': t.fondo,
+          '--fest-texto': t.texto,
+          '--fest-acento': t.acento,
+          '--fest-resalte': t.resalte,
+        } as React.CSSProperties);
 
   return (
     <section
@@ -89,7 +95,9 @@ export function SeccionMarca({
           height={recurso.h}
           unoptimized={'svg' in recurso}
           sizes="40vw"
-          className={`absolute z-0 pointer-events-none select-none h-auto ${c}`}
+          // Cada pieza arranca en un punto distinto de su ciclo para que no se muevan al unísono.
+          style={{ animationDelay: `${-i * 1.7}s` }}
+          className={`absolute z-0 pointer-events-none select-none h-auto ${recurso.anim} ${c}`}
         />
       ))}
       <div className="relative z-10">{children}</div>

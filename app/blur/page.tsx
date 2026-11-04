@@ -56,7 +56,7 @@ export default async function FestivalHome() {
         width={900}
         height={800}
         unoptimized
-        className="absolute z-[2] pointer-events-none right-[-4%] top-[4%] w-[62%] sm:w-[40%] max-w-[640px] h-auto"
+        className="fest-brisa absolute z-[2] pointer-events-none right-[-4%] top-[4%] w-[62%] sm:w-[40%] max-w-[640px] h-auto"
       />
       <div className="relative z-10 px-4 pb-[12svh] w-full flex flex-col items-center gap-5 sm:gap-6 fest-entra">
         <LogoBlur priority className="w-[86vw] sm:w-[min(72vw,1000px)] h-auto" />
