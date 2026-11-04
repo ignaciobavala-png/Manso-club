@@ -245,3 +245,39 @@
     transition: none;
   }
 }
+
+/* ── Los recursos de la diseñadora, en movimiento (sutil) ───────────────────
+   Las notas flotan y se mecen, las figuras "bailan" con un rebote y un
+   balanceo leves, y las texturas se mecen como pasto. Solo `transform`, así no
+   pisan el posicionamiento (right/bottom) de cada pieza. */
+@keyframes fest-flota {
+  0%   { transform: translateY(0) rotate(-5deg); }
+  100% { transform: translateY(-14px) rotate(5deg); }
+}
+@keyframes fest-baila {
+  0%   { transform: translateY(0) rotate(-2.5deg) scale(1); }
+  50%  { transform: translateY(-8px) rotate(0.5deg) scale(1.025); }
+  100% { transform: translateY(0) rotate(2.5deg) scale(1); }
+}
+@keyframes fest-brisa {
+  0%   { transform: rotate(-1.6deg) translateX(-6px); }
+  100% { transform: rotate(1.6deg) translateX(6px); }
+}
+.fest-flota {
+  animation: fest-flota 4.6s ease-in-out infinite alternate;
+}
+.fest-baila {
+  transform-origin: 50% 85%;
+  animation: fest-baila 5.2s ease-in-out infinite alternate;
+}
+.fest-brisa {
+  transform-origin: 50% 100%;
+  animation: fest-brisa 7.5s ease-in-out infinite alternate;
+}
+@media (prefers-reduced-motion: reduce) {
+  .fest-flota,
+  .fest-baila,
+  .fest-brisa {
+    animation: none;
+  }
+}
