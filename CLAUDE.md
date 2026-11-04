@@ -146,14 +146,14 @@ página por sección. Todas leen por `lib/festival.ts` (cacheado por request).
 
 - `/blur` — el hero a pantalla completa (la foto `fixed` y **sin filtros**:
   `banner_url`, o `public/blur/hero-cabina.jpg` si el panel no tiene banner;
-  el título y dos cajitas, fecha + horario y `lema`) y después scrollea por un
-  adelanto de secciones, cada una con su link: fotos (`locacion_fotos` +
-  `home_fotos`, las extra que Ana sume desde el panel), Visión y line-up. Las
-  secciones tienen fondo propio y suben por encima de la foto. El título dice
-  **BLUR** (`TITULO_HERO`) con el filtro difuso de `TituloDifuso`, no
-  `config.nombre`, que sigue siendo "Subreal" y es el que sale en la pestaña y
-  el pie. Si BLUR pasa a ser el nombre, cambiarlo en el panel y volver a leerlo
-  de ahí.
+  el logo, el `lema` debajo y una franja con fecha, horario y `lugar`) y después
+  scrollea por un adelanto de secciones, cada una con su link: fotos
+  (`locacion_fotos` + `home_fotos`, las extra que Ana sume desde el panel),
+  Visión y line-up. Las secciones tienen fondo propio y suben por encima de la
+  foto. El título es el **logo primario de la diseñadora** (`LogoBlur`, SVG en
+  `public/blur/marca/`), no `config.nombre`, que sigue siendo "Subreal" y es el
+  que sale en la pestaña y el pie. Todos los textos salen del panel: el código
+  no lleva copy fijo.
 - `/vision` — texto del panel por `TextoResaltado`: `*así*` va en
   `color_resalte` y `**así**` en `color_acento`. No es Markdown, a propósito.
   `/locacion` no muestra su texto del panel (repetía la barra de datos): solo
@@ -181,9 +181,25 @@ página por sección. Todas leen por `lib/festival.ts` (cacheado por request).
   resto, su estado. Los packs son una fila con `entradas_por_unidad` > 1.
 - `/info` — `festival_faq` en tres columnas.
 
-Diseño: fusión Basilar + Manso. Los colores vienen del panel
-(`festival_config.color_*`) y por defecto son la paleta de Manso llevada a
-oscuro (fondo `#1C1410`, cream, terra encendida `#E2532B`, oliva `#B9B23E`).
+Identidad (desde el 04/11, con los recursos de la diseñadora — PDF "BLUR -
+paleta" y `public/blur/marca/`): paleta `#003009` verde profundo (fondo del
+panel), `#FFFCDC` crema (texto), `#F65200` naranja (acento), `#FFA7FE` rosa
+(resalte), más `#EAEAEA`, `#005B15`, `#2F3A1E` y `#1A1A1A`. El panel guarda
+fondo/texto/acento/resalte; el resto vive en `SeccionMarca`, que alterna una
+**franja de color por sección o página** (verde = el del panel, gris, naranja,
+crema, rosa) pisando las `--fest-*` solo adentro: Locación gris, Visión
+naranja, Spots crema, Info rosa, Tickets crema, line-up verde. El tema verde
+**hereda** de la raíz a propósito: el hover del line-up cambia esas variables
+ahí, y una franja que las fijara se quedaría quieta. Las ilustraciones
+(figuras bailando, notas, texturas) salen de `DECO` en `SeccionMarca.tsx` y se
+animan con `fest-flota`/`fest-baila`/`fest-brisa` (solo `transform`, respeta
+`prefers-reduced-motion`). Las figuras en color son verde oscuro: sobre fondo
+verde no se ven, ahí va la silueta blanca. Los mails (`lib/festival-mail-marca.ts`)
+llevan logo y textura en PNG por URL pública: los clientes de mail no leen SVG.
+Las pantallas de pago (`/blur/compra/[id]`) siguen en verde a propósito.
+
+Diseño: fusión Basilar + Manso. (Lo anterior, fondo `#1C1410` y terra
+`#E2532B`, quedó reemplazado por la paleta de arriba.)
 Tipografía: **Archivo** variable en ancho (ancha para el nombre del festival y
 del artista, angosta para el menú y el line-up; clases `fest-*` en
 `festival.css`), Helvetica para el texto corrido y Plex Mono para los datos.
@@ -191,9 +207,9 @@ El menú y el botón TICKETS van en **Space Mono** Bold (`.fest-menu`), con el
 estilo del menú de Basilar (chevron dibujado con una máscara SVG en
 `.fest-chevron`) pero más chico: 18px en escritorio en vez de sus 23,3px. Basilar en realidad usa Space Grotesk; el
 equipo eligió la Mono.
-El título del hero imita el logo de Basilar con Archivo y un filtro SVG
-(`TituloDifuso`). Se probó el logo PNG de la diseñadora
-(`public/blur/blur-logo.png`) y no gustó: volvió el filtro.
+El título del hero ya no imita a Basilar: es el logo real de la diseñadora
+(`TituloDifuso` se borró). Neue Montreal, que usa la diseñadora, es de uso
+personal y **no se compra**: seguimos con Helvetica.
 COMPRAR y los botones de pago van en la tipografía de TICKETS (`.fest-menu`),
 un poco más grandes que él, no en Archivo a 24px.
 

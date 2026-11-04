@@ -6,6 +6,7 @@ import { urlTransferenciaGestion } from '@/lib/gestion-entradas';
 import { getCotizacionDolar } from '@/lib/dolar';
 import { TablaTickets } from '@/components/festival/TablaTickets';
 import { EscribeTexto } from '@/components/festival/Escribe';
+import { DECO, SeccionMarca } from '@/components/festival/SeccionMarca';
 import { leerTextos } from '@/lib/festival-idioma-servidor';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -21,11 +22,13 @@ export default async function FestivalTickets() {
   const cotizacion = medios.includes('cripto') ? await getCotizacionDolar().then(c => c.venta, () => null) : null;
 
   return (
-    <div className="w-full max-w-[980px] mx-auto px-4 sm:px-7 pt-6 sm:pt-10 pb-20 sm:pb-24 fest-entra">
-      <p className="fest-rotulo mb-8">
-        <EscribeTexto texto={t.tickets.titulo} />
-      </p>
-      <TablaTickets entradas={entradas} aviso={config.aviso} medios={medios} cotizacion={cotizacion} urlTransferencia={urlTransferenciaGestion()} />
-    </div>
+    <SeccionMarca tema="crema" deco={DECO.tickets} className="flex-1 px-4 sm:px-7 pt-6 sm:pt-10 pb-[34vw] sm:pb-24 fest-entra">
+      <div className="w-full max-w-[980px] mx-auto">
+        <p className="fest-rotulo mb-8">
+          <EscribeTexto texto={t.tickets.titulo} />
+        </p>
+        <TablaTickets entradas={entradas} aviso={config.aviso} medios={medios} cotizacion={cotizacion} urlTransferencia={urlTransferenciaGestion()} />
+      </div>
+    </SeccionMarca>
   );
 }

@@ -50,6 +50,14 @@ export const DECO = {
     { recurso: RECURSOS.figuras, className: 'right-[2%] bottom-[1.5%] w-[64%] sm:w-[26%]' },
     { recurso: RECURSOS.nota, className: 'left-[6%] bottom-[2%] w-[18%] sm:left-auto sm:right-[6%] sm:bottom-auto sm:top-[2%] sm:w-[8%]' },
   ],
+  // Tickets: la tabla mide 980 px y deja márgenes anchos solo en pantallas grandes;
+  // ahí van las figuras, y en las chicas solo la textura y una nota abajo.
+  tickets: [
+    { recurso: RECURSOS.texturaNaranja, className: 'left-[-6%] bottom-[-2%] w-[50%] sm:w-[22%]' },
+    { recurso: RECURSOS.figuras, className: 'hidden 2xl:block right-[1.5%] top-[24%] w-[15%]' },
+    { recurso: RECURSOS.nota, className: 'hidden 2xl:block left-[2.5%] top-[34%] w-[7%]' },
+    { recurso: RECURSOS.notas, className: 'left-[44%] bottom-[2%] w-[16%] sm:w-[9%] 2xl:hidden' },
+  ],
   lineup: [
     { recurso: RECURSOS.texturaBlanca, className: 'right-[-2%] top-0 w-[70%] sm:w-[36%] opacity-[0.18]' },
   ],

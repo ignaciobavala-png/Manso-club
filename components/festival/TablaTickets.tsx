@@ -94,7 +94,7 @@ export function TablaTickets({
 
   return (
     <div className="max-w-[980px]">
-      <div className="hidden sm:grid grid-cols-[1fr_160px_130px] gap-4 pb-3 border-b border-[var(--fest-texto)]/35 fest-mono text-[10px] uppercase tracking-[0.3em] opacity-60">
+      <div className="hidden sm:grid grid-cols-[1fr_160px_130px] gap-4 pb-3 border-b-[3px] border-[var(--fest-texto)] fest-mono text-[10px] uppercase tracking-[0.3em] [&>span]:opacity-70">
         <span>{t.tickets.tipo}</span>
         <span>{t.tickets.valor}</span>
         <span className="justify-self-end">{t.tickets.cantidad}</span>
@@ -108,24 +108,29 @@ export function TablaTickets({
           return (
             <li
               key={entrada.id}
-              className={`grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_160px_130px] items-center gap-x-4 gap-y-1.5 py-5 border-b border-[var(--fest-texto)]/15 ${
+              className={`grid grid-cols-[1fr_auto] sm:grid-cols-[1fr_160px_130px] items-center gap-x-4 gap-y-1.5 py-5 border-b-2 border-[var(--fest-texto)] ${
                 cerrada ? 'opacity-35' : ''
               }`}
             >
               <div className="min-w-0">
                 <h3 className={`fest-angosta text-2xl leading-none ${cerrada ? 'line-through' : ''}`}>
                   {entrada.nombre}
+                  {entrada.entradas_por_unidad > 1 && (
+                    <span className="inline-block align-middle ml-2.5 px-1.5 py-1 bg-[#FFA7FE] text-[#003009] fest-mono text-[11px] leading-none tracking-[0.1em]">
+                      ×{entrada.entradas_por_unidad}
+                    </span>
+                  )}
                 </h3>
                 {entrada.descripcion && <p className="text-[13px] opacity-55 mt-1.5">{entrada.descripcion}</p>}
               </div>
 
-              <p className="fest-mono text-base row-start-2 sm:row-start-auto">
+              <p className="fest-mono text-base font-bold row-start-2 sm:row-start-auto">
                 {entrada.precio > 0 ? formatArs(entrada.precio) : '—'}
               </p>
 
               <div className="justify-self-end row-span-2 sm:row-span-1 col-start-2 sm:col-start-auto row-start-1 sm:row-start-auto">
                 {enVenta ? (
-                  <div className="flex border border-[var(--fest-texto)]/40">
+                  <div className="flex border-2 border-[var(--fest-texto)]">
                     <button
                       type="button"
                       onClick={() => cambiar(entrada, -1)}
@@ -137,7 +142,7 @@ export function TablaTickets({
                     </button>
                     <span
                       aria-live="polite"
-                      className="w-11 grid place-items-center fest-mono border-x border-[var(--fest-texto)]/15 tabular-nums"
+                      className="w-11 grid place-items-center fest-mono font-bold border-x-2 border-[var(--fest-texto)] tabular-nums"
                     >
                       {n}
                     </span>
@@ -152,7 +157,7 @@ export function TablaTickets({
                     </button>
                   </div>
                 ) : (
-                  <span className="inline-block w-[120px] text-center border border-[var(--fest-texto)]/15 px-2.5 py-2 fest-mono text-[10px] uppercase tracking-[0.2em]">
+                  <span className="inline-block w-[120px] text-center border-2 border-[var(--fest-texto)]/60 px-2.5 py-2 fest-mono text-[10px] uppercase tracking-[0.2em]">
                     {t.estados[entrada.estado]}
                   </span>
                 )}
@@ -172,7 +177,7 @@ export function TablaTickets({
           type="button"
           disabled={total === 0 || !metodo}
           onClick={() => setDatosAbiertos(true)}
-          className="fest-menu text-[16px] sm:text-[18px] leading-[1.3] px-6 py-2.5 bg-[var(--fest-acento)] text-[var(--fest-fondo)] enabled:hover:bg-[var(--fest-texto)] transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+          className="fest-menu text-[16px] sm:text-[18px] leading-[1.3] px-6 py-2.5 border-2 border-[var(--fest-acento)] bg-[var(--fest-acento)] text-[#1A1A1A] enabled:hover:bg-[var(--fest-texto)] enabled:hover:border-[var(--fest-texto)] enabled:hover:text-[var(--fest-fondo)] transition-colors disabled:bg-transparent disabled:border-[var(--fest-texto)]/35 disabled:text-[var(--fest-texto)]/45 disabled:cursor-not-allowed"
         >
           {t.tickets.comprar}
         </button>
@@ -192,8 +197,8 @@ export function TablaTickets({
               {medios.map(m => (
                 <label
                   key={m}
-                  className={`flex items-center gap-3 border px-3 py-2.5 cursor-pointer transition-colors ${
-                    m === metodo ? 'border-[var(--fest-acento)]' : 'border-[var(--fest-texto)]/25 hover:border-[var(--fest-texto)]/60'
+                  className={`flex items-center gap-3 border-2 px-3 py-2.5 cursor-pointer transition-colors ${
+                    m === metodo ? 'border-[var(--fest-acento)]' : 'border-[var(--fest-texto)]/50 hover:border-[var(--fest-texto)]'
                   }`}
                 >
                   <input
@@ -226,7 +231,7 @@ export function TablaTickets({
             placeholder={t.tickets.nombre}
             autoComplete="name"
             maxLength={120}
-            className="bg-transparent border border-[var(--fest-texto)]/40 px-3 py-2.5 text-[15px] placeholder:opacity-50 focus:outline-none focus:border-[var(--fest-acento)]"
+            className="bg-transparent border-2 border-[var(--fest-texto)]/70 px-3 py-2.5 text-[15px] placeholder:opacity-50 focus:outline-none focus:border-[var(--fest-acento)]"
           />
           <input
             required
@@ -235,14 +240,14 @@ export function TablaTickets({
             onChange={e => setEmail(e.target.value)}
             placeholder={t.tickets.mail}
             autoComplete="email"
-            className="bg-transparent border border-[var(--fest-texto)]/40 px-3 py-2.5 text-[15px] placeholder:opacity-50 focus:outline-none focus:border-[var(--fest-acento)]"
+            className="bg-transparent border-2 border-[var(--fest-texto)]/70 px-3 py-2.5 text-[15px] placeholder:opacity-50 focus:outline-none focus:border-[var(--fest-acento)]"
           />
             </>
           )}
           <button
             type="submit"
             disabled={enviando}
-            className="fest-menu text-[16px] sm:text-[18px] leading-[1.3] py-2.5 bg-[var(--fest-acento)] text-[var(--fest-fondo)] enabled:hover:bg-[var(--fest-texto)] transition-colors disabled:opacity-50"
+            className="fest-menu text-[16px] sm:text-[18px] leading-[1.3] py-2.5 border-2 border-[var(--fest-acento)] bg-[var(--fest-acento)] text-[#1A1A1A] enabled:hover:bg-[var(--fest-texto)] enabled:hover:border-[var(--fest-texto)] enabled:hover:text-[var(--fest-fondo)] transition-colors disabled:opacity-50"
           >
             {enviando ? t.tickets.preparando : t.medios[metodo].boton}
           </button>
