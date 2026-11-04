@@ -22,16 +22,15 @@ import type { FestivalArtista } from '@/lib/types/festival';
  * Lo usan el home y /blur/line-up.
  */
 
-/** Fondo y texto. La paleta de Manso, en claro y en oscuro. */
+/** Fondo y texto. La paleta de BLUR (PDF "BLUR - paleta"), con el texto que lee bien sobre cada fondo. */
 const COLORES: [string, string][] = [
-  ['#E2532B', '#1C1410'], // terra encendida
-  ['#B9B23E', '#1C1410'], // oliva
-  ['#FFFCDC', '#1C1410'], // cream
-  ['#030044', '#FFFCDC'], // azul Manso
-  ['#BC2915', '#FFFCDC'], // terra
-  ['#542C1B', '#FFFCDC'], // marrón
-  ['#F0A27A', '#1C1410'], // terra lavada
+  ['#F65200', '#1A1A1A'], // naranja
+  ['#FFA7FE', '#003009'], // rosa
+  ['#FFFCDC', '#003009'], // crema
+  ['#EAEAEA', '#1A1A1A'], // gris claro
+  ['#005B15', '#FFFCDC'], // verde
   ['#2F3A1E', '#FFFCDC'], // oliva profundo
+  ['#1A1A1A', '#FFFCDC'], // negro
 ];
 
 const VARIABLES = ['--fest-fondo', '--fest-texto', '--fest-acento', '--fest-resalte'] as const;
