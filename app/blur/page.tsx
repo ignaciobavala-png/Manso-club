@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { fechaCorta, leerConfig, leerLineup } from '@/lib/festival';
 import { LogoBlur } from '@/components/festival/LogoBlur';
+import { DECO, SeccionMarca, type DecoItem, type TemaMarca } from '@/components/festival/SeccionMarca';
 import { GaleriaLocacion } from '@/components/festival/GaleriaLocacion';
 import { TextoResaltado } from '@/components/festival/TextoResaltado';
 import { LineupCorrido } from '@/components/festival/LineupCorrido';
@@ -77,13 +78,19 @@ export default async function FestivalHome() {
     </section>
 
     {fotos.length > 0 && (
-      <Seccion rotulo={t.home.locacion} href="/blur/locacion" ver={t.home.verLocacion}>
+      <Seccion
+        rotulo={t.home.locacion}
+        href="/blur/locacion"
+        ver={t.home.verLocacion}
+        tema="gris"
+        deco={DECO.locacion}
+      >
         <GaleriaLocacion fotos={fotos} alt={config.lugar ?? t.home.fotosAlt} />
       </Seccion>
     )}
 
     {config.vision && (
-      <Seccion rotulo={t.home.vision} deco={<Deco src="/blur/marca/ilus-bailando-b.webp" w={1100} h={717} className="right-[-6%] bottom-[-4%] w-[70%] sm:w-[38%] opacity-[0.12]" />}>
+      <Seccion rotulo={t.home.vision} tema="naranja" deco={DECO.vision} className="pb-[62vw] sm:pb-[22vw]">
         <TextoResaltado
           texto={config.vision}
           className="text-[clamp(17px,1.6vw,24px)] leading-[1.4] tracking-[-0.01em]"
@@ -92,7 +99,7 @@ export default async function FestivalHome() {
     )}
 
     {lineup.length > 0 && (
-      <Seccion rotulo={t.home.lineup} href="/blur/line-up" ver={t.home.verLineup} deco={<Deco src="/blur/marca/textura_1_b.svg" w={900} h={800} svg className="right-[-2%] top-0 w-[70%] sm:w-[36%] opacity-[0.18]" />}>
+      <Seccion rotulo={t.home.lineup} href="/blur/line-up" ver={t.home.verLineup} tema="verde" deco={DECO.lineup}>
         <LineupCorrido escenarios={lineup} />
       </Seccion>
     )}
@@ -101,72 +108,45 @@ export default async function FestivalHome() {
 }
 
 /**
- * Un adelanto de sección: rótulo, contenido y el link a la página entera.
- * Sin `href` no hay link ni aire abajo (Visión ya se muestra completa, y así
- * la sección siguiente queda más cerca del texto).
+ * Un adelanto de sección: rótulo, contenido y el link a la página entera, en
+ * una franja de color de la marca. Sin `href` no hay link ni aire abajo
+ * (Visión ya se muestra completa, y así la sección siguiente queda más cerca).
  */
 function Seccion({
   rotulo,
   href,
   ver,
+  tema,
   deco,
+  className = '',
   children,
 }: {
   rotulo: string;
   href?: string;
   ver?: string;
-  deco?: React.ReactNode;
+  tema: TemaMarca;
+  deco?: DecoItem[];
+  className?: string;
   children: React.ReactNode;
 }) {
   return (
-    <section className={`relative z-10 overflow-hidden bg-[var(--fest-fondo)] fest-fondo px-4 sm:px-7 pt-14 sm:pt-20 ${href ? 'pb-6 sm:pb-10' : ''}`}>
-      {deco}
-      <div className="relative z-10">
-        <p className="fest-rotulo mb-8">
-          <EscribeTexto texto={rotulo} />
-        </p>
-        {children}
-        {href && (
-          <Link
-            href={href}
-            className="fest-chevron fest-menu inline-block mt-8 sm:mt-10 text-[16px] sm:text-[18px] text-[var(--fest-acento)] hover:text-[var(--fest-texto)] transition-colors"
-          >
-            {ver}
-          </Link>
-        )}
-      </div>
-    </section>
-  );
-}
-
-/**
- * Ilustración o textura de la diseñadora como fondo de una sección: queda
- * detrás del contenido (z-0), sin captar clics y a baja opacidad para no
- * competir con el texto. Va en blanco: funciona sobre cualquier fondo oscuro.
- */
-function Deco({
-  src,
-  w,
-  h,
-  svg,
-  className,
-}: {
-  src: string;
-  w: number;
-  h: number;
-  svg?: boolean;
-  className: string;
-}) {
-  return (
-    <Image
-      aria-hidden
-      src={src}
-      alt=""
-      width={w}
-      height={h}
-      unoptimized={svg}
-      sizes="40vw"
-      className={`absolute z-0 pointer-events-none select-none h-auto ${className}`}
-    />
+    <SeccionMarca
+      tema={tema}
+      deco={deco}
+      className={`px-4 sm:px-7 pt-14 sm:pt-20 ${href ? 'pb-10 sm:pb-16' : 'pb-16 sm:pb-24'} ${className}`}
+    >
+      <p className="fest-rotulo mb-8">
+        <EscribeTexto texto={rotulo} />
+      </p>
+      {children}
+      {href && (
+        <Link
+          href={href}
+          className="fest-chevron fest-menu inline-block mt-8 sm:mt-10 text-[16px] sm:text-[18px] text-[var(--fest-acento)] hover:text-[var(--fest-texto)] transition-colors"
+        >
+          {ver}
+        </Link>
+      )}
+    </SeccionMarca>
   );
 }
