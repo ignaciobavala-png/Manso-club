@@ -124,7 +124,7 @@ const es = {
     transferencia: {
       nombre: 'Transferencia',
       boton: 'Pagar por transferencia',
-      detalle: 'Te mostramos los datos de la cuenta. Las entradas llegan cuando confirmamos la transferencia.',
+      detalle: 'Te llevamos a Manso Gestión para pagar. Ahí mismo ves tu QR cuando se confirma la transferencia.',
     },
     cripto: {
       nombre: 'Cripto',
@@ -357,7 +357,7 @@ const en: Textos = {
     transferencia: {
       nombre: 'Bank transfer',
       boton: 'Pay by bank transfer',
-      detalle: 'We show you the account details. Tickets arrive once we confirm the transfer.',
+      detalle: 'We take you to Manso Gestión to pay. Your QR shows up there once the transfer is confirmed.',
     },
     cripto: {
       nombre: 'Crypto',

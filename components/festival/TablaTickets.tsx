@@ -20,12 +20,15 @@ export function TablaTickets({
   aviso,
   medios,
   cotizacion = null,
+  urlTransferencia = null,
 }: {
   entradas: FestivalEntrada[];
   aviso: string | null;
   medios: MedioPago[];
   /** Dólar blue, solo para mostrar el equivalente aproximado en USDT: el cobro lo resuelve el servidor. */
   cotizacion?: number | null;
+  /** Adónde va quien elige transferencia: la página de compra de Gestión. */
+  urlTransferencia?: string | null;
 }) {
   const t = useTextos();
   const [cantidades, setCantidades] = useState<Record<string, number>>({});
@@ -56,6 +59,10 @@ export function TablaTickets({
 
   const comprar = async (ev: FormEvent) => {
     ev.preventDefault();
+    if (metodo === 'transferencia' && urlTransferencia) {
+      window.location.href = urlTransferencia;
+      return;
+    }
     const seleccion = Object.entries(cantidades)
       .filter(([, cantidad]) => cantidad > 0)
       .map(([id, cantidad]) => ({ id, cantidad }));
@@ -210,6 +217,8 @@ export function TablaTickets({
               {t.tickets.equivale((total / cotizacion).toLocaleString('es-AR', { minimumFractionDigits: 2, maximumFractionDigits: 2 }))}
             </p>
           )}
+          {metodo !== 'transferencia' && (
+            <>
           <input
             required
             value={nombre}
@@ -228,6 +237,8 @@ export function TablaTickets({
             autoComplete="email"
             className="bg-transparent border border-[var(--fest-texto)]/40 px-3 py-2.5 text-[15px] placeholder:opacity-50 focus:outline-none focus:border-[var(--fest-acento)]"
           />
+            </>
+          )}
           <button
             type="submit"
             disabled={enviando}
