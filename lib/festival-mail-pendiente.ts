@@ -1,6 +1,7 @@
 import type { SupabaseClient } from '@supabase/supabase-js';
 import { EMAIL_FROM, getResend } from './resend';
 import { REDES, monedasDe, type RedCripto } from './cripto-redes';
+import { MARCA_MAIL, filaLogoMail } from './festival-mail-marca';
 
 /**
  * Mail de "tu pago está pendiente" para las compras en cripto.
@@ -10,7 +11,7 @@ import { REDES, monedasDe, type RedCripto } from './cripto-redes';
  * celular sale a Lemon o Binance y puede perder la pestaña. Lleva el monto
  * exacto, la dirección y el link a `/blur/compra/[id]`.
  *
- * Misma pieza que el mail de entradas (tablas e inline, fondo de BLUR). El
+ * Misma pieza que el mail de entradas (tablas e inline, paleta y logo de BLUR). El
  * HTML es una función pura para poder renderizarla sin servidor.
  */
 
@@ -34,10 +35,7 @@ const hora = (iso: string) =>
 export const asuntoMailPendiente = 'Tu pago de BLUR está pendiente';
 
 export function htmlMailPagoPendiente({ nombre, red, monto, direccion, venceAt, link }: DatosMailPendiente): string {
-  const fondo = '#1C1410';
-  const texto = '#FFFCDC';
-  const acento = '#E2532B';
-  const resalte = '#B9B23E';
+  const { fondo, texto, acento, resalte, negro } = MARCA_MAIL;
   const fuente = 'Helvetica,Arial,sans-serif';
   const mono = "'Courier New',monospace";
   const cfg = REDES[red];
@@ -52,7 +50,7 @@ export function htmlMailPagoPendiente({ nombre, red, monto, direccion, venceAt, 
   return `<!doctype html><html lang="es"><body style="margin:0;background:${fondo}">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${fondo}"><tr><td align="center" style="padding:40px 16px">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px">
-<tr><td style="padding:0 0 8px;font:700 32px ${fuente};letter-spacing:4px;color:${texto}" align="center">BLUR</td></tr>
+${filaLogoMail()}
 <tr><td style="padding:0 0 28px;font:15px/1.5 ${fuente};color:${texto}" align="center">
   <span style="font-weight:700;font-size:20px">${escapar(nombre)}</span><br>Tu pago está pendiente
 </td></tr>
@@ -69,7 +67,7 @@ ${caja(`${rotulo(`A esta dirección · ${escapar(cfg.nombre)} (${cfg.estandar})`
   <span style="font-weight:700;color:${resalte}">Ojo con la comisión de retiro.</span>
   Antes de confirmar, fijate cuánto "recibe" la dirección: tiene que decir ${importe} ${escapar(moneda)}. Si dice menos, subí el monto a enviar.
 </td></tr></table></td></tr>
-<tr><td align="center" style="padding:0 0 12px"><a href="${link}" style="display:inline-block;background:${acento};color:${fondo};font:700 16px ${fuente};text-decoration:none;padding:14px 32px">Volver a mi pago</a></td></tr>
+<tr><td align="center" style="padding:0 0 12px"><a href="${link}" style="display:inline-block;background:${acento};color:${negro};font:700 16px ${fuente};text-decoration:none;padding:14px 32px">Volver a mi pago</a></td></tr>
 <tr><td align="center" style="padding:0 0 28px;font:13px/1.5 ${fuente};color:${texto};opacity:.7">
   ${venceAt ? `Tenés hasta las ${hora(venceAt)} para mandarlo. Si lo mandás después, igual se acredita.<br>` : ''}Cuando llegue el pago te mandamos las entradas por mail.
 </td></tr>

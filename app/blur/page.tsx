@@ -65,10 +65,11 @@ export default async function FestivalHome() {
         )}
       </div>
 
-      <div className="absolute z-10 inset-x-0 bottom-0 px-4 sm:px-7 pb-5 flex items-end justify-between gap-4 fest-mono text-[11px] sm:text-[12px] leading-[1.25] uppercase text-white">
+      {/* En el celular todo va a la izquierda: la esquina derecha es del botón TICKETS fijo. */}
+      <div className="absolute z-10 inset-x-0 bottom-0 px-4 sm:px-7 pb-5 flex flex-col items-start gap-1.5 sm:flex-row sm:items-end sm:justify-between sm:gap-4 fest-mono text-[11px] sm:text-[12px] leading-[1.25] uppercase text-white">
         <b className="font-sans font-black normal-case tracking-[-0.02em] text-[15px]">manso club</b>
         {(fecha || config.lugar) && (
-          <p className="text-right">
+          <p className="text-left sm:text-right max-w-[62%] sm:max-w-none">
             {fecha}
             {fecha && config.lugar && <br />}
             {config.lugar}

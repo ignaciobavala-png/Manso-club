@@ -5,6 +5,7 @@ import { EMAIL_FROM, getResend } from '@/lib/resend';
 import { getMPPaymentClient, getMPPreferenceClient } from '@/lib/mercadopago';
 import { confirmarEnGestion, liberarEnGestion, urlTransferenciaGestion } from '@/lib/gestion-entradas';
 import QRCode from 'qrcode';
+import { MARCA_MAIL, filaLogoMail, filaTexturaMail } from '@/lib/festival-mail-marca';
 import type { FestivalConfig, MedioPago } from '@/lib/types/festival';
 
 /**
@@ -706,17 +707,26 @@ export async function enviarMailTickets(supabase: SupabaseClient, orden: Pick<Or
 }
 
 function htmlMailConLink(orden: Pick<OrdenFestival, 'nombre' | 'cantidad_entradas'>, link: string) {
+  const { fondo, texto, acento, negro } = MARCA_MAIL;
   const entradas = orden.cantidad_entradas === 1 ? 'tu entrada' : `tus ${orden.cantidad_entradas} entradas`;
-  return `<p>Hola ${escapar(orden.nombre)},</p>
-<p>Recibimos el pago. Acá está ${entradas}, cada una con su QR:</p>
-<p><a href="${link}">${link}</a></p>
-<p>Guardá este mail: el link es tu entrada.</p>`;
+  return `<!doctype html><html><body style="margin:0;background:${fondo}">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${fondo}"><tr><td align="center" style="padding:40px 16px">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px">
+${filaLogoMail()}
+<tr><td style="padding:0 0 24px;font:15px/1.5 Helvetica,Arial,sans-serif;color:${texto}" align="center">
+  <span style="font-weight:700;font-size:20px">${escapar(orden.nombre)}</span><br>Recibimos el pago
+</td></tr>
+<tr><td style="padding:0 0 24px;font:15px/1.5 Helvetica,Arial,sans-serif;color:${texto}">
+  Acá está ${entradas}, cada una con su QR. Guardá este mail: el link es tu entrada.
+</td></tr>
+<tr><td align="center" style="padding:0 0 12px"><a href="${link}" style="display:inline-block;background:${acento};color:${negro};font:700 16px Helvetica,Arial,sans-serif;text-decoration:none;padding:14px 32px">Ver mis entradas</a></td></tr>
+${filaTexturaMail()}
+</table></td></tr></table></body></html>`;
 }
 
 /** Una pieza sola, en tablas e inline como piden los clientes de mail. */
-function htmlMailConQr(nombre: string, tickets: TicketFestival[]) {
-  const fondo = '#1C1410';
-  const texto = '#FFFCDC';
+export function htmlMailConQr(nombre: string, tickets: TicketFestival[]) {
+  const { fondo, texto } = MARCA_MAIL;
   const filas = tickets
     .map(
       (t, i) => `<tr><td style="padding:0 0 28px" align="center">
@@ -729,7 +739,7 @@ function htmlMailConQr(nombre: string, tickets: TicketFestival[]) {
   return `<!doctype html><html><body style="margin:0;background:${fondo}">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${fondo}"><tr><td align="center" style="padding:40px 16px">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px">
-<tr><td style="padding:0 0 8px;font:700 32px Helvetica,Arial,sans-serif;letter-spacing:4px;color:${texto}" align="center">BLUR</td></tr>
+${filaLogoMail()}
 <tr><td style="padding:0 0 32px;font:15px/1.5 Helvetica,Arial,sans-serif;color:${texto}" align="center">
   <span style="font-weight:700;font-size:20px">${escapar(nombre)}</span><br>¡Compra realizada con éxito!
 </td></tr>
@@ -742,6 +752,7 @@ ${filas}
     <li>Llevá tus entradas abiertas en el celular.</li>
   </ul>
 </td></tr>
+${filaTexturaMail()}
 </table></td></tr></table></body></html>`;
 }
 
