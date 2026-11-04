@@ -68,7 +68,7 @@ export const MEDIOS_PAGO: Record<MedioPago, { nombre: string; boton: string; det
   transferencia: {
     nombre: 'Transferencia',
     boton: 'Pagar por transferencia',
-    detalle: 'Te mostramos los datos de la cuenta. Las entradas llegan cuando confirmamos la transferencia.',
+    detalle: 'Te llevamos a Manso Gestión para pagar. Ahí mismo ves tu QR cuando se confirma la transferencia.',
   },
   cripto: {
     nombre: 'Cripto',

@@ -43,6 +43,17 @@ const MAX_POR_COMPRA_DEFAULT = 10;
 
 export const eventoGestion = () => process.env.FESTIVAL_GESTION_EVENT_ID || null;
 
+/**
+ * Dónde paga por transferencia quien compra BLUR: la página pública de Gestión
+ * (`/registro/<slug>`), con sus datos de cuenta, comprobante y QR a la vista en
+ * `/mi-entrada`. Las órdenes de transferencia ya no se arman en Club. null si
+ * falta `GESTION_API_URL`: sin la URL no se ofrece el medio.
+ */
+export const urlTransferenciaGestion = (): string | null => {
+  const base = process.env.GESTION_API_URL?.replace(/\/+$/, '');
+  return base ? `${base}/registro/${process.env.FESTIVAL_GESTION_SLUG || 'blur'}` : null;
+};
+
 export const ventaEnGestion = () =>
   Boolean(process.env.GESTION_SUPABASE_URL && process.env.GESTION_SERVICE_ROLE_KEY && eventoGestion());
 

@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { leerConfig, leerEntradas } from '@/lib/festival';
 import { mediosDePago } from '@/lib/festival-compra';
+import { urlTransferenciaGestion } from '@/lib/gestion-entradas';
 import { getCotizacionDolar } from '@/lib/dolar';
 import { TablaTickets } from '@/components/festival/TablaTickets';
 import { EscribeTexto } from '@/components/festival/Escribe';
@@ -24,7 +25,7 @@ export default async function FestivalTickets() {
       <p className="fest-rotulo mb-8">
         <EscribeTexto texto={t.tickets.titulo} />
       </p>
-      <TablaTickets entradas={entradas} aviso={config.aviso} medios={medios} cotizacion={cotizacion} />
+      <TablaTickets entradas={entradas} aviso={config.aviso} medios={medios} cotizacion={cotizacion} urlTransferencia={urlTransferenciaGestion()} />
     </div>
   );
 }

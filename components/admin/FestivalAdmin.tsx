@@ -260,7 +260,7 @@ export function FestivalAdmin() {
           {(
             [
               ['pago_mercadopago', 'Mercado Pago', 'Se confirma solo. Usa la cuenta de MP de la tienda.'],
-              ['pago_transferencia', 'Transferencia', 'Toma el CBU/alias de la config del checkout. Se confirma a mano en Ventas.'],
+              ['pago_transferencia', 'Transferencia', 'Lleva a quien compra a Manso Gestión (/registro/blur): ahí transfiere, sube el comprobante y ve su QR. Se confirma en Gestión.'],
               ['pago_cripto', 'Cripto (USDT en BEP20 o ERC20)', 'Necesita la wallet cargada en Vercel (FESTIVAL_WALLET_EVM). Sin ella no aparece aunque esté prendido.'],
             ] as const
           ).map(([campo, etiqueta, ayuda]) => (

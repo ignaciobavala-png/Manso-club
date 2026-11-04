@@ -3,8 +3,7 @@ import { ORDEN_REDES, REDES, type EstadoPago, type RedCripto } from '@/lib/cript
 import { leerTransferencias, normalizarHash, puntoDePartida, redesActivas, walletDe } from '@/lib/cripto-escaner';
 import { EMAIL_FROM, getResend } from '@/lib/resend';
 import { getMPPaymentClient, getMPPreferenceClient } from '@/lib/mercadopago';
-import { datosParaTransferencia, getBankConfig } from '@/lib/getBankConfig';
-import { confirmarEnGestion, liberarEnGestion } from '@/lib/gestion-entradas';
+import { confirmarEnGestion, liberarEnGestion, urlTransferenciaGestion } from '@/lib/gestion-entradas';
 import QRCode from 'qrcode';
 import type { FestivalConfig, MedioPago } from '@/lib/types/festival';
 
@@ -533,7 +532,7 @@ async function avisarComprobante(supabase: SupabaseClient, orden: Pick<OrdenFest
 export async function mediosDePago(config: FestivalConfig): Promise<MedioPago[]> {
   const medios: MedioPago[] = [];
   if (config.pago_mercadopago && process.env.MP_ACCESS_TOKEN) medios.push('mercadopago');
-  if (config.pago_transferencia && datosParaTransferencia(await getBankConfig()).length > 0) {
+  if (config.pago_transferencia && urlTransferenciaGestion()) {
     medios.push('transferencia');
   }
   if (config.pago_cripto && redesActivas().length > 0) medios.push('cripto');

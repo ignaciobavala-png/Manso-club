@@ -62,6 +62,10 @@ export async function POST(request: NextRequest) {
 
   const config = await leerConfig();
   const medios = config ? await mediosDePago(config) : [];
+  // La transferencia se paga en Gestión: ahí viven la cuenta, el comprobante y el QR.
+  if (body.metodo === 'transferencia') {
+    return NextResponse.json({ error: 'La transferencia se paga en Manso Gestión.' }, { status: 400 });
+  }
   if (!medios.includes(body.metodo)) {
     return NextResponse.json({ error: 'Ese medio de pago no está disponible.' }, { status: 400 });
   }
@@ -164,7 +168,7 @@ export async function POST(request: NextRequest) {
         nombre,
         email,
         items: items.map(i => ({ tipo_id: i.entrada_id, cantidad: i.cantidad })),
-        venceAt: metodo === 'transferencia' ? null : new Date(Date.now() + MINUTOS_DE_RESERVA * 60_000),
+        venceAt: new Date(Date.now() + MINUTOS_DE_RESERVA * 60_000),
       });
       await admin.from('festival_ordenes').update({ gestion_tickets: tickets }).eq('id', orden.id);
     } catch (e) {
