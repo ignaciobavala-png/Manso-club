@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { leerConfig, leerLineup } from '@/lib/festival';
 import { LineupCorrido } from '@/components/festival/LineupCorrido';
+import { DECO, SeccionMarca } from '@/components/festival/SeccionMarca';
 import { leerTextos } from '@/lib/festival-idioma-servidor';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -18,12 +19,16 @@ export default async function FestivalLineup() {
   if (!config) notFound();
 
   return (
-    <div className="px-4 sm:px-7 pt-6 sm:pt-10 pb-20 sm:pb-24 fest-entra">
+    <SeccionMarca
+      tema="verde"
+      deco={DECO.lineup}
+      className="flex-1 px-4 sm:px-7 pt-6 sm:pt-10 pb-20 sm:pb-24 fest-entra"
+    >
       {lineup.length === 0 ? (
         <p className="fest-mono text-sm opacity-60">{t.lineup.pronto}</p>
       ) : (
         <LineupCorrido escenarios={lineup} />
       )}
-    </div>
+    </SeccionMarca>
   );
 }
