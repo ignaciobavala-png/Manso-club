@@ -2,7 +2,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { fechaCorta, leerConfig, leerLineup } from '@/lib/festival';
-import { LogoBlur } from '@/components/festival/LogoBlur';
+import { TituloDifuso } from '@/components/festival/TituloDifuso';
 import { DECO, SeccionMarca, type DecoItem, type TemaMarca } from '@/components/festival/SeccionMarca';
 import { GaleriaLocacion } from '@/components/festival/GaleriaLocacion';
 import { TextoResaltado } from '@/components/festival/TextoResaltado';
@@ -10,12 +10,19 @@ import { LineupCorrido } from '@/components/festival/LineupCorrido';
 import { EscribeTexto } from '@/components/festival/Escribe';
 import { leerTextos } from '@/lib/festival-idioma-servidor';
 
+/**
+ * Lo que dice el hero: BLUR con el redondeo difuso de siempre. Ana prefirió
+ * este a la versión que entregó la diseñadora (04/11), así que el logo SVG
+ * queda solo en el pie y en los mails.
+ */
+const TITULO_HERO = 'Blur';
+
 /** Foto de fondo mientras no se cargue un banner desde el panel. */
 const BANNER_POR_DEFECTO = '/blur/hero-cabina.jpg';
 
 /**
  * Home de BLUR. Arranca con el hero a pantalla completa —la foto a sangre tal
- * cual, sin filtros, el logo primario de la diseñadora encima, el lema debajo y una franja con la
+ * cual, sin filtros, el nombre con el redondeo difuso encima, el lema debajo y una franja con la
  * fecha, el horario y el lugar. Todos los textos salen del panel— y scrollea por un adelanto de algunas
  * secciones (pedido del equipo): las fotos (las de Locación y las extra del
  * home), la Visión y el line-up, cada una con su link a la página entera.
@@ -59,7 +66,7 @@ export default async function FestivalHome() {
         className="fest-brisa absolute z-[2] pointer-events-none right-[-4%] top-[4%] w-[62%] sm:w-[40%] max-w-[640px] h-auto"
       />
       <div className="relative z-10 px-4 pb-[12svh] w-full flex flex-col items-center gap-5 sm:gap-6 fest-entra">
-        <LogoBlur priority className="w-[86vw] sm:w-[min(72vw,1000px)] h-auto" />
+        <TituloDifuso texto={TITULO_HERO} />
         {config.lema && (
           <p className="fest-mono text-[clamp(11px,1.3vw,17px)] uppercase tracking-[0.3em] text-white">{config.lema}</p>
         )}

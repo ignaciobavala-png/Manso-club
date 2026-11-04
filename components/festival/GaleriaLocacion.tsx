@@ -34,11 +34,14 @@ interface Props {
  * Cada una se abre entera en `VisorFotos` al tocarla. Lo usan Locación y Spots.
  */
 
-/** Ancho útil supuesto, alto ideal del renglón y separación, por pantalla. */
+/**
+ * Ancho útil supuesto, alto ideal del renglón y separación, por pantalla.
+ * Sin separación entre fotos (pedido de Ana, 04/11): van pegadas, como un mosaico.
+ */
 const PANTALLAS = [
-  { clase: 'flex sm:hidden', ancho: 343, alto: 230, gap: 8 },
-  { clase: 'hidden sm:flex lg:hidden', ancho: 700, alto: 300, gap: 16 },
-  { clase: 'hidden lg:flex', ancho: 1300, alto: 400, gap: 16 },
+  { clase: 'flex sm:hidden', ancho: 343, alto: 230, gap: 0 },
+  { clase: 'hidden sm:flex lg:hidden', ancho: 700, alto: 300, gap: 0 },
+  { clase: 'hidden lg:flex', ancho: 1300, alto: 400, gap: 0 },
 ] as const;
 
 /** Proporción para una foto que no se pudo medir: la vertical de celular. */
