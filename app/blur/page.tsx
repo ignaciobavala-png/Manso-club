@@ -2,27 +2,20 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { fechaCorta, leerConfig, leerLineup } from '@/lib/festival';
-import { TituloDifuso } from '@/components/festival/TituloDifuso';
+import { LogoBlur } from '@/components/festival/LogoBlur';
 import { GaleriaLocacion } from '@/components/festival/GaleriaLocacion';
 import { TextoResaltado } from '@/components/festival/TextoResaltado';
 import { LineupCorrido } from '@/components/festival/LineupCorrido';
 import { EscribeTexto } from '@/components/festival/Escribe';
 import { leerTextos } from '@/lib/festival-idioma-servidor';
 
-/**
- * Lo que dice el hero. Por ahora no es el nombre del panel (`config.nombre`),
- * que sigue siendo "Subreal". El logo de la diseñadora
- * (`public/blur/blur-logo.png`) se probó y no gustó: volvió el filtro.
- */
-const TITULO_HERO = 'Blur';
-
 /** Foto de fondo mientras no se cargue un banner desde el panel. */
 const BANNER_POR_DEFECTO = '/blur/hero-cabina.jpg';
 
 /**
  * Home de BLUR. Arranca con el hero a pantalla completa —la foto a sangre tal
- * cual, sin filtros, el nombre con el redondeo difuso de Basilar y la fecha y
- * el lema en cajitas translúcidas— y scrollea por un adelanto de algunas
+ * cual, sin filtros, el logo primario de la diseñadora encima, el lema debajo y una franja con la
+ * fecha, el horario y el lugar. Todos los textos salen del panel— y scrollea por un adelanto de algunas
  * secciones (pedido del equipo): las fotos (las de Locación y las extra del
  * home), la Visión y el line-up, cada una con su link a la página entera.
  *
@@ -53,26 +46,34 @@ export default async function FestivalHome() {
           className="object-cover object-[50%_70%]"
         />
       </div>
-      <div className="relative z-10 px-4 pb-[22svh] fest-entra">
-        <TituloDifuso texto={TITULO_HERO} />
-
-        {(fecha || config.lema) && (
-          <div className="mt-1 sm:mt-2 flex flex-col items-center gap-3 fest-mono text-[clamp(12px,1.3vw,17px)] tracking-[0.04em] uppercase text-[#2a1d18]">
-            {fecha && (
-              <span className="px-2 py-0.5 bg-[color-mix(in_srgb,var(--fest-acento)_55%,transparent)]">{fecha}</span>
-            )}
-            {config.lema && (
-              <span className="px-2 py-0.5 bg-[color-mix(in_srgb,var(--fest-acento)_55%,transparent)]">
-                {config.lema}
-              </span>
-            )}
-          </div>
+      {/* Degradés para que se lean el menú de arriba y la franja de abajo sin filtrar la foto. */}
+      <div aria-hidden className="absolute inset-0 z-[1] pointer-events-none bg-[linear-gradient(to_bottom,transparent_60%,rgba(13,46,19,0.88))]" />
+      <Image
+        aria-hidden
+        src="/blur/marca/textura_1_color.svg"
+        alt=""
+        width={900}
+        height={800}
+        unoptimized
+        className="absolute z-[2] pointer-events-none right-[-4%] top-[4%] w-[62%] sm:w-[40%] max-w-[640px] h-auto"
+      />
+      <div className="relative z-10 px-4 pb-[12svh] w-full flex flex-col items-center gap-5 sm:gap-6 fest-entra">
+        <LogoBlur priority className="w-[86vw] sm:w-[min(72vw,1000px)] h-auto" />
+        {config.lema && (
+          <p className="fest-mono text-[clamp(11px,1.3vw,17px)] uppercase tracking-[0.3em] text-white">{config.lema}</p>
         )}
       </div>
 
-      <p className="absolute z-10 left-4 sm:left-7 bottom-5 fest-mono text-[11px] uppercase tracking-[0.3em]">
+      <div className="absolute z-10 inset-x-0 bottom-0 px-4 sm:px-7 pb-5 flex items-end justify-between gap-4 fest-mono text-[11px] sm:text-[12px] leading-[1.25] uppercase text-white">
         <b className="font-sans font-black normal-case tracking-[-0.02em] text-[15px]">manso club</b>
-      </p>
+        {(fecha || config.lugar) && (
+          <p className="text-right">
+            {fecha}
+            {fecha && config.lugar && <br />}
+            {config.lugar}
+          </p>
+        )}
+      </div>
     </section>
 
     {fotos.length > 0 && (
@@ -82,7 +83,7 @@ export default async function FestivalHome() {
     )}
 
     {config.vision && (
-      <Seccion rotulo={t.home.vision}>
+      <Seccion rotulo={t.home.vision} deco={<Deco src="/blur/marca/ilus-bailando-b.webp" w={1100} h={717} className="right-[-6%] bottom-[-4%] w-[70%] sm:w-[38%] opacity-[0.12]" />}>
         <TextoResaltado
           texto={config.vision}
           className="text-[clamp(17px,1.6vw,24px)] leading-[1.4] tracking-[-0.01em]"
@@ -91,7 +92,7 @@ export default async function FestivalHome() {
     )}
 
     {lineup.length > 0 && (
-      <Seccion rotulo={t.home.lineup} href="/blur/line-up" ver={t.home.verLineup}>
+      <Seccion rotulo={t.home.lineup} href="/blur/line-up" ver={t.home.verLineup} deco={<Deco src="/blur/marca/textura_1_b.svg" w={900} h={800} svg className="right-[-2%] top-0 w-[70%] sm:w-[36%] opacity-[0.18]" />}>
         <LineupCorrido escenarios={lineup} />
       </Seccion>
     )}
@@ -108,27 +109,64 @@ function Seccion({
   rotulo,
   href,
   ver,
+  deco,
   children,
 }: {
   rotulo: string;
   href?: string;
   ver?: string;
+  deco?: React.ReactNode;
   children: React.ReactNode;
 }) {
   return (
-    <section className={`relative z-10 bg-[var(--fest-fondo)] fest-fondo px-4 sm:px-7 pt-14 sm:pt-20 ${href ? 'pb-6 sm:pb-10' : ''}`}>
-      <p className="fest-rotulo mb-8">
-        <EscribeTexto texto={rotulo} />
-      </p>
-      {children}
-      {href && (
-        <Link
-          href={href}
-          className="fest-chevron fest-menu inline-block mt-8 sm:mt-10 text-[16px] sm:text-[18px] text-[var(--fest-acento)] hover:text-[var(--fest-texto)] transition-colors"
-        >
-          {ver}
-        </Link>
-      )}
+    <section className={`relative z-10 overflow-hidden bg-[var(--fest-fondo)] fest-fondo px-4 sm:px-7 pt-14 sm:pt-20 ${href ? 'pb-6 sm:pb-10' : ''}`}>
+      {deco}
+      <div className="relative z-10">
+        <p className="fest-rotulo mb-8">
+          <EscribeTexto texto={rotulo} />
+        </p>
+        {children}
+        {href && (
+          <Link
+            href={href}
+            className="fest-chevron fest-menu inline-block mt-8 sm:mt-10 text-[16px] sm:text-[18px] text-[var(--fest-acento)] hover:text-[var(--fest-texto)] transition-colors"
+          >
+            {ver}
+          </Link>
+        )}
+      </div>
     </section>
+  );
+}
+
+/**
+ * Ilustración o textura de la diseñadora como fondo de una sección: queda
+ * detrás del contenido (z-0), sin captar clics y a baja opacidad para no
+ * competir con el texto. Va en blanco: funciona sobre cualquier fondo oscuro.
+ */
+function Deco({
+  src,
+  w,
+  h,
+  svg,
+  className,
+}: {
+  src: string;
+  w: number;
+  h: number;
+  svg?: boolean;
+  className: string;
+}) {
+  return (
+    <Image
+      aria-hidden
+      src={src}
+      alt=""
+      width={w}
+      height={h}
+      unoptimized={svg}
+      sizes="40vw"
+      className={`absolute z-0 pointer-events-none select-none h-auto ${className}`}
+    />
   );
 }
