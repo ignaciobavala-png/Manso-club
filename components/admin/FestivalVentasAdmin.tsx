@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase';
 import { formatArs } from '@/lib/precios';
 import { MEDIOS_PAGO, type MedioPago } from '@/lib/types/festival';
 import { AYUDA, BOTON_ICONO, CARD, TITULO } from './festivalComun';
+import { FestivalVentasGestion } from './FestivalVentasGestion';
 
 interface Venta {
   id: string;
@@ -22,6 +23,8 @@ interface Venta {
   transferencia_declarada_at: string | null;
   created_at: string;
 }
+
+type Vista = 'ordenes' | 'gestion';
 
 type Filtro = 'por_confirmar' | 'sin_avisar' | 'pagadas' | 'todas';
 
@@ -43,6 +46,7 @@ const FILTROS: [Filtro, string][] = [
  */
 export function FestivalVentasAdmin() {
   const [ventas, setVentas] = useState<Venta[]>([]);
+  const [vista, setVista] = useState<Vista>('ordenes');
   const [filtro, setFiltro] = useState<Filtro>('por_confirmar');
   const [cargando, setCargando] = useState(true);
   const [ocupada, setOcupada] = useState<string | null>(null);
@@ -104,11 +108,37 @@ export function FestivalVentasAdmin() {
             primeros 8 caracteres de la orden. Mercado Pago y cripto se confirman solos.
           </p>
         </div>
-        <button type="button" onClick={cargar} className={BOTON_ICONO} title="Actualizar">
-          <RefreshCw size={13} />
-        </button>
+        {vista === 'ordenes' && (
+          <button type="button" onClick={cargar} className={BOTON_ICONO} title="Actualizar">
+            <RefreshCw size={13} />
+          </button>
+        )}
       </div>
 
+      <div className="flex flex-wrap gap-2">
+        {(
+          [
+            ['ordenes', 'Órdenes de la web'],
+            ['gestion', 'Todas las entradas (Gestión)'],
+          ] as [Vista, string][]
+        ).map(([valor, etiqueta]) => (
+          <button
+            key={valor}
+            type="button"
+            onClick={() => setVista(valor)}
+            className={`px-3 py-1.5 rounded-lg border text-[9px] font-black uppercase tracking-widest transition-colors ${
+              vista === valor ? 'border-manso-cream bg-manso-cream text-manso-black' : 'border-manso-cream/20 text-manso-cream/50 hover:text-manso-cream'
+            }`}
+          >
+            {etiqueta}
+          </button>
+        ))}
+      </div>
+
+      {vista === 'gestion' ? (
+        <FestivalVentasGestion />
+      ) : (
+        <>
       <div className="flex flex-wrap gap-2">
         {FILTROS.map(([valor, etiqueta]) => (
           <button
@@ -223,6 +253,8 @@ export function FestivalVentasAdmin() {
             </li>
           ))}
         </ul>
+      )}
+        </>
       )}
     </section>
   );
