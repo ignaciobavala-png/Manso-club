@@ -146,13 +146,15 @@ página por sección. Todas leen por `lib/festival.ts` (cacheado por request).
 
 - `/blur` — el hero a pantalla completa (la foto `fixed` y **sin filtros**:
   `banner_url`, o `public/blur/hero-cabina.jpg` si el panel no tiene banner;
-  el logo, el `lema` debajo y una franja con fecha, horario y `lugar`) y después
+  el título BLUR difuso, el `lema` debajo y una franja con fecha, horario y `lugar`) y después
   scrollea por un adelanto de secciones, cada una con su link: fotos
   (`locacion_fotos` + `home_fotos`, las extra que Ana sume desde el panel),
   Visión y line-up. Las secciones tienen fondo propio y suben por encima de la
-  foto. El título es el **logo primario de la diseñadora** (`LogoBlur`, SVG en
-  `public/blur/marca/`), no `config.nombre`, que sigue siendo "Subreal" y es el
-  que sale en la pestaña y el pie. Todos los textos salen del panel: el código
+  foto. El título dice **BLUR** (`TITULO_HERO`) con el filtro difuso de
+  `TituloDifuso` (Ana lo prefirió al logo de la diseñadora, 04/11); el logo SVG
+  (`LogoBlur`, en `public/blur/marca/`) queda en el pie y los mails. No es
+  `config.nombre`, que sigue siendo "Subreal" y es el que sale en la pestaña y
+  el pie. Todos los textos salen del panel: el código
   no lleva copy fijo.
 - `/vision` — texto del panel por `TextoResaltado`: `*así*` va en
   `color_resalte` y `**así**` en `color_acento`. No es Markdown, a propósito.
@@ -207,8 +209,9 @@ El menú y el botón TICKETS van en **Space Mono** Bold (`.fest-menu`), con el
 estilo del menú de Basilar (chevron dibujado con una máscara SVG en
 `.fest-chevron`) pero más chico: 18px en escritorio en vez de sus 23,3px. Basilar en realidad usa Space Grotesk; el
 equipo eligió la Mono.
-El título del hero ya no imita a Basilar: es el logo real de la diseñadora
-(`TituloDifuso` se borró). Neue Montreal, que usa la diseñadora, es de uso
+El título del hero conserva el BLUR difuso (`TituloDifuso`), no el logo de la
+diseñadora: Ana lo eligió. Las galerías (`GaleriaLocacion`) van **sin separación**
+entre fotos, también pedido de Ana. Neue Montreal, que usa la diseñadora, es de uso
 personal y **no se compra**: seguimos con Helvetica.
 COMPRAR y los botones de pago van en la tipografía de TICKETS (`.fest-menu`),
 un poco más grandes que él, no en Archivo a 24px.
