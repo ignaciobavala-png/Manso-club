@@ -8,6 +8,7 @@ import { IdiomaProvider } from '@/components/festival/Idioma';
 import { leerTextos } from '@/lib/festival-idioma-servidor';
 import { leerConteo } from '@/lib/festival-conteo';
 import { ConteoVisitas } from '@/components/festival/ConteoVisitas';
+import { LogoBlur } from '@/components/festival/LogoBlur';
 
 /**
  * Subreal (/blur) — sitio chico con identidad propia, sin el navbar de
@@ -87,6 +88,9 @@ export default async function FestivalLayout({ children }: { children: React.Rea
       <main className="flex-1 flex flex-col">{children}</main>
 
       <footer className="relative z-10 bg-[var(--fest-fondo)] border-t border-[var(--fest-texto)]/15 px-4 sm:px-7 pt-4 pb-20 sm:pb-4 flex flex-col items-start sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-x-8 gap-y-2.5 fest-mono text-[11px] uppercase tracking-[0.2em]">
+        <a href="/blur" aria-label="BLUR" className="opacity-90 hover:opacity-100 transition-opacity">
+          <LogoBlur className="h-4 w-auto" />
+        </a>
         <nav className="flex flex-wrap gap-x-[22px] gap-y-1.5 text-[var(--fest-acento)]">
           {config.email && (
             <a href={`mailto:${config.email}`} className="fest-flecha hover:text-[var(--fest-texto)] transition-colors">

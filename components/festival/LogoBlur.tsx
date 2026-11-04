@@ -7,9 +7,12 @@ import Image from 'next/image';
  */
 export function LogoBlur({
   tono = 'blanco',
+  priority = false,
   className,
 }: {
   tono?: 'blanco' | 'negro';
+  /** Solo el del hero: es lo primero que se pinta. */
+  priority?: boolean;
   className?: string;
 }) {
   return (
@@ -18,7 +21,7 @@ export function LogoBlur({
       alt="BLUR"
       width={1183}
       height={201}
-      priority
+      priority={priority}
       unoptimized
       className={className}
     />
