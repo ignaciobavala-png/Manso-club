@@ -172,3 +172,52 @@ export async function borrarTipoGestion(id: string): Promise<void> {
   const { error } = await gestion().rpc('web_borrar_tipo', { p_event_id: eventoGestion(), p_id: id });
   if (error) throw fallo('web_borrar_tipo', error);
 }
+
+/**
+ * Los eventos de Gestión que para quien compra son un solo festival BLUR:
+ * la entrada sola, con lancha y con estacionamiento. `FESTIVAL_GESTION_EVENT_ID`
+ * sigue siendo el de la venta (el único donde se reserva); estos son los que
+ * el panel de Ventas lee. Se puede pisar con `FESTIVAL_GESTION_EVENT_IDS`
+ * (ids separados por coma).
+ */
+export const EVENTOS_FESTIVAL_GESTION: string[] = (
+  process.env.FESTIVAL_GESTION_EVENT_IDS?.split(',')
+    .map(s => s.trim())
+    .filter(Boolean) ?? [
+    'cad3a58d-3744-4c81-a493-43e3f5f5fe40', // BLUR
+    'd0471ae7-bff7-4797-945e-c93ff464012a', // BLUR + LANCHA
+    '3093fc7e-5a9c-44bb-81b9-6fb19e8beec1', // BLUR + Estacionamiento
+  ]
+);
+
+/** Una entrada de Gestión tal como la devuelve `web_ventas_admin` (migración 044). Sin el token del QR. */
+export interface VentaGestion {
+  registro_id: string;
+  event_id: string;
+  evento: string;
+  order_ref: string | null;
+  nombre: string;
+  email: string;
+  phone: string | null;
+  origen: 'web' | 'gestion';
+  payment_provider: string | null;
+  payment_verified: boolean;
+  vendida: boolean;
+  reservada: boolean;
+  rechazada: boolean;
+  tipo: string | null;
+  precio: number | null;
+  tiene_comprobante: boolean;
+  registered_at: string;
+  paid_at: string | null;
+  mp_expires_at: string | null;
+  qr_mail_enviado_at: string | null;
+  used_at: string | null;
+}
+
+/** Solo lectura: una fila por entrada de los eventos del festival, las de la web y las cargadas a mano. */
+export async function ventasAdminGestion(): Promise<VentaGestion[]> {
+  const { data, error } = await gestion().rpc('web_ventas_admin', { p_event_ids: EVENTOS_FESTIVAL_GESTION });
+  if (error) throw fallo('web_ventas_admin', error);
+  return ((data as VentaGestion[] | null) ?? []).map(v => ({ ...v, precio: v.precio === null ? null : Number(v.precio) }));
+}
