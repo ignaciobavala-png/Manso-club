@@ -63,12 +63,14 @@ export function FestivalVentasGestion() {
         const filas = ventas.filter(v => v.origen === origen);
         const vendidas = filas.filter(v => v.vendida);
         const verificadas = vendidas.filter(v => v.payment_verified);
+        const sinMail = vendidas.filter(v => !v.qr_mail_enviado_at);
         return {
           origen,
           etiqueta,
           total: filas.length,
           vendidas: vendidas.length,
           verificadas: verificadas.length,
+          sinMail: sinMail.length,
           monto: vendidas.reduce((suma, v) => suma + (v.precio ?? 0), 0),
         };
       }),
@@ -100,6 +102,9 @@ export function FestivalVentasGestion() {
               <span className="font-mono tabular-nums">{t.verificadas}</span> verificadas ·{' '}
               <span className="font-mono tabular-nums">{formatArs(t.monto)}</span>
             </p>
+            <p className={`text-[11px] ${t.sinMail > 0 ? 'text-manso-terra' : 'text-manso-cream/40'}`}>
+              {t.sinMail > 0 ? `${t.sinMail} vendidas sin mail del QR` : 'Todas las vendidas tienen el mail del QR enviado'}
+            </p>
           </div>
         ))}
       </div>
@@ -127,6 +132,16 @@ export function FestivalVentasGestion() {
                     {v.vendida && (
                       <span
                         className={`ml-1 align-middle px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${
+                          v.qr_mail_enviado_at ? 'bg-manso-olive/20 text-manso-olive' : 'bg-manso-terra/20 text-manso-terra'
+                        }`}
+                        title={v.qr_mail_enviado_at ? `Mail del QR enviado el ${fecha(v.qr_mail_enviado_at)}` : 'Gestión no registra que se haya mandado el mail con el QR'}
+                      >
+                        {v.qr_mail_enviado_at ? 'Mail QR enviado' : 'Sin mail QR'}
+                      </span>
+                    )}
+                    {v.vendida && (
+                      <span
+                        className={`ml-1 align-middle px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${
                           v.payment_verified ? 'bg-manso-olive/20 text-manso-olive' : 'bg-manso-cream/10 text-manso-cream/45'
                         }`}
                       >
@@ -136,6 +151,7 @@ export function FestivalVentasGestion() {
                   </p>
                   <p className="text-[11px] text-manso-cream/40 truncate">
                     {v.email} · {v.tipo ?? 'Sin tipo'} · {v.evento} · {v.origen === 'web' ? 'Web' : 'Manual'} · {fecha(v.registered_at)}
+                    {v.vendida && v.qr_mail_enviado_at ? ` · mail QR ${fecha(v.qr_mail_enviado_at)}` : ''}
                   </p>
                 </div>
                 <span className="text-sm font-mono text-manso-cream tabular-nums">{v.precio === null ? '—' : formatArs(v.precio)}</span>
