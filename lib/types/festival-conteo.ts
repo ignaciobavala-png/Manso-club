@@ -91,6 +91,7 @@ export function nombrePantalla(path: string): string {
     '/blur/line-up': 'Line up',
     '/blur/tickets': 'Tickets',
     '/blur/info': 'Info & FAQ',
+    '/blur/voluntarios': 'Voluntarios',
     '/blur/compra/:id': 'Compra',
   };
   if (fijas[path]) return fijas[path];

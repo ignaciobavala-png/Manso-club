@@ -29,6 +29,7 @@ import { FestivalVentasAdmin } from './FestivalVentasAdmin';
 import { FestivalEntradasGestion } from './FestivalEntradasGestion';
 import { FestivalSpotsAdmin } from './FestivalSpotsAdmin';
 import { FestivalConteoAdmin } from './FestivalConteoAdmin';
+import { FestivalVoluntariosAdmin } from './FestivalVoluntariosAdmin';
 import { GaleriaFotosAdmin } from './GaleriaFotosAdmin';
 import {
   AYUDA,
@@ -887,6 +888,8 @@ export function FestivalAdmin() {
           Agregar pregunta
         </button>
       </section>
+
+      <FestivalVoluntariosAdmin />
 
       <FestivalConteoAdmin />
     </div>
