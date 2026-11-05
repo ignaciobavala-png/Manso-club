@@ -25,7 +25,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   const supabase = createSupabaseAnon();
   // Solo lo público: lo que es para registrados o miembros da 404 a Google.
-  const [{ data: artistas }, { data: agenda }, { data: membresias }, { data: productos }] = await Promise.all([
+  const [{ data: artistas }, { data: agenda }, { data: membresias }, { data: productos }, { data: festival }, { data: festArtistas }, { data: festEscenarios }] = await Promise.all([
     supabase.from('artistas').select('slug, updated_at').eq('active', true),
     supabase
       .from('agenda')
@@ -35,7 +35,33 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       .not('slug', 'is', null),
     supabase.from('membresias').select('slug, updated_at').eq('activo', true).not('slug', 'is', null),
     supabase.from('productos').select('id, created_at').eq('active', true).eq('visibilidad', 'publico'),
+    // El RLS del festival devuelve vacío mientras no esté publicado: sin fila, no entra al sitemap.
+    supabase.from('festival_config').select('publicado, lineup_visible').eq('id', 1).maybeSingle(),
+    supabase.from('festival_artistas').select('slug, escenario_id').eq('activo', true),
+    supabase.from('festival_escenarios').select('id').eq('activo', true),
   ]);
+
+  // Mismas reglas que leerLineup: line-up apagado o escenario oculto dan 404 en la página.
+  const festivalPublico = festival?.publicado === true;
+  const escenariosVisibles = new Set((festEscenarios ?? []).map((e) => e.id));
+  const festivalRoutes: MetadataRoute.Sitemap = festivalPublico
+    ? [
+        { url: `${BASE}/blur`, changeFrequency: 'daily', priority: 0.9 },
+        ...['vision', 'locacion', 'spots', 'tickets', 'info', 'voluntarios'].map((r) => ({
+          url: `${BASE}/blur/${r}`,
+          changeFrequency: 'weekly' as const,
+          priority: r === 'tickets' ? 0.9 : 0.7,
+        })),
+        ...(festival?.lineup_visible
+          ? [
+              { url: `${BASE}/blur/line-up`, changeFrequency: 'daily' as const, priority: 0.8 },
+              ...(festArtistas ?? [])
+                .filter((a) => a.slug && escenariosVisibles.has(a.escenario_id))
+                .map((a) => ({ url: `${BASE}/blur/line-up/${a.slug}`, changeFrequency: 'weekly' as const, priority: 0.6 })),
+            ]
+          : []),
+      ]
+    : [];
 
   const artistRoutes: MetadataRoute.Sitemap = (artistas ?? []).map((a) => ({
     url: `${BASE}/artistas/${a.slug}`,
@@ -65,5 +91,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.6,
   }));
 
-  return [...staticRoutes, ...agendaRoutes, ...membresiaRoutes, ...artistRoutes, ...productoRoutes];
+  return [...staticRoutes, ...agendaRoutes, ...membresiaRoutes, ...artistRoutes, ...productoRoutes, ...festivalRoutes];
 }

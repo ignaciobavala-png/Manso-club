@@ -220,8 +220,13 @@ un poco más grandes que él, no en Archivo a 24px.
 sea false, las tablas del festival (`supabase/migration_festival*.sql`) solo las lee un
 admin, así que la página —que usa el cliente con cookies— da 404 a cualquier
 otro. Desde el 08/10 está publicada y el navbar principal la enlaza como
-`festival` (en el lugar de `tienda`, que pasó al menú "más"); sigue fuera del
-sitemap y con `noindex`.
+`festival` (en el lugar de `tienda`, que pasó al menú "más"); desde el 05/11 está
+**indexada** (pedido de Ana, para potenciar el festival): todo sale de
+`lib/festival-seo.ts` — metadata del layout (título `BLUR · Subreal`, OG y Twitter
+propios, `index` solo si `publicado`), descripciones por página, `MusicEvent`
+JSON-LD en la home (solo con fecha futura) y las rutas en el sitemap (solo si está
+publicado; el line-up y sus artistas, solo con `lineup_visible`). Las pantallas de
+compra siguen `noindex`.
 
 **Cobro: Mercado Pago, transferencia y cripto**, cada uno con su perilla en el
 panel (Festival → Cobro). Se ofrece un medio solo si está prendido *y*

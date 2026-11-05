@@ -9,6 +9,8 @@ import { TextoResaltado } from '@/components/festival/TextoResaltado';
 import { LineupCorrido } from '@/components/festival/LineupCorrido';
 import { EscribeTexto } from '@/components/festival/Escribe';
 import { leerTextos } from '@/lib/festival-idioma-servidor';
+import { JsonLd } from '@/components/SEO/JsonLd';
+import { eventoFestival } from '@/lib/festival-seo';
 import { TEXTOS_VOLUNTARIOS } from '@/lib/festival-voluntarios-textos';
 
 /**
@@ -38,9 +40,11 @@ export default async function FestivalHome() {
 
   const fecha = [fechaCorta(config.fecha), config.horario].filter(Boolean).join(' — ');
   const fotos = [...config.locacion_fotos, ...config.home_fotos];
+  const evento = eventoFestival(config, lineup.flatMap(e => e.artistas));
 
   return (
     <>
+    {evento && <JsonLd data={evento} />}
     {/* Alto de pantalla menos el menú, que en el celular ocupa dos o tres renglones. */}
     <section className="relative [clip-path:inset(0)] min-h-[calc(100svh-6rem)] sm:min-h-[calc(100svh-3.25rem)] flex flex-col items-center justify-center text-center">
       {/* `fill` pone la foto en absolute: el `fixed` lo lleva el contenedor. El `clip-path` de la

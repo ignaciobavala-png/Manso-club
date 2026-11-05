@@ -9,6 +9,7 @@ import { leerTextos } from '@/lib/festival-idioma-servidor';
 import { leerConteo } from '@/lib/festival-conteo';
 import { ConteoVisitas } from '@/components/festival/ConteoVisitas';
 import { LogoBlur } from '@/components/festival/LogoBlur';
+import { metadataFestival } from '@/lib/festival-seo';
 
 /**
  * Subreal (/blur) — sitio chico con identidad propia, sin el navbar de
@@ -41,14 +42,7 @@ const menu = Space_Mono({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const config = await leerConfig();
-  const nombre = config?.nombre ?? 'Festival';
-  return {
-    title: { default: nombre, template: `%s — ${nombre}` },
-    description: config?.bajada ?? undefined,
-    // Aunque se publique, no se indexa hasta que se decida lanzarlo en serio.
-    robots: { index: false, follow: false },
-  };
+  return metadataFestival(await leerConfig());
 }
 
 export default async function FestivalLayout({ children }: { children: React.ReactNode }) {

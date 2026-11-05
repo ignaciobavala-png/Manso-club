@@ -92,6 +92,7 @@ ${listaArtistas || 'Ver ' + SITE_URL + '/artistas'}
 - [Nuestro espacio](${SITE_URL}/nuestro-espacio): las salas del cowork.
 - [Cultural Manso](${SITE_URL}/mansocultural): ciclos, muestras y charlas.
 - [Manifiesto](${SITE_URL}/manifiesto)
+- [BLUR](${SITE_URL}/blur): el festival de Manso Club (fecha, line up, entradas e info).
 - [Tienda](${SITE_URL}/tienda)
 - [Presentá tu proyecto](${SITE_URL}/presenta-tu-proyecto)
 - [Trabajá con nosotros](${SITE_URL}/trabaja-con-nosotros)

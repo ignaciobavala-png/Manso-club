@@ -4,11 +4,14 @@ import { fechaCorta, leerConfig } from '@/lib/festival';
 import { GaleriaLocacion } from '@/components/festival/GaleriaLocacion';
 import { EscribeTexto } from '@/components/festival/Escribe';
 import { DECO, SeccionMarca } from '@/components/festival/SeccionMarca';
+import { MARCA_SEO, resumenFestival } from '@/lib/festival-seo';
+import { descripcion } from '@/lib/seo';
 import { leerTextos } from '@/lib/festival-idioma-servidor';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { t } = await leerTextos();
-  return { title: t.locacion.titulo };
+  const [{ t }, config] = await Promise.all([leerTextos(), leerConfig()]);
+  if (!config) return { title: t.locacion.titulo };
+  return { title: t.locacion.titulo, description: descripcion(`Dónde es ${MARCA_SEO}. ${resumenFestival(config)}`) };
 }
 
 /**

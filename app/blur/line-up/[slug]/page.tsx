@@ -5,6 +5,8 @@ import { leerConfig, leerLineup } from '@/lib/festival';
 import Image from 'next/image';
 import { VisorFotos } from '@/components/festival/VisorFotos';
 import { leerTextos } from '@/lib/festival-idioma-servidor';
+import { MARCA_SEO } from '@/lib/festival-seo';
+import { descripcion, og } from '@/lib/seo';
 
 /**
  * Página de un artista. Estructura de /speakers/[slug] de la bitconf: volver,
@@ -44,8 +46,12 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   const { artista } = encontrado;
   return {
     title: artista.nombre,
-    description: artista.bio?.slice(0, 160) ?? artista.origen ?? undefined,
-    openGraph: artista.foto_url ? { images: [artista.foto_url] } : undefined,
+    description: descripcion(artista.bio) ?? artista.origen ?? undefined,
+    // Next reemplaza el openGraph del layout: sin `og()` se perdería el resto.
+    openGraph: og({
+      title: `${artista.nombre} — ${MARCA_SEO}`,
+      ...(artista.foto_url && { images: [artista.foto_url] }),
+    }),
   };
 }
 

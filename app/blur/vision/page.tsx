@@ -4,11 +4,14 @@ import { leerConfig } from '@/lib/festival';
 import { TextoResaltado } from '@/components/festival/TextoResaltado';
 import { EscribeTexto } from '@/components/festival/Escribe';
 import { DECO, SeccionMarca } from '@/components/festival/SeccionMarca';
+import { MARCA_SEO, resumenFestival } from '@/lib/festival-seo';
+import { descripcion } from '@/lib/seo';
 import { leerTextos } from '@/lib/festival-idioma-servidor';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { t } = await leerTextos();
-  return { title: t.vision };
+  const [{ t }, config] = await Promise.all([leerTextos(), leerConfig()]);
+  if (!config) return { title: t.vision };
+  return { title: t.vision, description: descripcion(`La visión detrás de ${MARCA_SEO}. ${resumenFestival(config)}`) };
 }
 
 /**

@@ -3,11 +3,14 @@ import { notFound } from 'next/navigation';
 import { leerConfig, leerFaq } from '@/lib/festival';
 import { Escribe, EscribeTexto } from '@/components/festival/Escribe';
 import { DECO, SeccionMarca } from '@/components/festival/SeccionMarca';
+import { MARCA_SEO, resumenFestival } from '@/lib/festival-seo';
+import { descripcion } from '@/lib/seo';
 import { leerTextos } from '@/lib/festival-idioma-servidor';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { t } = await leerTextos();
-  return { title: t.info.titulo };
+  const [{ t }, config] = await Promise.all([leerTextos(), leerConfig()]);
+  if (!config) return { title: t.info.titulo };
+  return { title: t.info.titulo, description: descripcion(`Preguntas frecuentes de ${MARCA_SEO}: entradas, horarios, cómo llegar y todo lo que tenés que saber. ${resumenFestival(config)}`) };
 }
 
 /** Preguntas frecuentes en tres columnas, como "Info & FAQ" de Basilar. */

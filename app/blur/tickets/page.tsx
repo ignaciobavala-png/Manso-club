@@ -7,11 +7,14 @@ import { getCotizacionDolar } from '@/lib/dolar';
 import { TablaTickets } from '@/components/festival/TablaTickets';
 import { EscribeTexto } from '@/components/festival/Escribe';
 import { DECO, SeccionMarca } from '@/components/festival/SeccionMarca';
+import { MARCA_SEO, resumenFestival } from '@/lib/festival-seo';
+import { descripcion } from '@/lib/seo';
 import { leerTextos } from '@/lib/festival-idioma-servidor';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { t } = await leerTextos();
-  return { title: t.tickets.titulo };
+  const [{ t }, config] = await Promise.all([leerTextos(), leerConfig()]);
+  if (!config) return { title: t.tickets.titulo };
+  return { title: t.tickets.titulo, description: descripcion(`Entradas para ${MARCA_SEO}: tipos, precios y disponibilidad. ${resumenFestival(config)}`) };
 }
 
 export default async function FestivalTickets() {
