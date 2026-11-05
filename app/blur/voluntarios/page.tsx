@@ -24,7 +24,7 @@ const ANCLA = 'scroll-mt-16';
 
 /**
  * /blur/voluntarios — una sola página, corta y directa (brief del 04/11): hero,
- * qué es BLUR, áreas, beneficios, a quién buscamos, fecha y compromiso, cómo
+ * qué es BLUR, áreas, beneficios, a quién buscamos, cómo
  * funciona, formulario y FAQ. Los textos finales del brief están en
  * `festival-voluntarios-textos`; los datos que quedaron "A DEFINIR" (turnos,
  * montaje, traslado, inducción, edad) salen del panel y, vacíos, no se
@@ -39,21 +39,8 @@ export default async function FestivalVoluntarios() {
   const instagram = config.instagram?.replace(/^@/, '') ?? 'blur.festival';
   const contacto = config.email ?? '';
 
-  // Líneas de "Fecha, lugar y compromiso": las que tienen dato cargado.
-  const compromiso = [
-    t.compromiso.fecha,
-    vol.turnos && llenar(t.compromiso.turnos, { valor: vol.turnos }),
-    vol.montaje && llenar(t.compromiso.montaje, { valor: vol.montaje }),
-    vol.desmontaje && llenar(t.compromiso.desmontaje, { valor: vol.desmontaje }),
-    vol.traslado && llenar(t.compromiso.traslado, { valor: vol.traslado }),
-    vol.induccion && llenar(t.compromiso.induccion, { valor: vol.induccion }),
-  ].filter(Boolean) as string[];
-
   // Requisitos: la inducción solo si se cargó la fecha/formato.
-  const requisitos = [
-    t.quien.isla,
-    vol.induccion ? t.quien.induccion : null,
-  ].filter(Boolean) as string[];
+  const requisitos = [vol.induccion ? t.quien.induccion : null].filter(Boolean) as string[];
 
   const faq = [...t.faq.items];
   // "¿Cómo llego?" se suma solo si hay respuesta cargada (en el brief estaba "A DEFINIR").
@@ -111,31 +98,20 @@ export default async function FestivalVoluntarios() {
         </div>
       </SeccionMarca>
 
-      {/* 4. A quién buscamos + fecha, lugar y compromiso */}
+      {/* 4. A quién buscamos */}
       <SeccionMarca tema="crema" deco={DECO.info} className={`${SECCION} pb-24 sm:pb-28`}>
-        <div className="max-w-[1100px] grid gap-12 md:grid-cols-2 md:gap-16">
+        <div className="max-w-[1100px]">
           <div>
             <p className={ROTULO}>{t.quien.rotulo}</p>
             <p className="text-[18px] leading-[1.45] mb-5">{t.quien.texto}</p>
-            <ul className="space-y-2 text-[16px] leading-[1.4]">
+            {requisitos.length > 0 && <ul className="space-y-2 text-[16px] leading-[1.4]">
               {requisitos.map(r => (
                 <li key={r} className="flex gap-3">
                   <span aria-hidden className="text-[var(--fest-acento)] font-bold">›</span>
                   {r}
                 </li>
               ))}
-            </ul>
-          </div>
-          <div>
-            <p className={ROTULO}>{t.compromiso.rotulo}</p>
-            <ul className="space-y-2 text-[16px] leading-[1.4]">
-              {compromiso.map(c => (
-                <li key={c} className="flex gap-3">
-                  <span aria-hidden className="text-[var(--fest-acento)] font-bold">›</span>
-                  {c}
-                </li>
-              ))}
-            </ul>
+            </ul>}
           </div>
         </div>
       </SeccionMarca>

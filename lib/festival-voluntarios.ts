@@ -54,12 +54,7 @@ export const CONFIG_VOLUNTARIOS_POR_DEFECTO: ConfigVoluntarios = {
   desmontaje: null,
   traslado: null,
   induccion: null,
-  disponibilidad: [
-    'Montaje (días previos)',
-    'Sábado 12/12 tarde',
-    'Sábado 12/12 noche',
-    'Desmontaje domingo 13/12',
-  ],
+  disponibilidad: ['Sábado 12/12 mañana', 'Sábado 12/12 tarde', 'Sábado 12/12 noche'],
 };
 
 /** ¿Se puede postular hoy? Apagada a mano o pasada la fecha de cierre = cerrada. */
@@ -72,8 +67,6 @@ export interface Postulacion {
   email: string;
   whatsapp: string;
   fecha_nacimiento: string;
-  instagram: string;
-  ciudad: string;
   areas: string[];
   disponibilidad: string[];
   experiencia: 'si' | 'no' | '';
@@ -93,8 +86,6 @@ export const POSTULACION_VACIA: Postulacion = {
   // El brief pide +54 por defecto, con lugar para extranjeros.
   whatsapp: '+54 ',
   fecha_nacimiento: '',
-  instagram: '',
-  ciudad: '',
   areas: [],
   disponibilidad: [],
   experiencia: '',
@@ -131,8 +122,6 @@ export const ORDEN_CAMPOS: CampoPostulacion[] = [
   'email',
   'whatsapp',
   'fecha_nacimiento',
-  'instagram',
-  'ciudad',
   'areas',
   'disponibilidad',
   'experiencia',
@@ -163,14 +152,6 @@ export function edadAl(nacimiento: string, ref: string = FECHA_FESTIVAL): number
 /** "+54 9 11 1234-5678" → "+5491112345678". */
 export const normalizarTelefono = (t: string) => t.replace(/[^\d+]/g, '');
 
-/** Sin "@" adelante ni espacios: se guarda el usuario pelado. */
-export const normalizarInstagram = (t: string) =>
-  t
-    .trim()
-    .replace(/^https?:\/\/(www\.)?instagram\.com\//i, '')
-    .replace(/^@+/, '')
-    .replace(/\/.*$/, '');
-
 export function validarPostulacion(p: Postulacion, config: Pick<ConfigVoluntarios, 'edad_minima' | 'disponibilidad'>): Errores {
   const e: Errores = {};
 
@@ -194,8 +175,6 @@ export function validarPostulacion(p: Postulacion, config: Pick<ConfigVoluntario
     if (edad === null || edad > 110) e.fecha_nacimiento = 'fecha';
     else if (edad < config.edad_minima) e.fecha_nacimiento = 'menor';
   }
-
-  if (!p.ciudad.trim()) e.ciudad = 'obligatorio';
 
   if (p.areas.length === 0) e.areas = 'minimo_uno';
   if (p.disponibilidad.length === 0) e.disponibilidad = 'minimo_uno';

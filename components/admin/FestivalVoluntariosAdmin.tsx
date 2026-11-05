@@ -481,7 +481,7 @@ function Tarjeta({
           </div>
           <p className="text-[12px] text-manso-cream/60 truncate">{f.areas.join(' · ')}</p>
           <p className="text-[11px] text-manso-cream/40">
-            {fechaHora(f.created_at)} · {f.ciudad}
+            {fechaHora(f.created_at)}{f.ciudad ? ` · ${f.ciudad}` : ''}
             {edad !== null && ` · ${edad} años`}
             {f.idiomas.length > 0 && ` · ${f.idiomas.join(', ')}`}
           </p>

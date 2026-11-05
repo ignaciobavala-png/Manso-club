@@ -52,7 +52,7 @@ const es = {
     /** La moneda de cambio: va primero y en grande. */
     destacado: {
       titulo: 'Entrada gratis a BLUR',
-      texto: 'Tu tiempo a cambio de la entrada al festival. Fuera de tu turno, BLUR es tuyo.',
+      texto: 'Tu tiempo a cambio de la entrada al festival.',
     },
     items: [
       'Almuerzo en los puestos gastronómicos del festival.',
@@ -69,18 +69,7 @@ const es = {
     rotulo: '¿A quién buscamos?',
     texto:
       'Personas con compromiso y buena disposición para trabajar en equipo. Interesadas en ser parte de un movimiento cultural de vanguardia.',
-    isla: 'Poder estar en la isla el sábado 12/12 en el turno asignado.',
     induccion: 'Asistir a una charla de inducción previa (online o en Manso).',
-  },
-
-  compromiso: {
-    rotulo: 'Fecha, lugar y compromiso',
-    fecha: 'Sábado 12.12.26 · Delta, Tigre.',
-    turnos: 'Turnos de {valor}.',
-    montaje: 'Montaje: {valor}.',
-    desmontaje: 'Desmontaje: {valor}.',
-    traslado: 'Cómo llegar: {valor}.',
-    induccion: 'Inducción: {valor}.',
   },
 
   faq: {
@@ -130,9 +119,7 @@ const es = {
       whatsapp: 'WhatsApp',
       whatsappAyuda: 'Con código de país.',
       fecha_nacimiento: 'Fecha de nacimiento',
-      instagram: 'Instagram',
-      ciudad: 'Barrio / ciudad',
-      areas: 'Área de interés',
+            areas: 'Área de interés',
       disponibilidad: 'Disponibilidad',
       experiencia: '¿Tenés experiencia en eventos o festivales?',
       si: 'Sí',
@@ -242,7 +229,7 @@ const en: TextosVoluntarios = {
     rotulo: 'What we offer',
     destacado: {
       titulo: 'Free entry to BLUR',
-      texto: 'Your time in exchange for a ticket to the festival. Outside your shift, BLUR is yours.',
+      texto: 'Your time in exchange for a ticket to the festival.',
     },
     items: [
       'Lunch at the festival food stands.',
@@ -259,18 +246,7 @@ const en: TextosVoluntarios = {
     rotulo: 'Who we are looking for',
     texto:
       'People who are committed and enjoy working in a team. Interested in being part of a cutting-edge cultural movement.',
-    isla: 'Be able to be on the island on Saturday 12/12 during your assigned shift.',
     induccion: 'Attend a prior induction talk (online or at Manso).',
-  },
-
-  compromiso: {
-    rotulo: 'Date, place and commitment',
-    fecha: 'Saturday 12.12.26 · Delta, Tigre.',
-    turnos: 'Shifts of {valor}.',
-    montaje: 'Set-up: {valor}.',
-    desmontaje: 'Take-down: {valor}.',
-    traslado: 'Getting there: {valor}.',
-    induccion: 'Induction: {valor}.',
   },
 
   faq: {
@@ -319,9 +295,7 @@ const en: TextosVoluntarios = {
       whatsapp: 'WhatsApp',
       whatsappAyuda: 'Including country code.',
       fecha_nacimiento: 'Date of birth',
-      instagram: 'Instagram',
-      ciudad: 'Neighbourhood / city',
-      areas: 'Area of interest',
+            areas: 'Area of interest',
       disponibilidad: 'Availability',
       experiencia: 'Do you have experience in events or festivals?',
       si: 'Yes',

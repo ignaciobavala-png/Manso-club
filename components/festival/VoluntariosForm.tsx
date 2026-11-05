@@ -237,23 +237,11 @@ export function VoluntariosForm({ edadMinima, disponibilidad, contacto, instagra
             <label htmlFor={id('fecha_nacimiento')} className={ETIQUETA}>{t.campos.fecha_nacimiento} *</label>
             <input {...props('fecha_nacimiento')} type="date" autoComplete="bday" required
               min="1900-01-01" max="2026-12-31"
-              value={p.fecha_nacimiento} onChange={e => poner('fecha_nacimiento', e.target.value)} className={CAMPO} />
+              value={p.fecha_nacimiento} onChange={e => poner('fecha_nacimiento', e.target.value)}
+              className={`${CAMPO} block min-w-0 max-w-full appearance-none`} />
             {textoError('fecha_nacimiento')}
           </div>
 
-          <div className="grid gap-5 sm:grid-cols-2">
-            <div>
-              <label htmlFor={id('instagram')} className={ETIQUETA}>{t.campos.instagram}</label>
-              <input {...props('instagram')} type="text" autoComplete="off" placeholder="@" maxLength={80}
-                value={p.instagram} onChange={e => poner('instagram', e.target.value)} className={CAMPO} />
-            </div>
-            <div>
-              <label htmlFor={id('ciudad')} className={ETIQUETA}>{t.campos.ciudad} *</label>
-              <input {...props('ciudad')} type="text" autoComplete="address-level2" required maxLength={120}
-                value={p.ciudad} onChange={e => poner('ciudad', e.target.value)} className={CAMPO} />
-              {textoError('ciudad')}
-            </div>
-          </div>
         </fieldset>
 
         {/* ── Participación ── */}
