@@ -423,9 +423,8 @@ export function VoluntariosForm({ edadMinima, disponibilidad, contacto, instagra
 function etiquetaArea(idioma: 'es' | 'en', valor: string): string {
   if (idioma === 'es') return valor;
   const mapa: Record<string, string> = {
-    'Montaje y desmontaje': 'Set-up and take-down',
-    'Recepción y atención al público': 'Front desk and visitor care',
-    'Apoyo en producción y coordinación': 'Production and coordination support',
+    'Técnica y producción': 'Technical and production',
+    'Barra y gastronomía': 'Bar and food',
     'Donde me necesiten': 'Wherever you need me',
   };
   return mapa[valor] ?? valor;

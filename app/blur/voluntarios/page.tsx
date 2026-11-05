@@ -49,9 +49,8 @@ export default async function FestivalVoluntarios() {
     vol.induccion && llenar(t.compromiso.induccion, { valor: vol.induccion }),
   ].filter(Boolean) as string[];
 
-  // Requisitos: la edad sale del panel; la inducción solo si se cargó la fecha/formato.
+  // Requisitos: la inducción solo si se cargó la fecha/formato.
   const requisitos = [
-    llenar(t.quien.edad, { edad: vol.edad_minima }),
     t.quien.isla,
     vol.induccion ? t.quien.induccion : null,
   ].filter(Boolean) as string[];
@@ -82,46 +81,29 @@ export default async function FestivalVoluntarios() {
         </div>
       </SeccionMarca>
 
-      {/* 2. Qué es BLUR + 3. Áreas */}
+      {/* 2. Qué es BLUR */}
       <SeccionMarca tema="gris" deco={DECO.locacion} className={`${SECCION} pb-24 sm:pb-28`}>
-        <div className="max-w-[1100px] space-y-14 sm:space-y-20">
-          <div>
-            <p className={ROTULO}>{t.que.rotulo}</p>
-            <p className="text-[clamp(17px,1.6vw,24px)] leading-[1.4] tracking-[-0.01em] max-w-[780px]">{t.que.texto}</p>
-          </div>
-
-          <div id="areas" className={ANCLA}>
-            <p className={ROTULO}>{t.areas.rotulo}</p>
-            <div className="grid gap-4 md:grid-cols-3">
-              {t.areas.items.map(a => (
-                <article key={a.valor} className="border border-[var(--fest-texto)]/40 p-5 flex flex-col gap-3 bg-[var(--fest-fondo)]/60">
-                  <h2 className="fest-angosta text-[26px] leading-[1.05]">{a.valor}</h2>
-                  <p className="text-[15px] leading-[1.5]">{a.descripcion}</p>
-                  <p className="text-[14px] leading-[1.45] mt-auto pt-3 border-t border-[var(--fest-texto)]/25">
-                    <b className="fest-mono text-[11px] uppercase tracking-[0.2em] text-[var(--fest-resalte)]">{t.areas.ideal}</b>{' '}
-                    {a.ideal}
-                  </p>
-                </article>
-              ))}
-            </div>
-          </div>
+        <div className="max-w-[1100px]">
+          <p className={ROTULO}>{t.que.rotulo}</p>
+          <p className="text-[clamp(17px,1.6vw,24px)] leading-[1.4] tracking-[-0.01em] max-w-[780px]">{t.que.texto}</p>
         </div>
       </SeccionMarca>
 
-      {/* 4. Beneficios */}
-      <SeccionMarca tema="naranja" deco={DECO.spots} className={`${SECCION} pb-24 sm:pb-28`}>
+      {/* 3. Qué ofrecemos: va antes que cualquier tarea. La entrada gratis es la moneda de cambio. */}
+      <SeccionMarca tema="naranja" deco={DECO.spots} className={`${SECCION} pb-24 sm:pb-32`}>
         <div id="beneficios" className={`${ANCLA} max-w-[1100px]`}>
-          <p className={ROTULO}>{t.beneficios.rotulo}</p>
-          <ul className="grid gap-x-8 gap-y-0 sm:grid-cols-2 lg:grid-cols-3">
+          <h2 className="fest-ancha text-[clamp(44px,10vw,128px)] leading-[0.9] mb-10 sm:mb-14">{t.beneficios.rotulo}</h2>
+          <div className="border-y-2 border-[var(--fest-texto)] py-8 sm:py-12 mb-10 sm:mb-14">
+            <p className="fest-ancha text-[clamp(34px,7vw,88px)] leading-[0.95] mb-4">{t.beneficios.destacado.titulo}</p>
+            <p className="text-[clamp(18px,2vw,28px)] leading-[1.3] max-w-[640px]">{t.beneficios.destacado.texto}</p>
+          </div>
+          <ul className="grid gap-x-8 sm:grid-cols-2">
             {t.beneficios.items.map((b, i) => (
               <li
                 key={b}
-                className={`flex gap-3 py-4 border-t border-[var(--fest-texto)]/40 text-[16px] leading-[1.35] ${
-                  // Los dos primeros, destacados.
-                  i < 2 ? 'font-bold text-[18px]' : ''
-                }`}
+                className="flex gap-3 py-4 border-t border-[var(--fest-texto)]/40 text-[clamp(17px,1.5vw,21px)] font-bold leading-[1.3]"
               >
-                <span aria-hidden className="fest-mono text-[12px] pt-[3px] opacity-70">{String(i + 1).padStart(2, '0')}</span>
+                <span aria-hidden className="fest-mono text-[12px] pt-[5px] opacity-70">{String(i + 1).padStart(2, '0')}</span>
                 <span>{b}</span>
               </li>
             ))}
@@ -129,45 +111,46 @@ export default async function FestivalVoluntarios() {
         </div>
       </SeccionMarca>
 
-      {/* 5. A quién buscamos + 6. Fecha, lugar y compromiso + 7. Cómo funciona */}
-      <SeccionMarca tema="crema" deco={DECO.info} className={`${SECCION} pb-[60vw] sm:pb-[22vw]`}>
-        <div className="max-w-[1100px] space-y-14 sm:space-y-20">
-          <div className="grid gap-12 md:grid-cols-2 md:gap-16">
-            <div>
-              <p className={ROTULO}>{t.quien.rotulo}</p>
-              <p className="text-[18px] leading-[1.45] mb-5">{t.quien.texto}</p>
-              <ul className="space-y-2 text-[16px] leading-[1.4]">
-                {requisitos.map(r => (
-                  <li key={r} className="flex gap-3">
-                    <span aria-hidden className="text-[var(--fest-acento)] font-bold">›</span>
-                    {r}
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div>
-              <p className={ROTULO}>{t.compromiso.rotulo}</p>
-              <ul className="space-y-2 text-[16px] leading-[1.4]">
-                {compromiso.map(c => (
-                  <li key={c} className="flex gap-3">
-                    <span aria-hidden className="text-[var(--fest-acento)] font-bold">›</span>
-                    {c}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
-
+      {/* 4. A quién buscamos + fecha, lugar y compromiso */}
+      <SeccionMarca tema="crema" deco={DECO.info} className={`${SECCION} pb-24 sm:pb-28`}>
+        <div className="max-w-[1100px] grid gap-12 md:grid-cols-2 md:gap-16">
           <div>
-            <p className={ROTULO}>{t.pasos.rotulo}</p>
-            <ol className="grid gap-4 sm:grid-cols-4">
-              {t.pasos.items.map((paso, i) => (
-                <li key={paso} className="border-t border-[var(--fest-texto)]/40 pt-3">
-                  <span className="fest-angosta text-[44px] leading-none text-[var(--fest-acento)] block mb-2">{i + 1}</span>
-                  <span className="text-[15px] leading-[1.4]">{paso}</span>
+            <p className={ROTULO}>{t.quien.rotulo}</p>
+            <p className="text-[18px] leading-[1.45] mb-5">{t.quien.texto}</p>
+            <ul className="space-y-2 text-[16px] leading-[1.4]">
+              {requisitos.map(r => (
+                <li key={r} className="flex gap-3">
+                  <span aria-hidden className="text-[var(--fest-acento)] font-bold">›</span>
+                  {r}
                 </li>
               ))}
-            </ol>
+            </ul>
+          </div>
+          <div>
+            <p className={ROTULO}>{t.compromiso.rotulo}</p>
+            <ul className="space-y-2 text-[16px] leading-[1.4]">
+              {compromiso.map(c => (
+                <li key={c} className="flex gap-3">
+                  <span aria-hidden className="text-[var(--fest-acento)] font-bold">›</span>
+                  {c}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </SeccionMarca>
+
+      {/* 5. En qué vas a participar */}
+      <SeccionMarca tema="gris" deco={DECO.vision} className={`${SECCION} pb-[60vw] sm:pb-[22vw]`}>
+        <div id="areas" className={`${ANCLA} max-w-[1100px]`}>
+          <p className={ROTULO}>{t.areas.rotulo}</p>
+          <div className="grid gap-4 md:grid-cols-3">
+            {t.areas.items.map(a => (
+              <article key={a.valor} className="border border-[var(--fest-texto)]/40 p-5 flex flex-col gap-3 bg-[var(--fest-fondo)]/60">
+                <h2 className="fest-angosta text-[26px] leading-[1.05]">{a.valor}</h2>
+                <p className="text-[15px] leading-[1.5]">{a.descripcion}</p>
+              </article>
+            ))}
           </div>
         </div>
       </SeccionMarca>

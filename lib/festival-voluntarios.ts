@@ -12,9 +12,9 @@ export const FECHA_FESTIVAL = '2026-12-12';
 
 /** Los valores se guardan tal cual en la base: son los de las tarjetas de la página. */
 export const AREAS = [
-  'Montaje y desmontaje',
-  'Recepción y atención al público',
-  'Apoyo en producción y coordinación',
+  'Técnica y producción',
+  'Hospitality',
+  'Barra y gastronomía',
   'Donde me necesiten',
 ] as const;
 

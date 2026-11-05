@@ -14,47 +14,47 @@ import type { Idioma } from '@/lib/festival-idioma';
 const es = {
   titulo: 'Voluntarios',
   metaTitulo: 'Voluntarios · BLUR Festival 2026',
-  metaDescripcion: 'Sumate al equipo de BLUR Festival: montaje, recepción y producción. Sábado 12/12, Delta, Tigre.',
+  metaDescripcion: 'Sumate al equipo de BLUR Festival: técnica y producción, hospitality, barra y gastronomía. Sábado 12/12, Delta, Tigre.',
 
   hero: {
-    titulo: 'Buscamos voluntarios',
-    bajada: 'BLUR Festival, un microfestival en la naturaleza. Sábado 12.12.26 · Delta, Tigre.',
-    texto: 'Sumate al equipo que hace BLUR posible. Montaje, recepción y producción: vivilo desde adentro.',
+    titulo: '¿Querés ser parte de BLUR?',
+    bajada: 'BLUR Festival, Innovación, Arte y Cultura en Comunidad. Sábado 12.12.26, Delta, Tigre.',
+    texto: 'Sumate al equipo que hace BLUR posible: vivilo desde adentro.',
     boton: 'Quiero sumarme',
   },
 
   que: {
     rotulo: 'Qué es BLUR',
     texto:
-      'BLUR es un festival de un día en una isla del Delta del Paraná: arte, diseño, tecnología y música en 3 stages, un panel de charlas sobre innovación, gastronomía y atardecer sobre el río. Lo organiza Manso Club, club cultural y estudio creativo de Colegiales. Unas 800 personas, de 14 a 4 h.',
+      'BLUR es un festival de un día en una isla del Delta del Paraná: arte, diseño, tecnología y música en 3 stages, un panel de charlas sobre innovación, gastronomía y atardecer sobre el río. Lo organiza Manso Club, club cultural y estudio creativo de Colegiales.',
   },
 
   areas: {
     rotulo: '¿En qué vas a participar?',
-    ideal: 'Ideal si',
     items: [
       {
-        valor: 'Montaje y desmontaje',
-        descripcion: 'Cargar, descargar, mover materiales y armar espacios.',
-        ideal: 'te gusta el trabajo físico y ver cómo un lugar se transforma.',
+        valor: 'Técnica y producción',
+        descripcion: 'Ayudando a los equipos de técnica y logística, armado de escenarios y espacios.',
       },
       {
-        valor: 'Recepción y atención al público',
-        descripcion: 'Recibir a la gente, orientar y acompañar la experiencia.',
-        ideal: 'te sale natural hablar con gente, y si es en más de un idioma, mejor.',
+        valor: 'Hospitality',
+        descripcion: 'Ayudando a los equipos de técnica y logística, armado de escenarios y espacios.',
       },
       {
-        valor: 'Apoyo en producción y coordinación',
-        descripcion: 'Asistir al equipo de producción en logística, tiempos y comunicación.',
-        ideal: 'querés aprender cómo se produce un festival por dentro.',
+        valor: 'Barra y gastronomía',
+        descripcion: 'Asistiendo en los puestos de barra y gastronomía.',
       },
     ],
   },
 
   beneficios: {
     rotulo: '¿Qué ofrecemos?',
+    /** La moneda de cambio: va primero y en grande. */
+    destacado: {
+      titulo: 'Entrada gratis a BLUR',
+      texto: 'Tu tiempo a cambio de la entrada al festival. Fuera de tu turno, BLUR es tuyo.',
+    },
     items: [
-      'Acceso al festival fuera de tu turno.',
       'Almuerzo en los puestos gastronómicos del festival.',
       'Entrada free a eventos seleccionados de Manso.',
       'Conocer desde adentro cómo se produce un festival real.',
@@ -69,7 +69,6 @@ const es = {
     rotulo: '¿A quién buscamos?',
     texto:
       'Personas con compromiso y buena disposición para trabajar en equipo. Interesadas en ser parte de un movimiento cultural de vanguardia.',
-    edad: 'Ser mayor de {edad} años.',
     isla: 'Poder estar en la isla el sábado 12/12 en el turno asignado.',
     induccion: 'Asistir a una charla de inducción previa (online o en Manso).',
   },
@@ -82,16 +81,6 @@ const es = {
     desmontaje: 'Desmontaje: {valor}.',
     traslado: 'Cómo llegar: {valor}.',
     induccion: 'Inducción: {valor}.',
-  },
-
-  pasos: {
-    rotulo: 'Cómo funciona',
-    items: [
-      'Completás el formulario.',
-      'Te escribimos para confirmar y conocerte.',
-      'Te asignamos área y turno, y te invitamos a la inducción.',
-      'El 12/12 sos parte de BLUR.',
-    ],
   },
 
   faq: {
@@ -216,47 +205,46 @@ export type TextosVoluntarios = typeof es;
 const en: TextosVoluntarios = {
   titulo: 'Volunteers',
   metaTitulo: 'Volunteers · BLUR Festival 2026',
-  metaDescripcion: 'Join the BLUR Festival team: set-up, front desk and production. Saturday 12/12, Delta, Tigre.',
+  metaDescripcion: 'Join the BLUR Festival team: technical and production, hospitality, bar and food. Saturday 12/12, Delta, Tigre.',
 
   hero: {
-    titulo: 'We are looking for volunteers',
-    bajada: 'BLUR Festival, a micro-festival in nature. Saturday 12.12.26 · Delta, Tigre.',
-    texto: 'Join the team that makes BLUR happen. Set-up, front desk and production: live it from the inside.',
+    titulo: 'Want to be part of BLUR?',
+    bajada: 'BLUR Festival, Innovation, Art and Culture in Community. Saturday 12.12.26, Delta, Tigre.',
+    texto: 'Join the team that makes BLUR happen: live it from the inside.',
     boton: 'I want to join',
   },
 
   que: {
     rotulo: 'What is BLUR',
     texto:
-      'BLUR is a one-day festival on an island in the Paraná Delta: art, design, technology and music across 3 stages, a panel of talks on innovation, food and a sunset over the river. It is organised by Manso Club, a cultural club and creative studio in Colegiales. Around 800 people, from 2 pm to 4 am.',
+      'BLUR is a one-day festival on an island in the Paraná Delta: art, design, technology and music across 3 stages, a panel of talks on innovation, food and a sunset over the river. It is organised by Manso Club, a cultural club and creative studio in Colegiales.',
   },
 
   areas: {
     rotulo: 'What will you do?',
-    ideal: 'Ideal if',
     items: [
       {
-        valor: 'Montaje y desmontaje',
-        descripcion: 'Loading, unloading, moving materials and setting up spaces.',
-        ideal: 'you like physical work and watching a place transform.',
+        valor: 'Técnica y producción',
+        descripcion: 'Helping the technical and logistics teams, building stages and spaces.',
       },
       {
-        valor: 'Recepción y atención al público',
-        descripcion: 'Welcoming people, guiding them and looking after the experience.',
-        ideal: 'talking to people comes naturally to you, and even better in more than one language.',
+        valor: 'Hospitality',
+        descripcion: 'Helping the technical and logistics teams, building stages and spaces.',
       },
       {
-        valor: 'Apoyo en producción y coordinación',
-        descripcion: 'Assisting the production team with logistics, timing and communication.',
-        ideal: 'you want to learn how a festival is produced from the inside.',
+        valor: 'Barra y gastronomía',
+        descripcion: 'Assisting at the bar and food stands.',
       },
     ],
   },
 
   beneficios: {
     rotulo: 'What we offer',
+    destacado: {
+      titulo: 'Free entry to BLUR',
+      texto: 'Your time in exchange for a ticket to the festival. Outside your shift, BLUR is yours.',
+    },
     items: [
-      'Access to the festival outside your shift.',
       'Lunch at the festival food stands.',
       'Free entry to selected Manso events.',
       'See from the inside how a real festival is produced.',
@@ -271,7 +259,6 @@ const en: TextosVoluntarios = {
     rotulo: 'Who we are looking for',
     texto:
       'People who are committed and enjoy working in a team. Interested in being part of a cutting-edge cultural movement.',
-    edad: 'Be {edad} or older.',
     isla: 'Be able to be on the island on Saturday 12/12 during your assigned shift.',
     induccion: 'Attend a prior induction talk (online or at Manso).',
   },
@@ -284,16 +271,6 @@ const en: TextosVoluntarios = {
     desmontaje: 'Take-down: {valor}.',
     traslado: 'Getting there: {valor}.',
     induccion: 'Induction: {valor}.',
-  },
-
-  pasos: {
-    rotulo: 'How it works',
-    items: [
-      'You fill in the form.',
-      'We write to you to confirm and get to know you.',
-      'We assign your area and shift, and invite you to the induction.',
-      'On 12/12 you are part of BLUR.',
-    ],
   },
 
   faq: {
