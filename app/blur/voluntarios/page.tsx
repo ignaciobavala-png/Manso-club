@@ -39,9 +39,6 @@ export default async function FestivalVoluntarios() {
   const instagram = config.instagram?.replace(/^@/, '') ?? 'blur.festival';
   const contacto = config.email ?? '';
 
-  // Requisitos: la inducción solo si se cargó la fecha/formato.
-  const requisitos = [vol.induccion ? t.quien.induccion : null].filter(Boolean) as string[];
-
   const faq = [...t.faq.items];
   // "¿Cómo llego?" se suma solo si hay respuesta cargada (en el brief estaba "A DEFINIR").
   if (vol.traslado) faq.splice(4, 0, { p: t.faq.llegar.p, r: llenar(t.faq.llegar.r, { valor: vol.traslado }) });
@@ -54,11 +51,10 @@ export default async function FestivalVoluntarios() {
       <SeccionMarca tema="verde" deco={DECO.vision} className={`${SECCION} pb-[58vw] sm:pb-[18vw] fest-entra`}>
         <div className="max-w-[820px]">
           <p className={ROTULO}>{t.titulo}</p>
-          <h1 className="fest-ancha text-[clamp(38px,8vw,92px)] leading-[0.95] mb-6 text-[var(--fest-resalte)]">
+          <h1 className="fest-ancha text-[clamp(26px,4.5vw,56px)] leading-[1] mb-6 text-[var(--fest-resalte)]">
             {t.hero.titulo}
           </h1>
-          <p className="fest-mono text-[12px] sm:text-[13px] uppercase tracking-[0.2em] mb-5">{t.hero.bajada}</p>
-          <p className="text-[clamp(17px,1.6vw,22px)] leading-[1.4] mb-8 max-w-[560px]">{t.hero.texto}</p>
+          <p className="fest-mono text-[12px] sm:text-[13px] uppercase tracking-[0.2em] mb-8">{t.hero.bajada}</p>
           <a
             href="#formulario"
             className="fest-menu inline-block text-[19px] bg-[var(--fest-acento)] text-[var(--fest-fondo)] hover:bg-[var(--fest-texto)] transition-colors px-6 py-3"
@@ -76,14 +72,10 @@ export default async function FestivalVoluntarios() {
         </div>
       </SeccionMarca>
 
-      {/* 3. Qué ofrecemos: va antes que cualquier tarea. La entrada gratis es la moneda de cambio. */}
+      {/* 3. Qué ofrecemos */}
       <SeccionMarca tema="naranja" deco={DECO.spots} className={`${SECCION} pb-24 sm:pb-32`}>
         <div id="beneficios" className={`${ANCLA} max-w-[1100px]`}>
-          <h2 className="fest-ancha text-[clamp(44px,10vw,128px)] leading-[0.9] mb-10 sm:mb-14">{t.beneficios.rotulo}</h2>
-          <div className="border-y-2 border-[var(--fest-texto)] py-8 sm:py-12 mb-10 sm:mb-14">
-            <p className="fest-ancha text-[clamp(34px,7vw,88px)] leading-[0.95] mb-4">{t.beneficios.destacado.titulo}</p>
-            <p className="text-[clamp(18px,2vw,28px)] leading-[1.3] max-w-[640px]">{t.beneficios.destacado.texto}</p>
-          </div>
+          <h2 className="fest-ancha text-[clamp(26px,4.5vw,56px)] leading-[1] mb-8 sm:mb-10">{t.beneficios.rotulo}</h2>
           <ul className="grid gap-x-8 sm:grid-cols-2">
             {t.beneficios.items.map((b, i) => (
               <li
@@ -95,24 +87,6 @@ export default async function FestivalVoluntarios() {
               </li>
             ))}
           </ul>
-        </div>
-      </SeccionMarca>
-
-      {/* 4. A quién buscamos */}
-      <SeccionMarca tema="crema" deco={DECO.info} className={`${SECCION} pb-24 sm:pb-28`}>
-        <div className="max-w-[1100px]">
-          <div>
-            <p className={ROTULO}>{t.quien.rotulo}</p>
-            <p className="text-[18px] leading-[1.45] mb-5">{t.quien.texto}</p>
-            {requisitos.length > 0 && <ul className="space-y-2 text-[16px] leading-[1.4]">
-              {requisitos.map(r => (
-                <li key={r} className="flex gap-3">
-                  <span aria-hidden className="text-[var(--fest-acento)] font-bold">›</span>
-                  {r}
-                </li>
-              ))}
-            </ul>}
-          </div>
         </div>
       </SeccionMarca>
 
@@ -134,7 +108,7 @@ export default async function FestivalVoluntarios() {
       {/* 8. Formulario */}
       <SeccionMarca tema="rosa" className={`${SECCION} pb-24 sm:pb-32`}>
         <div id="formulario" className={`${ANCLA} mx-auto w-full max-w-[640px]`}>
-          <h2 className="fest-ancha text-[clamp(30px,5vw,52px)] leading-none mb-3">{t.form.titulo}</h2>
+          <h2 className="fest-ancha text-[clamp(24px,3.6vw,40px)] leading-none mb-3">{t.form.titulo}</h2>
           <p className="text-[17px] leading-[1.4] mb-10">{t.form.bajada}</p>
           {abierta ? (
             <VoluntariosForm

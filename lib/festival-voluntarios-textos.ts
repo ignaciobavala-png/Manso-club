@@ -49,19 +49,14 @@ const es = {
 
   beneficios: {
     rotulo: '¿Qué ofrecemos?',
-    /** La moneda de cambio: va primero y en grande. */
-    destacado: {
-      titulo: 'Entrada gratis a BLUR',
-      texto: 'Tu tiempo a cambio de la entrada al festival.',
-    },
     items: [
+      'Entrada gratuita a BLUR + 1 invitado.',
       'Almuerzo en los puestos gastronómicos del festival.',
       'Entrada free a eventos seleccionados de Manso.',
       'Conocer desde adentro cómo se produce un festival real.',
       'Experiencia práctica en el área que más te interese.',
       'Trabajo en equipo con personas de distintas disciplinas.',
       'Contacto con gente del rubro.',
-      'Participación para sumar a tu CV.',
     ],
   },
 
@@ -227,18 +222,14 @@ const en: TextosVoluntarios = {
 
   beneficios: {
     rotulo: 'What we offer',
-    destacado: {
-      titulo: 'Free entry to BLUR',
-      texto: 'Your time in exchange for a ticket to the festival.',
-    },
     items: [
+      'Free entry to BLUR + 1 guest.',
       'Lunch at the festival food stands.',
       'Free entry to selected Manso events.',
       'See from the inside how a real festival is produced.',
       'Hands-on experience in the area that interests you most.',
       'Teamwork with people from different disciplines.',
       'Contact with people in the field.',
-      'Participation you can add to your CV.',
     ],
   },
 
