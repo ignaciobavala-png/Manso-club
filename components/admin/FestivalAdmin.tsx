@@ -339,18 +339,22 @@ export function FestivalAdmin() {
         </div>
 
         <div>
-          <label className={LABEL}>Bajada (opcional)</label>
+          <label className={LABEL}>Descripción para Google y redes (opcional)</label>
           <textarea
             value={config.bajada ?? ''}
             onChange={e => editarConfig({ bajada: e.target.value })}
-            placeholder="Un párrafo corto debajo del nombre."
+            placeholder="Una o dos frases sobre el festival."
             rows={3}
             className={`${INPUT} resize-none`}
           />
+          <p className={AYUDA}>
+            No se muestra en la página: es el texto que aparece en Google y en la vista previa al compartir el link.
+            Vacío, se arma solo con la fecha y el lugar.
+          </p>
         </div>
 
         <div>
-          <label className={LABEL}>Bajada (English)</label>
+          <label className={LABEL}>Descripción para Google y redes (English)</label>
           <textarea
             value={config.bajada_en ?? ''}
             onChange={e => editarConfig({ bajada_en: e.target.value })}
@@ -425,7 +429,7 @@ export function FestivalAdmin() {
             placeholder="Ej: Hecho en Argentina"
             className={INPUT}
           />
-          <p className={AYUDA}>Va en una cajita debajo de la fecha, en la portada.</p>
+          <p className={AYUDA}>Va debajo del título BLUR, en la portada.</p>
         </div>
 
         <div>
@@ -504,8 +508,8 @@ export function FestivalAdmin() {
             className={`${INPUT} resize-y`}
           />
           <p className={AYUDA}>
-            Debajo del texto se arma solo un cuadro con lugar, fecha y horario (de &quot;Datos del
-            festival&quot;), y abajo el mosaico de fotos de Locación.
+            Este texto ya no se muestra en la página (repetía la barra de datos). En Locación se ve
+            solo el cuadro con lugar, fecha y horario (de &quot;Datos del festival&quot;) y el mosaico de fotos.
           </p>
         </div>
 

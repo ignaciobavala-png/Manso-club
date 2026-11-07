@@ -27,10 +27,15 @@ export function resumenFestival(config: FestivalConfig): string {
   return [cuando, donde].filter(Boolean).join(' · ');
 }
 
+/** "BLUR · Subreal"; con el nombre vacío en el panel, solo "BLUR" (sin el separador colgando). */
+function tituloFestival(nombre: string | null | undefined): string {
+  const n = nombre?.trim();
+  return n ? `${MARCA_SEO} · ${n}` : MARCA_SEO;
+}
+
 /** Metadata base del festival, con Open Graph propio (no el de Manso). */
 export function metadataFestival(config: FestivalConfig | null): Metadata {
-  const nombre = config?.nombre ?? 'Festival';
-  const titulo = `${MARCA_SEO} · ${nombre}`;
+  const titulo = tituloFestival(config?.nombre);
   const resumen = config ? resumenFestival(config) : '';
   const desc = descripcion([config?.bajada, resumen].filter(Boolean).join(' — ')) ?? `${MARCA_SEO}, festival de Manso Club en Buenos Aires.`;
   const imagen = config?.banner_url || IMAGEN_POR_DEFECTO;
@@ -43,7 +48,7 @@ export function metadataFestival(config: FestivalConfig | null): Metadata {
     openGraph: og({
       title: titulo,
       description: desc,
-      images: [{ url: imagen, alt: `${MARCA_SEO} — ${nombre}` }],
+      images: [{ url: imagen, alt: titulo }],
     }),
     twitter: { card: 'summary_large_image', title: titulo, description: desc, images: [imagen] },
   };
@@ -59,7 +64,7 @@ export function eventoFestival(config: FestivalConfig, artistas: { nombre: strin
   const imagen = config.banner_url || `${SITE_URL}${IMAGEN_POR_DEFECTO}`;
   return {
     '@type': 'MusicEvent',
-    name: `${MARCA_SEO} · ${config.nombre}`,
+    name: tituloFestival(config.nombre),
     url: `${SITE_URL}/blur`,
     ...(descripcion(config.bajada, 500) && { description: descripcion(config.bajada, 500) }),
     startDate: config.fecha,

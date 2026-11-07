@@ -44,7 +44,7 @@ export default async function FestivalHome() {
     <>
     {evento && <JsonLd data={evento} />}
     {/* Alto de pantalla menos el menú, que en el celular ocupa dos o tres renglones. */}
-    <section className="relative [clip-path:inset(0)] min-h-[calc(100svh-6rem)] sm:min-h-[calc(100svh-3.25rem)] flex flex-col items-center justify-center text-center">
+    <section className="relative overflow-clip [clip-path:inset(0)] min-h-[calc(100svh-6rem)] sm:min-h-[calc(100svh-3.25rem)] flex flex-col items-center justify-center text-center">
       {/* `fill` pone la foto en absolute: el `fixed` lo lleva el contenedor. El `clip-path` de la
           sección recorta la foto a su propia caja: con el scroll rápido el navegador pinta la capa
           fija antes que las secciones de abajo y la foto se asomaba por ahí. */}

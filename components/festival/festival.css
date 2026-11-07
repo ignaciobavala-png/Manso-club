@@ -66,17 +66,20 @@
 }
 
 /* ── Grano de película, encima de todo ──────────────────────────────────── */
+/* Se mueve el fondo, no el elemento: un `fixed` más ancho que la pantalla
+   (antes `inset: -10%`) agrandaba el ancho scrolleable en el celular y se
+   podía arrastrar de costado dejando ver el negro del html. */
 @keyframes fest-grano {
-  0%   { transform: translate(0, 0); }
-  25%  { transform: translate(-3%, 2%); }
-  50%  { transform: translate(2%, -3%); }
-  75%  { transform: translate(3%, 3%); }
-  100% { transform: translate(0, 0); }
+  0%   { background-position: 0 0; }
+  25%  { background-position: -7% 4%; }
+  50%  { background-position: 4% -6%; }
+  75%  { background-position: 7% 7%; }
+  100% { background-position: 0 0; }
 }
 
 .fest-grano {
   position: fixed;
-  inset: -10%;
+  inset: 0;
   z-index: 50;
   pointer-events: none;
   opacity: 0.13;

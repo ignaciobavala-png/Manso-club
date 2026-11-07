@@ -64,7 +64,7 @@ export default async function FestivalLayout({ children }: { children: React.Rea
     <div
       data-fest-raiz
       style={estilo}
-      className={`${display.variable} ${mono.variable} ${menu.variable} min-h-screen flex flex-col bg-[var(--fest-fondo)] text-[var(--fest-texto)] font-sans antialiased selection:bg-[var(--fest-acento)] selection:text-[var(--fest-fondo)]`}
+      className={`${display.variable} ${mono.variable} ${menu.variable} overflow-x-clip min-h-screen flex flex-col bg-[var(--fest-fondo)] text-[var(--fest-texto)] font-sans antialiased selection:bg-[var(--fest-acento)] selection:text-[var(--fest-fondo)]`}
     >
       <div aria-hidden className="fest-grano" />
 
