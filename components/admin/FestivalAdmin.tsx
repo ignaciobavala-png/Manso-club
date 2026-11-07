@@ -28,6 +28,7 @@ import { FestivalLineupAdmin } from './FestivalLineupAdmin';
 import { FestivalVentasAdmin } from './FestivalVentasAdmin';
 import { FestivalEntradasGestion } from './FestivalEntradasGestion';
 import { FestivalSpotsAdmin } from './FestivalSpotsAdmin';
+import { FestivalLanchasAdmin } from './FestivalLanchasAdmin';
 import { FestivalConteoAdmin } from './FestivalConteoAdmin';
 import { FestivalVoluntariosAdmin } from './FestivalVoluntariosAdmin';
 import { GaleriaFotosAdmin } from './GaleriaFotosAdmin';
@@ -789,6 +790,8 @@ export function FestivalAdmin() {
       </FestivalEntradasGestion>
 
       <FestivalSpotsAdmin />
+
+      <FestivalLanchasAdmin />
 
       <FestivalLineupAdmin />
 

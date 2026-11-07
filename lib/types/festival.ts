@@ -124,6 +124,17 @@ export interface FestivalSpot {
   activo: boolean;
 }
 
+/** Un viaje en lancha: hora de salida y de regreso ("HH:MM", 24 h; vacío = a confirmar). */
+export interface FestivalLancha {
+  id: string;
+  nombre: string;
+  salida: string | null;
+  regreso: string | null;
+  nota: string;
+  orden: number;
+  activo: boolean;
+}
+
 /** Una pregunta de /blur/info. */
 export interface FestivalFaq {
   id: string;
