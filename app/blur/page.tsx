@@ -76,6 +76,20 @@ export default async function FestivalHome() {
         {config.lema && (
           <p className="fest-mono text-[clamp(11px,1.3vw,17px)] uppercase tracking-[0.3em] text-white">{config.lema}</p>
         )}
+        <div className="flex items-center justify-center gap-3 sm:gap-4 mt-2 sm:mt-3">
+          <Link
+            href="/blur/tickets"
+            className="fest-menu fest-brillo relative overflow-hidden bg-[var(--fest-acento)] text-[var(--fest-fondo)] hover:bg-[var(--fest-texto)] transition-colors text-[clamp(17px,1.9vw,25px)] leading-none px-[0.9em] py-[0.5em]"
+          >
+            {t.menu['/blur/tickets']}
+          </Link>
+          <Link
+            href="/blur/info"
+            className="fest-menu border-2 border-[var(--fest-texto)] text-[var(--fest-texto)] hover:bg-[var(--fest-texto)] hover:text-[var(--fest-fondo)] transition-colors text-[clamp(17px,1.9vw,25px)] leading-none px-[0.9em] py-[0.5em]"
+          >
+            Info
+          </Link>
+        </div>
       </div>
 
       {/* En el celular todo va a la izquierda: la esquina derecha es del botón TICKETS fijo. */}

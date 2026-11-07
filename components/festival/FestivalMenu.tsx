@@ -34,7 +34,9 @@ export function FestivalMenu() {
   // La página de un artista cuenta como "Line up".
   const actual = (href: string) =>
     href === '/blur' ? pathname === href : pathname === href || pathname.startsWith(`${href}/`);
+  // En el home el botón ya vive en el hero, debajo del lema.
   const enTickets = actual('/blur/tickets');
+  const enHome = pathname === '/blur';
 
   return (
     <header className="relative sm:sticky top-0 z-20 bg-[var(--fest-fondo)] flex items-start justify-between gap-4 px-4 py-3 sm:px-5 sm:py-4">
@@ -60,7 +62,7 @@ export function FestivalMenu() {
         href="/blur/tickets"
         style={{ '--i': SECCIONES.length } as React.CSSProperties}
         className={`fest-menu fest-menu-entra fest-brillo shrink-0 bg-[var(--fest-acento)] text-[var(--fest-fondo)] hover:bg-[var(--fest-texto)] transition-colors text-[18px] sm:text-[17px] leading-[1.3] px-[0.26em] py-2 sm:py-0 fixed right-4 bottom-4 z-30 sm:relative sm:right-auto sm:bottom-auto overflow-hidden ${
-          enTickets ? 'hidden sm:inline-block' : ''
+          enHome ? 'hidden' : enTickets ? 'hidden sm:inline-block' : ''
         }`}
       >
         {t.menu['/blur/tickets']}
