@@ -13,7 +13,6 @@ export const SECCIONES = [
   '/blur/line-up',
   '/blur/tickets',
   '/blur/info',
-  '/blur/voluntarios',
 ] as const;
 
 /**

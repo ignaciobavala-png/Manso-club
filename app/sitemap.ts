@@ -47,7 +47,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const festivalRoutes: MetadataRoute.Sitemap = festivalPublico
     ? [
         { url: `${BASE}/blur`, changeFrequency: 'daily', priority: 0.9 },
-        ...['vision', 'locacion', 'spots', 'tickets', 'info', 'voluntarios'].map((r) => ({
+        ...['vision', 'locacion', 'spots', 'tickets', 'info'].map((r) => ({
           url: `${BASE}/blur/${r}`,
           changeFrequency: 'weekly' as const,
           priority: r === 'tickets' ? 0.9 : 0.7,

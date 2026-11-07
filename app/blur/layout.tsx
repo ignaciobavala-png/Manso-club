@@ -86,9 +86,6 @@ export default async function FestivalLayout({ children }: { children: React.Rea
           <LogoBlur className="h-4 w-auto" />
         </a>
         <nav className="flex flex-wrap gap-x-[22px] gap-y-1.5 text-[var(--fest-acento)]">
-          <a href="/blur/voluntarios" className="fest-flecha hover:text-[var(--fest-texto)] transition-colors">
-            {t.menu['/blur/voluntarios']}
-          </a>
           {config.email && (
             <a href={`mailto:${config.email}`} className="fest-flecha hover:text-[var(--fest-texto)] transition-colors">
               {t.contacto}

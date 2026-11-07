@@ -13,6 +13,7 @@ import {
   type ConfigVoluntarios,
   type EstadoVoluntario,
 } from '@/lib/festival-voluntarios';
+import { FestivalVoluntariosLink } from './FestivalVoluntariosLink';
 import { AYUDA, BOTON_GUARDAR, BOTON_ICONO, CARD, INPUT, LABEL, TITULO } from './festivalComun';
 
 /**
@@ -242,13 +243,15 @@ export function FestivalVoluntariosAdmin() {
         <div>
           <h3 className={TITULO}>Voluntarios</h3>
           <p className={AYUDA}>
-            Lo que se completa en <b>/blur/voluntarios</b> llega acá. {conteos.nuevo ?? 0} sin contactar · {filas.length} en total.
+            Lo que se completa en el formulario privado llega acá. {conteos.nuevo ?? 0} sin contactar · {filas.length} en total.
           </p>
         </div>
         <button type="button" onClick={cargar} className={BOTON_ICONO} aria-label="Actualizar" title="Actualizar">
           {cargando ? <Loader2 size={16} className="animate-spin" /> : <RefreshCw size={16} />}
         </button>
       </div>
+
+      <FestivalVoluntariosLink />
 
       {errorCarga && (
         <p className="text-[12px] text-manso-terra bg-manso-terra/10 border border-manso-terra/30 rounded-xl p-3">

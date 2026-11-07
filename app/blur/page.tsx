@@ -11,7 +11,6 @@ import { EscribeTexto } from '@/components/festival/Escribe';
 import { leerTextos } from '@/lib/festival-idioma-servidor';
 import { JsonLd } from '@/components/SEO/JsonLd';
 import { eventoFestival } from '@/lib/festival-seo';
-import { TEXTOS_VOLUNTARIOS } from '@/lib/festival-voluntarios-textos';
 
 /**
  * Lo que dice el hero: BLUR con el redondeo difuso de siempre. Ana prefirió
@@ -34,8 +33,7 @@ const BANNER_POR_DEFECTO = '/blur/hero-cabina.jpg';
  * suben por encima de ella al scrollear.
  */
 export default async function FestivalHome() {
-  const [config, lineup, { t, idioma }] = await Promise.all([leerConfig(), leerLineup(), leerTextos()]);
-  const vol = TEXTOS_VOLUNTARIOS[idioma].home;
+  const [config, lineup, { t }] = await Promise.all([leerConfig(), leerLineup(), leerTextos()]);
   if (!config) notFound();
 
   const fecha = [fechaCorta(config.fecha), config.horario].filter(Boolean).join(' — ');
@@ -131,19 +129,6 @@ export default async function FestivalHome() {
         <LineupCorrido escenarios={lineup} />
       </Seccion>
     )}
-
-    {/* Antes del pie: un bloque chico que lleva a /blur/voluntarios. */}
-    <SeccionMarca tema="rosa" className="px-4 sm:px-7 py-12 sm:py-16">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
-        <p className="fest-angosta text-[clamp(26px,3.4vw,44px)] leading-[1.05] max-w-[640px]">{vol.texto}</p>
-        <Link
-          href="/blur/voluntarios"
-          className="fest-menu self-start sm:self-auto shrink-0 text-[19px] bg-[var(--fest-acento)] text-[var(--fest-fondo)] hover:bg-[var(--fest-texto)] transition-colors px-6 py-3"
-        >
-          {vol.boton}
-        </Link>
-      </div>
-    </SeccionMarca>
     </>
   );
 }

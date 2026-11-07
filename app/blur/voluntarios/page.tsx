@@ -13,8 +13,14 @@ import { BotonFlotanteVoluntarios } from '@/components/festival/BotonFlotanteVol
 export async function generateMetadata(): Promise<Metadata> {
   const { idioma } = await leerTextos();
   const v = TEXTOS_VOLUNTARIOS[idioma];
-  // El layout ya manda `noindex` mientras el festival no se lance en serio.
-  return { title: v.metaTitulo, description: v.metaDescripcion, openGraph: { title: v.metaTitulo, description: v.metaDescripcion } };
+  // Página privada: no se linkea desde el sitio y no se indexa. El link se
+  // comparte a mano desde Festival → Voluntarios en el panel.
+  return {
+    title: v.metaTitulo,
+    description: v.metaDescripcion,
+    robots: { index: false, follow: false },
+    openGraph: { title: v.metaTitulo, description: v.metaDescripcion },
+  };
 }
 
 const ROTULO = 'fest-rotulo mb-6';
