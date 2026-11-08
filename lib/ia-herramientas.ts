@@ -5,6 +5,34 @@ import { firmarPropuesta, type PropuestaMail } from '@/lib/ia-aprobacion';
 
 export const MAX_PROPUESTAS = 5;
 
+/**
+ * Tablas que el asistente puede leer con leer_tabla. Quedan afuera a propósito
+ * las que guardan datos de cobro o conversaciones privadas (checkout_config,
+ * festival_cripto_*, chat_mensajes, chat_reacciones, festival_clicks/visitas).
+ */
+const TABLAS_LEGIBLES = [
+  'user_profiles', 'membresias', 'membresia_beneficios', 'user_membresias_activas', 'membresias_config',
+  'cowork_fechas', 'cowork_solicitudes', 'propuestas', 'ofertas_empleo',
+  'agenda', 'agenda_inscripciones', 'eventos', 'eventos_home', 'artistas', 'artistas_tracks',
+  'productos', 'pedidos', 'ordenes', 'tickets', 'cotizaciones',
+  'festival_config', 'festival_artistas', 'festival_escenarios', 'festival_entradas', 'festival_ordenes',
+  'festival_tickets', 'festival_spots', 'festival_faq', 'festival_lanchas', 'festival_voluntarios',
+  'foro_threads', 'foro_replies', 'foro_categorias', 'foro_reportes',
+  'mailing_campanias', 'mailing_envios', 'mailing_exclusiones', 'newsletter_suscriptores',
+  'streaming_contenido', 'streaming_categorias', 'multimedia_videos', 'gallery_images', 'hero_config',
+  'team_members', 'espacio_salas', 'espacio_config', 'cultura_config', 'cultura_bloques', 'about_us', 'manifiesto',
+  'chat_salas', 'chat_miembros', 'ai_agent_log',
+] as const;
+
+const COLUMNA_SENSIBLE = /token|secret|password|api_?key|hash|cbu|wallet|private/i;
+
+function recortar(valor: unknown): unknown {
+  if (typeof valor === 'string') return valor.length > 300 ? `${valor.slice(0, 300)}…` : valor;
+  if (Array.isArray(valor)) return valor.slice(0, 20).map(recortar);
+  if (valor && typeof valor === 'object') return Object.fromEntries(Object.entries(valor).map(([k, v]) => [k, recortar(v)]));
+  return valor;
+}
+
 /** Mail del equipo (Ana). Si no está configurado, el de la persona que usa el panel. */
 export function emailEquipo(emailSesion: string | null): string | null {
   return process.env.IA_AVISOS_EMAIL || emailSesion;
@@ -97,6 +125,34 @@ export function crearHerramientas(ctx: { supabase: SupabaseClient; userId: strin
         const { data, error } = await supabase.from('ofertas_empleo').select('area, descripcion, activo').order('orden').limit(30);
         if (error) return { error: 'No se pudo consultar las ofertas.' };
         return { ofertas: data };
+      },
+    }),
+
+    ver_tablas: tool({
+      description: 'Lista las tablas del sistema que se pueden leer con leer_tabla. Usala si no sabés en qué tabla está un dato.',
+      inputSchema: z.object({}),
+      execute: async () => ({ tablas: TABLAS_LEGIBLES }),
+    }),
+
+    leer_tabla: tool({
+      description: 'Lee filas de cualquier tabla de ver_tablas (eventos, agenda, productos, pedidos, artistas, foro, festival, etc.). Devuelve hasta 25 filas. Se puede filtrar por igualdad en una columna y ordenar. Si no conocés las columnas, pedí pocas filas y mirá el resultado.',
+      inputSchema: z.object({
+        tabla: z.enum(TABLAS_LEGIBLES),
+        filtro_columna: z.string().regex(/^[a-z_]+$/).optional(),
+        filtro_valor: z.union([z.string(), z.number(), z.boolean()]).optional(),
+        ordenar_por: z.string().regex(/^[a-z_]+$/).optional().describe('Columna para ordenar, descendente (ej: created_at, fecha).'),
+        limite: z.number().int().min(1).max(25).default(15),
+      }),
+      execute: async ({ tabla, filtro_columna, filtro_valor, ordenar_por, limite }) => {
+        let q = supabase.from(tabla).select('*').limit(limite);
+        if (filtro_columna && filtro_valor !== undefined) q = q.eq(filtro_columna, filtro_valor);
+        if (ordenar_por) q = q.order(ordenar_por, { ascending: false });
+        const { data, error } = await q;
+        if (error) return { error: `No se pudo leer ${tabla}: ${error.message.slice(0, 120)}` };
+        const filas = (data ?? []).map(f =>
+          Object.fromEntries(Object.entries(f).filter(([k]) => !COLUMNA_SENSIBLE.test(k)).map(([k, v]) => [k, recortar(v)])),
+        );
+        return { tabla, cantidad: filas.length, filas };
       },
     }),
 

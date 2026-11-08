@@ -200,13 +200,13 @@ export function Dashboard() {
               aria-label={label}
               title={label}
               onClick={() => setTab(id)}
-              className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-5 py-2.5 sm:py-3 rounded-xl text-[12px] sm:text-[13px] font-black uppercase tracking-wider transition-all ${
+              className={`flex-1 sm:flex-none flex items-center justify-center gap-1 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[12px] sm:text-[13px] font-black uppercase tracking-widest transition-all ${
                 tab === id
                   ? (id === 'crm' ? 'bg-manso-terra text-white' : 'bg-manso-cream text-manso-black') + ' shadow-sm'
                   : 'text-manso-cream/70 hover:text-manso-cream'
               }`}
             >
-              <Icon size={16} aria-hidden />
+              <Icon size={12} aria-hidden />
               <span className="hidden sm:inline">{label}</span>
             </button>
           ))}
