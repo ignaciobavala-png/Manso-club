@@ -39,7 +39,7 @@ const VENTANAS: { id: Ventana; label: string; desde: () => Date | null }[] = [
 ];
 
 const inputCls =
-  'w-full p-2.5 bg-manso-cream/10 rounded-xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream text-sm';
+  'w-full p-2.5 bg-manso-cream/10 rounded-xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream text-[15px]';
 
 /**
  * Open Cowork se organiza por fecha, no por estado: lo que Ana necesita saber
@@ -147,7 +147,7 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
     <div className="space-y-8">
       {/* Alta de fecha */}
       <div>
-        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-manso-cream/50 mb-3">
+        <p className="text-[13px] font-black uppercase tracking-[0.2em] text-manso-cream/50 mb-3">
           Sumar una fecha
         </p>
         <div className="flex flex-wrap items-end gap-2">
@@ -164,7 +164,7 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
             value={nueva.horario}
             onChange={e => setNueva(p => ({ ...p, horario: e.target.value }))}
           />
-          <span className="pb-2.5 text-[10px] uppercase tracking-widest text-manso-cream/35">a</span>
+          <span className="pb-2.5 text-[13px] uppercase tracking-widest text-manso-cream/62">a</span>
           <input
             type="time"
             title="Hora de cierre (opcional)"
@@ -183,7 +183,7 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
           <button
             onClick={agregarFecha}
             disabled={!nueva.fecha}
-            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-dashed border-manso-terra/30 text-[9px] font-black uppercase tracking-widest text-manso-terra/60 hover:text-manso-terra hover:border-manso-terra/60 hover:bg-manso-terra/5 transition-all disabled:opacity-25"
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl border border-dashed border-manso-terra/30 text-[12px] font-black uppercase tracking-widest text-manso-terra/60 hover:text-manso-terra hover:border-manso-terra/60 hover:bg-manso-terra/5 transition-all disabled:opacity-25"
           >
             <Plus size={12} />
             Sumar fecha
@@ -197,10 +197,10 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
           <button
             key={v.id}
             onClick={() => setVentana(v.id)}
-            className={`px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border transition-colors ${
+            className={`px-3 py-1.5 rounded-full text-[12px] font-black uppercase tracking-widest border transition-colors ${
               ventana === v.id
                 ? 'bg-manso-terra text-manso-cream border-manso-terra'
-                : 'text-manso-cream/40 border-manso-cream/15 hover:text-manso-cream/70 hover:border-manso-cream/30'
+                : 'text-manso-cream/62 border-manso-cream/15 hover:text-manso-cream/70 hover:border-manso-cream/30'
             }`}
           >
             {v.label} ({contarEn(v.id)})
@@ -210,7 +210,7 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
 
       {/* Fechas con sus anotados */}
       {visibles.length === 0 ? (
-        <p className="text-xs text-manso-cream/30 font-light py-6 text-center">
+        <p className="text-[13px] text-manso-cream/62 font-light py-6 text-center">
           {fechas.length === 0
             ? 'Sin fechas cargadas. El acordeón de la web aparece vacío hasta que sumes una.'
             : 'No hay encuentros en este período.'}
@@ -252,7 +252,7 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
                         value={edicion.horario}
                         onChange={e => setEdicion(p => ({ ...p, horario: e.target.value }))}
                       />
-                      <span className="text-[10px] uppercase tracking-widest text-manso-cream/35">a</span>
+                      <span className="text-[13px] uppercase tracking-widest text-manso-cream/62">a</span>
                       <input
                         type="time"
                         title="Hora de cierre (opcional)"
@@ -275,29 +275,29 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
                       <button
                         onClick={() => guardarEdicion(f)}
                         disabled={!edicion.fecha}
-                        className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border border-green-500/30 text-green-400 hover:bg-green-500/10 transition-colors disabled:opacity-25"
+                        className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-[12px] font-black uppercase tracking-widest border border-green-500/30 text-green-400 hover:bg-green-500/10 transition-colors disabled:opacity-25"
                       >
                         <Check size={12} />Guardar
                       </button>
                       <button
                         onClick={() => setEditando(null)}
-                        className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest text-manso-cream/40 hover:text-manso-cream transition-colors"
+                        className="flex items-center gap-1.5 px-3 py-2 rounded-xl text-[12px] font-black uppercase tracking-widest text-manso-cream/62 hover:text-manso-cream transition-colors"
                       >
                         <X size={12} />Cancelar
                       </button>
                     </div>
                   ) : (
                   <div className="flex items-center gap-3 min-w-0">
-                    <span className="text-sm text-manso-cream font-medium">
+                    <span className="text-[15px] text-manso-cream font-medium">
                       {fechaLarga(f.fecha, f.horario, f.horario_fin)}
                     </span>
                     {pasada && (
-                      <span className="text-[9px] uppercase tracking-widest text-manso-cream/30">
+                      <span className="text-[12px] uppercase tracking-widest text-manso-cream/62">
                         Ya pasó
                       </span>
                     )}
                     {!f.activo && !pasada && (
-                      <span className="text-[9px] uppercase tracking-widest text-manso-cream/30">
+                      <span className="text-[12px] uppercase tracking-widest text-manso-cream/62">
                         Oculta en la web
                       </span>
                     )}
@@ -306,7 +306,7 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
 
                   <div className="flex items-center gap-3 shrink-0">
                     <span
-                      className={`flex items-center gap-1.5 text-[11px] font-black uppercase tracking-widest ${
+                      className={`flex items-center gap-1.5 text-[13px] font-black uppercase tracking-widest ${
                         lleno ? 'text-manso-terra' : 'text-manso-cream/50'
                       }`}
                     >
@@ -316,16 +316,16 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
                     <button
                       onClick={() => (editando === f.id ? setEditando(null) : abrirEdicion(f))}
                       title="Editar fecha, horarios y cupos"
-                      className="text-manso-cream/30 hover:text-manso-cream transition-colors"
+                      className="text-manso-cream/62 hover:text-manso-cream transition-colors"
                     >
                       <Pencil size={13} />
                     </button>
                     <button
                       onClick={() => toggleFecha(f)}
-                      className={`text-[9px] font-black uppercase tracking-widest transition-colors ${
+                      className={`text-[12px] font-black uppercase tracking-widest transition-colors ${
                         tieneGente && f.activo
                           ? 'text-manso-terra hover:text-manso-cream'
-                          : 'text-manso-cream/40 hover:text-manso-cream'
+                          : 'text-manso-cream/62 hover:text-manso-cream'
                       }`}
                       title={
                         tieneGente && f.activo
@@ -343,7 +343,7 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
                           ? `No se puede borrar: hay ${gente.length} ${gente.length === 1 ? 'persona anotada' : 'personas anotadas'}. Usá "Ocultar".`
                           : 'Borrar esta fecha'
                       }
-                      className="text-manso-cream/25 hover:text-red-400 transition-colors disabled:text-manso-cream/10 disabled:cursor-not-allowed disabled:hover:text-manso-cream/10"
+                      className="text-manso-cream/62 hover:text-red-400 transition-colors disabled:text-manso-cream/62 disabled:cursor-not-allowed disabled:hover:text-manso-cream/62"
                     >
                       <Trash2 size={13} />
                     </button>
@@ -353,7 +353,7 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
                 {/* Anotados */}
                 <div className="p-3 space-y-3">
                   {gente.length === 0 ? (
-                    <p className="text-xs text-manso-cream/25 font-light py-3 text-center">
+                    <p className="text-[13px] text-manso-cream/62 font-light py-3 text-center">
                       Nadie anotado todavía.
                     </p>
                   ) : (
@@ -375,7 +375,7 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
 
       {huerfanas.length > 0 && (
         <div className="border-t border-manso-cream/10 pt-5 space-y-3">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-manso-cream/50">
+          <p className="text-[13px] font-black uppercase tracking-[0.2em] text-manso-cream/50">
             Sin fecha asignada
           </p>
           {huerfanas.map(s => (

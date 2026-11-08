@@ -90,13 +90,13 @@ export function ForoCategoriasAdmin() {
         {categorias.map(cat => (
           <div key={cat.id} className="flex items-center justify-between gap-3 bg-manso-cream/5 rounded-2xl px-4 py-3 border border-manso-cream/10">
             <div className="flex items-center gap-3 min-w-0">
-              <span className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${
+              <span className={`px-2 py-0.5 rounded-full text-[12px] font-black uppercase tracking-widest ${
                 cat.activo ? 'bg-manso-terra text-manso-cream' : 'bg-zinc-700 text-white'
               }`}>
                 {cat.nombre}
               </span>
-              <span className="text-manso-cream/30 text-[10px] font-mono">/{cat.slug}</span>
-              {!cat.activo && <span className="text-manso-cream/30 text-[10px] uppercase">inactiva</span>}
+              <span className="text-manso-cream/62 text-[13px] font-mono">/{cat.slug}</span>
+              {!cat.activo && <span className="text-manso-cream/62 text-[13px] uppercase">inactiva</span>}
             </div>
             <div className="flex items-center gap-2 shrink-0">
               <button
@@ -115,7 +115,7 @@ export function ForoCategoriasAdmin() {
           </div>
         ))}
         {categorias.length === 0 && (
-          <p className="text-manso-cream/30 text-xs text-center py-4 uppercase tracking-widest font-black">Sin categorías</p>
+          <p className="text-manso-cream/62 text-[13px] text-center py-4 uppercase tracking-widest font-black">Sin categorías</p>
         )}
       </div>
 
@@ -123,34 +123,34 @@ export function ForoCategoriasAdmin() {
       <form onSubmit={handleSubmit} className="flex flex-col gap-2">
         <div className="flex gap-2 flex-wrap">
           <input
-            className="flex-1 min-w-0 p-3 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/40 text-sm font-bold"
+            className="flex-1 min-w-0 p-3 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/62 text-[15px] font-bold"
             placeholder="Nombre"
             value={form.nombre}
             onChange={e => setForm({ ...form, nombre: e.target.value })}
             required
           />
           <input
-            className="w-40 p-3 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/40 text-sm font-bold"
+            className="w-40 p-3 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/62 text-[15px] font-bold"
             placeholder="slug (auto)"
             value={form.slug}
             onChange={e => setForm({ ...form, slug: e.target.value })}
           />
           <input
             type="number"
-            className="w-24 p-3 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/40 text-sm font-bold"
+            className="w-24 p-3 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/62 text-[15px] font-bold"
             placeholder="Orden"
             value={form.orden}
             onChange={e => setForm({ ...form, orden: parseInt(e.target.value, 10) || 0 })}
           />
         </div>
         <input
-          className="p-3 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/40 text-sm"
+          className="p-3 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/62 text-[15px]"
           placeholder="Descripción (opcional)"
           value={form.descripcion}
           onChange={e => setForm({ ...form, descripcion: e.target.value })}
         />
         <div className="flex items-center justify-between gap-2">
-          <label className="flex items-center gap-2 text-manso-cream/60 text-xs font-bold uppercase tracking-widest">
+          <label className="flex items-center gap-2 text-manso-cream/60 text-[13px] font-bold uppercase tracking-widest">
             <input
               type="checkbox"
               checked={form.activo}
@@ -163,7 +163,7 @@ export function ForoCategoriasAdmin() {
               <button
                 type="button"
                 onClick={resetForm}
-                className="flex items-center gap-2 px-4 py-3 bg-manso-cream/10 text-manso-cream/70 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-manso-cream/20 transition-all"
+                className="flex items-center gap-2 px-4 py-3 bg-manso-cream/10 text-manso-cream/70 rounded-2xl font-black uppercase tracking-widest text-[13px] hover:bg-manso-cream/20 transition-all"
               >
                 <X size={14} />
                 Cancelar
@@ -172,7 +172,7 @@ export function ForoCategoriasAdmin() {
             <button
               type="submit"
               disabled={loading}
-              className="flex items-center gap-2 px-4 py-3 bg-manso-terra text-manso-cream rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-manso-cream hover:text-manso-black transition-all disabled:opacity-50"
+              className="flex items-center gap-2 px-4 py-3 bg-manso-terra text-manso-cream rounded-2xl font-black uppercase tracking-widest text-[13px] hover:bg-manso-cream hover:text-manso-black transition-all disabled:opacity-50"
             >
               <Plus size={14} />
               {editingId ? 'Guardar cambios' : 'Agregar'}

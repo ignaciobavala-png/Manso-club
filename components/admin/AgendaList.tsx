@@ -127,7 +127,7 @@ export function AgendaList({ refreshTrigger }: AgendaListProps) {
   return (
     <div className="space-y-4">
       {eventos.length === 0 ? (
-        <div className="text-center text-manso-cream/40 py-8">
+        <div className="text-center text-manso-cream/62 py-8">
           No hay eventos en la agenda
         </div>
       ) : (
@@ -139,7 +139,7 @@ export function AgendaList({ refreshTrigger }: AgendaListProps) {
                   <h3 className="text-xl font-black text-manso-cream uppercase tracking-tighter">
                     {evento.titulo}
                   </h3>
-                  <span className={`text-[10px] px-2 py-1 rounded-full font-bold uppercase ${
+                  <span className={`text-[13px] px-2 py-1 rounded-full font-bold uppercase ${
                     evento.activo 
                       ? 'bg-manso-terra/20 text-manso-terra' 
                       : 'bg-manso-cream/20 text-manso-cream/60'
@@ -148,7 +148,7 @@ export function AgendaList({ refreshTrigger }: AgendaListProps) {
                   </span>
                 </div>
                 
-                <div className="flex flex-wrap gap-3 text-[10px] uppercase tracking-widest text-manso-cream/60 mb-3">
+                <div className="flex flex-wrap gap-3 text-[13px] uppercase tracking-widest text-manso-cream/60 mb-3">
                   <span>{evento.categoria}</span>
                   <span>•</span>
                   <span>{evento.frecuencia}</span>
@@ -160,11 +160,11 @@ export function AgendaList({ refreshTrigger }: AgendaListProps) {
                   </span>
                 </div>
 
-                <p className="text-sm text-manso-cream/80 mb-3 line-clamp-2">
+                <p className="text-[15px] text-manso-cream/80 mb-3 line-clamp-2">
                   {evento.descripcion}
                 </p>
 
-                <div className="flex items-center gap-4 text-[10px] text-manso-cream/60">
+                <div className="flex items-center gap-4 text-[13px] text-manso-cream/60">
                   {evento.cupos_maximos && evento.cupos_maximos > 0 && (
                     <span>Cupos: {evento.cupos_maximos}</span>
                   )}
@@ -214,13 +214,13 @@ export function AgendaList({ refreshTrigger }: AgendaListProps) {
               <div className="mt-4 pt-4 border-t border-manso-cream/10">
                 <div className="flex items-center gap-2 mb-3">
                   <Users size={16} className="text-manso-terra" />
-                  <h4 className="text-sm font-bold uppercase tracking-wider text-manso-cream">
+                  <h4 className="text-[15px] font-bold uppercase tracking-wider text-manso-cream">
                     Inscripciones ({inscripciones[evento.id]?.length || 0})
                   </h4>
                 </div>
                 
                 {inscripciones[evento.id]?.length === 0 ? (
-                  <p className="text-manso-cream/40 text-sm">No hay inscripciones aún</p>
+                  <p className="text-manso-cream/62 text-[15px]">No hay inscripciones aún</p>
                 ) : (
                   <div className="space-y-2">
                     {inscripciones[evento.id]?.map((inscripcion) => (
@@ -228,14 +228,14 @@ export function AgendaList({ refreshTrigger }: AgendaListProps) {
                         <div className="flex justify-between items-start">
                           <div className="flex-1">
                             <div className="flex items-center gap-3 mb-1">
-                              <span className="text-sm font-bold text-manso-cream">
+                              <span className="text-[15px] font-bold text-manso-cream">
                                 {inscripcion.nombre}
                               </span>
-                              <span className="text-[10px] text-manso-terra font-mono">
+                              <span className="text-[13px] text-manso-terra font-mono">
                                 ID: {inscripcion.id.slice(0, 8)}
                               </span>
                             </div>
-                            <div className="text-[10px] text-manso-cream/60 space-y-1">
+                            <div className="text-[13px] text-manso-cream/60 space-y-1">
                               <div>Email: {inscripcion.email}</div>
                               <div>Teléfono: {inscripcion.telefono}</div>
                               {inscripcion.mensaje && (

@@ -16,7 +16,7 @@ const COLOR_ESTADO: Record<Estado, string> = {
   Vendida: 'bg-manso-olive/20 text-manso-olive',
   Reservada: 'bg-manso-cream/10 text-manso-cream/60',
   Rechazada: 'bg-manso-terra/20 text-manso-terra',
-  'Sin pagar': 'bg-manso-cream/10 text-manso-cream/45',
+  'Sin pagar': 'bg-manso-cream/10 text-manso-cream/62',
 };
 
 type Origen = VentaGestion['origen'];
@@ -77,10 +77,10 @@ export function FestivalVentasGestion() {
     [ventas]
   );
 
-  if (cargando) return <Loader2 size={16} className="animate-spin text-manso-cream/40" />;
+  if (cargando) return <Loader2 size={16} className="animate-spin text-manso-cream/62" />;
   if (error) {
     return (
-      <p className="text-[11px] text-manso-terra">
+      <p className="text-[13px] text-manso-terra">
         {error}.{' '}
         <button type="button" onClick={cargar} className="underline hover:text-manso-cream">
           Reintentar
@@ -94,15 +94,15 @@ export function FestivalVentasGestion() {
       <div className="grid gap-3 sm:grid-cols-2">
         {totales.map(t => (
           <div key={t.origen} className="rounded-xl border border-manso-cream/10 p-3 space-y-1">
-            <p className="text-[9px] font-black uppercase tracking-widest text-manso-cream/50">
+            <p className="text-[12px] font-black uppercase tracking-widest text-manso-cream/50">
               {t.etiqueta} · {t.total} {t.total === 1 ? 'entrada' : 'entradas'}
             </p>
-            <p className="text-sm text-manso-cream">
+            <p className="text-[15px] text-manso-cream">
               <span className="font-mono tabular-nums">{t.vendidas}</span> vendidas ·{' '}
               <span className="font-mono tabular-nums">{t.verificadas}</span> verificadas ·{' '}
               <span className="font-mono tabular-nums">{formatArs(t.monto)}</span>
             </p>
-            <p className={`text-[11px] ${t.sinMail > 0 ? 'text-manso-terra' : 'text-manso-cream/40'}`}>
+            <p className={`text-[13px] ${t.sinMail > 0 ? 'text-manso-terra' : 'text-manso-cream/62'}`}>
               {t.sinMail > 0 ? `${t.sinMail} vendidas sin mail del QR` : 'Todas las vendidas tienen el mail del QR enviado'}
             </p>
           </div>
@@ -114,7 +114,7 @@ export function FestivalVentasGestion() {
       </p>
 
       {ventas.length === 0 ? (
-        <p className="text-[11px] text-manso-cream/40">Gestión no tiene entradas de este festival.</p>
+        <p className="text-[13px] text-manso-cream/62">Gestión no tiene entradas de este festival.</p>
       ) : (
         <ul className="divide-y divide-manso-cream/10">
           {ventas.map(v => {
@@ -122,16 +122,16 @@ export function FestivalVentasGestion() {
             return (
               <li key={v.registro_id} className="py-3 flex flex-wrap items-center gap-x-4 gap-y-1.5">
                 <div className="min-w-0 flex-1">
-                  <p className="text-sm text-manso-cream truncate">
+                  <p className="text-[15px] text-manso-cream truncate">
                     {v.nombre}
                     <span
-                      className={`ml-2 align-middle px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${COLOR_ESTADO[estado]}`}
+                      className={`ml-2 align-middle px-2 py-0.5 rounded-full text-[12px] font-black uppercase tracking-widest ${COLOR_ESTADO[estado]}`}
                     >
                       {estado}
                     </span>
                     {v.vendida && (
                       <span
-                        className={`ml-1 align-middle px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${
+                        className={`ml-1 align-middle px-2 py-0.5 rounded-full text-[12px] font-black uppercase tracking-widest ${
                           v.qr_mail_enviado_at ? 'bg-manso-olive/20 text-manso-olive' : 'bg-manso-terra/20 text-manso-terra'
                         }`}
                         title={v.qr_mail_enviado_at ? `Mail del QR enviado el ${fecha(v.qr_mail_enviado_at)}` : 'Gestión no registra que se haya mandado el mail con el QR'}
@@ -141,20 +141,20 @@ export function FestivalVentasGestion() {
                     )}
                     {v.vendida && (
                       <span
-                        className={`ml-1 align-middle px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${
-                          v.payment_verified ? 'bg-manso-olive/20 text-manso-olive' : 'bg-manso-cream/10 text-manso-cream/45'
+                        className={`ml-1 align-middle px-2 py-0.5 rounded-full text-[12px] font-black uppercase tracking-widest ${
+                          v.payment_verified ? 'bg-manso-olive/20 text-manso-olive' : 'bg-manso-cream/10 text-manso-cream/62'
                         }`}
                       >
                         {v.payment_verified ? 'Verificada' : 'Sin verificar'}
                       </span>
                     )}
                   </p>
-                  <p className="text-[11px] text-manso-cream/40 truncate">
+                  <p className="text-[13px] text-manso-cream/62 truncate">
                     {v.email} · {v.tipo ?? 'Sin tipo'} · {v.evento} · {v.origen === 'web' ? 'Web' : 'Manual'} · {fecha(v.registered_at)}
                     {v.vendida && v.qr_mail_enviado_at ? ` · mail QR ${fecha(v.qr_mail_enviado_at)}` : ''}
                   </p>
                 </div>
-                <span className="text-sm font-mono text-manso-cream tabular-nums">{v.precio === null ? '—' : formatArs(v.precio)}</span>
+                <span className="text-[15px] font-mono text-manso-cream tabular-nums">{v.precio === null ? '—' : formatArs(v.precio)}</span>
               </li>
             );
           })}

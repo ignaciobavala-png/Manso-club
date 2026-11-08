@@ -61,7 +61,7 @@ export function CoworkMembresias({ solicitudes, cuentas, onRefetch, onEstado, on
 
   if (solicitudes.length === 0) {
     return (
-      <p className="text-xs text-manso-cream/30 font-light py-8 text-center">
+      <p className="text-[13px] text-manso-cream/62 font-light py-8 text-center">
         Todavía nadie pidió un plan desde las cards.
       </p>
     );
@@ -74,10 +74,10 @@ export function CoworkMembresias({ solicitudes, cuentas, onRefetch, onEstado, on
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => setPlanFiltro('todos')}
-            className={`px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border transition-colors ${
+            className={`px-3 py-1.5 rounded-full text-[12px] font-black uppercase tracking-widest border transition-colors ${
               planFiltro === 'todos'
                 ? 'bg-manso-terra text-manso-cream border-manso-terra'
-                : 'text-manso-cream/40 border-manso-cream/15 hover:text-manso-cream/70 hover:border-manso-cream/30'
+                : 'text-manso-cream/62 border-manso-cream/15 hover:text-manso-cream/70 hover:border-manso-cream/30'
             }`}
           >
             Todas ({solicitudes.length})
@@ -86,10 +86,10 @@ export function CoworkMembresias({ solicitudes, cuentas, onRefetch, onEstado, on
             <button
               key={clave}
               onClick={() => setPlanFiltro(clave)}
-              className={`px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border transition-colors ${
+              className={`px-3 py-1.5 rounded-full text-[12px] font-black uppercase tracking-widest border transition-colors ${
                 planFiltro === clave
                   ? 'bg-manso-terra text-manso-cream border-manso-terra'
-                  : 'text-manso-cream/40 border-manso-cream/15 hover:text-manso-cream/70 hover:border-manso-cream/30'
+                  : 'text-manso-cream/62 border-manso-cream/15 hover:text-manso-cream/70 hover:border-manso-cream/30'
               }`}
             >
               {nombre} ({solicitudes.filter(s => claveDe(s) === clave).length})
@@ -114,22 +114,22 @@ export function CoworkMembresias({ solicitudes, cuentas, onRefetch, onEstado, on
                 <div className="mt-4 pt-3 border-t border-manso-cream/10 flex flex-wrap items-center justify-between gap-3">
                   {/* Estado real de la cuenta, leído de user_profiles */}
                   {activa ? (
-                    <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-green-400">
+                    <span className="flex items-center gap-1.5 text-[13px] font-black uppercase tracking-widest text-green-400">
                       <Crown size={12} />
                       Membresía activa
                       {cuenta?.membresia_hasta && (
-                        <span className="font-light tracking-normal text-manso-cream/35 normal-case">
+                        <span className="font-light tracking-normal text-manso-cream/62 normal-case">
                           hasta {new Date(cuenta.membresia_hasta).toLocaleDateString('es-AR')}
                         </span>
                       )}
                     </span>
                   ) : cuenta ? (
-                    <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-manso-cream/40">
+                    <span className="flex items-center gap-1.5 text-[13px] font-black uppercase tracking-widest text-manso-cream/62">
                       <UserPlus size={12} />
                       Registrado, sin membresía
                     </span>
                   ) : (
-                    <span className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-manso-cream/30">
+                    <span className="flex items-center gap-1.5 text-[13px] font-black uppercase tracking-widest text-manso-cream/62">
                       <UserX size={12} />
                       Sin cuenta en el sitio
                     </span>
@@ -138,14 +138,14 @@ export function CoworkMembresias({ solicitudes, cuentas, onRefetch, onEstado, on
                   {cuenta ? (
                     <button
                       onClick={() => abrirPerfil(s.email)}
-                      className="px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border border-manso-terra/40 text-manso-terra hover:bg-manso-terra/10 transition-colors"
+                      className="px-3 py-1.5 rounded-full text-[12px] font-black uppercase tracking-widest border border-manso-terra/40 text-manso-terra hover:bg-manso-terra/10 transition-colors"
                     >
                       {activa ? 'Ver / editar membresía' : 'Otorgar membresía'}
                     </button>
                   ) : (
                     <button
                       onClick={() => copiarRegistro(s.id)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border border-manso-cream/20 text-manso-cream/50 hover:text-manso-cream hover:border-manso-cream/40 transition-colors"
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[12px] font-black uppercase tracking-widest border border-manso-cream/20 text-manso-cream/50 hover:text-manso-cream hover:border-manso-cream/40 transition-colors"
                       title="Para darle la membresía primero tiene que crear su cuenta"
                     >
                       {copiado === s.id ? <Check size={11} /> : <Copy size={11} />}

@@ -96,28 +96,28 @@ export function UsuariosList() {
         ].map(m => (
           <div key={m.label} className="bg-manso-cream/5 border border-manso-cream/10 rounded-2xl p-4 text-center">
             <p className={`text-2xl font-black ${m.color}`}>{m.value}</p>
-            <p className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40 mt-1">{m.label}</p>
+            <p className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62 mt-1">{m.label}</p>
           </div>
         ))}
       </div>
 
       {/* Buscador */}
       <div className="relative mb-4">
-        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-manso-cream/30" />
+        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-manso-cream/62" />
         <input
           type="text"
           placeholder="Buscar por email o nombre..."
           value={busqueda}
           onChange={e => setBusqueda(e.target.value)}
-          className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl pl-9 pr-4 py-2.5 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra"
+          className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl pl-9 pr-4 py-2.5 text-[15px] text-manso-cream placeholder:text-manso-cream/62 focus:outline-none focus:border-manso-terra"
         />
       </div>
 
       {/* Lista */}
       {filtrados.length === 0 ? (
         <div className="text-center py-12">
-          <Users size={32} className="text-manso-cream/20 mx-auto mb-3" />
-          <p className="text-sm text-manso-cream/40">Sin resultados</p>
+          <Users size={32} className="text-manso-cream/62 mx-auto mb-3" />
+          <p className="text-[15px] text-manso-cream/62">Sin resultados</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -138,39 +138,39 @@ export function UsuariosList() {
                       <div className="w-full h-full flex items-center justify-center">
                         {nivel === 'miembro'
                           ? <Crown size={14} className="text-manso-terra" />
-                          : <User size={14} className="text-manso-cream/40" />}
+                          : <User size={14} className="text-manso-cream/62" />}
                       </div>
                     )}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-bold text-manso-cream truncate">
+                    <p className="text-[15px] font-bold text-manso-cream truncate">
                       {u.display_name ?? u.email}
                     </p>
                     <div className="flex items-center gap-2 flex-wrap">
                       {u.display_name && (
-                        <p className="text-[10px] text-manso-cream/40 truncate">{u.email}</p>
+                        <p className="text-[13px] text-manso-cream/62 truncate">{u.email}</p>
                       )}
                       {u.telefono && (
-                        <p className="text-[10px] text-manso-cream/30 truncate">{u.telefono}</p>
+                        <p className="text-[13px] text-manso-cream/62 truncate">{u.telefono}</p>
                       )}
                     </div>
                   </div>
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   {u.foro_baneado && (
-                    <span className="px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest bg-red-500/20 text-red-400">
+                    <span className="px-2 py-0.5 rounded-full text-[12px] font-black uppercase tracking-widest bg-red-500/20 text-red-400">
                       Baneado
                     </span>
                   )}
                   {vencida && (
-                    <span className="px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest bg-red-500/20 text-red-400">
+                    <span className="px-2 py-0.5 rounded-full text-[12px] font-black uppercase tracking-widest bg-red-500/20 text-red-400">
                       Vencida
                     </span>
                   )}
-                  <span className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${NIVEL_BADGE[nivel]}`}>
+                  <span className={`px-2 py-0.5 rounded-full text-[12px] font-black uppercase tracking-widest ${NIVEL_BADGE[nivel]}`}>
                     {NIVEL_LABEL[nivel]}
                   </span>
-                  <span className="text-[9px] text-manso-cream/30">
+                  <span className="text-[12px] text-manso-cream/62">
                     {new Date(u.created_at).toLocaleDateString('es-AR')}
                   </span>
                 </div>

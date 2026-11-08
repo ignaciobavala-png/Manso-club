@@ -66,10 +66,10 @@ export function StreamingCategoriasAdmin() {
         {categorias.map(cat => (
           <div key={cat.id} className="flex items-center justify-between gap-3 bg-manso-cream/5 rounded-2xl px-4 py-3 border border-manso-cream/10">
             <div className="flex items-center gap-3">
-              <span className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${cat.color}`}>
+              <span className={`px-2 py-0.5 rounded-full text-[12px] font-black uppercase tracking-widest ${cat.color}`}>
                 {cat.nombre}
               </span>
-              <span className="text-manso-cream/30 text-[10px] font-mono">/{cat.slug}</span>
+              <span className="text-manso-cream/62 text-[13px] font-mono">/{cat.slug}</span>
             </div>
             <button
               onClick={() => handleDelete(cat.id, cat.nombre)}
@@ -80,14 +80,14 @@ export function StreamingCategoriasAdmin() {
           </div>
         ))}
         {categorias.length === 0 && (
-          <p className="text-manso-cream/30 text-xs text-center py-4 uppercase tracking-widest font-black">Sin categorías</p>
+          <p className="text-manso-cream/62 text-[13px] text-center py-4 uppercase tracking-widest font-black">Sin categorías</p>
         )}
       </div>
 
       {/* Formulario agregar */}
       <form onSubmit={handleAdd} className="flex gap-2 flex-wrap">
         <input
-          className="flex-1 min-w-0 p-3 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/40 text-sm font-bold"
+          className="flex-1 min-w-0 p-3 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/62 text-[15px] font-bold"
           placeholder="Nueva categoría"
           value={nombre}
           onChange={e => setNombre(e.target.value)}
@@ -96,7 +96,7 @@ export function StreamingCategoriasAdmin() {
         <select
           value={color}
           onChange={e => setColor(e.target.value)}
-          className="p-3 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 text-manso-cream text-sm font-bold outline-none focus:ring-2 focus:ring-manso-terra"
+          className="p-3 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 text-manso-cream text-[15px] font-bold outline-none focus:ring-2 focus:ring-manso-terra"
         >
           {COLORES.map(c => (
             <option key={c.value} value={c.value}>{c.label}</option>
@@ -105,7 +105,7 @@ export function StreamingCategoriasAdmin() {
         <button
           type="submit"
           disabled={loading}
-          className="flex items-center gap-2 px-4 py-3 bg-manso-terra text-manso-cream rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-manso-cream hover:text-manso-black transition-all disabled:opacity-50"
+          className="flex items-center gap-2 px-4 py-3 bg-manso-terra text-manso-cream rounded-2xl font-black uppercase tracking-widest text-[13px] hover:bg-manso-cream hover:text-manso-black transition-all disabled:opacity-50"
         >
           <Plus size={14} />
           Agregar

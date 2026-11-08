@@ -54,7 +54,7 @@ export default function DebugPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-green-500 p-10 font-mono text-xs">
+    <div className="min-h-screen bg-black text-green-500 p-10 font-mono text-[13px]">
       <h1 className="text-xl font-bold mb-6 border-b border-green-500 pb-2">MANSO_DEBUGGER_V1.0</h1>
       
       <div className="space-y-6">

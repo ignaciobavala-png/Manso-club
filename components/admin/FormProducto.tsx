@@ -230,14 +230,14 @@ export function FormProducto() {
         <h2 className="text-2xl font-black uppercase tracking-tighter text-manso-cream mb-2">
           {isEditing ? 'EDITAR PRODUCTO' : 'NUEVO PRODUCTO'}
         </h2>
-        <p className="text-sm text-manso-cream/60">
+        <p className="text-[15px] text-manso-cream/60">
           {isEditing ? 'Modifica los datos del producto seleccionado' : 'Agrega un nuevo producto a la tienda'}
         </p>
         {isEditing && (
           <button
             type="button"
             onClick={resetForm}
-            className="mt-3 text-xs text-manso-terra hover:text-manso-cream transition-colors"
+            className="mt-3 text-[13px] text-manso-terra hover:text-manso-cream transition-colors"
           >
             ← Cancelar edición
           </button>
@@ -250,14 +250,14 @@ export function FormProducto() {
         {error && (
           <div className="bg-red-500/10 border border-red-500/30 text-red-400 px-4 py-3 rounded-2xl flex items-center gap-3">
             <AlertCircle size={16} className="w-4 h-4" />
-            <span className="text-sm font-medium">{error}</span>
+            <span className="text-[15px] font-medium">{error}</span>
           </div>
         )}
         
         {success && (
           <div className="bg-green-500/10 border border-green-500/30 text-green-400 px-4 py-3 rounded-2xl flex items-center gap-3">
             <CheckCircle size={16} className="w-4 h-4" />
-            <span className="text-sm font-medium">
+            <span className="text-[15px] font-medium">
               {isEditing ? '¡Producto actualizado correctamente!' : '¡Producto sincronizado con la tienda!'}
             </span>
           </div>
@@ -265,7 +265,7 @@ export function FormProducto() {
         
         {/* Fotos del producto: un hueco por foto */}
         <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2">
+          <label className="text-[13px] font-black uppercase tracking-widest text-manso-cream/60 ml-2">
             Fotos del producto ({formData.imagenes_urls.length}/{MAX_FOTOS})
           </label>
 
@@ -304,7 +304,7 @@ export function FormProducto() {
                         <X size={11} />
                       </button>
                       {slot === 0 && (
-                        <span className="absolute bottom-1 left-1 z-10 px-1.5 py-0.5 rounded bg-manso-black/70 text-[8px] font-black uppercase tracking-widest text-manso-cream/70">
+                        <span className="absolute bottom-1 left-1 z-10 px-1.5 py-0.5 rounded bg-manso-black/70 text-[12px] font-black uppercase tracking-widest text-manso-cream/70">
                           Portada
                         </span>
                       )}
@@ -315,7 +315,7 @@ export function FormProducto() {
             })}
           </div>
 
-          <p className="text-[10px] text-manso-cream/30 ml-2 leading-relaxed">
+          <p className="text-[13px] text-manso-cream/62 ml-2 leading-relaxed">
             La primera foto es la portada: es la que sale en la grilla de la
             tienda. Las demás se pasan con las flechas en la ficha del producto.
           </p>
@@ -328,7 +328,7 @@ export function FormProducto() {
             <input 
               type="text" 
               placeholder="NOMBRE DEL ARTÍCULO"
-              className="w-full bg-manso-cream/10 p-3 sm:p-4 pl-10 sm:pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all text-sm sm:text-base"
+              className="w-full bg-manso-cream/10 p-3 sm:p-4 pl-10 sm:pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/62 transition-all text-[15px] sm:text-base"
               value={formData.nombre}
               onChange={e => {
                 setFormData({...formData, nombre: e.target.value});
@@ -342,7 +342,7 @@ export function FormProducto() {
           <div className="relative">
             <textarea 
               placeholder="BREVE DESCRIPCIÓN DEL PRODUCTO (opcional)"
-              className="w-full bg-manso-cream/10 p-3 sm:p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-medium text-manso-cream placeholder:text-manso-cream/40 transition-all text-sm sm:text-base resize-none h-20"
+              className="w-full bg-manso-cream/10 p-3 sm:p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-medium text-manso-cream placeholder:text-manso-cream/62 transition-all text-[15px] sm:text-base resize-none h-20"
               value={formData.descripcion}
               onChange={e => {
                 setFormData({...formData, descripcion: e.target.value});
@@ -350,14 +350,14 @@ export function FormProducto() {
               }}
               maxLength={200}
             />
-            <div className="text-[8px] text-manso-cream/40 text-right mt-1">
+            <div className="text-[12px] text-manso-cream/62 text-right mt-1">
               {formData.descripcion.length}/200 caracteres
             </div>
           </div>
 
           {/* Categoria: chips con X para borrar */}
           <div className="space-y-3">
-            <p className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2 flex items-center gap-2">
+            <p className="text-[13px] font-black uppercase tracking-widest text-manso-cream/60 ml-2 flex items-center gap-2">
               <Tag size={14} /> Categoria
             </p>
             <div className="flex flex-wrap gap-1 sm:gap-2">
@@ -366,7 +366,7 @@ export function FormProducto() {
                   key={cat}
                   type="button"
                   onClick={() => setFormData({...formData, categoria: cat})}
-                  className={`group flex items-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all border ${
+                  className={`group flex items-center gap-1 sm:gap-1.5 px-2 sm:px-4 py-2 rounded-xl text-[12px] sm:text-[13px] font-black uppercase tracking-widest transition-all border ${
                     formData.categoria === cat
                       ? 'bg-manso-terra text-manso-cream border-manso-terra'
                       : 'bg-manso-cream/10 text-manso-cream/60 border-manso-cream/20 hover:border-manso-cream/40'
@@ -393,7 +393,7 @@ export function FormProducto() {
               <button
                 type="button"
                 onClick={() => setShowNewCat(true)}
-                className="flex items-center gap-1 text-[8px] sm:text-[9px] font-bold uppercase tracking-widest text-manso-terra hover:text-manso-cream transition-colors ml-2"
+                className="flex items-center gap-1 text-[12px] sm:text-[12px] font-bold uppercase tracking-widest text-manso-terra hover:text-manso-cream transition-colors ml-2"
               >
                 <Plus size={14} className="w-4 h-4" /> Nueva categoria
               </button>
@@ -402,7 +402,7 @@ export function FormProducto() {
                 <input
                   type="text"
                   placeholder="Nombre de la categoria"
-                  className="flex-1 bg-manso-cream/10 p-2 sm:p-3 rounded-xl border border-manso-terra/30 outline-none text-[10px] sm:text-xs font-bold text-manso-cream placeholder:text-manso-cream/40 focus:ring-2 focus:ring-manso-terra"
+                  className="flex-1 bg-manso-cream/10 p-2 sm:p-3 rounded-xl border border-manso-terra/30 outline-none text-[13px] sm:text-[13px] font-bold text-manso-cream placeholder:text-manso-cream/62 focus:ring-2 focus:ring-manso-terra"
                   value={newCatName}
                   onChange={e => setNewCatName(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), handleAddCategory())}
@@ -411,14 +411,14 @@ export function FormProducto() {
                 <button
                   type="button"
                   onClick={handleAddCategory}
-                  className="px-2 sm:px-3 py-2 bg-manso-terra text-manso-cream rounded-xl text-[8px] sm:text-[9px] font-black uppercase hover:bg-manso-cream hover:text-manso-black transition-all"
+                  className="px-2 sm:px-3 py-2 bg-manso-terra text-manso-cream rounded-xl text-[12px] sm:text-[12px] font-black uppercase hover:bg-manso-cream hover:text-manso-black transition-all"
                 >
                   Crear
                 </button>
                 <button
                   type="button"
                   onClick={() => { setShowNewCat(false); setNewCatName(''); }}
-                  className="px-2 sm:px-3 py-2 bg-manso-cream/10 text-manso-cream/60 rounded-xl text-[8px] sm:text-[9px] font-black uppercase hover:bg-manso-cream/20 transition-all"
+                  className="px-2 sm:px-3 py-2 bg-manso-cream/10 text-manso-cream/60 rounded-xl text-[12px] sm:text-[12px] font-black uppercase hover:bg-manso-cream/20 transition-all"
                 >
                   X
                 </button>
@@ -428,7 +428,7 @@ export function FormProducto() {
 
           {/* Precio: se carga en la moneda de referencia que se elija */}
           <div className="space-y-2">
-            <p className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2">
+            <p className="text-[13px] font-black uppercase tracking-widest text-manso-cream/60 ml-2">
               Precio de referencia
             </p>
 
@@ -442,7 +442,7 @@ export function FormProducto() {
                   key={op.id}
                   type="button"
                   onClick={() => { setFormData({ ...formData, moneda: op.id }); setError(null); }}
-                  className={`flex-1 px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${
+                  className={`flex-1 px-4 py-2.5 rounded-xl text-[13px] font-black uppercase tracking-widest transition-all border ${
                     formData.moneda === op.id
                       ? 'bg-manso-terra text-manso-cream border-manso-terra'
                       : 'bg-manso-cream/10 text-manso-cream/60 border-manso-cream/20 hover:border-manso-cream/40'
@@ -458,7 +458,7 @@ export function FormProducto() {
               <input 
                 type="number" 
                 placeholder={esDolares ? 'PRECIO EN DÓLARES' : 'PRECIO EN PESOS'}
-                className="w-full bg-manso-cream/10 p-3 sm:p-4 pl-10 sm:pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono font-bold text-manso-cream placeholder:text-manso-cream/40 text-sm sm:text-base"
+                className="w-full bg-manso-cream/10 p-3 sm:p-4 pl-10 sm:pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono font-bold text-manso-cream placeholder:text-manso-cream/62 text-[15px] sm:text-base"
                 value={formData.precio === 0 ? '' : formData.precio}
                 onChange={e => {
                   setFormData({...formData, precio: Number(e.target.value)});
@@ -469,7 +469,7 @@ export function FormProducto() {
             </div>
 
             {precioSospechoso ? (
-              <p className="text-[10px] font-bold text-manso-terra ml-2 leading-relaxed flex items-start gap-1.5">
+              <p className="text-[13px] font-bold text-manso-terra ml-2 leading-relaxed flex items-start gap-1.5">
                 <AlertCircle size={12} className="mt-0.5 shrink-0" />
                 <span>
                   ¿Seguro? Este precio está cargado en {esDolares ? 'dólares' : 'pesos'}:{' '}
@@ -477,7 +477,7 @@ export function FormProducto() {
                 </span>
               </p>
             ) : (
-              <p className="text-[10px] text-manso-cream/30 ml-2 leading-relaxed">
+              <p className="text-[13px] text-manso-cream/62 ml-2 leading-relaxed">
                 {esDolares
                   ? 'Los dólares quedan fijos y los pesos se recalculan con el blue.'
                   : 'Los pesos quedan fijos y los dólares se recalculan con el blue.'}
@@ -493,7 +493,7 @@ export function FormProducto() {
             <input 
               type="number" 
               placeholder="STOCK"
-              className="w-full bg-manso-cream/10 p-3 sm:p-4 pl-10 sm:pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono font-bold text-manso-cream placeholder:text-manso-cream/40 text-sm sm:text-base"
+              className="w-full bg-manso-cream/10 p-3 sm:p-4 pl-10 sm:pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono font-bold text-manso-cream placeholder:text-manso-cream/62 text-[15px] sm:text-base"
               value={formData.stock === 0 ? '' : formData.stock}
               onChange={e => {
                 setFormData({...formData, stock: Number(e.target.value)});
@@ -514,7 +514,7 @@ export function FormProducto() {
         {/* Boton de Accion */}
         <button
           disabled={loading}
-          className="w-full bg-manso-terra text-manso-cream py-4 sm:py-5 rounded-3xl font-black uppercase tracking-[0.2em] hover:bg-manso-cream hover:text-manso-black transition-all active:scale-95 disabled:opacity-50 text-sm sm:text-base"
+          className="w-full bg-manso-terra text-manso-cream py-4 sm:py-5 rounded-3xl font-black uppercase tracking-[0.2em] hover:bg-manso-cream hover:text-manso-black transition-all active:scale-95 disabled:opacity-50 text-[15px] sm:text-base"
         >
           {loading ? 'PROCESANDO...' : isEditing ? 'ACTUALIZAR PRODUCTO' : 'PUBLICAR PRODUCTO'}
         </button>

@@ -20,10 +20,10 @@ interface Miembro {
 
 const card = 'bg-manso-cream/5 border border-manso-cream/10 rounded-[2rem] p-5 sm:p-6';
 const input =
-  'w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra/50 transition-colors';
+  'w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 text-[15px] text-manso-cream placeholder:text-manso-cream/62 focus:outline-none focus:border-manso-terra/50 transition-colors';
 const boton =
-  'px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all disabled:opacity-40';
-const titulo = 'text-[10px] font-black uppercase tracking-[0.2em] text-manso-cream/50 mb-4';
+  'px-4 py-2.5 rounded-xl text-[13px] font-black uppercase tracking-widest transition-all disabled:opacity-40';
+const titulo = 'text-[13px] font-black uppercase tracking-[0.2em] text-manso-cream/50 mb-4';
 
 async function copiar(texto: string) {
   try {
@@ -158,7 +158,7 @@ export function ChatAdmin() {
       {aviso && (
         <p
           role="status"
-          className={`rounded-xl px-4 py-3 text-xs font-bold ${
+          className={`rounded-xl px-4 py-3 text-[13px] font-bold ${
             aviso.tipo === 'ok' ? 'bg-emerald-500/15 text-emerald-300' : 'bg-manso-terra/20 text-manso-cream'
           }`}
         >
@@ -170,7 +170,7 @@ export function ChatAdmin() {
         {/* Borrado automático */}
         <section className={card}>
           <h2 className={titulo}>Borrado automático</h2>
-          <p className="mb-4 text-xs leading-relaxed text-manso-cream/60">
+          <p className="mb-4 text-[13px] leading-relaxed text-manso-cream/60">
             Todos los días a las 4 AM se borran los mensajes más viejos que este límite (con sus reacciones). Cada sala puede
             tener su propio límite más abajo; si no, usa este.
           </p>
@@ -184,7 +184,7 @@ export function ChatAdmin() {
               className={`${input} max-w-[7rem]`}
               aria-label="Días de retención"
             />
-            <span className="text-xs text-manso-cream/60">días</span>
+            <span className="text-[13px] text-manso-cream/60">días</span>
             <button onClick={guardarRetencionGlobal} className={`${boton} bg-manso-terra text-manso-cream hover:bg-manso-terra/90`}>
               Guardar
             </button>
@@ -218,7 +218,7 @@ export function ChatAdmin() {
 
           {creada && (
             <div className="mt-4 rounded-2xl border border-manso-olive/40 bg-manso-olive/10 p-4">
-              <p className="text-[10px] font-black uppercase tracking-widest text-manso-olive">Sala creada: {creada.nombre}</p>
+              <p className="text-[13px] font-black uppercase tracking-widest text-manso-olive">Sala creada: {creada.nombre}</p>
               <p className="my-2 break-all font-mono text-xl font-black tracking-widest text-manso-cream">{formatearClave(creada.clave)}</p>
               <div className="flex flex-wrap gap-2">
                 <BotonCopiar texto={creada.clave} etiqueta="Copiar clave" />
@@ -232,7 +232,7 @@ export function ChatAdmin() {
       {/* Salas */}
       <section>
         <h2 className={titulo}>Salas ({salas.length})</h2>
-        {cargando && <p className="text-xs text-manso-cream/50">Cargando…</p>}
+        {cargando && <p className="text-[13px] text-manso-cream/50">Cargando…</p>}
         <div className="space-y-3">
           {salas.map(s => (
             <SalaCard key={s.id} sala={s} retencionGlobal={retencion} onCambio={cargar} avisar={avisar} />
@@ -243,7 +243,7 @@ export function ChatAdmin() {
       {/* Silenciados */}
       <section className={card}>
         <h2 className={titulo}>Moderación de personas</h2>
-        <p className="mb-3 text-xs text-manso-cream/60">
+        <p className="mb-3 text-[13px] text-manso-cream/60">
           Una persona silenciada sigue leyendo pero no puede escribir, reaccionar ni crear salas. Los mensajes de cualquiera se
           borran desde el propio chat (siendo admin).
         </p>
@@ -252,8 +252,8 @@ export function ChatAdmin() {
           <ul className="mb-4 divide-y divide-manso-cream/10 rounded-xl border border-manso-cream/10">
             {resultados.map(u => (
               <li key={u.id} className="flex items-center gap-3 px-4 py-2.5">
-                <span className="min-w-0 flex-1 truncate text-sm text-manso-cream">
-                  {u.display_name ?? 'Sin nombre'} <span className="text-manso-cream/40">· {u.email}</span>
+                <span className="min-w-0 flex-1 truncate text-[15px] text-manso-cream">
+                  {u.display_name ?? 'Sin nombre'} <span className="text-manso-cream/62">· {u.email}</span>
                 </span>
                 <button
                   onClick={() => silenciar(u, !u.chat_baneado)}
@@ -265,15 +265,15 @@ export function ChatAdmin() {
             ))}
           </ul>
         )}
-        <h3 className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-manso-cream/50">
+        <h3 className="mb-2 flex items-center gap-2 text-[13px] font-black uppercase tracking-widest text-manso-cream/50">
           <VolumeX size={12} /> Silenciadas ahora ({silenciados.length})
         </h3>
         {silenciados.length === 0 ? (
-          <p className="text-xs text-manso-cream/40">Nadie.</p>
+          <p className="text-[13px] text-manso-cream/62">Nadie.</p>
         ) : (
           <ul className="space-y-1.5">
             {silenciados.map(u => (
-              <li key={u.id} className="flex items-center gap-3 text-sm text-manso-cream">
+              <li key={u.id} className="flex items-center gap-3 text-[15px] text-manso-cream">
                 <span className="min-w-0 flex-1 truncate">{u.display_name ?? u.email}</span>
                 <button onClick={() => silenciar(u, false)} className={`${boton} bg-manso-cream/10 hover:bg-manso-cream/20`}>
                   Dar voz
@@ -363,8 +363,8 @@ function SalaCard({
           <Icono size={16} />
         </span>
         <div className="min-w-0 flex-1">
-          <h3 className="truncate text-sm font-black uppercase tracking-wide text-manso-cream">{sala.nombre}</h3>
-          <p className="text-[11px] text-manso-cream/50">
+          <h3 className="truncate text-[15px] font-black uppercase tracking-wide text-manso-cream">{sala.nombre}</h3>
+          <p className="text-[13px] text-manso-cream/50">
             {sala.tipo === 'general' ? 'General' : privada ? 'Privada' : 'Pública'} · {sala.mensajes} mensajes
             {privada && <> · {sala.miembros} miembros</>}
           </p>
@@ -379,7 +379,7 @@ function SalaCard({
       {privada && sala.clave && (
         <div className="mb-3 flex flex-wrap items-center gap-2 rounded-xl bg-manso-black/40 px-4 py-3">
           <KeyRound size={14} className="text-manso-olive" />
-          <span className="font-mono text-sm font-black tracking-widest text-manso-cream">{formatearClave(sala.clave)}</span>
+          <span className="font-mono text-[15px] font-black tracking-widest text-manso-cream">{formatearClave(sala.clave)}</span>
           <span className="ml-auto flex flex-wrap gap-2">
             <BotonCopiar texto={sala.clave} etiqueta="Clave" />
             <BotonCopiar texto={invitacion(sala.nombre, sala.clave)} etiqueta="Invitación" />
@@ -390,7 +390,7 @@ function SalaCard({
               onChange={e => setClaveNueva(e.target.value)}
               placeholder="Clave nueva (vacío = generar)"
               autoComplete="off"
-              className={`${input} py-2 font-mono text-xs uppercase`}
+              className={`${input} py-2 font-mono text-[13px] uppercase`}
             />
             <button onClick={regenerar} className={`${boton} flex shrink-0 items-center gap-1.5 bg-manso-cream/10 text-manso-cream hover:bg-manso-cream/20`}>
               <RefreshCw size={12} /> Cambiar
@@ -431,10 +431,10 @@ function SalaCard({
 
       {miembros && (
         <ul className="mt-4 divide-y divide-manso-cream/10 rounded-xl border border-manso-cream/10">
-          {miembros.length === 0 && <li className="px-4 py-3 text-xs text-manso-cream/50">Sin miembros.</li>}
+          {miembros.length === 0 && <li className="px-4 py-3 text-[13px] text-manso-cream/50">Sin miembros.</li>}
           {miembros.map(m => (
-            <li key={m.user_id} className="flex items-center gap-3 px-4 py-2 text-sm text-manso-cream">
-              <MessageSquare size={13} className="text-manso-cream/40" />
+            <li key={m.user_id} className="flex items-center gap-3 px-4 py-2 text-[15px] text-manso-cream">
+              <MessageSquare size={13} className="text-manso-cream/62" />
               <span className="min-w-0 flex-1 truncate">{m.nombre}</span>
               <button onClick={() => expulsar(m)} className={`${boton} flex items-center gap-1.5 bg-manso-cream/10 py-1.5 hover:bg-manso-terra/80`}>
                 <UserX size={12} /> Sacar

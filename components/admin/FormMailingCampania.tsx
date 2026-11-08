@@ -335,7 +335,7 @@ function CanvasHotspots({
             className="absolute border-2 border-manso-terra bg-manso-terra/20 cursor-move group"
             style={{ left: `${hs.x}%`, top: `${hs.y}%`, width: `${hs.w}%`, height: `${hs.h}%` }}
           >
-            <span className="absolute -top-2.5 -left-2.5 w-5 h-5 rounded-full bg-manso-terra text-manso-cream text-[10px] font-black flex items-center justify-center">
+            <span className="absolute -top-2.5 -left-2.5 w-5 h-5 rounded-full bg-manso-terra text-manso-cream text-[13px] font-black flex items-center justify-center">
               {i + 1}
             </span>
             <button
@@ -355,7 +355,7 @@ function CanvasHotspots({
         ))}
       </div>
 
-      <p className="text-[9px] text-manso-cream/40 mt-1.5">
+      <p className="text-[12px] text-manso-cream/62 mt-1.5">
         Dibujá un rectángulo sobre cada botón de la imagen arrastrando el mouse. Arrastralo para
         moverlo y usá la esquina para ajustar el tamaño.
       </p>
@@ -364,7 +364,7 @@ function CanvasHotspots({
         <div className="space-y-1.5 mt-2">
           {hotspots.map((hs, i) => (
             <div key={i} className="flex items-center gap-2">
-              <span className="w-5 h-5 shrink-0 rounded-full bg-manso-terra text-manso-cream text-[10px] font-black flex items-center justify-center">
+              <span className="w-5 h-5 shrink-0 rounded-full bg-manso-terra text-manso-cream text-[13px] font-black flex items-center justify-center">
                 {i + 1}
               </span>
               <input
@@ -375,7 +375,7 @@ function CanvasHotspots({
                   onChange(next);
                 }}
                 placeholder="Link de la zona (https://...)"
-                className="flex-1 bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-1.5 text-xs text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra"
+                className="flex-1 bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-1.5 text-[13px] text-manso-cream placeholder:text-manso-cream/62 focus:outline-none focus:border-manso-terra"
               />
             </div>
           ))}
@@ -765,39 +765,39 @@ export function FormMailingCampania({ onSaved }: Props) {
         <h2 className="text-lg md:text-xl font-black uppercase tracking-tighter text-manso-cream mb-1">
           Nueva Campaña
         </h2>
-        <p className="text-xs text-manso-cream/60">
+        <p className="text-[13px] text-manso-cream/60">
           Armá el mail apilando bloques: imágenes, botones y textos.
         </p>
       </div>
 
       {successMsg && (
-        <div className="flex items-center gap-2 p-3 rounded-xl bg-green-500/10 text-green-400 text-xs">
+        <div className="flex items-center gap-2 p-3 rounded-xl bg-green-500/10 text-green-400 text-[13px]">
           <CheckCircle size={14} /> {successMsg}
         </div>
       )}
       {errorMsg && (
-        <div className="flex items-center gap-2 p-3 rounded-xl bg-red-500/10 text-red-400 text-xs">
+        <div className="flex items-center gap-2 p-3 rounded-xl bg-red-500/10 text-red-400 text-[13px]">
           <AlertCircle size={14} /> {errorMsg}
         </div>
       )}
 
       <div>
-        <label className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40 mb-1 block">
+        <label className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62 mb-1 block">
           Asunto
         </label>
         <input
           value={asunto}
           onChange={(e) => setAsunto(e.target.value)}
           placeholder="Ej: Nuevo evento este viernes"
-          className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-2.5 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra"
+          className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-2.5 text-[15px] text-manso-cream placeholder:text-manso-cream/62 focus:outline-none focus:border-manso-terra"
         />
       </div>
 
       <div>
-        <label className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40 mb-1 block">
+        <label className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62 mb-1 block">
           Pre-header
         </label>
-        <p className="text-[9px] text-manso-cream/40 mb-1.5">
+        <p className="text-[12px] text-manso-cream/62 mb-1.5">
           Es el texto gris que la casilla muestra al lado del asunto. No repitas el asunto:
           usalo para completar la idea y dar una razón más para abrir el mail.
         </p>
@@ -806,11 +806,11 @@ export function FormMailingCampania({ onSaved }: Props) {
           onChange={(e) => setPreheader(e.target.value)}
           maxLength={140}
           placeholder="Ej: Entradas anticipadas hasta el jueves"
-          className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-2.5 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra"
+          className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-2.5 text-[15px] text-manso-cream placeholder:text-manso-cream/62 focus:outline-none focus:border-manso-terra"
         />
         {/* Así se va a ver en la bandeja de entrada */}
-        <div className="mt-2 rounded-lg bg-manso-cream/10 border border-manso-cream/10 px-3 py-2 text-xs truncate">
-          <span className="text-[8px] font-black uppercase tracking-widest text-manso-cream/30 block mb-0.5">
+        <div className="mt-2 rounded-lg bg-manso-cream/10 border border-manso-cream/10 px-3 py-2 text-[13px] truncate">
+          <span className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62 block mb-0.5">
             Así se ve en la casilla
           </span>
           <span className="font-bold text-manso-cream">{asunto.trim() || 'Asunto'}</span>
@@ -821,20 +821,20 @@ export function FormMailingCampania({ onSaved }: Props) {
         </div>
         {preheader.trim() &&
           preheader.trim().toLowerCase() === asunto.trim().toLowerCase() && (
-            <p className="flex items-center gap-1 text-[10px] text-red-400 mt-1.5">
+            <p className="flex items-center gap-1 text-[13px] text-red-400 mt-1.5">
               <AlertCircle size={11} /> El pre-header está repitiendo el asunto
             </p>
           )}
       </div>
 
       <div>
-        <label className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40 mb-1 block">
+        <label className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62 mb-1 block">
           Audiencia
         </label>
         <select
           value={audiencia}
           onChange={(e) => setAudiencia(e.target.value as Audiencia)}
-          className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-2.5 text-sm text-manso-cream focus:outline-none focus:border-manso-terra"
+          className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-2.5 text-[15px] text-manso-cream focus:outline-none focus:border-manso-terra"
         >
           {AUDIENCIAS.map((a) => (
             <option key={a.id} value={a.id} className="bg-manso-black">
@@ -849,16 +849,16 @@ export function FormMailingCampania({ onSaved }: Props) {
             onChange={(e) => setMailsEspecificos(e.target.value)}
             placeholder="Un email por línea o separados por coma: fulano@mail.com, mengano@mail.com"
             rows={3}
-            className="w-full mt-2 bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-2.5 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra resize-none"
+            className="w-full mt-2 bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-2.5 text-[15px] text-manso-cream placeholder:text-manso-cream/62 focus:outline-none focus:border-manso-terra resize-none"
           />
         )}
       </div>
 
       <div className="space-y-3">
-        <label className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40 block">
+        <label className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62 block">
           Contenido del mail
         </label>
-        <p className="text-[9px] text-manso-cream/40 -mt-2">
+        <p className="text-[12px] text-manso-cream/62 -mt-2">
           Apilá bloques en el orden en que van a aparecer. Para los botones principales usá
           el bloque <strong className="text-manso-cream/70">Botón</strong> en vez de dibujarlos
           dentro de la imagen: se ven aunque Gmail bloquee las imágenes y nunca se cortan.
@@ -871,7 +871,7 @@ export function FormMailingCampania({ onSaved }: Props) {
               <select
                 value=""
                 onChange={(e) => e.target.value && cargarPlantilla(e.target.value)}
-                className="bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-2.5 py-1.5 text-[10px] text-manso-cream focus:outline-none focus:border-manso-terra"
+                className="bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-2.5 py-1.5 text-[13px] text-manso-cream focus:outline-none focus:border-manso-terra"
                 title="Cargar plantilla (reemplaza los bloques actuales)"
               >
                 <option value="" className="bg-manso-black">
@@ -886,7 +886,7 @@ export function FormMailingCampania({ onSaved }: Props) {
               <select
                 value=""
                 onChange={(e) => e.target.value && borrarPlantilla(e.target.value)}
-                className="bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-2.5 py-1.5 text-[10px] text-manso-cream/50 focus:outline-none"
+                className="bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-2.5 py-1.5 text-[13px] text-manso-cream/50 focus:outline-none"
                 title="Borrar una plantilla guardada"
               >
                 <option value="" className="bg-manso-black">
@@ -912,18 +912,18 @@ export function FormMailingCampania({ onSaved }: Props) {
                   if (e.key === 'Escape') setGuardandoPlantilla(false);
                 }}
                 placeholder="Nombre de la plantilla"
-                className="bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-2.5 py-1.5 text-[10px] text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra"
+                className="bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-2.5 py-1.5 text-[13px] text-manso-cream placeholder:text-manso-cream/62 focus:outline-none focus:border-manso-terra"
               />
               <button
                 onClick={guardarPlantilla}
                 disabled={!nombrePlantilla.trim()}
-                className="px-2.5 py-1.5 rounded-lg bg-manso-terra/80 text-manso-cream text-[9px] font-black uppercase tracking-widest disabled:opacity-30"
+                className="px-2.5 py-1.5 rounded-lg bg-manso-terra/80 text-manso-cream text-[12px] font-black uppercase tracking-widest disabled:opacity-30"
               >
                 Guardar
               </button>
               <button
                 onClick={() => setGuardandoPlantilla(false)}
-                className="p-1.5 text-manso-cream/40 hover:text-manso-cream"
+                className="p-1.5 text-manso-cream/62 hover:text-manso-cream"
               >
                 <X size={12} />
               </button>
@@ -932,7 +932,7 @@ export function FormMailingCampania({ onSaved }: Props) {
             <button
               onClick={() => setGuardandoPlantilla(true)}
               disabled={bloques.length === 0}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-manso-cream/5 hover:bg-manso-cream/10 text-manso-cream/60 text-[9px] font-black uppercase tracking-widest transition-colors disabled:opacity-30"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-manso-cream/5 hover:bg-manso-cream/10 text-manso-cream/60 text-[12px] font-black uppercase tracking-widest transition-colors disabled:opacity-30"
               title="Guardar estos bloques como plantilla reutilizable"
             >
               <Save size={11} /> Guardar como plantilla
@@ -942,7 +942,7 @@ export function FormMailingCampania({ onSaved }: Props) {
           {bloques.length > 1 && (
             <button
               onClick={alternarTodos}
-              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-manso-cream/5 hover:bg-manso-cream/10 text-manso-cream/60 text-[9px] font-black uppercase tracking-widest transition-colors ml-auto"
+              className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-manso-cream/5 hover:bg-manso-cream/10 text-manso-cream/60 text-[12px] font-black uppercase tracking-widest transition-colors ml-auto"
             >
               {todosColapsados ? <FolderOpen size={11} /> : <ChevronRight size={11} />}
               {todosColapsados ? 'Abrir todos' : 'Colapsar todos'}
@@ -951,7 +951,7 @@ export function FormMailingCampania({ onSaved }: Props) {
         </div>
 
         {bloques.length > 1 && (
-          <p className="text-[9px] text-manso-cream/30">
+          <p className="text-[12px] text-manso-cream/62">
             Arrastrá un bloque desde el encabezado para cambiarlo de lugar.
           </p>
         )}
@@ -989,11 +989,11 @@ export function FormMailingCampania({ onSaved }: Props) {
               }}
               className="flex items-center justify-between cursor-grab active:cursor-grabbing"
             >
-              <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/50 flex items-center gap-1.5 min-w-0">
-                <GripVertical size={12} className="text-manso-cream/30 shrink-0" />
+              <span className="text-[12px] font-black uppercase tracking-widest text-manso-cream/50 flex items-center gap-1.5 min-w-0">
+                <GripVertical size={12} className="text-manso-cream/62 shrink-0" />
                 <button
                   onClick={() => alternarColapso(bloque.id)}
-                  className="text-manso-cream/40 hover:text-manso-cream shrink-0"
+                  className="text-manso-cream/62 hover:text-manso-cream shrink-0"
                   title={colapsado ? 'Abrir bloque' : 'Colapsar bloque'}
                 >
                   {colapsado ? <ChevronRight size={12} /> : <ChevronDown size={12} />}
@@ -1002,7 +1002,7 @@ export function FormMailingCampania({ onSaved }: Props) {
                 {bloque.tipo === 'boton' && <><MousePointerClick size={12} /> Botón</>}
                 {bloque.tipo === 'texto' && <><TypeIcon size={12} /> Texto</>}
                 {bloque.tipo === 'redes' && <><Share2 size={12} /> Redes / Contacto</>}
-                <span className="text-manso-cream/25 shrink-0">bloque {i + 1}</span>
+                <span className="text-manso-cream/62 shrink-0">bloque {i + 1}</span>
                 {bloque.tipo === 'canvas' && bloque.hotspots.length > 0 && !colapsado && (
                   <span className="flex items-center gap-1 text-manso-terra">
                     <MousePointerClick size={12} /> {bloque.hotspots.length}{' '}
@@ -1010,7 +1010,7 @@ export function FormMailingCampania({ onSaved }: Props) {
                   </span>
                 )}
                 {colapsado && (
-                  <span className="text-manso-cream/35 normal-case tracking-normal font-normal truncate">
+                  <span className="text-manso-cream/62 normal-case tracking-normal font-normal truncate">
                     {resumenBloque(bloque)}
                   </span>
                 )}
@@ -1021,16 +1021,16 @@ export function FormMailingCampania({ onSaved }: Props) {
                 )}
               </span>
               <div className="flex items-center gap-1 shrink-0">
-                <button onClick={() => moverBloque(i, -1)} disabled={i === 0} className="p-1 text-manso-cream/40 hover:text-manso-cream disabled:opacity-20" title="Subir">
+                <button onClick={() => moverBloque(i, -1)} disabled={i === 0} className="p-1 text-manso-cream/62 hover:text-manso-cream disabled:opacity-20" title="Subir">
                   <ArrowUp size={12} />
                 </button>
-                <button onClick={() => moverBloque(i, 1)} disabled={i === bloques.length - 1} className="p-1 text-manso-cream/40 hover:text-manso-cream disabled:opacity-20" title="Bajar">
+                <button onClick={() => moverBloque(i, 1)} disabled={i === bloques.length - 1} className="p-1 text-manso-cream/62 hover:text-manso-cream disabled:opacity-20" title="Bajar">
                   <ArrowDown size={12} />
                 </button>
-                <button onClick={() => duplicarBloque(i)} className="p-1 text-manso-cream/40 hover:text-manso-cream" title="Duplicar bloque">
+                <button onClick={() => duplicarBloque(i)} className="p-1 text-manso-cream/62 hover:text-manso-cream" title="Duplicar bloque">
                   <Copy size={12} />
                 </button>
-                <button onClick={() => eliminarBloque(i)} className="p-1 text-manso-cream/40 hover:text-red-400" title="Eliminar bloque">
+                <button onClick={() => eliminarBloque(i)} className="p-1 text-manso-cream/62 hover:text-red-400" title="Eliminar bloque">
                   <Trash2 size={12} />
                 </button>
               </div>
@@ -1052,7 +1052,7 @@ export function FormMailingCampania({ onSaved }: Props) {
                   value={bloque.alt}
                   onChange={(e) => actualizarBloque(i, { alt: e.target.value })}
                   placeholder="Texto alternativo (accesibilidad)"
-                  className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-1.5 text-xs text-manso-cream placeholder:text-manso-cream/30 focus:outline-none"
+                  className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-1.5 text-[13px] text-manso-cream placeholder:text-manso-cream/62 focus:outline-none"
                 />
               </>
             )}
@@ -1063,13 +1063,13 @@ export function FormMailingCampania({ onSaved }: Props) {
                   value={bloque.texto}
                   onChange={(e) => actualizarBloque(i, { texto: e.target.value })}
                   placeholder="Texto del botón. Ej: SUMATE :)"
-                  className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-2 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra"
+                  className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-2 text-[15px] text-manso-cream placeholder:text-manso-cream/62 focus:outline-none focus:border-manso-terra"
                 />
                 <input
                   value={bloque.link}
                   onChange={(e) => actualizarBloque(i, { link: e.target.value })}
                   placeholder="https://mansoclub.com.ar/membresias"
-                  className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-2 text-xs text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra"
+                  className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-2 text-[13px] text-manso-cream placeholder:text-manso-cream/62 focus:outline-none focus:border-manso-terra"
                 />
                 <div className="flex items-center gap-2 flex-wrap">
                   <label
@@ -1082,7 +1082,7 @@ export function FormMailingCampania({ onSaved }: Props) {
                       onChange={(e) => actualizarBloque(i, { color: e.target.value })}
                       className="w-5 h-5 bg-transparent border-0 p-0 cursor-pointer"
                     />
-                    <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/50">
+                    <span className="text-[12px] font-black uppercase tracking-widest text-manso-cream/50">
                       Fondo
                     </span>
                   </label>
@@ -1096,7 +1096,7 @@ export function FormMailingCampania({ onSaved }: Props) {
                       onChange={(e) => actualizarBloque(i, { colorTexto: e.target.value })}
                       className="w-5 h-5 bg-transparent border-0 p-0 cursor-pointer"
                     />
-                    <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/50">
+                    <span className="text-[12px] font-black uppercase tracking-widest text-manso-cream/50">
                       Texto
                     </span>
                   </label>
@@ -1104,7 +1104,7 @@ export function FormMailingCampania({ onSaved }: Props) {
                     value={bloque.radio || RADIO_DEFAULT}
                     onChange={(e) => actualizarBloque(i, { radio: e.target.value as RadioBoton })}
                     title="Redondeo de las esquinas"
-                    className="flex-1 min-w-[9rem] bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-2 text-xs text-manso-cream focus:outline-none focus:border-manso-terra"
+                    className="flex-1 min-w-[9rem] bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-2 text-[13px] text-manso-cream focus:outline-none focus:border-manso-terra"
                   >
                     {RADIOS.map((r) => (
                       <option key={r.id} value={r.id} className="bg-manso-black">
@@ -1116,7 +1116,7 @@ export function FormMailingCampania({ onSaved }: Props) {
                     value={bloque.separacion}
                     onChange={(e) => actualizarBloque(i, { separacion: e.target.value as Separacion })}
                     title="Aire respecto del bloque de arriba"
-                    className="flex-1 min-w-[9rem] bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-2 text-xs text-manso-cream focus:outline-none focus:border-manso-terra"
+                    className="flex-1 min-w-[9rem] bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-2 text-[13px] text-manso-cream focus:outline-none focus:border-manso-terra"
                   >
                     {SEPARACIONES.map((s) => (
                       <option key={s.id} value={s.id} className="bg-manso-black">
@@ -1128,7 +1128,7 @@ export function FormMailingCampania({ onSaved }: Props) {
                 {/* Vista previa aproximada de cómo lo va a dibujar el mail */}
                 <div className="rounded-lg p-3 flex justify-center" style={{ backgroundColor: colorFondo }}>
                   <span
-                    className="inline-block px-8 py-3 text-sm"
+                    className="inline-block px-8 py-3 text-[15px]"
                     style={{
                       background: bloque.color,
                       color: bloque.colorTexto || TEXTO_BOTON_DEFAULT,
@@ -1149,7 +1149,7 @@ export function FormMailingCampania({ onSaved }: Props) {
                   <select
                     value={bloque.modo}
                     onChange={(e) => actualizarBloque(i, { modo: e.target.value })}
-                    className="flex-1 bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-2 text-xs text-manso-cream focus:outline-none focus:border-manso-terra"
+                    className="flex-1 bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-2 text-[13px] text-manso-cream focus:outline-none focus:border-manso-terra"
                   >
                     <option value="iconos" className="bg-manso-black">Mostrar iconos</option>
                     <option value="texto" className="bg-manso-black">Mostrar nombres (se ven sin imágenes)</option>
@@ -1157,7 +1157,7 @@ export function FormMailingCampania({ onSaved }: Props) {
                   <select
                     value={bloque.separacion}
                     onChange={(e) => actualizarBloque(i, { separacion: e.target.value })}
-                    className="flex-1 bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-2 text-xs text-manso-cream focus:outline-none focus:border-manso-terra"
+                    className="flex-1 bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-2 text-[13px] text-manso-cream focus:outline-none focus:border-manso-terra"
                   >
                     {SEPARACIONES.map((s) => (
                       <option key={s.id} value={s.id} className="bg-manso-black">{s.label}</option>
@@ -1169,7 +1169,7 @@ export function FormMailingCampania({ onSaved }: Props) {
                   <select
                     value={bloque.tamano || TAMANO_RED_DEFAULT}
                     onChange={(e) => actualizarBloque(i, { tamano: e.target.value as TamanoRed })}
-                    className="flex-1 bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-2 text-xs text-manso-cream focus:outline-none focus:border-manso-terra"
+                    className="flex-1 bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-2 text-[13px] text-manso-cream focus:outline-none focus:border-manso-terra"
                     title="Tamaño de los iconos y de la letra"
                   >
                     {TAMANOS_RED.map((t) => (
@@ -1194,7 +1194,7 @@ export function FormMailingCampania({ onSaved }: Props) {
                         type="button"
                         onClick={() => actualizarBloque(i, { colorTexto: '' })}
                         disabled={!bloque.colorTexto}
-                        className={`px-2 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-colors ${
+                        className={`px-2 py-1.5 rounded-lg text-[12px] font-black uppercase tracking-widest transition-colors ${
                           bloque.colorTexto
                             ? 'bg-manso-cream/5 hover:bg-manso-cream/10 text-manso-cream/60'
                             : 'bg-manso-terra/20 text-manso-cream/70'
@@ -1284,19 +1284,19 @@ export function FormMailingCampania({ onSaved }: Props) {
                         value={item.etiqueta}
                         onChange={(e) => actualizarItemRed(i, k, { etiqueta: e.target.value })}
                         placeholder="Nombre. Ej: Instagram"
-                        className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-1.5 text-xs text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra"
+                        className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-1.5 text-[13px] text-manso-cream placeholder:text-manso-cream/62 focus:outline-none focus:border-manso-terra"
                       />
                       <input
                         value={item.link}
                         onChange={(e) => actualizarItemRed(i, k, { link: e.target.value })}
                         placeholder="https://instagram.com/... · mailto:hola@... · tel:+5411..."
-                        className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-1.5 text-xs text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra"
+                        className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-1.5 text-[13px] text-manso-cream placeholder:text-manso-cream/62 focus:outline-none focus:border-manso-terra"
                       />
                     </div>
                     <button
                       onClick={() => eliminarItemRed(i, k)}
                       disabled={bloque.items.length === 1}
-                      className="p-1 text-manso-cream/40 hover:text-red-400 disabled:opacity-20 shrink-0"
+                      className="p-1 text-manso-cream/62 hover:text-red-400 disabled:opacity-20 shrink-0"
                     >
                       <Trash2 size={12} />
                     </button>
@@ -1305,12 +1305,12 @@ export function FormMailingCampania({ onSaved }: Props) {
 
                 <button
                   onClick={() => agregarItemRed(i)}
-                  className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-manso-cream/5 hover:bg-manso-cream/10 text-manso-cream/60 text-[9px] font-black uppercase tracking-widest transition-colors"
+                  className="w-full flex items-center justify-center gap-1.5 py-1.5 rounded-lg bg-manso-cream/5 hover:bg-manso-cream/10 text-manso-cream/60 text-[12px] font-black uppercase tracking-widest transition-colors"
                 >
                   <Plus size={11} /> Agregar link
                 </button>
 
-                <p className="text-[9px] text-manso-cream/40">
+                <p className="text-[12px] text-manso-cream/62">
                   Se dibujan en fila, centrados. Cada uno es su propia imagen con su propio
                   link, así que no hace falta recortar nada. Los iconos van en PNG con fondo
                   transparente, de unos 120px; el margen transparente sobrante se recorta
@@ -1326,7 +1326,7 @@ export function FormMailingCampania({ onSaved }: Props) {
                 onChange={(e) => actualizarBloque(i, { contenido: e.target.value })}
                 rows={4}
                 placeholder="Escribí el texto del mail. Se ve aunque las imágenes estén bloqueadas."
-                className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-2 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra resize-y"
+                className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-2 text-[15px] text-manso-cream placeholder:text-manso-cream/62 focus:outline-none focus:border-manso-terra resize-y"
               />
             )}
             </>}
@@ -1337,25 +1337,25 @@ export function FormMailingCampania({ onSaved }: Props) {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
           <button
             onClick={() => agregarBloque('canvas')}
-            className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-manso-cream/5 hover:bg-manso-cream/10 text-manso-cream/70 text-[9px] font-black uppercase tracking-widest transition-colors"
+            className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-manso-cream/5 hover:bg-manso-cream/10 text-manso-cream/70 text-[12px] font-black uppercase tracking-widest transition-colors"
           >
             <Plus size={12} /> Imagen
           </button>
           <button
             onClick={() => agregarBloque('boton')}
-            className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-manso-terra/20 hover:bg-manso-terra/30 text-manso-cream text-[9px] font-black uppercase tracking-widest transition-colors"
+            className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-manso-terra/20 hover:bg-manso-terra/30 text-manso-cream text-[12px] font-black uppercase tracking-widest transition-colors"
           >
             <Plus size={12} /> Botón
           </button>
           <button
             onClick={() => agregarBloque('texto')}
-            className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-manso-cream/5 hover:bg-manso-cream/10 text-manso-cream/70 text-[9px] font-black uppercase tracking-widest transition-colors"
+            className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-manso-cream/5 hover:bg-manso-cream/10 text-manso-cream/70 text-[12px] font-black uppercase tracking-widest transition-colors"
           >
             <Plus size={12} /> Texto
           </button>
           <button
             onClick={() => agregarBloque('redes')}
-            className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-manso-cream/5 hover:bg-manso-cream/10 text-manso-cream/70 text-[9px] font-black uppercase tracking-widest transition-colors"
+            className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-manso-cream/5 hover:bg-manso-cream/10 text-manso-cream/70 text-[12px] font-black uppercase tracking-widest transition-colors"
           >
             <Plus size={12} /> Redes
           </button>
@@ -1363,10 +1363,10 @@ export function FormMailingCampania({ onSaved }: Props) {
       </div>
 
       <div>
-        <label className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40 mb-1 block">
+        <label className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62 mb-1 block">
           Color de fondo del mail
         </label>
-        <p className="text-[9px] text-manso-cream/40 mb-2">
+        <p className="text-[12px] text-manso-cream/62 mb-2">
           El marco alrededor del arte. Elegí el mismo color que el fondo de la imagen para que se
           vea continuo.
         </p>
@@ -1395,20 +1395,20 @@ export function FormMailingCampania({ onSaved }: Props) {
               onChange={(e) => setColorFondo(e.target.value)}
               className="w-5 h-5 bg-transparent border-0 p-0 cursor-pointer"
             />
-            <span className="text-[10px] font-mono text-manso-cream/60 uppercase">{colorFondo}</span>
+            <span className="text-[13px] font-mono text-manso-cream/60 uppercase">{colorFondo}</span>
           </label>
         </div>
       </div>
 
       <div>
-        <label className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40 mb-1 flex items-center gap-1.5">
+        <label className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62 mb-1 flex items-center gap-1.5">
           <CalendarClock size={11} /> Programar envío (opcional)
         </label>
         <input
           type="datetime-local"
           value={scheduledAt}
           onChange={(e) => setScheduledAt(e.target.value)}
-          className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-2.5 text-sm text-manso-cream focus:outline-none focus:border-manso-terra [color-scheme:dark]"
+          className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-2.5 text-[15px] text-manso-cream focus:outline-none focus:border-manso-terra [color-scheme:light]"
         />
       </div>
 
@@ -1416,12 +1416,12 @@ export function FormMailingCampania({ onSaved }: Props) {
           guardar y se va vaciando sola a medida que se corrige. */}
       {intentoEnvio && problemas.length > 0 && (
         <div className="rounded-xl bg-red-500/10 border border-red-500/20 p-3">
-          <p className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-red-400 mb-1.5">
+          <p className="flex items-center gap-1.5 text-[12px] font-black uppercase tracking-widest text-red-400 mb-1.5">
             <AlertCircle size={11} /> Falta corregir ({problemas.length})
           </p>
           <ul className="space-y-1">
             {problemas.map((p, i) => (
-              <li key={i} className="text-[11px] text-red-300/90 leading-snug">
+              <li key={i} className="text-[13px] text-red-300/90 leading-snug">
                 · {p.mensaje}
               </li>
             ))}
@@ -1429,7 +1429,7 @@ export function FormMailingCampania({ onSaved }: Props) {
         </div>
       )}
       {intentoEnvio && problemas.length === 0 && (
-        <p className="flex items-center gap-1.5 text-[10px] text-green-400">
+        <p className="flex items-center gap-1.5 text-[13px] text-green-400">
           <CheckCircle size={12} /> Todo listo para guardar
         </p>
       )}
@@ -1437,7 +1437,7 @@ export function FormMailingCampania({ onSaved }: Props) {
       <button
         onClick={abrirPreview}
         disabled={bloques.length === 0}
-        className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-manso-cream/10 text-manso-cream text-xs font-black uppercase tracking-widest hover:bg-manso-cream/20 transition-colors disabled:opacity-30"
+        className="w-full flex items-center justify-center gap-2 py-3 rounded-xl bg-manso-cream/10 text-manso-cream text-[13px] font-black uppercase tracking-widest hover:bg-manso-cream/20 transition-colors disabled:opacity-30"
       >
         <Eye size={14} /> Vista previa
       </button>
@@ -1446,14 +1446,14 @@ export function FormMailingCampania({ onSaved }: Props) {
         <button
           onClick={() => guardar(false)}
           disabled={loading}
-          className="flex-1 py-3 rounded-xl bg-manso-cream/10 text-manso-cream text-xs font-black uppercase tracking-widest hover:bg-manso-cream/20 transition-colors disabled:opacity-50"
+          className="flex-1 py-3 rounded-xl bg-manso-cream/10 text-manso-cream text-[13px] font-black uppercase tracking-widest hover:bg-manso-cream/20 transition-colors disabled:opacity-50"
         >
           {loading ? 'Guardando...' : 'Guardar borrador'}
         </button>
         <button
           onClick={() => guardar(true)}
           disabled={loading || !scheduledAt}
-          className="flex-1 py-3 rounded-xl bg-manso-terra text-manso-cream text-xs font-black uppercase tracking-widest hover:bg-manso-terra/90 transition-colors disabled:opacity-50"
+          className="flex-1 py-3 rounded-xl bg-manso-terra text-manso-cream text-[13px] font-black uppercase tracking-widest hover:bg-manso-terra/90 transition-colors disabled:opacity-50"
         >
           {loading ? 'Guardando...' : 'Programar campaña'}
         </button>
@@ -1469,14 +1469,14 @@ export function FormMailingCampania({ onSaved }: Props) {
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-center justify-between gap-3 px-4 py-3 border-b border-manso-cream/10">
-              <span className="text-[10px] font-black uppercase tracking-widest text-manso-cream">
+              <span className="text-[13px] font-black uppercase tracking-widest text-manso-cream">
                 Vista previa
               </span>
               <div className="flex items-center gap-2">
                 <div className="flex rounded-full bg-manso-cream/10 p-0.5">
                   <button
                     onClick={() => setPreviewMobile(false)}
-                    className={`flex items-center gap-1 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest transition-colors ${
+                    className={`flex items-center gap-1 px-3 py-1 rounded-full text-[12px] font-black uppercase tracking-widest transition-colors ${
                       !previewMobile ? 'bg-manso-cream text-manso-black' : 'text-manso-cream/60'
                     }`}
                   >
@@ -1484,7 +1484,7 @@ export function FormMailingCampania({ onSaved }: Props) {
                   </button>
                   <button
                     onClick={() => setPreviewMobile(true)}
-                    className={`flex items-center gap-1 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest transition-colors ${
+                    className={`flex items-center gap-1 px-3 py-1 rounded-full text-[12px] font-black uppercase tracking-widest transition-colors ${
                       previewMobile ? 'bg-manso-cream text-manso-black' : 'text-manso-cream/60'
                     }`}
                   >
@@ -1502,10 +1502,10 @@ export function FormMailingCampania({ onSaved }: Props) {
 
             {/* Así se ve en la bandeja antes de abrirlo */}
             <div className="px-4 py-2.5 border-b border-manso-cream/10 bg-manso-cream/5">
-              <p className="text-[8px] font-black uppercase tracking-widest text-manso-cream/30 mb-0.5">
+              <p className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62 mb-0.5">
                 En la casilla
               </p>
-              <p className="text-xs truncate">
+              <p className="text-[13px] truncate">
                 <span className="font-bold text-manso-cream">{asunto.trim() || 'Asunto'}</span>
                 <span className="text-manso-cream/50"> - {preheader.trim() || 'Pre-header'}</span>
               </p>
@@ -1513,9 +1513,9 @@ export function FormMailingCampania({ onSaved }: Props) {
 
             <div className="flex-1 overflow-auto p-4 flex justify-center bg-manso-cream/5">
               {previewError ? (
-                <p className="text-xs text-red-400 self-center text-center px-6">{previewError}</p>
+                <p className="text-[13px] text-red-400 self-center text-center px-6">{previewError}</p>
               ) : previewHtml === null ? (
-                <p className="text-[10px] uppercase tracking-widest text-manso-cream/30 self-center">
+                <p className="text-[13px] uppercase tracking-widest text-manso-cream/62 self-center">
                   Generando...
                 </p>
               ) : (
@@ -1529,7 +1529,7 @@ export function FormMailingCampania({ onSaved }: Props) {
               )}
             </div>
 
-            <p className="px-4 py-2.5 border-t border-manso-cream/10 text-[9px] text-manso-cream/40 leading-relaxed">
+            <p className="px-4 py-2.5 border-t border-manso-cream/10 text-[12px] text-manso-cream/62 leading-relaxed">
               Las imágenes se muestran enteras: las zonas clickeables se recortan recién al
               enviar, así que acá no se pueden clickear. Antes de mandar la campaña, revisala
               igual con el envío de prueba desde la lista.

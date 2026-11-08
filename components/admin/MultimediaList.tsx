@@ -65,7 +65,7 @@ export function MultimediaList({ refreshTrigger }: { refreshTrigger?: number }) 
         <ImageIcon size={18} /> Contenidos ({items.length})
       </h3>
       {items.length === 0 ? (
-        <div className="text-manso-cream/40 text-sm text-center py-8">No hay contenido todavía</div>
+        <div className="text-manso-cream/62 text-[15px] text-center py-8">No hay contenido todavía</div>
       ) : items.map(item => {
         const meta = TIPO_META[item.tipo] || TIPO_META.youtube;
         const Icon = meta.icon;
@@ -89,13 +89,13 @@ export function MultimediaList({ refreshTrigger }: { refreshTrigger?: number }) 
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
                     <Icon size={14} className="text-manso-terra shrink-0" />
-                    <p className="text-manso-cream font-bold text-sm truncate">{item.titulo}</p>
+                    <p className="text-manso-cream font-bold text-[15px] truncate">{item.titulo}</p>
                   </div>
-                  <p className="text-manso-cream/40 text-xs font-mono truncate mt-0.5">
+                  <p className="text-manso-cream/62 text-[13px] font-mono truncate mt-0.5">
                     {item.tipo === 'youtube' ? item.youtube_url : meta.label}
                   </p>
                   {item.descripcion && (
-                    <p className="text-manso-cream/50 text-xs mt-1 line-clamp-1">{item.descripcion}</p>
+                    <p className="text-manso-cream/50 text-[13px] mt-1 line-clamp-1">{item.descripcion}</p>
                   )}
                 </div>
               </div>

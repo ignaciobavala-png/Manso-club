@@ -92,9 +92,9 @@ export function CoworkSolicitudesList() {
 
   if (loading) {
     return (
-      <div className="flex items-center gap-3 text-manso-cream/30 py-8">
+      <div className="flex items-center gap-3 text-manso-cream/62 py-8">
         <div className="w-4 h-4 border border-manso-cream/20 border-t-manso-cream/60 rounded-full animate-spin" />
-        <span className="text-[10px] uppercase tracking-widest font-black">Cargando...</span>
+        <span className="text-[13px] uppercase tracking-widest font-black">Cargando...</span>
       </div>
     );
   }
@@ -107,17 +107,17 @@ export function CoworkSolicitudesList() {
           <button
             key={s.id}
             onClick={() => setSeccion(s.id)}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-[10px] font-black uppercase tracking-[0.2em] transition-all ${
+            className={`flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-[13px] font-black uppercase tracking-[0.2em] transition-all ${
               seccion === s.id
                 ? 'bg-manso-terra text-manso-cream'
-                : 'text-manso-cream/40 hover:text-manso-cream/70'
+                : 'text-manso-cream/62 hover:text-manso-cream/70'
             }`}
           >
             {s.icon}
             {s.label}
             {s.sin > 0 && (
               <span
-                className={`min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center text-[9px] ${
+                className={`min-w-[18px] h-[18px] px-1 rounded-full flex items-center justify-center text-[12px] ${
                   seccion === s.id ? 'bg-manso-cream/25' : 'bg-yellow-500/20 text-yellow-400'
                 }`}
                 title={`${s.sin} sin responder`}

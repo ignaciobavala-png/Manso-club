@@ -102,8 +102,8 @@ const Interruptor = ({
 }) => (
   <label className="flex items-start justify-between gap-4 py-3 cursor-pointer">
     <span className="space-y-0.5">
-      <span className="block text-[11px] font-black uppercase tracking-widest text-manso-cream">{titulo}</span>
-      <span className="block text-[11px] text-manso-cream/40 leading-relaxed">{ayuda}</span>
+      <span className="block text-[13px] font-black uppercase tracking-widest text-manso-cream">{titulo}</span>
+      <span className="block text-[13px] text-manso-cream/62 leading-relaxed">{ayuda}</span>
     </span>
     <input
       type="checkbox"
@@ -133,8 +133,8 @@ const Numero = ({
 }) => (
   <div className="py-3 flex items-start justify-between gap-4">
     <div className="space-y-0.5">
-      <p className="text-[11px] font-black uppercase tracking-widest text-manso-cream">{titulo}</p>
-      <p className="text-[11px] text-manso-cream/40 leading-relaxed">{ayuda}</p>
+      <p className="text-[13px] font-black uppercase tracking-widest text-manso-cream">{titulo}</p>
+      <p className="text-[13px] text-manso-cream/62 leading-relaxed">{ayuda}</p>
     </div>
     <div className="flex items-center gap-2 shrink-0">
       <input
@@ -145,7 +145,7 @@ const Numero = ({
         onChange={e => onChange(Math.min(max, Math.max(min, Math.trunc(Number(e.target.value) || 0))))}
         className={`${INPUT} !w-24 !py-2 text-right`}
       />
-      <span className="text-[10px] text-manso-cream/40 w-10">{unidad}</span>
+      <span className="text-[13px] text-manso-cream/62 w-10">{unidad}</span>
     </div>
   </div>
 );
@@ -272,9 +272,9 @@ export function FestivalConteoAdmin() {
 
   const tarjeta = (titulo: string, valor: string, nota?: string) => (
     <div className="bg-manso-cream/5 border border-manso-cream/10 rounded-xl p-3">
-      <p className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40">{titulo}</p>
+      <p className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62">{titulo}</p>
       <p className="text-xl font-black text-manso-cream mt-1">{valor}</p>
-      {nota && <p className="text-[10px] text-manso-cream/40 mt-0.5">{nota}</p>}
+      {nota && <p className="text-[13px] text-manso-cream/62 mt-0.5">{nota}</p>}
     </div>
   );
 
@@ -293,7 +293,7 @@ export function FestivalConteoAdmin() {
           onClick={cargar}
           disabled={cargando}
           title="Actualizar"
-          className="w-8 h-8 shrink-0 flex items-center justify-center rounded-lg text-manso-cream/40 hover:text-manso-cream hover:bg-manso-cream/10 transition-colors"
+          className="w-8 h-8 shrink-0 flex items-center justify-center rounded-lg text-manso-cream/62 hover:text-manso-cream hover:bg-manso-cream/10 transition-colors"
         >
           {cargando ? <Loader2 size={14} className="animate-spin" /> : <RefreshCw size={14} />}
         </button>
@@ -307,7 +307,7 @@ export function FestivalConteoAdmin() {
               key={r.id}
               type="button"
               onClick={() => setRango(r.id)}
-              className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-colors ${
+              className={`px-3 py-1.5 rounded-lg text-[12px] font-black uppercase tracking-widest transition-colors ${
                 rango === r.id
                   ? 'bg-manso-terra/25 text-manso-terra'
                   : 'bg-manso-cream/5 text-manso-cream/50 hover:text-manso-cream'
@@ -321,7 +321,7 @@ export function FestivalConteoAdmin() {
           {rango === 'custom' && (
             <>
               <input type="date" value={desde} onChange={e => setDesde(e.target.value)} className={`${INPUT} !w-auto !py-2`} />
-              <span className="text-manso-cream/30 text-xs">a</span>
+              <span className="text-manso-cream/62 text-[13px]">a</span>
               <input type="date" value={hasta} onChange={e => setHasta(e.target.value)} className={`${INPUT} !w-auto !py-2`} />
             </>
           )}
@@ -336,7 +336,7 @@ export function FestivalConteoAdmin() {
             <button
               type="button"
               onClick={() => setPantallaElegida(null)}
-              className="px-3 py-1.5 rounded-lg bg-manso-olive/20 text-manso-olive text-[9px] font-black uppercase tracking-widest"
+              className="px-3 py-1.5 rounded-lg bg-manso-olive/20 text-manso-olive text-[12px] font-black uppercase tracking-widest"
             >
               Clicks de: {nombrePantalla(pantallaElegida)} ✕
             </button>
@@ -345,7 +345,7 @@ export function FestivalConteoAdmin() {
       </div>
 
       {error && (
-        <p className="text-[11px] text-manso-terra leading-relaxed">
+        <p className="text-[13px] text-manso-terra leading-relaxed">
           No se pudieron leer los datos: {error}. ¿Corriste supabase/migration_festival_conteo.sql?
         </p>
       )}
@@ -364,7 +364,7 @@ export function FestivalConteoAdmin() {
           <p className={LABEL}>Por día (vistas)</p>
           <div className="space-y-1 max-h-56 overflow-y-auto pr-1">
             {dias.map(d => (
-              <div key={d.dia} className="flex items-center gap-3 text-[11px]">
+              <div key={d.dia} className="flex items-center gap-3 text-[13px]">
                 <span className="w-20 shrink-0 text-manso-cream/50 tabular-nums">
                   {new Date(`${d.dia}T12:00:00`).toLocaleDateString('es-AR', { day: '2-digit', month: 'short' })}
                 </span>
@@ -388,21 +388,21 @@ export function FestivalConteoAdmin() {
             type="button"
             onClick={exportarCsv}
             disabled={!pantallas.length}
-            className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-manso-cream/50 hover:text-manso-cream disabled:opacity-30"
+            className="inline-flex items-center gap-1.5 text-[12px] font-black uppercase tracking-widest text-manso-cream/50 hover:text-manso-cream disabled:opacity-30"
           >
             <Download size={11} />
             CSV
           </button>
         </div>
         {pantallas.length === 0 ? (
-          <p className="text-[11px] text-manso-cream/40 py-4">
+          <p className="text-[13px] text-manso-cream/62 py-4">
             {cargando ? 'Cargando…' : 'Todavía no hay visitas en este período.'}
           </p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-[11px] text-manso-cream">
+            <table className="w-full text-[13px] text-manso-cream">
               <thead>
-                <tr className="text-left text-[9px] uppercase tracking-widest text-manso-cream/40">
+                <tr className="text-left text-[12px] uppercase tracking-widest text-manso-cream/62">
                   <th className="py-2 pr-3 font-black">Pantalla</th>
                   {COLUMNAS.map(c => (
                     <th key={c.id} className="py-2 px-2 font-black text-right whitespace-nowrap">
@@ -428,7 +428,7 @@ export function FestivalConteoAdmin() {
                   >
                     <td className="py-2 pr-3">
                       <span className="font-black">{nombrePantalla(p.path)}</span>
-                      <span className="block text-[10px] text-manso-cream/30">{p.path}</span>
+                      <span className="block text-[13px] text-manso-cream/62">{p.path}</span>
                     </td>
                     <td className="py-2 px-2 text-right tabular-nums">{numero(p.vistas)}</td>
                     <td className="py-2 px-2 text-right tabular-nums">{numero(p.visitantes)}</td>
@@ -454,17 +454,17 @@ export function FestivalConteoAdmin() {
           Dónde tocan{pantallaElegida ? ` · ${nombrePantalla(pantallaElegida)}` : ''}
         </p>
         {clicks.length === 0 ? (
-          <p className="text-[11px] text-manso-cream/40 py-2">
+          <p className="text-[13px] text-manso-cream/62 py-2">
             {config.contar_clicks ? 'Sin clicks registrados en este período.' : 'El conteo de clicks está apagado.'}
           </p>
         ) : (
-          <ul className="divide-y divide-manso-cream/10 text-[11px] max-h-72 overflow-y-auto pr-1">
+          <ul className="divide-y divide-manso-cream/10 text-[13px] max-h-72 overflow-y-auto pr-1">
             {clicks.map(c => (
               <li key={`${c.path}|${c.elemento}`} className="py-1.5 flex items-center justify-between gap-3">
                 <span className="min-w-0">
                   <span className="text-manso-cream">{c.elemento}</span>
                   {!pantallaElegida && (
-                    <span className="ml-2 text-[10px] text-manso-cream/30">{nombrePantalla(c.path)}</span>
+                    <span className="ml-2 text-[13px] text-manso-cream/62">{nombrePantalla(c.path)}</span>
                   )}
                 </span>
                 <span className="font-black tabular-nums shrink-0">{numero(c.clicks)}</span>
@@ -558,8 +558,8 @@ export function FestivalConteoAdmin() {
             onChange={retencion_dias => editar({ retencion_dias })}
           />
           <div className="py-3 space-y-2">
-            <p className="text-[11px] font-black uppercase tracking-widest text-manso-cream">Pantallas que no se miden</p>
-            <p className="text-[11px] text-manso-cream/40 leading-relaxed">
+            <p className="text-[13px] font-black uppercase tracking-widest text-manso-cream">Pantallas que no se miden</p>
+            <p className="text-[13px] text-manso-cream/62 leading-relaxed">
               Una ruta por renglón; vale ella y todo lo que cuelga. Ej: <code>/blur/info</code>. Por defecto se
               miden todas; las de compra se agrupan en una sola (<code>/blur/compra/:id</code>) para no guardar ids de
               órdenes.
@@ -569,7 +569,7 @@ export function FestivalConteoAdmin() {
               onChange={e => setRutasTexto(e.target.value)}
               rows={3}
               placeholder="/blur/compra"
-              className={`${INPUT} font-mono text-xs`}
+              className={`${INPUT} font-mono text-[13px]`}
             />
           </div>
         </div>
@@ -582,12 +582,12 @@ export function FestivalConteoAdmin() {
           <button
             type="button"
             onClick={borrarAnteriores}
-            className="inline-flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-manso-cream/40 hover:text-manso-terra transition-colors"
+            className="inline-flex items-center gap-2 text-[12px] font-black uppercase tracking-widest text-manso-cream/62 hover:text-manso-terra transition-colors"
           >
             <Trash2 size={11} />
             Borrar datos…
           </button>
-          {avisoConfig && <span className="text-[11px] text-manso-cream/60">{avisoConfig}</span>}
+          {avisoConfig && <span className="text-[13px] text-manso-cream/60">{avisoConfig}</span>}
         </div>
       </div>
     </section>

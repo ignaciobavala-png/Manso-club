@@ -64,15 +64,15 @@ function RevenueDetail({ eventId, onClose }: { eventId: string; onClose: () => v
       <div className="grid grid-cols-2 gap-2">
         <div className="bg-manso-terra/10 border border-manso-terra/20 rounded-xl p-3 col-span-2">
           <p className="text-2xl font-black text-manso-terra">{formatARS(grandTotal)}</p>
-          <p className="text-[8px] uppercase tracking-widest text-manso-terra/50 mt-0.5">Total del evento</p>
+          <p className="text-[12px] uppercase tracking-widest text-manso-terra/50 mt-0.5">Total del evento</p>
         </div>
         <div className="bg-manso-cream/5 border border-manso-cream/10 rounded-xl p-3">
           <p className="text-lg font-black text-manso-cream">{formatARS(revenue.totals.tickets_revenue)}</p>
-          <p className="text-[8px] uppercase tracking-widest text-manso-cream/30 mt-0.5">Tickets · {revenue.totals.tickets_count} vendidos</p>
+          <p className="text-[12px] uppercase tracking-widest text-manso-cream/62 mt-0.5">Tickets · {revenue.totals.tickets_count} vendidos</p>
         </div>
         <div className="bg-manso-cream/5 border border-manso-cream/10 rounded-xl p-3">
           <p className="text-lg font-black text-manso-cream">{formatARS(revenue.totals.products_revenue)}</p>
-          <p className="text-[8px] uppercase tracking-widest text-manso-cream/30 mt-0.5">Productos</p>
+          <p className="text-[12px] uppercase tracking-widest text-manso-cream/62 mt-0.5">Productos</p>
         </div>
       </div>
         );
@@ -81,15 +81,15 @@ function RevenueDetail({ eventId, onClose }: { eventId: string; onClose: () => v
       {/* Detalle tickets */}
       {revenue.ticket_sales.length > 0 && (
         <div>
-          <p className="text-[9px] font-black uppercase tracking-widest text-manso-cream/30 mb-2">Ventas en puerta</p>
+          <p className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62 mb-2">Ventas en puerta</p>
           <div className="space-y-1 max-h-40 overflow-y-auto">
             {revenue.ticket_sales.map(t => (
               <div key={t.id} className="flex items-center justify-between px-3 py-2 bg-manso-cream/5 rounded-lg">
                 <div>
-                  <p className="text-xs text-manso-cream">{t.guest_name}</p>
-                  <p className="text-[8px] text-manso-cream/30 uppercase">{t.type}</p>
+                  <p className="text-[13px] text-manso-cream">{t.guest_name}</p>
+                  <p className="text-[12px] text-manso-cream/62 uppercase">{t.type}</p>
                 </div>
-                <p className="text-xs font-black text-manso-terra">{formatARS(t.price)}</p>
+                <p className="text-[13px] font-black text-manso-terra">{formatARS(t.price)}</p>
               </div>
             ))}
           </div>
@@ -99,15 +99,15 @@ function RevenueDetail({ eventId, onClose }: { eventId: string; onClose: () => v
       {/* Detalle productos */}
       {revenue.product_sales.length > 0 && (
         <div>
-          <p className="text-[9px] font-black uppercase tracking-widest text-manso-cream/30 mb-2">Ventas de productos</p>
+          <p className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62 mb-2">Ventas de productos</p>
           <div className="space-y-1 max-h-40 overflow-y-auto">
             {revenue.product_sales.map(s => (
               <div key={s.id} className="flex items-center justify-between px-3 py-2 bg-manso-cream/5 rounded-lg">
                 <div>
-                  <p className="text-xs text-manso-cream">{s.product_name}</p>
-                  <p className="text-[8px] text-manso-cream/30">{s.quantity} u · {s.payment_method}</p>
+                  <p className="text-[13px] text-manso-cream">{s.product_name}</p>
+                  <p className="text-[12px] text-manso-cream/62">{s.quantity} u · {s.payment_method}</p>
                 </div>
-                <p className="text-xs font-black text-manso-olive">{formatARS(s.total)}</p>
+                <p className="text-[13px] font-black text-manso-olive">{formatARS(s.total)}</p>
               </div>
             ))}
           </div>
@@ -117,7 +117,7 @@ function RevenueDetail({ eventId, onClose }: { eventId: string; onClose: () => v
       {/* Registraciones verificadas con precio — sistema nuevo */}
       {verifiedRegs.length > 0 && (
         <div>
-          <p className="text-[9px] font-black uppercase tracking-widest text-manso-cream/30 mb-2">
+          <p className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62 mb-2">
             Registros con pago verificado
             <span className="ml-2 text-green-400/60">· {formatARS(verifiedRegs.reduce((s, r) => s + (r.price_per_ticket ?? 0), 0))}</span>
           </p>
@@ -125,10 +125,10 @@ function RevenueDetail({ eventId, onClose }: { eventId: string; onClose: () => v
             {verifiedRegs.map(r => (
               <div key={r.id} className="flex items-center justify-between px-3 py-2 bg-green-500/5 border border-green-500/10 rounded-lg">
                 <div>
-                  <p className="text-xs text-manso-cream">{r.name}</p>
-                  <p className="text-[8px] text-manso-cream/30">{r.email}</p>
+                  <p className="text-[13px] text-manso-cream">{r.name}</p>
+                  <p className="text-[12px] text-manso-cream/62">{r.email}</p>
                 </div>
-                <p className="text-xs font-black text-green-400">{formatARS(r.price_per_ticket!)}</p>
+                <p className="text-[13px] font-black text-green-400">{formatARS(r.price_per_ticket!)}</p>
               </div>
             ))}
           </div>
@@ -136,7 +136,7 @@ function RevenueDetail({ eventId, onClose }: { eventId: string; onClose: () => v
       )}
 
       {revenue.ticket_sales.length === 0 && revenue.product_sales.length === 0 && verifiedRegs.length === 0 && (
-        <p className="text-xs text-manso-cream/30 text-center py-4">Sin ventas registradas</p>
+        <p className="text-[13px] text-manso-cream/62 text-center py-4">Sin ventas registradas</p>
       )}
     </div>
   );
@@ -161,8 +161,8 @@ export function CRMFinanzas({ events }: CRMFinanzasProps) {
 
   if (events.length === 0) return (
     <div className="text-center py-10">
-      <DollarSign size={32} className="text-manso-cream/20 mx-auto mb-3" />
-      <p className="text-sm text-manso-cream/30">Sin datos de eventos</p>
+      <DollarSign size={32} className="text-manso-cream/62 mx-auto mb-3" />
+      <p className="text-[15px] text-manso-cream/62">Sin datos de eventos</p>
     </div>
   );
 
@@ -172,19 +172,19 @@ export function CRMFinanzas({ events }: CRMFinanzasProps) {
       <div className="grid grid-cols-3 gap-2">
         <div className="bg-manso-cream/5 border border-manso-cream/10 rounded-2xl p-4">
           <p className="text-2xl font-black text-manso-cream">{proximos.length}</p>
-          <p className="text-[8px] uppercase tracking-widest text-manso-cream/30 mt-1">Próximos</p>
+          <p className="text-[12px] uppercase tracking-widest text-manso-cream/62 mt-1">Próximos</p>
         </div>
         <div className="bg-manso-cream/5 border border-manso-cream/10 rounded-2xl p-4">
           <p className="text-2xl font-black text-manso-cream">{proximos.reduce((s, e) => s + e.registrations_count, 0)}</p>
-          <p className="text-[8px] uppercase tracking-widest text-manso-cream/30 mt-1">Registraciones</p>
+          <p className="text-[12px] uppercase tracking-widest text-manso-cream/62 mt-1">Registraciones</p>
         </div>
         <div className="bg-manso-cream/5 border border-manso-cream/10 rounded-2xl p-4">
           <p className="text-2xl font-black text-manso-cream">{proximos.reduce((s, e) => s + e.ticket_sales_count, 0)}</p>
-          <p className="text-[8px] uppercase tracking-widest text-manso-cream/30 mt-1">Tickets puerta</p>
+          <p className="text-[12px] uppercase tracking-widest text-manso-cream/62 mt-1">Tickets puerta</p>
         </div>
       </div>
 
-      <p className="text-xs font-black uppercase tracking-[0.2em] text-manso-cream/40 px-1 flex items-center gap-2">
+      <p className="text-[13px] font-black uppercase tracking-[0.2em] text-manso-cream/62 px-1 flex items-center gap-2">
         <TrendingUp size={13} /> Ingresos por evento — expandir para ver detalle
       </p>
 
@@ -206,35 +206,35 @@ export function CRMFinanzas({ events }: CRMFinanzasProps) {
                 }`}
               >
                 <div className="min-w-0">
-                  <p className="text-sm font-bold text-manso-cream truncate">{event.name}</p>
-                  <p className="text-[9px] text-manso-cream/40 mt-0.5">
+                  <p className="text-[15px] font-bold text-manso-cream truncate">{event.name}</p>
+                  <p className="text-[12px] text-manso-cream/62 mt-0.5">
                     {formatDate(event.start_date)} · {event.ticket_sales_count} tickets vendidos
                   </p>
                   {event.ticket_alias_pago && (
-                    <p className="text-[8px] text-manso-cream/30 mt-0.5 uppercase tracking-widest">
+                    <p className="text-[12px] text-manso-cream/62 mt-0.5 uppercase tracking-widest">
                       Recaudó: {event.ticket_alias_pago}
                     </p>
                   )}
                 </div>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   {event.ticket_alias_pago && (
-                    <span className="text-[7px] font-black uppercase px-1.5 py-0.5 bg-manso-cream/5 border border-manso-cream/10 rounded-full text-manso-cream/30">
+                    <span className="text-[12px] font-black uppercase px-1.5 py-0.5 bg-manso-cream/5 border border-manso-cream/10 rounded-full text-manso-cream/62">
                       Tercero
                     </span>
                   )}
                   {!isPast && !event.ticket_alias_pago && (
-                    <span className="text-[7px] font-black uppercase px-1.5 py-0.5 bg-green-500/10 border border-green-500/20 rounded-full text-green-400">
+                    <span className="text-[12px] font-black uppercase px-1.5 py-0.5 bg-green-500/10 border border-green-500/20 rounded-full text-green-400">
                       Próximo
                     </span>
                   )}
-                  <ChevronDown size={13} className={`text-manso-cream/30 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
+                  <ChevronDown size={13} className={`text-manso-cream/62 transition-transform ${isExpanded ? 'rotate-180' : ''}`} />
                 </div>
               </button>
 
               {isExpanded && (
                 <div className="mt-2 bg-manso-black/40 border border-manso-cream/10 rounded-2xl p-4">
                   <div className="flex justify-end mb-3">
-                    <button onClick={() => setExpanded(null)} className="text-manso-cream/20 hover:text-manso-cream transition-colors">
+                    <button onClick={() => setExpanded(null)} className="text-manso-cream/62 hover:text-manso-cream transition-colors">
                       <X size={13} />
                     </button>
                   </div>

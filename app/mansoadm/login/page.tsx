@@ -37,11 +37,11 @@ export default function LoginPage() {
       <div className="w-full max-w-sm bg-zinc-50 p-10 rounded-[40px] border border-zinc-100 shadow-2xl">
         <div className="text-center mb-10">
           <h1 className="text-4xl font-black italic tracking-tighter uppercase" style={{color: '#000000'}}>Manso_</h1>
-          <p className="text-[9px] font-bold text-zinc-400 uppercase tracking-[0.4em] mt-2">Acceso Admin</p>
+          <p className="text-[12px] font-bold text-zinc-400 uppercase tracking-[0.2em] mt-2">Acceso Admin</p>
         </div>
 
         {message && (
-          <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-600 text-xs">
+          <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg text-blue-600 text-[13px]">
             {message}
           </div>
         )}
@@ -50,7 +50,7 @@ export default function LoginPage() {
           <input 
             type="email" 
             placeholder="EMAIL" 
-            className="w-full p-5 bg-white border border-zinc-200 rounded-2xl outline-none font-bold text-xs"
+            className="w-full p-5 bg-white border border-zinc-200 rounded-2xl outline-none font-bold text-[13px]"
             style={{color: '#000000'}}
             value={email} 
             onChange={(e) => setEmail(e.target.value)}
@@ -59,7 +59,7 @@ export default function LoginPage() {
           <input 
             type="password" 
             placeholder="PASSWORD" 
-            className="w-full p-5 bg-white border border-zinc-200 rounded-2xl outline-none font-bold text-xs"
+            className="w-full p-5 bg-white border border-zinc-200 rounded-2xl outline-none font-bold text-[13px]"
             style={{color: '#000000'}}
             value={password} 
             onChange={(e) => setPassword(e.target.value)}
@@ -68,7 +68,7 @@ export default function LoginPage() {
           <button 
             type="submit"
             disabled={loading}
-            className="w-full p-5 rounded-2xl font-black uppercase tracking-widest text-xs hover:bg-zinc-800 transition-all disabled:opacity-50"
+            className="w-full p-5 rounded-2xl font-black uppercase tracking-widest text-[13px] hover:bg-zinc-800 transition-all disabled:opacity-50"
             style={{backgroundColor: '#000000', color: '#FFFCDC'}}
           >
             {loading ? 'Entrando...' : 'Entrar'}

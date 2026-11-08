@@ -18,7 +18,7 @@ const OPCIONES: { value: Visibilidad; label: string; icon: React.ReactNode; desc
 export function VisibilidadToggle({ value, onChange }: VisibilidadToggleProps) {
   return (
     <div>
-      <span className="block text-[10px] font-black uppercase tracking-widest text-manso-cream/50 mb-2">
+      <span className="block text-[13px] font-black uppercase tracking-widest text-manso-cream/50 mb-2">
         Visibilidad
       </span>
       <div className="flex gap-1.5">
@@ -28,14 +28,14 @@ export function VisibilidadToggle({ value, onChange }: VisibilidadToggleProps) {
             type="button"
             onClick={() => onChange(op.value)}
             title={op.desc}
-            className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all flex-1 justify-center ${
+            className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-[12px] font-black uppercase tracking-widest transition-all flex-1 justify-center ${
               value === op.value
                 ? op.value === 'publico'
                   ? 'bg-manso-cream text-manso-black'
                   : op.value === 'registrado'
                   ? 'bg-manso-blue/50 text-blue-200'
                   : 'bg-manso-terra text-manso-cream'
-                : 'bg-manso-cream/5 text-manso-cream/40 hover:bg-manso-cream/10 border border-manso-cream/10'
+                : 'bg-manso-cream/5 text-manso-cream/62 hover:bg-manso-cream/10 border border-manso-cream/10'
             }`}
           >
             {op.icon}

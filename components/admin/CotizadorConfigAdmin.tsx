@@ -13,8 +13,8 @@ interface Servicio    { id: string; label: string; precio: number; orden: number
 
 const ICONOS_DISPONIBLES = ['Music', 'Palette', 'Camera', 'Mic', 'Users', 'Calendar', 'Star', 'Video', 'BookOpen', 'Package'];
 
-const inputCls = "bg-manso-cream/5 border border-manso-cream/15 rounded-xl px-3 py-2 text-manso-cream placeholder:text-manso-cream/20 text-sm focus:outline-none focus:border-manso-terra/50 transition-colors";
-const labelCls = "text-[9px] font-black uppercase tracking-[0.4em] text-manso-terra";
+const inputCls = "bg-manso-cream/5 border border-manso-cream/15 rounded-xl px-3 py-2 text-manso-cream placeholder:text-manso-cream/62 text-[15px] focus:outline-none focus:border-manso-terra/50 transition-colors";
+const labelCls = "text-[12px] font-black uppercase tracking-[0.2em] text-manso-terra";
 
 // ── Componente genérico de fila editable ─────────────────────
 
@@ -28,7 +28,7 @@ function TipoRow({ item, onSave, onDelete }: {
 
   return (
     <div className="flex flex-wrap items-center gap-2 p-3 bg-manso-cream/5 border border-manso-cream/10 rounded-xl">
-      <GripVertical size={14} className="text-manso-cream/20 shrink-0" />
+      <GripVertical size={14} className="text-manso-cream/62 shrink-0" />
       <input
         className={`${inputCls} flex-1 min-w-[140px]`}
         value={local.label}
@@ -43,7 +43,7 @@ function TipoRow({ item, onSave, onDelete }: {
         {ICONOS_DISPONIBLES.map(ic => <option key={ic} value={ic}>{ic}</option>)}
       </select>
       <div className="flex items-center gap-1">
-        <span className="text-manso-cream/40 text-xs">$</span>
+        <span className="text-manso-cream/62 text-[13px]">$</span>
         <input
           type="number"
           className={`${inputCls} w-28`}
@@ -60,7 +60,7 @@ function TipoRow({ item, onSave, onDelete }: {
           onChange={e => setLocal(p => ({ ...p, activo: e.target.checked }))}
           className="accent-manso-terra"
         />
-        <span className="text-[10px] text-manso-cream/50">Activo</span>
+        <span className="text-[13px] text-manso-cream/50">Activo</span>
       </label>
       {dirty && (
         <button
@@ -92,7 +92,7 @@ function DuracionRow({ item, onSave, onDelete }: {
 
   return (
     <div className="flex flex-wrap items-center gap-2 p-3 bg-manso-cream/5 border border-manso-cream/10 rounded-xl">
-      <GripVertical size={14} className="text-manso-cream/20 shrink-0" />
+      <GripVertical size={14} className="text-manso-cream/62 shrink-0" />
       <input
         className={`${inputCls} flex-1 min-w-[160px]`}
         value={local.label}
@@ -100,7 +100,7 @@ function DuracionRow({ item, onSave, onDelete }: {
         placeholder="Ej: 2 horas, Tarde completa..."
       />
       <div className="flex items-center gap-1">
-        <span className="text-manso-cream/40 text-xs">$</span>
+        <span className="text-manso-cream/62 text-[13px]">$</span>
         <input
           type="number"
           className={`${inputCls} w-28`}
@@ -117,7 +117,7 @@ function DuracionRow({ item, onSave, onDelete }: {
           onChange={e => setLocal(p => ({ ...p, activo: e.target.checked }))}
           className="accent-manso-terra"
         />
-        <span className="text-[10px] text-manso-cream/50">Activo</span>
+        <span className="text-[13px] text-manso-cream/50">Activo</span>
       </label>
       {dirty && (
         <button
@@ -147,7 +147,7 @@ function CapacidadRow({ item, onSave, onDelete }: {
 
   return (
     <div className="flex flex-wrap items-center gap-2 p-3 bg-manso-cream/5 border border-manso-cream/10 rounded-xl">
-      <GripVertical size={14} className="text-manso-cream/20 shrink-0" />
+      <GripVertical size={14} className="text-manso-cream/62 shrink-0" />
       <input
         className={`${inputCls} flex-1 min-w-[180px]`}
         value={local.label}
@@ -155,7 +155,7 @@ function CapacidadRow({ item, onSave, onDelete }: {
         placeholder="Nombre de la capacidad"
       />
       <div className="flex items-center gap-1">
-        <span className="text-manso-cream/40 text-xs">$</span>
+        <span className="text-manso-cream/62 text-[13px]">$</span>
         <input
           type="number"
           className={`${inputCls} w-28`}
@@ -172,7 +172,7 @@ function CapacidadRow({ item, onSave, onDelete }: {
           onChange={e => setLocal(p => ({ ...p, activo: e.target.checked }))}
           className="accent-manso-terra"
         />
-        <span className="text-[10px] text-manso-cream/50">Activo</span>
+        <span className="text-[13px] text-manso-cream/50">Activo</span>
       </label>
       {dirty && (
         <button
@@ -202,7 +202,7 @@ function ServicioRow({ item, onSave, onDelete }: {
 
   return (
     <div className="flex flex-wrap items-center gap-2 p-3 bg-manso-cream/5 border border-manso-cream/10 rounded-xl">
-      <GripVertical size={14} className="text-manso-cream/20 shrink-0" />
+      <GripVertical size={14} className="text-manso-cream/62 shrink-0" />
       <input
         className={`${inputCls} flex-1 min-w-[180px]`}
         value={local.label}
@@ -210,7 +210,7 @@ function ServicioRow({ item, onSave, onDelete }: {
         placeholder="Nombre del servicio"
       />
       <div className="flex items-center gap-1">
-        <span className="text-manso-cream/40 text-xs">$</span>
+        <span className="text-manso-cream/62 text-[13px]">$</span>
         <input
           type="number"
           className={`${inputCls} w-28`}
@@ -227,7 +227,7 @@ function ServicioRow({ item, onSave, onDelete }: {
           onChange={e => setLocal(p => ({ ...p, activo: e.target.checked }))}
           className="accent-manso-terra"
         />
-        <span className="text-[10px] text-manso-cream/50">Activo</span>
+        <span className="text-[13px] text-manso-cream/50">Activo</span>
       </label>
       {dirty && (
         <button
@@ -352,7 +352,7 @@ export function CotizadorConfigAdmin() {
     { id: 'servicios',  label: 'Servicios adicionales', count: servicios.length },
   ];
 
-  if (loading) return <div className="text-manso-cream/40 text-center py-8">Cargando configuración...</div>;
+  if (loading) return <div className="text-manso-cream/62 text-center py-8">Cargando configuración...</div>;
 
   return (
     <div className="space-y-6">
@@ -360,7 +360,7 @@ export function CotizadorConfigAdmin() {
         <h3 className="text-base font-black uppercase tracking-tighter text-manso-cream mb-1">
           Configuración del cotizador
         </h3>
-        <p className="text-manso-cream/40 text-xs">
+        <p className="text-manso-cream/62 text-[13px]">
           Los cambios se aplican inmediatamente al formulario público.
         </p>
       </div>
@@ -371,10 +371,10 @@ export function CotizadorConfigAdmin() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex-1 py-2 px-3 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all whitespace-nowrap ${
+            className={`flex-1 py-2 px-3 rounded-lg text-[13px] font-black uppercase tracking-wider transition-all whitespace-nowrap ${
               activeTab === tab.id
                 ? 'bg-manso-terra text-manso-cream'
-                : 'text-manso-cream/40 hover:text-manso-cream/70'
+                : 'text-manso-cream/62 hover:text-manso-cream/70'
             }`}
           >
             {tab.label}
@@ -395,7 +395,7 @@ export function CotizadorConfigAdmin() {
             ))}
             <button
               onClick={addTipo}
-              className="flex items-center gap-2 px-4 py-2.5 bg-manso-cream/5 hover:bg-manso-cream/10 border border-dashed border-manso-cream/20 rounded-xl text-manso-cream/50 text-xs font-bold uppercase tracking-wider transition-all w-full justify-center mt-2"
+              className="flex items-center gap-2 px-4 py-2.5 bg-manso-cream/5 hover:bg-manso-cream/10 border border-dashed border-manso-cream/20 rounded-xl text-manso-cream/50 text-[13px] font-bold uppercase tracking-wider transition-all w-full justify-center mt-2"
             >
               <Plus size={14} /> Agregar tipo de evento
             </button>
@@ -412,7 +412,7 @@ export function CotizadorConfigAdmin() {
             ))}
             <button
               onClick={addDuracion}
-              className="flex items-center gap-2 px-4 py-2.5 bg-manso-cream/5 hover:bg-manso-cream/10 border border-dashed border-manso-cream/20 rounded-xl text-manso-cream/50 text-xs font-bold uppercase tracking-wider transition-all w-full justify-center mt-2"
+              className="flex items-center gap-2 px-4 py-2.5 bg-manso-cream/5 hover:bg-manso-cream/10 border border-dashed border-manso-cream/20 rounded-xl text-manso-cream/50 text-[13px] font-bold uppercase tracking-wider transition-all w-full justify-center mt-2"
             >
               <Plus size={14} /> Agregar duración
             </button>
@@ -429,7 +429,7 @@ export function CotizadorConfigAdmin() {
             ))}
             <button
               onClick={addCapacidad}
-              className="flex items-center gap-2 px-4 py-2.5 bg-manso-cream/5 hover:bg-manso-cream/10 border border-dashed border-manso-cream/20 rounded-xl text-manso-cream/50 text-xs font-bold uppercase tracking-wider transition-all w-full justify-center mt-2"
+              className="flex items-center gap-2 px-4 py-2.5 bg-manso-cream/5 hover:bg-manso-cream/10 border border-dashed border-manso-cream/20 rounded-xl text-manso-cream/50 text-[13px] font-bold uppercase tracking-wider transition-all w-full justify-center mt-2"
             >
               <Plus size={14} /> Agregar capacidad
             </button>
@@ -446,7 +446,7 @@ export function CotizadorConfigAdmin() {
             ))}
             <button
               onClick={addServicio}
-              className="flex items-center gap-2 px-4 py-2.5 bg-manso-cream/5 hover:bg-manso-cream/10 border border-dashed border-manso-cream/20 rounded-xl text-manso-cream/50 text-xs font-bold uppercase tracking-wider transition-all w-full justify-center mt-2"
+              className="flex items-center gap-2 px-4 py-2.5 bg-manso-cream/5 hover:bg-manso-cream/10 border border-dashed border-manso-cream/20 rounded-xl text-manso-cream/50 text-[13px] font-bold uppercase tracking-wider transition-all w-full justify-center mt-2"
             >
               <Plus size={14} /> Agregar servicio
             </button>

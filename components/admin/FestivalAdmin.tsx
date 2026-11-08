@@ -198,7 +198,7 @@ export function FestivalAdmin() {
 
   if (cargando) {
     return (
-      <div className="flex items-center gap-2 text-xs text-manso-cream/40 py-10">
+      <div className="flex items-center gap-2 text-[13px] text-manso-cream/62 py-10">
         <Loader2 size={14} className="animate-spin" />
         Cargando…
       </div>
@@ -219,10 +219,10 @@ export function FestivalAdmin() {
         }`}
       >
         <div className="space-y-1">
-          <p className="text-[10px] font-black uppercase tracking-widest text-manso-cream">
+          <p className="text-[13px] font-black uppercase tracking-widest text-manso-cream">
             {config.publicado ? 'Publicado' : 'Borrador — no publicado'}
           </p>
-          <p className="text-[11px] text-manso-cream/50 leading-relaxed max-w-md">
+          <p className="text-[13px] text-manso-cream/50 leading-relaxed max-w-md">
             {config.publicado
               ? 'Cualquiera con el link ve /blur. No está enlazado desde el sitio de Manso.'
               : 'Solo los admins pueden ver /blur. Para el resto la página no existe.'}
@@ -233,7 +233,7 @@ export function FestivalAdmin() {
             href="/blur"
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-manso-terra hover:text-manso-cream transition-colors"
+            className="inline-flex items-center gap-2 text-[12px] font-black uppercase tracking-widest text-manso-terra hover:text-manso-cream transition-colors"
           >
             Ver la página
             <ExternalLink size={11} />
@@ -242,7 +242,7 @@ export function FestivalAdmin() {
             type="button"
             onClick={alternarPublicado}
             disabled={guardando === 'publicado'}
-            className="px-4 py-2 rounded-xl border border-manso-cream/20 text-[9px] font-black uppercase tracking-widest text-manso-cream hover:bg-manso-cream/10 transition-colors disabled:opacity-40"
+            className="px-4 py-2 rounded-xl border border-manso-cream/20 text-[12px] font-black uppercase tracking-widest text-manso-cream hover:bg-manso-cream/10 transition-colors disabled:opacity-40"
           >
             {config.publicado ? 'Despublicar' : 'Publicar'}
           </button>
@@ -268,7 +268,7 @@ export function FestivalAdmin() {
           ).map(([campo, etiqueta, ayuda]) => (
             <label key={campo} className="flex items-start justify-between gap-4 py-3 cursor-pointer">
               <span>
-                <span className="block text-sm text-manso-cream">{etiqueta}</span>
+                <span className="block text-[15px] text-manso-cream">{etiqueta}</span>
                 <span className={AYUDA}>{ayuda}</span>
               </span>
               <input
@@ -321,7 +321,7 @@ export function FestivalAdmin() {
                 editarConfig({ flyer_url: null });
                 guardarConfig({ flyer_url: null }, 'flyer');
               }}
-              className="mt-2 text-[9px] font-black uppercase tracking-widest text-manso-cream/40 hover:text-manso-terra transition-colors"
+              className="mt-2 text-[12px] font-black uppercase tracking-widest text-manso-cream/62 hover:text-manso-terra transition-colors"
             >
               Quitar flyer
             </button>
@@ -371,7 +371,7 @@ export function FestivalAdmin() {
               type="date"
               value={config.fecha ?? ''}
               onChange={e => editarConfig({ fecha: e.target.value || null })}
-              className={`${INPUT} [color-scheme:dark]`}
+              className={`${INPUT} [color-scheme:light]`}
             />
           </div>
           <div>
@@ -561,7 +561,7 @@ export function FestivalAdmin() {
                     editarConfig({ [campo]: null });
                     guardarConfig({ [campo]: null }, campo);
                   }}
-                  className="mt-2 text-[9px] font-black uppercase tracking-widest text-manso-cream/40 hover:text-manso-terra transition-colors"
+                  className="mt-2 text-[12px] font-black uppercase tracking-widest text-manso-cream/62 hover:text-manso-terra transition-colors"
                 >
                   Quitar
                 </button>
@@ -654,12 +654,12 @@ export function FestivalAdmin() {
             </p>
           </div>
 
-          {entradas.length === 0 && <p className="text-xs text-manso-cream/40">Sin entradas todavía.</p>}
+          {entradas.length === 0 && <p className="text-[13px] text-manso-cream/62">Sin entradas todavía.</p>}
 
           {entradas.map((entrada, i) => (
             <div key={entrada.id} className={CARD}>
               <div className="flex items-center justify-between gap-2">
-                <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40 truncate">
+                <span className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62 truncate">
                   {entrada.nombre || `Entrada ${i + 1}`}
                   {entrada.precio > 0 && ` · ${formatArs(entrada.precio)}`}
                 </span>
@@ -688,7 +688,7 @@ export function FestivalAdmin() {
               </div>
 
               {!entrada.activo && (
-                <p className="text-[10px] font-black uppercase tracking-widest text-manso-cream/30">
+                <p className="text-[13px] font-black uppercase tracking-widest text-manso-cream/62">
                   Oculta — no aparece en la tabla
                 </p>
               )}
@@ -720,7 +720,7 @@ export function FestivalAdmin() {
                   <select
                     value={entrada.estado}
                     onChange={e => editarEntrada(entrada.id, { estado: e.target.value as EstadoEntrada })}
-                    className={`${INPUT} [color-scheme:dark]`}
+                    className={`${INPUT} [color-scheme:light]`}
                   >
                     {ESTADOS_ENTRADA.map(e => (
                       <option key={e.valor} value={e.valor}>
@@ -805,12 +805,12 @@ export function FestivalAdmin() {
           </p>
         </div>
 
-        {faq.length === 0 && <p className="text-xs text-manso-cream/40">Sin preguntas todavía.</p>}
+        {faq.length === 0 && <p className="text-[13px] text-manso-cream/62">Sin preguntas todavía.</p>}
 
         {faq.map((p, i) => (
           <div key={p.id} className={CARD}>
             <div className="flex items-center justify-between gap-2">
-              <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40 truncate">
+              <span className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62 truncate">
                 {p.titulo || `Pregunta ${i + 1}`}
                 {!p.activo && ' · oculta'}
               </span>

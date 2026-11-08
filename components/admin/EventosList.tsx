@@ -104,7 +104,7 @@ export function EventosList({ refreshTrigger }: EventosListProps) {
   return (
     <div className="space-y-4">
       {eventos.length === 0 ? (
-        <div className="text-center text-manso-cream/40 py-8">
+        <div className="text-center text-manso-cream/62 py-8">
           No hay eventos registrados
         </div>
       ) : (
@@ -116,14 +116,14 @@ export function EventosList({ refreshTrigger }: EventosListProps) {
                   <h3 className="text-xl font-black text-manso-cream uppercase tracking-tighter">
                     {evento.titulo}
                   </h3>
-                  <span className={`text-[10px] px-2 py-1 rounded-full font-bold uppercase ${
+                  <span className={`text-[13px] px-2 py-1 rounded-full font-bold uppercase ${
                     evento.activo
                       ? 'bg-manso-terra/20 text-manso-terra'
                       : 'bg-manso-cream/20 text-manso-cream/60'
                   }`}>
                     {evento.activo ? 'Activo' : 'Inactivo'}
                   </span>
-                  <span className={`text-[10px] px-2 py-1 rounded-full font-bold uppercase ${
+                  <span className={`text-[13px] px-2 py-1 rounded-full font-bold uppercase ${
                     evento.disponible
                       ? 'bg-green-500/20 text-green-400'
                       : 'bg-yellow-500/20 text-yellow-400'
@@ -132,7 +132,7 @@ export function EventosList({ refreshTrigger }: EventosListProps) {
                   </span>
                 </div>
                 
-                <div className="flex flex-wrap gap-3 text-[10px] uppercase tracking-widest text-manso-cream/60 mb-3">
+                <div className="flex flex-wrap gap-3 text-[13px] uppercase tracking-widest text-manso-cream/60 mb-3">
                   <span className="flex items-center gap-1">
                     <Calendar size={12} />
                     {new Date(evento.fecha).toLocaleDateString('es-AR', {
@@ -155,7 +155,7 @@ export function EventosList({ refreshTrigger }: EventosListProps) {
                 </div>
 
                 {evento.descripcion && (
-                  <p className="text-sm text-manso-cream/80 mb-3 line-clamp-2">
+                  <p className="text-[15px] text-manso-cream/80 mb-3 line-clamp-2">
                     {evento.descripcion}
                   </p>
                 )}
@@ -170,7 +170,7 @@ export function EventosList({ refreshTrigger }: EventosListProps) {
                   </div>
                 )}
 
-                <div className="flex items-center gap-4 text-[10px] text-manso-cream/60">
+                <div className="flex items-center gap-4 text-[13px] text-manso-cream/60">
                   {evento.link_tickets && (
                     <a 
                       href={evento.link_tickets}

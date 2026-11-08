@@ -210,7 +210,7 @@ export function CompactImageUploader({
               <Loader2 className="w-4 h-4 text-manso-terra animate-spin" />
             ) : (
               <>
-                <Upload className="w-4 h-4 text-manso-cream/40 group-hover:text-manso-terra transition-colors" />
+                <Upload className="w-4 h-4 text-manso-cream/62 group-hover:text-manso-terra transition-colors" />
               </>
             )}
           </div>
@@ -226,10 +226,10 @@ export function CompactImageUploader({
       </label>
       
       {errorMsg ? (
-        <p className="mt-1 text-[8px] text-red-400 font-medium">{errorMsg}</p>
+        <p className="mt-1 text-[12px] text-red-400 font-medium">{errorMsg}</p>
       ) : preview && (
         <div className="mt-1">
-          <p className="text-[8px] text-green-400 font-medium flex items-center gap-1">
+          <p className="text-[12px] text-green-400 font-medium flex items-center gap-1">
             <CheckCircle2 size={8} /> Lista
           </p>
         </div>

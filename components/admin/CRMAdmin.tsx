@@ -287,9 +287,9 @@ ${proximos.length === 0
       {/* Header */}
       <div className="flex items-center justify-between px-1 mb-4">
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.25em] text-manso-cream">CRM — Vista del negocio</p>
+          <p className="text-[13px] font-black uppercase tracking-[0.2em] text-manso-cream">CRM — Vista del negocio</p>
           {lastFetch && (
-            <p className="text-[9px] text-manso-cream/30 mt-0.5">
+            <p className="text-[12px] text-manso-cream/62 mt-0.5">
               Actualizado a las {lastFetch.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}
             </p>
           )}
@@ -298,7 +298,7 @@ ${proximos.length === 0
           <button
             onClick={exportarInforme}
             disabled={loading}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-manso-olive/20 text-manso-olive/60 hover:text-manso-olive hover:border-manso-olive/40 transition-all text-[9px] font-black uppercase tracking-widest disabled:opacity-40"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-manso-olive/20 text-manso-olive/60 hover:text-manso-olive hover:border-manso-olive/40 transition-all text-[12px] font-black uppercase tracking-widest disabled:opacity-40"
           >
             <FileDown size={11} />
             Exportar
@@ -306,7 +306,7 @@ ${proximos.length === 0
           <button
             onClick={fetchData}
             disabled={loading}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-manso-cream/10 text-manso-cream/40 hover:text-manso-cream hover:border-manso-cream/30 transition-all text-[9px] font-black uppercase tracking-widest disabled:opacity-40"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-manso-cream/10 text-manso-cream/62 hover:text-manso-cream hover:border-manso-cream/30 transition-all text-[12px] font-black uppercase tracking-widest disabled:opacity-40"
           >
             <RefreshCw size={11} className={loading ? 'animate-spin' : ''} />
             Actualizar
@@ -333,12 +333,12 @@ ${proximos.length === 0
               className="w-full flex items-center justify-between px-5 py-4 hover:bg-manso-cream/5 transition-colors"
             >
               <div className="flex items-center gap-3 text-manso-cream">
-                <span className="text-manso-cream/40">{section.icon}</span>
-                <span className="text-[10px] font-black uppercase tracking-[0.2em]">{section.label}</span>
+                <span className="text-manso-cream/62">{section.icon}</span>
+                <span className="text-[13px] font-black uppercase tracking-[0.2em]">{section.label}</span>
               </div>
               <ChevronDown
                 size={14}
-                className={`text-manso-cream/30 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+                className={`text-manso-cream/62 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
               />
             </button>
 

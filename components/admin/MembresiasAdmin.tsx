@@ -63,14 +63,14 @@ export function MembresiasAdmin({ refreshTrigger }: MembresiasAdminProps) {
               className="w-full flex items-center justify-between px-5 py-4 hover:bg-manso-cream/5 transition-colors"
             >
               <div className="flex items-center gap-3 text-manso-cream">
-                <span className="text-manso-cream/40">{section.icon}</span>
-                <span className="text-[10px] font-black uppercase tracking-[0.2em]">
+                <span className="text-manso-cream/62">{section.icon}</span>
+                <span className="text-[13px] font-black uppercase tracking-[0.2em]">
                   {section.label}
                 </span>
               </div>
               <ChevronDown
                 size={14}
-                className={`text-manso-cream/30 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+                className={`text-manso-cream/62 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
               />
             </button>
 
@@ -84,7 +84,7 @@ export function MembresiasAdmin({ refreshTrigger }: MembresiasAdminProps) {
                     {!showFormMembresia ? (
                       <button
                         onClick={() => setShowFormMembresia(true)}
-                        className="w-full flex items-center justify-center gap-2 py-3 border border-dashed border-manso-terra/30 rounded-2xl text-[9px] font-black uppercase tracking-widest text-manso-terra/60 hover:text-manso-terra hover:border-manso-terra/60 hover:bg-manso-terra/5 transition-all"
+                        className="w-full flex items-center justify-center gap-2 py-3 border border-dashed border-manso-terra/30 rounded-2xl text-[12px] font-black uppercase tracking-widest text-manso-terra/60 hover:text-manso-terra hover:border-manso-terra/60 hover:bg-manso-terra/5 transition-all"
                       >
                         <Plus size={12} />
                         Nueva membresía
@@ -93,7 +93,7 @@ export function MembresiasAdmin({ refreshTrigger }: MembresiasAdminProps) {
                       <div className="relative">
                         <button
                           onClick={() => setShowFormMembresia(false)}
-                          className="absolute top-4 right-4 z-10 w-6 h-6 flex items-center justify-center text-manso-cream/30 hover:text-manso-cream transition-colors"
+                          className="absolute top-4 right-4 z-10 w-6 h-6 flex items-center justify-center text-manso-cream/62 hover:text-manso-cream transition-colors"
                         >
                           <X size={13} />
                         </button>

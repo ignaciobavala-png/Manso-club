@@ -140,7 +140,7 @@ export function PedidosList({ refreshTrigger }: PedidosListProps) {
           <p className="text-red-400 mb-4">{error}</p>
           <button 
             onClick={fetchPedidos}
-            className="px-4 py-2 bg-manso-terra text-manso-cream rounded-xl text-sm font-bold"
+            className="px-4 py-2 bg-manso-terra text-manso-cream rounded-xl text-[15px] font-bold"
           >
             Reintentar
           </button>
@@ -153,11 +153,11 @@ export function PedidosList({ refreshTrigger }: PedidosListProps) {
     return (
       <div className="bg-manso-cream/5 p-8 rounded-[2.5rem] border border-manso-cream/10">
         <div className="text-center">
-          <Package className="mx-auto text-manso-cream/40 mb-4" size={48} />
+          <Package className="mx-auto text-manso-cream/62 mb-4" size={48} />
           <h3 className="text-lg font-black uppercase tracking-tighter text-manso-cream mb-2">
             No hay pedidos
           </h3>
-          <p className="text-sm text-manso-cream/60">
+          <p className="text-[15px] text-manso-cream/60">
             Cuando los clientes realicen compras, aparecerán aquí
           </p>
         </div>
@@ -173,7 +173,7 @@ export function PedidosList({ refreshTrigger }: PedidosListProps) {
         </h3>
         <button 
           onClick={fetchPedidos}
-          className="px-4 py-2 bg-manso-cream/10 text-manso-cream rounded-xl text-xs font-bold hover:bg-manso-cream/20 transition-all"
+          className="px-4 py-2 bg-manso-cream/10 text-manso-cream rounded-xl text-[13px] font-bold hover:bg-manso-cream/20 transition-all"
         >
           Actualizar
         </button>
@@ -185,11 +185,11 @@ export function PedidosList({ refreshTrigger }: PedidosListProps) {
           <div className="flex items-start justify-between mb-4">
             <div className="flex-1">
               <div className="flex items-center gap-3 mb-2">
-                <div className={`px-3 py-1 rounded-full text-xs font-bold flex items-center gap-2 ${getEstadoColor(pedido.estado)}`}>
+                <div className={`px-3 py-1 rounded-full text-[13px] font-bold flex items-center gap-2 ${getEstadoColor(pedido.estado)}`}>
                   {getEstadoIcon(pedido.estado)}
                   {pedido.estado.replace('_', ' ').toUpperCase()}
                 </div>
-                <span className="text-xs text-manso-cream/40">
+                <span className="text-[13px] text-manso-cream/62">
                   {new Date(pedido.created_at).toLocaleString('es-AR')}
                 </span>
               </div>
@@ -209,19 +209,19 @@ export function PedidosList({ refreshTrigger }: PedidosListProps) {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
             <div className="flex items-center gap-2 text-manso-cream/80">
               <Mail className="w-4 h-4" />
-              <span className="text-sm truncate">{pedido.cliente_email}</span>
+              <span className="text-[15px] truncate">{pedido.cliente_email}</span>
             </div>
             <div className="flex items-center gap-2 text-manso-cream/80">
               <Phone className="w-4 h-4" />
-              <span className="text-sm">{pedido.cliente_telefono}</span>
+              <span className="text-[15px]">{pedido.cliente_telefono}</span>
             </div>
             <div className="flex items-center gap-2 text-manso-cream/80">
               <User className="w-4 h-4" />
-              <span className="text-sm">DNI: {pedido.cliente_dni || 'No especificado'}</span>
+              <span className="text-[15px]">DNI: {pedido.cliente_dni || 'No especificado'}</span>
             </div>
             <div className="flex items-center gap-2 text-manso-cream/80">
               <Package className="w-4 h-4" />
-              <span className="text-sm">{pedido.productos.length} producto(s)</span>
+              <span className="text-[15px]">{pedido.productos.length} producto(s)</span>
             </div>
           </div>
 
@@ -236,8 +236,8 @@ export function PedidosList({ refreshTrigger }: PedidosListProps) {
                   </svg>
                 </div>
                 <div>
-                  <div className="text-xs text-manso-cream/60 mb-1">Dirección de envío:</div>
-                  <span className="text-sm">{pedido.cliente_direccion}</span>
+                  <div className="text-[13px] text-manso-cream/60 mb-1">Dirección de envío:</div>
+                  <span className="text-[15px]">{pedido.cliente_direccion}</span>
                 </div>
               </div>
             </div>
@@ -245,10 +245,10 @@ export function PedidosList({ refreshTrigger }: PedidosListProps) {
 
           {/* Productos */}
           <div className="mb-4">
-            <div className="text-xs text-manso-cream/60 mb-2">Productos:</div>
+            <div className="text-[13px] text-manso-cream/60 mb-2">Productos:</div>
             <div className="space-y-1">
               {pedido.productos.map((producto, index) => (
-                <div key={index} className="flex justify-between items-center text-sm">
+                <div key={index} className="flex justify-between items-center text-[15px]">
                   <span className="text-manso-cream/80">{producto.nombre}</span>
                   <span className="text-manso-cream">
                     {producto.quantity} × ${producto.precio} = ${producto.precio * producto.quantity}
@@ -260,7 +260,7 @@ export function PedidosList({ refreshTrigger }: PedidosListProps) {
 
           {/* Acciones */}
           <div className="flex items-center justify-between pt-4 border-t border-manso-cream/10">
-            <div className="flex items-center gap-4 text-xs text-manso-cream/60">
+            <div className="flex items-center gap-4 text-[13px] text-manso-cream/60">
               <div className="flex items-center gap-1">
                 <Mail className={`w-3 h-3 ${pedido.notificacion_email_enviada ? 'text-green-400' : 'text-red-400'}`} />
                 Email {pedido.notificacion_email_enviada ? 'enviado' : 'no enviado'}
@@ -276,13 +276,13 @@ export function PedidosList({ refreshTrigger }: PedidosListProps) {
                 <>
                   <button
                     onClick={() => updateEstado(pedido.id, 'pagado')}
-                    className="px-3 py-1 bg-green-500/20 text-green-400 rounded-lg text-xs font-bold hover:bg-green-500/30 transition-all"
+                    className="px-3 py-1 bg-green-500/20 text-green-400 rounded-lg text-[13px] font-bold hover:bg-green-500/30 transition-all"
                   >
                     Marcar Pagado
                   </button>
                   <button
                     onClick={() => updateEstado(pedido.id, 'cancelado')}
-                    className="px-3 py-1 bg-red-500/20 text-red-400 rounded-lg text-xs font-bold hover:bg-red-500/30 transition-all"
+                    className="px-3 py-1 bg-red-500/20 text-red-400 rounded-lg text-[13px] font-bold hover:bg-red-500/30 transition-all"
                   >
                     Cancelar
                   </button>
@@ -291,7 +291,7 @@ export function PedidosList({ refreshTrigger }: PedidosListProps) {
               {pedido.estado === 'pagado' && (
                 <button
                   onClick={() => updateEstado(pedido.id, 'enviado')}
-                  className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-lg text-xs font-bold hover:bg-blue-500/30 transition-all"
+                  className="px-3 py-1 bg-blue-500/20 text-blue-400 rounded-lg text-[13px] font-bold hover:bg-blue-500/30 transition-all"
                 >
                   Marcar Enviado
                 </button>
@@ -299,7 +299,7 @@ export function PedidosList({ refreshTrigger }: PedidosListProps) {
               {pedido.estado === 'cancelado' && (
                 <button
                   onClick={() => eliminarPedido(pedido.id, pedido.cliente_nombre)}
-                  className="px-3 py-1 bg-red-600/20 text-red-400 rounded-lg text-xs font-bold hover:bg-red-600/30 transition-all flex items-center gap-1"
+                  className="px-3 py-1 bg-red-600/20 text-red-400 rounded-lg text-[13px] font-bold hover:bg-red-600/30 transition-all flex items-center gap-1"
                 >
                   <Trash2 className="w-3 h-3" />
                   Eliminar

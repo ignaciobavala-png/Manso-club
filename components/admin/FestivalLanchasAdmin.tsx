@@ -82,18 +82,18 @@ export function FestivalLanchasAdmin() {
       </div>
 
       {cargando ? (
-        <div className="flex items-center gap-2 text-xs text-manso-cream/40">
+        <div className="flex items-center gap-2 text-[13px] text-manso-cream/62">
           <Loader2 size={14} className="animate-spin" />
           Cargando transporte…
         </div>
       ) : (
-        lanchas.length === 0 && <p className="text-xs text-manso-cream/40">Sin viajes todavía.</p>
+        lanchas.length === 0 && <p className="text-[13px] text-manso-cream/62">Sin viajes todavía.</p>
       )}
 
       {lanchas.map((lancha, i) => (
         <div key={lancha.id} className={CARD}>
           <div className="flex items-center justify-between gap-2">
-            <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40 truncate">
+            <span className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62 truncate">
               {lancha.nombre || `Viaje ${i + 1}`}
               {!lancha.activo && ' · oculto'}
             </span>

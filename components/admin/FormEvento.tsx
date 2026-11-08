@@ -140,7 +140,7 @@ export function FormEvento() {
           {editingId ? 'Editar Evento' : 'Nuevo Evento'}
         </h2>
         {editingId && (
-          <p className="text-sm text-manso-cream/60">
+          <p className="text-[15px] text-manso-cream/60">
             Modificando los datos del evento
           </p>
         )}
@@ -151,19 +151,19 @@ export function FormEvento() {
           <input 
             type="text" 
             placeholder="TÍTULO DEL EVENTO"
-            className="w-full text-2xl font-black bg-manso-cream/10 p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/40"
+            className="w-full text-2xl font-black bg-manso-cream/10 p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/62"
             value={formData.titulo}
             onChange={e => setFormData({...formData, titulo: e.target.value})}
             required
           />
           
           <div className="space-y-2">
-            <label className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/60">
+            <label className="text-[13px] font-bold uppercase tracking-widest text-manso-cream/60">
               FECHA DE INICIO
             </label>
             <input 
               type="datetime-local" 
-              className="w-full bg-manso-cream/10 p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream"
+              className="w-full bg-manso-cream/10 p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-[15px] text-manso-cream"
               value={formData.fecha}
               onChange={e => setFormData({...formData, fecha: e.target.value})}
               required
@@ -171,12 +171,12 @@ export function FormEvento() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/60">
+            <label className="text-[13px] font-bold uppercase tracking-widest text-manso-cream/60">
               FECHA DE FINALIZACIÓN (opcional)
             </label>
             <input 
               type="datetime-local"
-              className="w-full bg-manso-cream/10 p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream"
+              className="w-full bg-manso-cream/10 p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-[15px] text-manso-cream"
               value={formData.fecha_fin}
               onChange={e => setFormData({...formData, fecha_fin: e.target.value})}
             />
@@ -185,13 +185,13 @@ export function FormEvento() {
           <textarea 
             placeholder="DESCRIPCIÓN DEL EVENTO"
             rows={3}
-            className="w-full bg-manso-cream/10 p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/40 resize-none"
+            className="w-full bg-manso-cream/10 p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/62 resize-none"
             value={formData.descripcion}
             onChange={e => setFormData({...formData, descripcion: e.target.value})}
           />
 
           <div className="space-y-3">
-            <label className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/60">
+            <label className="text-[13px] font-bold uppercase tracking-widest text-manso-cream/60">
               CATEGORÍA
             </label>
             
@@ -201,7 +201,7 @@ export function FormEvento() {
                   <button
                     type="button"
                     onClick={() => setFormData({...formData, categoria: cat})}
-                    className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
+                    className={`px-3 py-1 rounded-full text-[13px] font-medium transition-all ${
                       formData.categoria === cat 
                         ? 'bg-manso-terra text-manso-cream' 
                         : 'bg-manso-cream/20 text-manso-cream hover:bg-manso-cream/30'
@@ -217,7 +217,7 @@ export function FormEvento() {
                         setFormData({...formData, categoria: ''});
                       }
                     }}
-                    className="text-manso-cream/60 hover:text-manso-cream text-xs leading-none"
+                    className="text-manso-cream/60 hover:text-manso-cream text-[13px] leading-none"
                   >
                     ×
                   </button>
@@ -237,7 +237,7 @@ export function FormEvento() {
                     setNuevaCategoria('');
                   }
                 }}
-                className="flex-1 bg-manso-cream/10 px-3 py-2 rounded-xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-sm text-manso-cream placeholder:text-manso-cream/40"
+                className="flex-1 bg-manso-cream/10 px-3 py-2 rounded-xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-[15px] text-manso-cream placeholder:text-manso-cream/62"
               />
               <button
                 type="button"
@@ -248,7 +248,7 @@ export function FormEvento() {
                   }
                 }}
                 disabled={!nuevaCategoria.trim()}
-                className="px-4 py-2 bg-manso-terra text-manso-cream rounded-xl font-medium text-sm hover:bg-manso-cream hover:text-manso-black transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 bg-manso-terra text-manso-cream rounded-xl font-medium text-[15px] hover:bg-manso-cream hover:text-manso-black transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 +
               </button>
@@ -256,10 +256,10 @@ export function FormEvento() {
           </div>
 
           <div className="flex items-center gap-3">
-            <label className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 whitespace-nowrap">Orden</label>
+            <label className="text-[13px] font-black uppercase tracking-widest text-manso-cream/60 whitespace-nowrap">Orden</label>
             <input 
               type="number"
-              className="w-24 p-3 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream text-center"
+              className="w-24 p-3 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-[15px] text-manso-cream text-center"
               value={formData.orden}
               onChange={e => setFormData({...formData, orden: e.target.value})}
               min="0"
@@ -269,13 +269,13 @@ export function FormEvento() {
           <input 
             type="url" 
             placeholder="LINK DE TICKETS (opcional)"
-            className="w-full p-4 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream placeholder:text-manso-cream/40"
+            className="w-full p-4 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-[15px] text-manso-cream placeholder:text-manso-cream/62"
             value={formData.link_tickets}
             onChange={e => setFormData({...formData, link_tickets: e.target.value})}
           />
 
           <div className="space-y-2">
-            <label className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/60">
+            <label className="text-[13px] font-bold uppercase tracking-widest text-manso-cream/60">
               FLYER DEL EVENTO
             </label>
             <ImageUploader 
@@ -293,7 +293,7 @@ export function FormEvento() {
                 onChange={e => setFormData({...formData, disponible: e.target.checked})}
                 className="w-4 h-4 text-manso-terra bg-manso-cream/20 border-manso-cream/30 rounded focus:ring-manso-terra"
               />
-              <span className="text-sm text-manso-cream font-medium">
+              <span className="text-[15px] text-manso-cream font-medium">
                 Evento disponible para el público
               </span>
             </label>

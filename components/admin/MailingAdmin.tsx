@@ -36,10 +36,10 @@ export function MailingAdmin() {
               className="w-full flex items-center justify-between px-5 py-4 hover:bg-manso-cream/5 transition-colors"
             >
               <div className="flex items-center gap-3 text-manso-cream">
-                <span className="text-manso-cream/40">{section.icon}</span>
-                <span className="text-[10px] font-black uppercase tracking-[0.2em]">{section.label}</span>
+                <span className="text-manso-cream/62">{section.icon}</span>
+                <span className="text-[13px] font-black uppercase tracking-[0.2em]">{section.label}</span>
               </div>
-              <ChevronDown size={14} className={`text-manso-cream/30 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown size={14} className={`text-manso-cream/62 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {isOpen && (

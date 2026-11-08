@@ -103,7 +103,7 @@ export function AgendaFotosList({ agendaId, tallerTitulo, refreshTrigger }: Prop
           <h3 className="text-lg font-black uppercase tracking-tighter text-manso-cream">
             Carrusel de {tallerTitulo}
           </h3>
-          <p className="text-sm text-manso-cream/60 mt-0.5">
+          <p className="text-[15px] text-manso-cream/60 mt-0.5">
             {fotos.length} foto{fotos.length !== 1 ? 's' : ''} — se muestran en la página de detalle del taller
           </p>
         </div>
@@ -111,7 +111,7 @@ export function AgendaFotosList({ agendaId, tallerTitulo, refreshTrigger }: Prop
 
       {/* Uploader */}
       <div className="mb-6">
-        <label className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-1 mb-2 block">
+        <label className="text-[13px] font-black uppercase tracking-widest text-manso-cream/60 ml-1 mb-2 block">
           Agregar foto
         </label>
         <ImageUploader
@@ -131,7 +131,7 @@ export function AgendaFotosList({ agendaId, tallerTitulo, refreshTrigger }: Prop
           ))}
         </div>
       ) : fotos.length === 0 ? (
-        <div className="text-center py-8 text-manso-cream/40 text-sm">
+        <div className="text-center py-8 text-manso-cream/62 text-[15px]">
           Aún no hay fotos en el carrusel
         </div>
       ) : (
@@ -153,14 +153,14 @@ export function AgendaFotosList({ agendaId, tallerTitulo, refreshTrigger }: Prop
                   <button
                     onClick={() => handleReorder(foto.id, Math.max(0, foto.orden - 1))}
                     disabled={actionLoading === foto.id || index === 0}
-                    className="px-2 py-1 bg-white/20 text-white rounded text-xs disabled:opacity-30 hover:bg-white/30 transition-colors"
+                    className="px-2 py-1 bg-white/20 text-white rounded text-[13px] disabled:opacity-30 hover:bg-white/30 transition-colors"
                   >
                     ◀
                   </button>
                   <button
                     onClick={() => handleReorder(foto.id, foto.orden + 1)}
                     disabled={actionLoading === foto.id || index === fotos.length - 1}
-                    className="px-2 py-1 bg-white/20 text-white rounded text-xs disabled:opacity-30 hover:bg-white/30 transition-colors"
+                    className="px-2 py-1 bg-white/20 text-white rounded text-[13px] disabled:opacity-30 hover:bg-white/30 transition-colors"
                   >
                     ▶
                   </button>
@@ -174,7 +174,7 @@ export function AgendaFotosList({ agendaId, tallerTitulo, refreshTrigger }: Prop
                 </button>
               </div>
 
-              <span className="absolute top-2 left-2 bg-black/60 text-white text-[9px] font-mono px-1.5 py-0.5 rounded">
+              <span className="absolute top-2 left-2 bg-black/60 text-white text-[12px] font-mono px-1.5 py-0.5 rounded">
                 #{index + 1}
               </span>
             </div>

@@ -112,7 +112,7 @@ export function FormEventoHome() {
           {editingId ? 'Editar Evento del Home' : 'Nuevo Evento del Home'}
         </h2>
         {editingId && (
-          <p className="text-sm text-manso-cream/60">
+          <p className="text-[15px] text-manso-cream/60">
             Modificando los datos del evento seleccionado
           </p>
         )}
@@ -123,7 +123,7 @@ export function FormEventoHome() {
           <input 
             type="text" 
             placeholder="TÍTULO DEL EVENTO"
-            className="w-full text-2xl font-black bg-manso-cream/10 p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/40"
+            className="w-full text-2xl font-black bg-manso-cream/10 p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/62"
             value={formData.titulo}
             onChange={e => setFormData({...formData, titulo: e.target.value})}
             required
@@ -132,14 +132,14 @@ export function FormEventoHome() {
           <div className="grid grid-cols-2 gap-4">
             <input 
               type="date"
-              className="w-full p-4 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream placeholder:text-manso-cream/40 [color-scheme:dark]"
+              className="w-full p-4 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-[15px] text-manso-cream placeholder:text-manso-cream/62 [color-scheme:light]"
               value={formData.fecha}
               onChange={e => setFormData({...formData, fecha: e.target.value})}
               required
             />
 
             <select 
-              className="w-full p-4 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream"
+              className="w-full p-4 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-[15px] text-manso-cream"
               value={formData.categoria}
               onChange={e => setFormData({...formData, categoria: e.target.value})}
             >
@@ -153,7 +153,7 @@ export function FormEventoHome() {
             <input 
               type="number" 
               placeholder="ORDEN (opcional, auto-asignado)"
-              className="w-full p-4 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream placeholder:text-manso-cream/40"
+              className="w-full p-4 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-[15px] text-manso-cream placeholder:text-manso-cream/62"
               value={formData.orden || ''}
               onChange={e => setFormData({...formData, orden: e.target.value})}
               min="0"
@@ -166,7 +166,7 @@ export function FormEventoHome() {
                 onChange={e => setFormData({...formData, disponible: e.target.checked})}
                 className="w-5 h-5 text-manso-terra bg-manso-cream/20 border-manso-cream/40 rounded focus:ring-manso-terra"
               />
-              <span className="text-sm font-mono text-manso-cream">Disponible para venta</span>
+              <span className="text-[15px] font-mono text-manso-cream">Disponible para venta</span>
             </label>
           </div>
         </div>

@@ -50,14 +50,14 @@ export function FormMembresiaGallery() {
         <h2 className="text-lg font-black uppercase tracking-tighter text-manso-cream mb-1">
           Galería Cowork
         </h2>
-        <p className="text-xs text-manso-cream/50">
+        <p className="text-[13px] text-manso-cream/50">
           Fotos que aparecen en la sección membresías del sitio
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-5">
         <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2 flex items-center gap-2">
+          <label className="text-[13px] font-black uppercase tracking-widest text-manso-cream/60 ml-2 flex items-center gap-2">
             <ImageIcon size={14} />
             Foto del Cowork
           </label>
@@ -74,7 +74,7 @@ export function FormMembresiaGallery() {
         <button
           type="submit"
           disabled={loading || !photoUrl}
-          className="w-full bg-manso-terra text-manso-cream py-4 rounded-2xl font-black uppercase tracking-[0.2em] hover:bg-manso-cream hover:text-manso-black transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+          className="w-full bg-manso-terra text-manso-cream py-4 rounded-2xl font-black uppercase tracking-[0.2em] hover:bg-manso-cream hover:text-manso-black transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed text-[15px]"
         >
           {loading ? 'AGREGANDO...' : 'AGREGAR FOTO'}
         </button>

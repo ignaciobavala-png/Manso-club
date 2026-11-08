@@ -209,7 +209,7 @@ export function ModeracionForo() {
   };
 
   if (loading) {
-    return <p className="text-manso-cream/40 text-xs text-center py-12">Cargando moderación...</p>;
+    return <p className="text-manso-cream/62 text-[13px] text-center py-12">Cargando moderación...</p>;
   }
 
   return (
@@ -222,7 +222,7 @@ export function ModeracionForo() {
         </h3>
 
         {reportes.length === 0 ? (
-          <p className="text-manso-cream/30 text-xs text-center py-8 uppercase tracking-widest font-black">
+          <p className="text-manso-cream/62 text-[13px] text-center py-8 uppercase tracking-widest font-black">
             Sin reportes pendientes
           </p>
         ) : (
@@ -233,34 +233,34 @@ export function ModeracionForo() {
                 <div key={rep.id} className="bg-manso-cream/5 rounded-2xl border border-manso-cream/10 p-4">
                   <div className="flex items-start justify-between gap-3 mb-2">
                     <div className="min-w-0">
-                      <p className="text-manso-cream text-xs font-bold">
+                      <p className="text-manso-cream text-[13px] font-bold">
                         {rep.thread_id ? 'Thread' : 'Respuesta'} de {contenido?.autor_nombre ?? 'Usuario'}
                       </p>
-                      <p className="text-manso-cream/50 text-xs line-clamp-2 mt-1">{contenido?.texto ?? '(contenido eliminado)'}</p>
+                      <p className="text-manso-cream/50 text-[13px] line-clamp-2 mt-1">{contenido?.texto ?? '(contenido eliminado)'}</p>
                     </div>
                     <a
                       href={contenido ? `/foro/${contenido.threadIdParaLink}` : '#'}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-manso-terra text-[10px] uppercase tracking-widest shrink-0 hover:underline"
+                      className="text-manso-terra text-[13px] uppercase tracking-widest shrink-0 hover:underline"
                     >
                       Ver
                     </a>
                   </div>
-                  <p className="text-manso-cream/40 text-[11px] mb-3">
+                  <p className="text-manso-cream/62 text-[13px] mb-3">
                     <span className="font-bold uppercase tracking-widest">Motivo:</span> {rep.motivo}
                   </p>
                   <div className="flex flex-wrap gap-2">
                     <button
                       onClick={() => descartar(rep.id)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-manso-cream/10 text-manso-cream/70 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-manso-cream/20 transition-all"
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-manso-cream/10 text-manso-cream/70 rounded-xl text-[13px] font-black uppercase tracking-widest hover:bg-manso-cream/20 transition-all"
                     >
                       <X size={12} />
                       Descartar
                     </button>
                     <button
                       onClick={() => borrarContenido(rep)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-manso-terra/10 text-manso-terra rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-manso-terra/20 transition-all"
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-manso-terra/10 text-manso-terra rounded-xl text-[13px] font-black uppercase tracking-widest hover:bg-manso-terra/20 transition-all"
                     >
                       <Trash2 size={12} />
                       Borrar contenido
@@ -268,7 +268,7 @@ export function ModeracionForo() {
                     {contenido && (
                       <button
                         onClick={() => banear(contenido.autor_id, rep.id)}
-                        className="flex items-center gap-1.5 px-3 py-1.5 bg-manso-terra text-manso-cream rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-manso-terra/80 transition-all"
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-manso-terra text-manso-cream rounded-xl text-[13px] font-black uppercase tracking-widest hover:bg-manso-terra/80 transition-all"
                       >
                         <Ban size={12} />
                         Banear autor
@@ -290,7 +290,7 @@ export function ModeracionForo() {
         </h3>
 
         {todosThreads.length === 0 ? (
-          <p className="text-manso-cream/30 text-xs text-center py-8 uppercase tracking-widest font-black">
+          <p className="text-manso-cream/62 text-[13px] text-center py-8 uppercase tracking-widest font-black">
             Sin threads en el foro
           </p>
         ) : (
@@ -302,8 +302,8 @@ export function ModeracionForo() {
                 <div key={thread.id} className="bg-manso-cream/5 rounded-2xl border border-manso-cream/10 p-4">
                   <div className="flex items-start justify-between gap-3">
                     <div className="min-w-0">
-                      <p className="text-manso-cream text-xs font-bold truncate">{thread.titulo}</p>
-                      <p className="text-manso-cream/40 text-[11px] mt-0.5">
+                      <p className="text-manso-cream text-[13px] font-bold truncate">{thread.titulo}</p>
+                      <p className="text-manso-cream/62 text-[13px] mt-0.5">
                         {thread.autor_nombre ?? 'Usuario'} · {thread.reply_count} {thread.reply_count === 1 ? 'respuesta' : 'respuestas'}
                       </p>
                     </div>
@@ -311,7 +311,7 @@ export function ModeracionForo() {
                       href={`/foro/${thread.id}`}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-manso-terra text-[10px] uppercase tracking-widest shrink-0 hover:underline"
+                      className="text-manso-terra text-[13px] uppercase tracking-widest shrink-0 hover:underline"
                     >
                       Ver
                     </a>
@@ -319,14 +319,14 @@ export function ModeracionForo() {
                   <div className="flex flex-wrap gap-2 mt-3">
                     <button
                       onClick={() => toggleExpandThread(thread.id)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-manso-cream/10 text-manso-cream/70 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-manso-cream/20 transition-all"
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-manso-cream/10 text-manso-cream/70 rounded-xl text-[13px] font-black uppercase tracking-widest hover:bg-manso-cream/20 transition-all"
                     >
                       {expandido ? <ChevronUp size={12} /> : <ChevronDown size={12} />}
                       {expandido ? 'Ocultar respuestas' : 'Ver respuestas'}
                     </button>
                     <button
                       onClick={() => borrarThreadCompleto(thread.id)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 bg-manso-terra/10 text-manso-terra rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-manso-terra/20 transition-all"
+                      className="flex items-center gap-1.5 px-3 py-1.5 bg-manso-terra/10 text-manso-terra rounded-xl text-[13px] font-black uppercase tracking-widest hover:bg-manso-terra/20 transition-all"
                     >
                       <Trash2 size={12} />
                       Borrar thread
@@ -336,17 +336,17 @@ export function ModeracionForo() {
                   {expandido && (
                     <div className="mt-3 pl-4 border-l-2 border-manso-cream/10 space-y-2">
                       {replies.length === 0 ? (
-                        <p className="text-manso-cream/30 text-[11px] py-2">Sin respuestas</p>
+                        <p className="text-manso-cream/62 text-[13px] py-2">Sin respuestas</p>
                       ) : (
                         replies.map(reply => (
                           <div key={reply.id} className="flex items-start justify-between gap-3 bg-manso-cream/5 rounded-xl px-3 py-2">
                             <div className="min-w-0">
-                              <p className="text-manso-cream/70 text-[11px] font-bold">{reply.autor_nombre ?? 'Usuario'}</p>
-                              <p className="text-manso-cream/50 text-[11px] line-clamp-2 mt-0.5">{reply.cuerpo}</p>
+                              <p className="text-manso-cream/70 text-[13px] font-bold">{reply.autor_nombre ?? 'Usuario'}</p>
+                              <p className="text-manso-cream/50 text-[13px] line-clamp-2 mt-0.5">{reply.cuerpo}</p>
                             </div>
                             <button
                               onClick={() => borrarReplyIndividual(reply.id, thread.id)}
-                              className="flex items-center gap-1 px-2 py-1 bg-manso-terra/10 text-manso-terra rounded-lg text-[9px] font-black uppercase tracking-widest hover:bg-manso-terra/20 transition-all shrink-0"
+                              className="flex items-center gap-1 px-2 py-1 bg-manso-terra/10 text-manso-terra rounded-lg text-[12px] font-black uppercase tracking-widest hover:bg-manso-terra/20 transition-all shrink-0"
                             >
                               <Trash2 size={11} />
                               Borrar
@@ -371,7 +371,7 @@ export function ModeracionForo() {
         </h3>
 
         {baneados.length === 0 ? (
-          <p className="text-manso-cream/30 text-xs text-center py-8 uppercase tracking-widest font-black">
+          <p className="text-manso-cream/62 text-[13px] text-center py-8 uppercase tracking-widest font-black">
             Sin usuarios baneados
           </p>
         ) : (
@@ -379,12 +379,12 @@ export function ModeracionForo() {
             {baneados.map(u => (
               <div key={u.id} className="flex items-center justify-between gap-3 bg-manso-cream/5 rounded-2xl px-4 py-3 border border-manso-cream/10">
                 <div className="min-w-0">
-                  <p className="text-manso-cream text-xs font-bold">{u.display_name ?? u.email}</p>
-                  {u.foro_baneado_motivo && <p className="text-manso-cream/40 text-[11px] mt-0.5">{u.foro_baneado_motivo}</p>}
+                  <p className="text-manso-cream text-[13px] font-bold">{u.display_name ?? u.email}</p>
+                  {u.foro_baneado_motivo && <p className="text-manso-cream/62 text-[13px] mt-0.5">{u.foro_baneado_motivo}</p>}
                 </div>
                 <button
                   onClick={() => desbanear(u.id)}
-                  className="px-3 py-1.5 bg-manso-cream/10 text-manso-cream/70 rounded-xl text-[10px] font-black uppercase tracking-widest hover:bg-manso-cream/20 transition-all shrink-0"
+                  className="px-3 py-1.5 bg-manso-cream/10 text-manso-cream/70 rounded-xl text-[13px] font-black uppercase tracking-widest hover:bg-manso-cream/20 transition-all shrink-0"
                 >
                   Desbanear
                 </button>

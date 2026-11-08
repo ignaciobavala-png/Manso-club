@@ -70,60 +70,60 @@ export function CRMKPIStrip({ users, events, mrr, ticketsRevenue, loading }: CRM
       <div className="flex-shrink-0 bg-manso-cream/5 border border-manso-cream/10 rounded-2xl px-4 py-3 min-w-[150px]">
         <div className="flex items-center gap-1.5 mb-1">
           <TrendingUp size={11} className="text-manso-olive" />
-          <p className="text-[8px] font-black uppercase tracking-widest text-manso-cream/40">Ingresos membresías / mes</p>
+          <p className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62">Ingresos membresías / mes</p>
         </div>
         <p className="text-2xl font-black text-manso-olive leading-none">{formatARS(mrr)}</p>
-        <p className="text-[8px] text-manso-cream/30 mt-0.5">suma de planes activos vigentes</p>
+        <p className="text-[12px] text-manso-cream/62 mt-0.5">suma de planes activos vigentes</p>
       </div>
 
       {/* Ingresos por tickets */}
       <div className="flex-shrink-0 bg-manso-cream/5 border border-manso-cream/10 rounded-2xl px-4 py-3 min-w-[150px]">
         <div className="flex items-center gap-1.5 mb-1">
           <Ticket size={11} className="text-manso-terra" />
-          <p className="text-[8px] font-black uppercase tracking-widest text-manso-cream/40">Ingresos tickets</p>
+          <p className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62">Ingresos tickets</p>
         </div>
         <p className="text-2xl font-black text-manso-terra leading-none">{formatARS(ticketsRevenue)}</p>
-        <p className="text-[8px] text-manso-cream/30 mt-0.5">acumulado eventos propios</p>
+        <p className="text-[12px] text-manso-cream/62 mt-0.5">acumulado eventos propios</p>
       </div>
 
       {/* Miembros activos */}
       <div className="flex-shrink-0 bg-manso-cream/5 border border-manso-cream/10 rounded-2xl px-4 py-3 min-w-[120px]">
         <div className="flex items-center gap-1.5 mb-1">
           <Crown size={11} className="text-green-400" />
-          <p className="text-[8px] font-black uppercase tracking-widest text-manso-cream/40">Activos</p>
+          <p className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62">Activos</p>
         </div>
         <p className="text-2xl font-black text-green-400 leading-none">{activos}</p>
-        <p className="text-[8px] text-manso-cream/30 mt-0.5">+{nuevosEstaSemana} esta semana</p>
+        <p className="text-[12px] text-manso-cream/62 mt-0.5">+{nuevosEstaSemana} esta semana</p>
       </div>
 
       {/* Por vencer */}
       <div className="flex-shrink-0 bg-manso-cream/5 border border-manso-cream/10 rounded-2xl px-4 py-3 min-w-[110px]">
         <div className="flex items-center gap-1.5 mb-1">
-          <AlertTriangle size={11} className={porVencer > 0 ? 'text-yellow-400' : 'text-manso-cream/20'} />
-          <p className="text-[8px] font-black uppercase tracking-widest text-manso-cream/40">Vencen</p>
+          <AlertTriangle size={11} className={porVencer > 0 ? 'text-yellow-400' : 'text-manso-cream/62'} />
+          <p className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62">Vencen</p>
         </div>
-        <p className={`text-2xl font-black leading-none ${porVencer > 0 ? 'text-yellow-400' : 'text-manso-cream/20'}`}>{porVencer}</p>
-        <p className="text-[8px] text-manso-cream/30 mt-0.5">esta semana</p>
+        <p className={`text-2xl font-black leading-none ${porVencer > 0 ? 'text-yellow-400' : 'text-manso-cream/62'}`}>{porVencer}</p>
+        <p className="text-[12px] text-manso-cream/62 mt-0.5">esta semana</p>
       </div>
 
       {/* Vencidos */}
       <div className="flex-shrink-0 bg-manso-cream/5 border border-manso-cream/10 rounded-2xl px-4 py-3 min-w-[110px]">
         <div className="flex items-center gap-1.5 mb-1">
-          <XCircle size={11} className={vencidos > 0 ? 'text-red-400' : 'text-manso-cream/20'} />
-          <p className="text-[8px] font-black uppercase tracking-widest text-manso-cream/40">Vencidos</p>
+          <XCircle size={11} className={vencidos > 0 ? 'text-red-400' : 'text-manso-cream/62'} />
+          <p className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62">Vencidos</p>
         </div>
-        <p className={`text-2xl font-black leading-none ${vencidos > 0 ? 'text-red-400' : 'text-manso-cream/20'}`}>{vencidos}</p>
-        <p className="text-[8px] text-manso-cream/30 mt-0.5">reactivar</p>
+        <p className={`text-2xl font-black leading-none ${vencidos > 0 ? 'text-red-400' : 'text-manso-cream/62'}`}>{vencidos}</p>
+        <p className="text-[12px] text-manso-cream/62 mt-0.5">reactivar</p>
       </div>
 
       {/* Leads — sin membresía */}
       <div className="flex-shrink-0 bg-manso-cream/5 border border-manso-cream/10 rounded-2xl px-4 py-3 min-w-[140px]">
         <div className="flex items-center gap-1.5 mb-1">
           <UserSearch size={11} className="text-manso-blue" style={{ color: '#4f8ef7' }} />
-          <p className="text-[8px] font-black uppercase tracking-widest text-manso-cream/40">Leads</p>
+          <p className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62">Leads</p>
         </div>
         <p className="text-2xl font-black leading-none" style={{ color: '#4f8ef7' }}>{leads}</p>
-        <p className="text-[8px] text-manso-cream/30 mt-0.5">
+        <p className="text-[12px] text-manso-cream/62 mt-0.5">
           {leadsCalientes > 0 ? <><span className="text-orange-400">{leadsCalientes} calientes</span> · {leads - leadsCalientes} fríos</> : 'sin membresía activa'}
         </p>
       </div>
@@ -131,21 +131,21 @@ export function CRMKPIStrip({ users, events, mrr, ticketsRevenue, loading }: CRM
       {/* Churn este mes */}
       <div className="flex-shrink-0 bg-manso-cream/5 border border-manso-cream/10 rounded-2xl px-4 py-3 min-w-[130px]">
         <div className="flex items-center gap-1.5 mb-1">
-          <TrendingDown size={11} className={churnMes > 0 ? 'text-orange-400' : 'text-manso-cream/20'} />
-          <p className="text-[8px] font-black uppercase tracking-widest text-manso-cream/40">Churn / mes</p>
+          <TrendingDown size={11} className={churnMes > 0 ? 'text-orange-400' : 'text-manso-cream/62'} />
+          <p className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62">Churn / mes</p>
         </div>
-        <p className={`text-2xl font-black leading-none ${churnMes > 0 ? 'text-orange-400' : 'text-manso-cream/20'}`}>{churnMes}</p>
-        <p className="text-[8px] text-manso-cream/30 mt-0.5">vencieron últimos 30d</p>
+        <p className={`text-2xl font-black leading-none ${churnMes > 0 ? 'text-orange-400' : 'text-manso-cream/62'}`}>{churnMes}</p>
+        <p className="text-[12px] text-manso-cream/62 mt-0.5">vencieron últimos 30d</p>
       </div>
 
       {/* Tasa de conversión */}
       <div className="flex-shrink-0 bg-manso-cream/5 border border-manso-cream/10 rounded-2xl px-4 py-3 min-w-[120px]">
         <div className="flex items-center gap-1.5 mb-1">
           <Percent size={11} className="text-manso-olive" />
-          <p className="text-[8px] font-black uppercase tracking-widest text-manso-cream/40">Conversión</p>
+          <p className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62">Conversión</p>
         </div>
         <p className="text-2xl font-black text-manso-olive leading-none">{tasaConversion}%</p>
-        <p className="text-[8px] text-manso-cream/30 mt-0.5">{activos} de {nonAdmin.length} usuarios</p>
+        <p className="text-[12px] text-manso-cream/62 mt-0.5">{activos} de {nonAdmin.length} usuarios</p>
       </div>
 
       {/* Separador */}
@@ -156,9 +156,9 @@ export function CRMKPIStrip({ users, events, mrr, ticketsRevenue, loading }: CRM
         <div className="flex-shrink-0 bg-manso-cream/5 border border-manso-cream/10 rounded-2xl px-4 py-3 min-w-[170px]">
           <div className="flex items-center gap-1.5 mb-1">
             <Zap size={11} className="text-manso-terra" />
-            <p className="text-[8px] font-black uppercase tracking-widest text-manso-cream/40">En curso</p>
+            <p className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62">En curso</p>
           </div>
-          <p className="text-sm font-black text-manso-cream truncate max-w-[150px]">{enCurso.name}</p>
+          <p className="text-[15px] font-black text-manso-cream truncate max-w-[150px]">{enCurso.name}</p>
           {enCurso.max_capacity ? (
             <div className="mt-1.5">
               <div className="h-1 bg-manso-terra/20 rounded-full overflow-hidden">
@@ -167,10 +167,10 @@ export function CRMKPIStrip({ users, events, mrr, ticketsRevenue, loading }: CRM
                   style={{ width: `${Math.min(Math.round((enCurso.registrations_count / enCurso.max_capacity) * 100), 100)}%` }}
                 />
               </div>
-              <p className="text-[7px] text-manso-terra/50 mt-0.5">{enCurso.registrations_count}/{enCurso.max_capacity} cupos</p>
+              <p className="text-[12px] text-manso-terra/50 mt-0.5">{enCurso.registrations_count}/{enCurso.max_capacity} cupos</p>
             </div>
           ) : (
-            <p className="text-[8px] text-manso-terra/50 mt-0.5">{enCurso.registrations_count} registraciones</p>
+            <p className="text-[12px] text-manso-terra/50 mt-0.5">{enCurso.registrations_count} registraciones</p>
           )}
         </div>
       )}
@@ -179,13 +179,13 @@ export function CRMKPIStrip({ users, events, mrr, ticketsRevenue, loading }: CRM
       {proximo && proximo.id !== enCurso?.id && (
         <div className="flex-shrink-0 bg-manso-cream/5 border border-manso-cream/10 rounded-2xl px-4 py-3 min-w-[170px]">
           <div className="flex items-center gap-1.5 mb-1">
-            <Calendar size={11} className="text-manso-cream/40" />
-            <p className="text-[8px] font-black uppercase tracking-widest text-manso-cream/30">Próximo</p>
+            <Calendar size={11} className="text-manso-cream/62" />
+            <p className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62">Próximo</p>
             {proximo.is_private && (
-              <span className="text-[7px] font-black uppercase px-1 py-0.5 bg-manso-blue/20 border border-manso-blue/30 rounded text-blue-300">Privado</span>
+              <span className="text-[12px] font-black uppercase px-1 py-0.5 bg-manso-blue/20 border border-manso-blue/30 rounded text-blue-300">Privado</span>
             )}
           </div>
-          <p className="text-sm font-black text-manso-cream truncate max-w-[150px]">{proximo.name}</p>
+          <p className="text-[15px] font-black text-manso-cream truncate max-w-[150px]">{proximo.name}</p>
           {proximo.max_capacity ? (
             <div className="mt-1.5">
               <div className="h-1 bg-manso-cream/10 rounded-full overflow-hidden">
@@ -197,14 +197,14 @@ export function CRMKPIStrip({ users, events, mrr, ticketsRevenue, loading }: CRM
                   style={{ width: `${Math.min(Math.round((proximo.registrations_count / proximo.max_capacity) * 100), 100)}%` }}
                 />
               </div>
-              <p className="text-[7px] text-manso-cream/30 mt-0.5">{formatFecha(proximo.start_date)} · {proximo.registrations_count}/{proximo.max_capacity}</p>
+              <p className="text-[12px] text-manso-cream/62 mt-0.5">{formatFecha(proximo.start_date)} · {proximo.registrations_count}/{proximo.max_capacity}</p>
             </div>
           ) : (
             <div className="flex items-center gap-1.5 mt-0.5">
-              <span className="text-[8px] text-manso-cream/30">{formatFecha(proximo.start_date)}</span>
-              <span className="text-[8px] text-manso-cream/20">·</span>
-              <Users size={8} className="text-manso-cream/30" />
-              <span className="text-[8px] text-manso-cream/30">{proximo.registrations_count}</span>
+              <span className="text-[12px] text-manso-cream/62">{formatFecha(proximo.start_date)}</span>
+              <span className="text-[12px] text-manso-cream/62">·</span>
+              <Users size={8} className="text-manso-cream/62" />
+              <span className="text-[12px] text-manso-cream/62">{proximo.registrations_count}</span>
             </div>
           )}
         </div>
@@ -212,7 +212,7 @@ export function CRMKPIStrip({ users, events, mrr, ticketsRevenue, loading }: CRM
 
       {proximos.length === 0 && !enCurso && (
         <div className="flex-shrink-0 bg-manso-cream/5 border border-manso-cream/10 rounded-2xl px-4 py-3 min-w-[140px] flex items-center justify-center">
-          <p className="text-[9px] text-manso-cream/20 uppercase tracking-widest">Sin próximos eventos</p>
+          <p className="text-[12px] text-manso-cream/62 uppercase tracking-widest">Sin próximos eventos</p>
         </div>
       )}
     </div>

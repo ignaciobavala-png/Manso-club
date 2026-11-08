@@ -309,7 +309,7 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
     <div className="fixed inset-0 z-50 flex justify-end">
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="relative w-full max-w-md bg-[#000000] border-l border-manso-cream/10 h-full overflow-y-auto flex flex-col">
+      <div className="relative w-full max-w-md bg-manso-black border-l border-manso-cream/10 h-full overflow-y-auto flex flex-col">
 
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-5 border-b border-manso-cream/10">
@@ -318,17 +318,17 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
               <User size={18} className="text-manso-cream/60" />
             </div>
             <div>
-              <p className="text-sm font-black text-manso-cream leading-none mb-1">
+              <p className="text-[15px] font-black text-manso-cream leading-none mb-1">
                 {usuario.display_name ?? 'Sin nombre'}
               </p>
-              <span className={`px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${NIVEL_BADGE[nivel]}`}>
+              <span className={`px-2 py-0.5 rounded-full text-[12px] font-black uppercase tracking-widest ${NIVEL_BADGE[nivel]}`}>
                 {NIVEL_LABEL[nivel]}
               </span>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="w-8 h-8 flex items-center justify-center text-manso-cream/40 hover:text-manso-cream transition-colors rounded-lg hover:bg-manso-cream/10"
+            className="w-8 h-8 flex items-center justify-center text-manso-cream/62 hover:text-manso-cream transition-colors rounded-lg hover:bg-manso-cream/10"
           >
             <X size={16} />
           </button>
@@ -338,11 +338,11 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
         <div className="px-6 py-5 space-y-3 border-b border-manso-cream/10">
           <div className="flex items-center gap-2 text-manso-cream/60">
             <Mail size={13} />
-            <span className="text-xs">{usuario.email}</span>
+            <span className="text-[13px]">{usuario.email}</span>
           </div>
           <div className="flex items-center gap-2 text-manso-cream/60">
             <Calendar size={13} />
-            <span className="text-xs">
+            <span className="text-[13px]">
               Registrado el {new Date(usuario.created_at).toLocaleDateString('es-AR', { day: 'numeric', month: 'long', year: 'numeric' })}
             </span>
           </div>
@@ -351,13 +351,13 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
         {/* Perfil de artista */}
         {artista && (
           <div className="px-6 py-5 border-b border-manso-cream/10">
-            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-manso-terra mb-4">
+            <p className="text-[12px] font-black uppercase tracking-[0.2em] text-manso-terra mb-4">
               Perfil de artista
             </p>
             <div className="flex items-center justify-between gap-3 p-4 rounded-xl bg-manso-cream/5 border border-manso-cream/10">
               <div className="min-w-0">
-                <p className="text-sm font-black text-manso-cream truncate">{artista.nombre}</p>
-                <p className="text-[9px] text-manso-cream/40 uppercase tracking-widest mt-0.5">{artista.tipo ?? 'DJ'}</p>
+                <p className="text-[15px] font-black text-manso-cream truncate">{artista.nombre}</p>
+                <p className="text-[12px] text-manso-cream/62 uppercase tracking-widest mt-0.5">{artista.tipo ?? 'DJ'}</p>
               </div>
               <div className="flex items-center gap-2 shrink-0">
                 <a
@@ -371,7 +371,7 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
                 <button
                   onClick={handleToggleArtista}
                   disabled={togglingArtista}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all disabled:opacity-50 ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[12px] font-black uppercase tracking-widest transition-all disabled:opacity-50 ${
                     artista.active
                       ? 'bg-red-500/20 border border-red-500/30 text-red-400 hover:bg-red-500/30'
                       : 'bg-green-500/20 border border-green-500/30 text-green-400 hover:bg-green-500/30'
@@ -387,7 +387,7 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
         {/* Membresía */}
         {usuario.role !== 'admin' && (
           <div className="px-6 py-5 border-b border-manso-cream/10">
-            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-manso-terra mb-4">
+            <p className="text-[12px] font-black uppercase tracking-[0.2em] text-manso-terra mb-4">
               Membresía
             </p>
 
@@ -399,8 +399,8 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
                     <div className="flex items-center gap-2 min-w-0">
                       <Crown size={13} className="text-manso-terra flex-shrink-0 mt-0.5" />
                       <div className="min-w-0">
-                        <p className="text-sm font-black text-manso-cream">{planActivo.nombre}</p>
-                        <p className="text-[9px] text-manso-cream/40 uppercase tracking-widest mt-0.5">
+                        <p className="text-[15px] font-black text-manso-cream">{planActivo.nombre}</p>
+                        <p className="text-[12px] text-manso-cream/62 uppercase tracking-widest mt-0.5">
                           {planActivo.categoria} · ${planActivo.precio.toLocaleString('es-AR')}/{planActivo.periodo}
                         </p>
                       </div>
@@ -408,13 +408,13 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
                     <div className="text-right flex-shrink-0">
                       {planActivo.vencimiento ? (
                         <>
-                          <p className="text-[9px] text-manso-cream/40 uppercase tracking-widest">Vence</p>
-                          <p className="text-xs font-black text-manso-terra">
+                          <p className="text-[12px] text-manso-cream/62 uppercase tracking-widest">Vence</p>
+                          <p className="text-[13px] font-black text-manso-terra">
                             {new Date(planActivo.vencimiento).toLocaleDateString('es-AR', { day: 'numeric', month: 'short', year: '2-digit' })}
                           </p>
                         </>
                       ) : (
-                        <p className="text-xs font-black text-manso-olive">Vitalicio</p>
+                        <p className="text-[13px] font-black text-manso-olive">Vitalicio</p>
                       )}
                     </div>
                   </div>
@@ -424,14 +424,14 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
                 <div className="flex gap-2">
                   <button
                     onClick={() => { setAsignando(true); }}
-                    className="flex-1 py-2 text-[9px] font-black uppercase tracking-widest rounded-xl border border-manso-cream/20 text-manso-cream/60 hover:text-manso-cream hover:border-manso-cream/40 transition-all"
+                    className="flex-1 py-2 text-[12px] font-black uppercase tracking-widest rounded-xl border border-manso-cream/20 text-manso-cream/60 hover:text-manso-cream hover:border-manso-cream/40 transition-all"
                   >
                     Cambiar plan
                   </button>
                   <button
                     onClick={handleCancelarPlan}
                     disabled={cancelandoPlan}
-                    className="flex-1 py-2 text-[9px] font-black uppercase tracking-widest rounded-xl border border-red-500/20 text-red-400/60 hover:text-red-400 hover:border-red-500/40 transition-all disabled:opacity-50"
+                    className="flex-1 py-2 text-[12px] font-black uppercase tracking-widest rounded-xl border border-red-500/20 text-red-400/60 hover:text-red-400 hover:border-red-500/40 transition-all disabled:opacity-50"
                   >
                     {cancelandoPlan ? 'Cancelando...' : 'Cancelar membresía'}
                   </button>
@@ -439,10 +439,10 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
               </div>
             ) : !asignando ? (
               <div className="space-y-3">
-                <p className="text-xs text-manso-cream/30">Sin membresía activa</p>
+                <p className="text-[13px] text-manso-cream/62">Sin membresía activa</p>
                 <button
                   onClick={() => setAsignando(true)}
-                  className="flex items-center gap-2 px-4 py-2.5 bg-manso-terra/10 border border-manso-terra/30 rounded-xl text-[9px] font-black uppercase tracking-widest text-manso-terra hover:bg-manso-terra/20 transition-all"
+                  className="flex items-center gap-2 px-4 py-2.5 bg-manso-terra/10 border border-manso-terra/30 rounded-xl text-[12px] font-black uppercase tracking-widest text-manso-terra hover:bg-manso-terra/20 transition-all"
                 >
                   <Plus size={11} /> Asignar plan
                 </button>
@@ -453,13 +453,13 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
             {asignando && (
               <div className="space-y-4">
                 <div>
-                  <label className="text-[9px] font-black uppercase tracking-widest text-manso-cream/50 block mb-2">
+                  <label className="text-[12px] font-black uppercase tracking-widest text-manso-cream/50 block mb-2">
                     Plan
                   </label>
                   <select
                     value={planSelId}
                     onChange={e => handlePlanSelect(e.target.value)}
-                    className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-3 py-2 text-sm text-manso-cream focus:outline-none focus:border-manso-terra"
+                    className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-3 py-2 text-[15px] text-manso-cream focus:outline-none focus:border-manso-terra"
                   >
                     <option value="">Seleccioná un plan...</option>
                     {planes.map(p => (
@@ -472,7 +472,7 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
 
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="text-[9px] font-black uppercase tracking-widest text-manso-cream/50">
+                    <label className="text-[12px] font-black uppercase tracking-widest text-manso-cream/50">
                       Vence el
                     </label>
                     <button
@@ -481,10 +481,10 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
                         setVitalicio(v => !v);
                         if (!vitalicio) setVencimientoInput('');
                       }}
-                      className={`flex items-center gap-1.5 text-[8px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border transition-all ${
+                      className={`flex items-center gap-1.5 text-[12px] font-black uppercase tracking-widest px-2 py-1 rounded-lg border transition-all ${
                         vitalicio
                           ? 'bg-manso-olive/20 border-manso-olive/40 text-manso-olive'
-                          : 'border-manso-cream/10 text-manso-cream/30 hover:text-manso-cream/60'
+                          : 'border-manso-cream/10 text-manso-cream/62 hover:text-manso-cream/60'
                       }`}
                     >
                       <Crown size={10} />
@@ -496,25 +496,25 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
                       type="date"
                       value={vencimientoInput}
                       onChange={e => setVencimientoInput(e.target.value)}
-                      className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-3 py-2 text-sm text-manso-cream focus:outline-none focus:border-manso-terra"
+                      className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-3 py-2 text-[15px] text-manso-cream focus:outline-none focus:border-manso-terra"
                     />
                   )}
                   {vitalicio && (
-                    <p className="text-xs text-manso-olive/70 px-1">Sin fecha de vencimiento</p>
+                    <p className="text-[13px] text-manso-olive/70 px-1">Sin fecha de vencimiento</p>
                   )}
                 </div>
 
                 <div className="flex gap-2 pt-1">
                   <button
                     onClick={() => { setAsignando(false); setPlanSelId(''); setVitalicio(false); }}
-                    className="flex-1 py-2.5 text-[9px] font-black uppercase tracking-widest rounded-xl border border-manso-cream/10 text-manso-cream/40 hover:text-manso-cream transition-all"
+                    className="flex-1 py-2.5 text-[12px] font-black uppercase tracking-widest rounded-xl border border-manso-cream/10 text-manso-cream/62 hover:text-manso-cream transition-all"
                   >
                     Cancelar
                   </button>
                   <button
                     onClick={handleAsignarPlan}
                     disabled={!planSelId || (!vitalicio && !vencimientoInput) || guardandoPlan}
-                    className="flex-1 py-2.5 bg-manso-terra text-white text-[9px] font-black uppercase tracking-widest rounded-xl hover:bg-manso-terra/80 transition-all disabled:opacity-40"
+                    className="flex-1 py-2.5 bg-manso-terra text-white text-[12px] font-black uppercase tracking-widest rounded-xl hover:bg-manso-terra/80 transition-all disabled:opacity-40"
                   >
                     {guardandoPlan ? 'Guardando...' : 'Confirmar'}
                   </button>
@@ -527,14 +527,14 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
         {/* Permisos */}
         {usuario.role !== 'admin' && (
           <div className="px-6 py-5 border-b border-manso-cream/10">
-            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-manso-terra mb-5">
+            <p className="text-[12px] font-black uppercase tracking-[0.2em] text-manso-terra mb-5">
               Permisos
             </p>
-            <p className="text-[9px] text-manso-cream/30 uppercase tracking-widest mb-4">
+            <p className="text-[12px] text-manso-cream/62 uppercase tracking-widest mb-4">
               Activa el acceso a streaming, tienda y perfil de artista
             </p>
             <div className="flex items-center justify-between mb-6">
-              <span className="text-sm font-bold text-manso-cream">Permisos totales</span>
+              <span className="text-[15px] font-bold text-manso-cream">Permisos totales</span>
               <button
                 onClick={() => setPermisos(!permisos)}
                 className={`w-12 h-6 rounded-full transition-colors relative ${permisos ? 'bg-manso-olive' : 'bg-manso-cream/20'}`}
@@ -545,7 +545,7 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
             <button
               onClick={handleGuardarPermisos}
               disabled={guardandoPermisos}
-              className="w-full py-3 bg-manso-cream text-manso-black font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-manso-cream/90 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full py-3 bg-manso-cream text-manso-black font-black text-[13px] uppercase tracking-widest rounded-xl hover:bg-manso-cream/90 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {guardandoPermisos ? (
                 <div className="w-4 h-4 border-2 border-manso-black/30 border-t-manso-black rounded-full animate-spin" />
@@ -561,14 +561,14 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
         {/* Foro */}
         {usuario.role !== 'admin' && (
           <div className="px-6 py-5 flex-1">
-            <p className="text-[9px] font-black uppercase tracking-[0.3em] text-manso-terra mb-5">
+            <p className="text-[12px] font-black uppercase tracking-[0.2em] text-manso-terra mb-5">
               Foro
             </p>
-            <p className="text-[9px] text-manso-cream/30 uppercase tracking-widest mb-4">
+            <p className="text-[12px] text-manso-cream/62 uppercase tracking-widest mb-4">
               Impide crear threads, responder y reaccionar en el foro. No afecta el resto de la cuenta
             </p>
             <div className="flex items-center justify-between mb-4">
-              <span className="text-sm font-bold text-manso-cream flex items-center gap-1.5">
+              <span className="text-[15px] font-bold text-manso-cream flex items-center gap-1.5">
                 {baneado && <Ban size={13} className="text-red-400" />}
                 Baneado del foro
               </span>
@@ -585,13 +585,13 @@ export function UsuarioDrawer({ usuario, onClose, onUpdated }: UsuarioDrawerProp
                 onChange={e => setMotivoBaneo(e.target.value)}
                 placeholder="Motivo del baneo (opcional, visible solo para el equipo)"
                 rows={2}
-                className="w-full mb-4 bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-3 py-2 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra"
+                className="w-full mb-4 bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-3 py-2 text-[15px] text-manso-cream placeholder:text-manso-cream/62 focus:outline-none focus:border-manso-terra"
               />
             )}
             <button
               onClick={handleGuardarBaneo}
               disabled={guardandoBaneo}
-              className={`w-full py-3 font-black text-[10px] uppercase tracking-widest rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 ${
+              className={`w-full py-3 font-black text-[13px] uppercase tracking-widest rounded-xl transition-all disabled:opacity-50 flex items-center justify-center gap-2 ${
                 baneado ? 'bg-red-500 text-white hover:bg-red-500/80' : 'bg-manso-cream text-manso-black hover:bg-manso-cream/90'
               }`}
             >

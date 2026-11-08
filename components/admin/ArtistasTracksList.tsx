@@ -144,14 +144,14 @@ export function ArtistasTracksList({
           <h3 className="text-lg font-black uppercase tracking-tighter text-manso-cream">
             Tracks de {artistaNombre}
           </h3>
-          <p className="text-sm text-manso-cream/60 mt-1">
+          <p className="text-[15px] text-manso-cream/60 mt-1">
             {tracks.filter(t => t.activo).length} tracks activos
           </p>
         </div>
         {onNewTrack && (
           <button
             onClick={onNewTrack}
-            className="flex items-center gap-2 px-4 py-2 bg-manso-terra text-manso-cream rounded-full font-black uppercase tracking-wider text-xs hover:bg-manso-cream hover:text-manso-black transition-all"
+            className="flex items-center gap-2 px-4 py-2 bg-manso-terra text-manso-cream rounded-full font-black uppercase tracking-wider text-[13px] hover:bg-manso-cream hover:text-manso-black transition-all"
           >
             <Plus size={14} />
             Nuevo Track
@@ -162,7 +162,7 @@ export function ArtistasTracksList({
       {/* Lista de tracks */}
       {tracks.length === 0 ? (
         <div className="text-center py-12">
-          <Music size={48} className="mx-auto text-manso-cream/20 mb-4" />
+          <Music size={48} className="mx-auto text-manso-cream/62 mb-4" />
           <p className="text-manso-cream/60 font-medium">
             No hay tracks registrados
           </p>
@@ -189,7 +189,7 @@ export function ArtistasTracksList({
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4 flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-manso-cream/40 text-xs font-mono">
+                    <span className="text-manso-cream/62 text-[13px] font-mono">
                       #{track.orden}
                     </span>
                     <Music size={16} className="text-manso-terra" />
@@ -201,7 +201,7 @@ export function ArtistasTracksList({
                     }`}>
                       {track.titulo}
                     </h4>
-                    <p className="text-xs text-manso-cream/40 truncate">
+                    <p className="text-[13px] text-manso-cream/62 truncate">
                       {track.soundcloud_url}
                     </p>
                   </div>
@@ -227,7 +227,7 @@ export function ArtistasTracksList({
                     <button
                       onClick={() => handleReorder(track.id, Math.max(1, track.orden - 1))}
                       disabled={actionLoading === track.id || track.orden <= 1}
-                      className="p-1 rounded text-manso-cream/40 hover:text-manso-cream disabled:opacity-30"
+                      className="p-1 rounded text-manso-cream/62 hover:text-manso-cream disabled:opacity-30"
                       title="Subir"
                     >
                       ▲
@@ -235,7 +235,7 @@ export function ArtistasTracksList({
                     <button
                       onClick={() => handleReorder(track.id, track.orden + 1)}
                       disabled={actionLoading === track.id}
-                      className="p-1 rounded text-manso-cream/40 hover:text-manso-cream disabled:opacity-30"
+                      className="p-1 rounded text-manso-cream/62 hover:text-manso-cream disabled:opacity-30"
                       title="Bajar"
                     >
                       ▼

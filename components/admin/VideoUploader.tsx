@@ -86,8 +86,8 @@ export function VideoUploader({ onUpload, bucket = 'hero-media', folder = 'video
         {isUploading ? (
           <div className="flex flex-col items-center justify-center gap-2">
             <Loader2 className="w-8 h-8 text-manso-terra animate-spin" />
-            <p className="text-xs font-bold text-manso-cream/70 tracking-tighter uppercase">{status ?? 'Procesando…'}</p>
-            <p className="text-[9px] text-manso-cream/30 font-medium">No cierres esta ventana</p>
+            <p className="text-[13px] font-bold text-manso-cream/70 tracking-tighter uppercase">{status ?? 'Procesando…'}</p>
+            <p className="text-[12px] text-manso-cream/62 font-medium">No cierres esta ventana</p>
           </div>
         ) : preview ? (
           <div className="absolute inset-0 w-full h-full">
@@ -103,9 +103,9 @@ export function VideoUploader({ onUpload, bucket = 'hero-media', folder = 'video
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center pt-5 pb-6">
-            <Film className="w-8 h-8 text-manso-cream/40 mb-2 group-hover:text-manso-terra transition-colors" />
-            <p className="text-xs font-bold text-manso-cream/60 tracking-tighter uppercase">Soltá el video acá</p>
-            <p className="text-[9px] text-manso-cream/30 font-medium">MP4, WebM — se comprime solo antes de subir</p>
+            <Film className="w-8 h-8 text-manso-cream/62 mb-2 group-hover:text-manso-terra transition-colors" />
+            <p className="text-[13px] font-bold text-manso-cream/60 tracking-tighter uppercase">Soltá el video acá</p>
+            <p className="text-[12px] text-manso-cream/62 font-medium">MP4, WebM — se comprime solo antes de subir</p>
           </div>
         )}
 
@@ -119,15 +119,15 @@ export function VideoUploader({ onUpload, bucket = 'hero-media', folder = 'video
       </label>
 
       {error && (
-        <p className="mt-2 text-[10px] text-manso-terra font-bold leading-relaxed">{error}</p>
+        <p className="mt-2 text-[13px] text-manso-terra font-bold leading-relaxed">{error}</p>
       )}
 
       {!error && preview && !isUploading && (
         <div className="mt-2 space-y-1">
-          <p className="text-[10px] text-manso-cream font-bold flex items-center gap-1">
+          <p className="text-[13px] text-manso-cream font-bold flex items-center gap-1">
             <CheckCircle2 size={12} /> VIDEO LISTO PARA PUBLICAR
           </p>
-          {savedNote && <p className="text-[9px] text-manso-cream/40 font-medium">{savedNote}</p>}
+          {savedNote && <p className="text-[12px] text-manso-cream/62 font-medium">{savedNote}</p>}
         </div>
       )}
     </div>

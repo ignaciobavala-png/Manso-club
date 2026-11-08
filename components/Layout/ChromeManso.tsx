@@ -5,9 +5,9 @@ import { usePathname } from 'next/navigation';
 /**
  * Rutas que viven dentro del sitio pero no son "Manso": tienen identidad
  * propia, así que no llevan navbar, footer ni los flotantes (player, WhatsApp,
- * calendario, vinilo, cursor).
+ * calendario, vinilo, cursor). El panel (/mansoadm) trae su propia barra.
  */
-const RUTAS_SIN_CHROME = ['/blur'];
+const RUTAS_SIN_CHROME = ['/blur', '/mansoadm'];
 
 export function ChromeManso({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

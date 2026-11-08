@@ -153,7 +153,7 @@ export function HeroList({ refreshTrigger }: HeroListProps) {
       </h3>
 
       {heroSlides.length === 0 ? (
-        <div className="text-center text-manso-cream/40 py-8">
+        <div className="text-center text-manso-cream/62 py-8">
           No hay slides del hero configurados
         </div>
       ) : (
@@ -208,7 +208,7 @@ export function HeroList({ refreshTrigger }: HeroListProps) {
                     {/* Placeholder si no hay imágenes */}
                     {!slide.media_url_desktop && !slide.media_url_mobile && !slide.media_url && (
                       <div className="w-full h-full flex items-center justify-center">
-                        <Image size={24} className="text-manso-cream/30" />
+                        <Image size={24} className="text-manso-cream/62" />
                       </div>
                     )}
                   </>
@@ -218,7 +218,7 @@ export function HeroList({ refreshTrigger }: HeroListProps) {
                   </div>
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <Type size={24} className="text-manso-cream/30" />
+                    <Type size={24} className="text-manso-cream/62" />
                   </div>
                 )}
               </div>
@@ -229,24 +229,24 @@ export function HeroList({ refreshTrigger }: HeroListProps) {
                   !slide.active ? 'line-through decoration-1 decoration-manso-cream/50' : ''
                 }`}>
                   {slide.title_line1}
-                  {slide.title_line2 && <span className="block text-sm">{slide.title_line2}</span>}
+                  {slide.title_line2 && <span className="block text-[15px]">{slide.title_line2}</span>}
                 </h4>
                 <div className="flex flex-wrap gap-2 mt-1">
                   {slide.tag && (
-                    <span className="text-[9px] uppercase tracking-widest text-manso-cream/60 px-2 py-0.5 border border-manso-cream/20 rounded">
+                    <span className="text-[12px] uppercase tracking-widest text-manso-cream/60 px-2 py-0.5 border border-manso-cream/20 rounded">
                       {slide.tag}
                     </span>
                   )}
-                  <span className={`text-[9px] uppercase tracking-widest px-2 py-0.5 border rounded flex items-center gap-1 ${getTipoBadge(slide.tipo)}`}>
+                  <span className={`text-[12px] uppercase tracking-widest px-2 py-0.5 border rounded flex items-center gap-1 ${getTipoBadge(slide.tipo)}`}>
                     {getTipoIcon(slide.tipo)}
                     {slide.tipo.toUpperCase()}
                   </span>
-                  <span className="text-[9px] uppercase tracking-widest text-manso-terra px-2 py-0.5 border border-manso-terra/30 rounded">
+                  <span className="text-[12px] uppercase tracking-widest text-manso-terra px-2 py-0.5 border border-manso-terra/30 rounded">
                     Orden: {slide.order_index}
                   </span>
                   {slide.tipo === 'imagen' && (
                     <>
-                      <span className={`text-[9px] uppercase tracking-widest px-2 py-0.5 border rounded flex items-center gap-1 ${
+                      <span className={`text-[12px] uppercase tracking-widest px-2 py-0.5 border rounded flex items-center gap-1 ${
                         slide.media_url_desktop && slide.media_url_mobile 
                           ? 'bg-green-500/20 text-green-400 border-green-500/30'
                           : slide.media_url_desktop || slide.media_url_mobile
@@ -262,13 +262,13 @@ export function HeroList({ refreshTrigger }: HeroListProps) {
                     </>
                   )}
                   {!slide.active && (
-                    <span className="text-[9px] uppercase font-bold text-red-400 px-2 py-0.5 border border-red-400/30 rounded">
+                    <span className="text-[12px] uppercase font-bold text-red-400 px-2 py-0.5 border border-red-400/30 rounded">
                       Inactivo
                     </span>
                   )}
                 </div>
                 {slide.description && (
-                  <p className="text-sm text-manso-cream/60 mt-2 line-clamp-2">{slide.description}</p>
+                  <p className="text-[15px] text-manso-cream/60 mt-2 line-clamp-2">{slide.description}</p>
                 )}
               </div>
 

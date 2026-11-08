@@ -22,9 +22,9 @@ const SUBTABS: { id: SubTab; label: string; icon: React.ReactNode }[] = [
 function Placeholder({ label, icon }: { label: string; icon: React.ReactNode }) {
   return (
     <div className="bg-manso-cream/5 border border-manso-cream/10 rounded-[2rem] p-12 text-center">
-      <div className="text-manso-cream/20 flex justify-center mb-4">{icon}</div>
-      <h3 className="text-sm font-black uppercase tracking-tighter text-manso-cream mb-2">{label}</h3>
-      <p className="text-xs text-manso-cream/40">Próximamente</p>
+      <div className="text-manso-cream/62 flex justify-center mb-4">{icon}</div>
+      <h3 className="text-[15px] font-black uppercase tracking-tighter text-manso-cream mb-2">{label}</h3>
+      <p className="text-[13px] text-manso-cream/62">Próximamente</p>
     </div>
   );
 }
@@ -40,7 +40,7 @@ export function ComunidadAdmin() {
           <button
             key={t.id}
             onClick={() => setSubTab(t.id)}
-            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all ${
+            className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-[12px] font-black uppercase tracking-widest transition-all ${
               subTab === t.id
                 ? 'bg-manso-cream text-manso-black shadow-sm'
                 : 'text-manso-cream/50 hover:text-manso-cream'
@@ -57,7 +57,7 @@ export function ComunidadAdmin() {
 
       {subTab === 'membresias' && (
         <div>
-          <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-manso-cream/50 mb-6">
+          <h2 className="text-[13px] font-black uppercase tracking-[0.2em] text-manso-cream/50 mb-6">
             Membresías activas
           </h2>
           <MembresiaActivasList />

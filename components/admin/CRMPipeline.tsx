@@ -36,7 +36,7 @@ export function CRMPipeline({ users, onRefresh }: CRMPipelineProps) {
       color: 'text-manso-cream/50',
       border: 'border-manso-cream/10',
       headerBg: 'bg-manso-cream/5',
-      countColor: 'text-manso-cream/40',
+      countColor: 'text-manso-cream/62',
       users: nonAdmin.filter(u => !u.membresia_activa),
     },
     {
@@ -95,7 +95,7 @@ export function CRMPipeline({ users, onRefresh }: CRMPipelineProps) {
                   {stage.users.length}
                 </span>
               </div>
-              <p className={`text-[9px] font-black uppercase tracking-widest ${stage.color}`}>
+              <p className={`text-[12px] font-black uppercase tracking-widest ${stage.color}`}>
                 {stage.label}
               </p>
             </div>
@@ -103,7 +103,7 @@ export function CRMPipeline({ users, onRefresh }: CRMPipelineProps) {
             {/* Lista */}
             <div className="flex-1 overflow-y-auto max-h-64 p-1.5 space-y-0.5">
               {stage.users.length === 0 && (
-                <p className="text-[8px] text-manso-cream/20 text-center py-4 uppercase tracking-widest">
+                <p className="text-[12px] text-manso-cream/62 text-center py-4 uppercase tracking-widest">
                   Vacío
                 </p>
               )}
@@ -113,20 +113,20 @@ export function CRMPipeline({ users, onRefresh }: CRMPipelineProps) {
                   onClick={() => setSeleccionado(u)}
                   className="w-full flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-manso-cream/10 transition-colors text-left"
                 >
-                  <div className="w-5 h-5 rounded-full bg-manso-cream/10 flex items-center justify-center flex-shrink-0 text-[8px] font-black text-manso-cream/50">
+                  <div className="w-5 h-5 rounded-full bg-manso-cream/10 flex items-center justify-center flex-shrink-0 text-[12px] font-black text-manso-cream/50">
                     {inicial(u)}
                   </div>
                   <div className="min-w-0 flex-1">
-                    <p className="text-[10px] text-manso-cream truncate leading-tight">
+                    <p className="text-[13px] text-manso-cream truncate leading-tight">
                       {u.display_name ?? u.email.split('@')[0]}
                     </p>
                     {u.membresia_hasta && (
-                      <p className="text-[8px] text-manso-cream/30 leading-tight">
+                      <p className="text-[12px] text-manso-cream/62 leading-tight">
                         {new Date(u.membresia_hasta).toLocaleDateString('es-AR', { day: 'numeric', month: 'short' })}
                       </p>
                     )}
                     {!u.membresia_hasta && u.membresia_activa && (
-                      <p className="text-[8px] text-manso-olive/60 leading-tight">Vitalicio</p>
+                      <p className="text-[12px] text-manso-olive/60 leading-tight">Vitalicio</p>
                     )}
                   </div>
                 </button>

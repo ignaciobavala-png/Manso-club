@@ -82,7 +82,7 @@ export function FestivalEntradasGestion({ children }: { children: React.ReactNod
       .catch(() => setConexion({ cargando: false, conectado: false }));
   }, [cargar]);
 
-  if (conexion.cargando) return <Loader2 size={16} className="animate-spin text-manso-cream/40" />;
+  if (conexion.cargando) return <Loader2 size={16} className="animate-spin text-manso-cream/62" />;
   if (!conexion.conectado) return <>{children}</>;
 
   const guardar = async () => {
@@ -139,14 +139,14 @@ export function FestivalEntradasGestion({ children }: { children: React.ReactNod
       </div>
 
       {error ? (
-        <p className="text-[11px] text-manso-terra">{error}</p>
+        <p className="text-[13px] text-manso-terra">{error}</p>
       ) : (
         <ul className="divide-y divide-manso-cream/10">
           {tipos.map(t => (
             <li key={t.id} className={`py-3 flex flex-wrap items-center gap-x-4 gap-y-1 ${t.activo ? '' : 'opacity-50'}`}>
               <div className="min-w-0 flex-1">
-                <p className="text-sm text-manso-cream truncate">{t.nombre}</p>
-                <p className="text-[11px] text-manso-cream/40">
+                <p className="text-[15px] text-manso-cream truncate">{t.nombre}</p>
+                <p className="text-[13px] text-manso-cream/62">
                   {t.activo ? etiquetaEstado(t.estado) : 'Oculto'}
                   {t.entradas_por_unidad > 1 && ` · ${t.entradas_por_unidad} entradas por unidad`}
                   {' · '}
@@ -155,7 +155,7 @@ export function FestivalEntradasGestion({ children }: { children: React.ReactNod
                   {t.ocupadas} vendidas o reservadas
                 </p>
               </div>
-              <span className="text-sm font-mono text-manso-cream tabular-nums">{formatArs(t.precio)}</span>
+              <span className="text-[15px] font-mono text-manso-cream tabular-nums">{formatArs(t.precio)}</span>
               <button
                 type="button"
                 onClick={() => setEditando(aBorrador(t))}
@@ -178,7 +178,7 @@ export function FestivalEntradasGestion({ children }: { children: React.ReactNod
             </li>
           ))}
           {tipos.length === 0 && (
-            <li className="py-3 text-[11px] text-manso-cream/40">El evento no tiene tipos de entrada cargados.</li>
+            <li className="py-3 text-[13px] text-manso-cream/62">El evento no tiene tipos de entrada cargados.</li>
           )}
         </ul>
       )}
@@ -250,7 +250,7 @@ export function FestivalEntradasGestion({ children }: { children: React.ReactNod
               />
             </label>
           </div>
-          <label className="flex items-center gap-2 text-[11px] text-manso-cream/60">
+          <label className="flex items-center gap-2 text-[13px] text-manso-cream/60">
             <input type="checkbox" checked={editando.activo} onChange={e => campo({ activo: e.target.checked })} />
             Visible en la web
           </label>

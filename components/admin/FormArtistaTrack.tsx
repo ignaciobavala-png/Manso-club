@@ -179,7 +179,7 @@ export function FormArtistaTrack({
               <h2 className="text-2xl font-black uppercase tracking-tighter text-manso-cream">
                 {track ? 'Editar Track' : 'Nuevo Track'}
               </h2>
-              <p className="text-sm text-manso-cream/60 mt-1">
+              <p className="text-[15px] text-manso-cream/60 mt-1">
                 {artistaNombre} - Track #{formData.orden}
               </p>
             </div>
@@ -200,7 +200,7 @@ export function FormArtistaTrack({
             <input 
               type="text" 
               placeholder="TÍTULO DEL TRACK"
-              className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all"
+              className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/62 transition-all"
               value={formData.titulo}
               onChange={e => setFormData({...formData, titulo: e.target.value})}
               required
@@ -209,7 +209,7 @@ export function FormArtistaTrack({
 
           {/* URL de SoundCloud */}
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2">
+            <label className="text-[13px] font-black uppercase tracking-widest text-manso-cream/60 ml-2">
               URL de SoundCloud
             </label>
             <div className="relative">
@@ -221,14 +221,14 @@ export function FormArtistaTrack({
                   soundcloudError 
                     ? 'border-red-500/50 focus:ring-red-500' 
                     : 'border-manso-cream/20 focus:ring-manso-terra'
-                } outline-none font-mono text-sm text-manso-cream placeholder:text-manso-cream/40`}
+                } outline-none font-mono text-[15px] text-manso-cream placeholder:text-manso-cream/62`}
                 value={formData.soundcloud_url}
                 onChange={e => handleSoundCloudChange(e.target.value)}
               />
             </div>
             
             {soundcloudError && (
-              <p className="text-red-400 text-xs font-medium mt-2 ml-2">
+              <p className="text-red-400 text-[13px] font-medium mt-2 ml-2">
                 {soundcloudError}
               </p>
             )}
@@ -237,13 +237,13 @@ export function FormArtistaTrack({
           {/* Orden y Estado */}
           <div className="grid grid-cols-2 gap-4">
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2">
+              <label className="text-[13px] font-black uppercase tracking-widest text-manso-cream/60 ml-2">
                 Orden
               </label>
               <input 
                 type="number" 
                 min="1"
-                className="w-full bg-manso-cream/10 p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all"
+                className="w-full bg-manso-cream/10 p-4 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/62 transition-all"
                 value={formData.orden}
                 onChange={e => setFormData({...formData, orden: e.target.value})}
                 required
@@ -251,7 +251,7 @@ export function FormArtistaTrack({
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2">
+              <label className="text-[13px] font-black uppercase tracking-widest text-manso-cream/60 ml-2">
                 Estado
               </label>
               <div className="flex items-center gap-3 p-4 bg-manso-cream/10 rounded-2xl border border-manso-cream/20">
@@ -268,7 +268,7 @@ export function FormArtistaTrack({
                     }`}
                   />
                 </button>
-                <span className="text-sm font-medium text-manso-cream">
+                <span className="text-[15px] font-medium text-manso-cream">
                   {formData.activo ? 'Activo' : 'Inactivo'}
                 </span>
               </div>
@@ -279,7 +279,7 @@ export function FormArtistaTrack({
           {formData.soundcloud_url && (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <p className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60">
+                <p className="text-[13px] font-black uppercase tracking-widest text-manso-cream/60">
                   Vista previa del reproductor
                 </p>
                 <button

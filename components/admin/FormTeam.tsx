@@ -83,7 +83,7 @@ export function FormTeam() {
           {editingId ? 'Editar Miembro del Team' : 'Nuevo Miembro del Team'}
         </h2>
         {editingId && (
-          <p className="text-sm text-manso-cream/60">
+          <p className="text-[15px] text-manso-cream/60">
             Modificando a {formData.name}
           </p>
         )}
@@ -93,7 +93,7 @@ export function FormTeam() {
         
         {/* Zona de Carga de Imagen */}
         <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2">
+          <label className="text-[13px] font-black uppercase tracking-widest text-manso-cream/60 ml-2">
             Foto del Miembro
           </label>
           <ImageUploader
@@ -113,7 +113,7 @@ export function FormTeam() {
             <input 
               type="text" 
               placeholder="NOMBRE COMPLETO"
-              className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all"
+              className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/62 transition-all"
               value={formData.name}
               onChange={e => setFormData({...formData, name: e.target.value})}
               required
@@ -126,7 +126,7 @@ export function FormTeam() {
             <input 
               type="text" 
               placeholder="ROL EN EL EQUIPO (ej: Director, Coordinador, etc)"
-              className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all"
+              className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/62 transition-all"
               value={formData.role}
               onChange={e => setFormData({...formData, role: e.target.value})}
               required
@@ -135,14 +135,14 @@ export function FormTeam() {
 
           {/* Orden */}
           <div className="relative">
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-manso-cream/60 text-[10px] font-black uppercase tracking-widest">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-manso-cream/60 text-[13px] font-black uppercase tracking-widest">
               #
             </div>
             <input 
               type="number" 
               placeholder="ORDEN (1, 2, 3...)"
               min="1"
-              className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all"
+              className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/62 transition-all"
               value={formData.order_index}
               onChange={e => setFormData({...formData, order_index: e.target.value})}
               required

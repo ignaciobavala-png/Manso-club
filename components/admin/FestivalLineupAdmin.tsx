@@ -172,7 +172,7 @@ export function FestivalLineupAdmin() {
 
   if (cargando) {
     return (
-      <div className="flex items-center gap-2 text-xs text-manso-cream/40 py-4">
+      <div className="flex items-center gap-2 text-[13px] text-manso-cream/62 py-4">
         <Loader2 size={14} className="animate-spin" />
         Cargando line-up…
       </div>
@@ -193,11 +193,11 @@ export function FestivalLineupAdmin() {
           <button
             type="button"
             onClick={() => alternarAbierto(a.id)}
-            className="flex items-center gap-2 min-w-0 text-left text-xs font-bold text-manso-cream"
+            className="flex items-center gap-2 min-w-0 text-left text-[13px] font-bold text-manso-cream"
           >
             <ChevronDown size={13} className={`shrink-0 transition-transform ${abierto ? '' : '-rotate-90'}`} />
             <span className="truncate">{a.nombre || 'Sin nombre'}</span>
-            {!a.activo && <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/30">oculto</span>}
+            {!a.activo && <span className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62">oculto</span>}
           </button>
           <div className="flex items-center gap-1 shrink-0">
             {/* B2B a la vista y guardado al tocarlo: dentro de la ficha costaba encontrarlo. */}
@@ -209,8 +209,8 @@ export function FestivalLineupAdmin() {
               }}
               disabled={i === 0}
               title={i === 0 ? 'El primero no puede ser B2B: no tiene a nadie arriba' : a.b2b ? 'Separar del de arriba' : 'Hacer B2B con el de arriba'}
-              className={`px-2 h-7 rounded-lg text-[9px] font-black tracking-widest transition-colors disabled:opacity-20 ${
-                a.b2b ? 'bg-manso-olive text-manso-black' : 'text-manso-cream/40 border border-manso-cream/15 hover:text-manso-cream'
+              className={`px-2 h-7 rounded-lg text-[12px] font-black tracking-widest transition-colors disabled:opacity-20 ${
+                a.b2b ? 'bg-manso-olive text-manso-black' : 'text-manso-cream/62 border border-manso-cream/15 hover:text-manso-cream'
               }`}
             >
               B2B
@@ -311,7 +311,7 @@ export function FestivalLineupAdmin() {
                       editarArtista(a.id, { foto_url: null });
                       guardarFila('festival_artistas', a.id, { foto_url: null });
                     }}
-                    className="mt-2 text-[9px] font-black uppercase tracking-widest text-manso-cream/40 hover:text-manso-terra transition-colors"
+                    className="mt-2 text-[12px] font-black uppercase tracking-widest text-manso-cream/62 hover:text-manso-terra transition-colors"
                   >
                     Quitar
                   </button>
@@ -358,7 +358,7 @@ export function FestivalLineupAdmin() {
                   href={`/blur/line-up/${a.slug}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-manso-cream/40 hover:text-manso-cream transition-colors"
+                  className="inline-flex items-center gap-1.5 text-[12px] font-black uppercase tracking-widest text-manso-cream/62 hover:text-manso-cream transition-colors"
                 >
                   Ver página <ExternalLink size={11} />
                 </a>
@@ -367,7 +367,7 @@ export function FestivalLineupAdmin() {
                 <select
                   value={a.escenario_id ?? ''}
                   onChange={e => cambiarEscenario(a, e.target.value)}
-                  className="bg-transparent border border-manso-cream/10 rounded-lg px-2 py-1.5 text-[11px] text-manso-cream/60 [color-scheme:dark]"
+                  className="bg-transparent border border-manso-cream/10 rounded-lg px-2 py-1.5 text-[13px] text-manso-cream/60 [color-scheme:light]"
                   title="Pasar a otro escenario"
                 >
                   {escenarios.map(e => (
@@ -402,10 +402,10 @@ export function FestivalLineupAdmin() {
         }`}
       >
         <div className="space-y-1">
-          <p className="text-[10px] font-black uppercase tracking-widest text-manso-cream">
+          <p className="text-[13px] font-black uppercase tracking-widest text-manso-cream">
             {visible ? 'Line-up visible en la página' : 'Line-up oculto'}
           </p>
-          <p className="text-[11px] text-manso-cream/50 leading-relaxed max-w-md">
+          <p className="text-[13px] text-manso-cream/50 leading-relaxed max-w-md">
             {visible
               ? 'Se ven los escenarios y artistas no ocultos. Apagalo mientras el line-up no esté cerrado.'
               : 'La página dice "El line-up se anuncia pronto". Podés seguir cargando y ordenando acá sin que se vea.'}
@@ -415,20 +415,20 @@ export function FestivalLineupAdmin() {
           type="button"
           onClick={alternarVisible}
           disabled={guardando === 'lineup_visible'}
-          className="px-4 py-2 rounded-xl border border-manso-cream/20 text-[9px] font-black uppercase tracking-widest text-manso-cream hover:bg-manso-cream/10 transition-colors disabled:opacity-40"
+          className="px-4 py-2 rounded-xl border border-manso-cream/20 text-[12px] font-black uppercase tracking-widest text-manso-cream hover:bg-manso-cream/10 transition-colors disabled:opacity-40"
         >
           {visible ? 'Ocultar line-up' : 'Mostrar line-up'}
         </button>
       </div>
 
-      {escenarios.length === 0 && <p className="text-xs text-manso-cream/40">Sin escenarios todavía.</p>}
+      {escenarios.length === 0 && <p className="text-[13px] text-manso-cream/62">Sin escenarios todavía.</p>}
 
       {escenarios.map((esc, i) => {
         const delEscenario = artistas.filter(a => a.escenario_id === esc.id);
         return (
           <div key={esc.id} className={CARD}>
             <div className="flex items-center justify-between gap-2">
-              <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40 truncate">
+              <span className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62 truncate">
                 Escenario {i + 1} · {delEscenario.length} artistas
               </span>
               <div className="flex items-center gap-1 shrink-0">
@@ -469,7 +469,7 @@ export function FestivalLineupAdmin() {
             </div>
 
             {!esc.activo && (
-              <p className="text-[10px] font-black uppercase tracking-widest text-manso-cream/30">
+              <p className="text-[13px] font-black uppercase tracking-widest text-manso-cream/62">
                 Oculto — no se ve en la página
               </p>
             )}
@@ -504,18 +504,18 @@ export function FestivalLineupAdmin() {
 
       {sueltos.length > 0 && (
         <div className={CARD}>
-          <p className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40">
+          <p className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62">
             Sin escenario — no se ven en la página
           </p>
           {sueltos.map(a => (
-            <div key={a.id} className="flex items-center justify-between gap-2 text-xs text-manso-cream/70">
+            <div key={a.id} className="flex items-center justify-between gap-2 text-[13px] text-manso-cream/70">
               <span className="truncate">{a.nombre}</span>
               <div className="flex items-center gap-2 shrink-0">
                 {escenarios.length > 0 && (
                   <select
                     value=""
                     onChange={e => cambiarEscenario(a, e.target.value)}
-                    className="bg-transparent border border-manso-cream/10 rounded-lg px-2 py-1.5 text-[11px] [color-scheme:dark]"
+                    className="bg-transparent border border-manso-cream/10 rounded-lg px-2 py-1.5 text-[13px] [color-scheme:light]"
                   >
                     <option value="" disabled>
                       Pasar a…

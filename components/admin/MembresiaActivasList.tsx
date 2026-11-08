@@ -96,7 +96,7 @@ export function MembresiaActivasList() {
           {vencidos.length > 0 && (
             <div className="flex items-center gap-2 px-4 py-3 bg-red-500/10 border border-red-500/20 rounded-xl">
               <AlertTriangle size={14} className="text-red-400 flex-shrink-0" />
-              <p className="text-xs text-red-300">
+              <p className="text-[13px] text-red-300">
                 <span className="font-black">{vencidos.length}</span> membresía{vencidos.length > 1 ? 's' : ''} vencida{vencidos.length > 1 ? 's' : ''}
               </p>
             </div>
@@ -104,7 +104,7 @@ export function MembresiaActivasList() {
           {proximos.length > 0 && (
             <div className="flex items-center gap-2 px-4 py-3 bg-yellow-500/10 border border-yellow-500/20 rounded-xl">
               <AlertTriangle size={14} className="text-yellow-400 flex-shrink-0" />
-              <p className="text-xs text-yellow-300">
+              <p className="text-[13px] text-yellow-300">
                 <span className="font-black">{proximos.length}</span> membresía{proximos.length > 1 ? 's' : ''} vence{proximos.length > 1 ? 'n' : ''} en menos de 7 días
               </p>
             </div>
@@ -114,12 +114,12 @@ export function MembresiaActivasList() {
 
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
-        <p className="text-[9px] font-black uppercase tracking-[0.3em] text-manso-cream/50">
+        <p className="text-[12px] font-black uppercase tracking-[0.2em] text-manso-cream/50">
           {usuarios.length} miembro{usuarios.length !== 1 ? 's' : ''} activo{usuarios.length !== 1 ? 's' : ''}
         </p>
         <button
           onClick={fetchMiembros}
-          className="w-7 h-7 flex items-center justify-center text-manso-cream/30 hover:text-manso-cream transition-colors"
+          className="w-7 h-7 flex items-center justify-center text-manso-cream/62 hover:text-manso-cream transition-colors"
         >
           <RefreshCw size={13} />
         </button>
@@ -127,8 +127,8 @@ export function MembresiaActivasList() {
 
       {usuarios.length === 0 ? (
         <div className="text-center py-12 bg-manso-cream/5 border border-manso-cream/10 rounded-2xl">
-          <Crown size={32} className="text-manso-cream/20 mx-auto mb-3" />
-          <p className="text-sm text-manso-cream/40">Sin miembros activos todavía</p>
+          <Crown size={32} className="text-manso-cream/62 mx-auto mb-3" />
+          <p className="text-[15px] text-manso-cream/62">Sin miembros activos todavía</p>
         </div>
       ) : (
         <div className="space-y-2">
@@ -143,21 +143,21 @@ export function MembresiaActivasList() {
                 <div className="flex items-center gap-3 min-w-0">
                   <Crown size={14} className="text-manso-terra flex-shrink-0" />
                   <div className="min-w-0">
-                    <p className="text-sm font-bold text-manso-cream truncate">
+                    <p className="text-[15px] font-bold text-manso-cream truncate">
                       {u.display_name ?? u.email}
                     </p>
                     {u.display_name && (
-                      <p className="text-[10px] text-manso-cream/40 truncate">{u.email}</p>
+                      <p className="text-[13px] text-manso-cream/62 truncate">{u.email}</p>
                     )}
                   </div>
                 </div>
                 <div className="flex flex-col items-end flex-shrink-0 gap-1">
                   {u.membresia_tipo && (
-                    <span className="text-[8px] font-black uppercase tracking-widest text-manso-cream/40">
+                    <span className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62">
                       {u.membresia_tipo}
                     </span>
                   )}
-                  <span className={`text-[10px] font-black ${estadoColor(dias)}`}>
+                  <span className={`text-[13px] font-black ${estadoColor(dias)}`}>
                     {dias === null
                       ? 'Vitalicio'
                       : dias < 0

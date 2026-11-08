@@ -58,7 +58,7 @@ export function ActividadForo() {
             <button
               key={o.id}
               onClick={() => setOrden(o.id)}
-              className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${
+              className={`px-3 py-1.5 rounded-lg text-[12px] font-black uppercase tracking-widest transition-all ${
                 orden === o.id ? 'bg-manso-cream text-manso-black' : 'text-manso-cream/50 hover:text-manso-cream'
               }`}
             >
@@ -72,20 +72,20 @@ export function ActividadForo() {
       <div className="flex flex-wrap gap-3 mb-6">
         <div className="flex items-center gap-2 bg-manso-cream/5 rounded-2xl px-4 py-3 border border-manso-cream/10">
           <Eye size={14} className="text-manso-terra" />
-          <span className="text-manso-cream text-sm font-black">{totalViews.toLocaleString('es-AR')}</span>
-          <span className="text-manso-cream/40 text-[10px] uppercase tracking-widest font-black">vistas</span>
+          <span className="text-manso-cream text-[15px] font-black">{totalViews.toLocaleString('es-AR')}</span>
+          <span className="text-manso-cream/62 text-[13px] uppercase tracking-widest font-black">vistas</span>
         </div>
         <div className="flex items-center gap-2 bg-manso-cream/5 rounded-2xl px-4 py-3 border border-manso-cream/10">
           <MessageSquare size={14} className="text-manso-terra" />
-          <span className="text-manso-cream text-sm font-black">{totalReplies.toLocaleString('es-AR')}</span>
-          <span className="text-manso-cream/40 text-[10px] uppercase tracking-widest font-black">respuestas</span>
+          <span className="text-manso-cream text-[15px] font-black">{totalReplies.toLocaleString('es-AR')}</span>
+          <span className="text-manso-cream/62 text-[13px] uppercase tracking-widest font-black">respuestas</span>
         </div>
       </div>
 
       {loading ? (
-        <p className="text-manso-cream/40 text-xs text-center py-12">Cargando actividad...</p>
+        <p className="text-manso-cream/62 text-[13px] text-center py-12">Cargando actividad...</p>
       ) : threads.length === 0 ? (
-        <p className="text-manso-cream/30 text-xs text-center py-8 uppercase tracking-widest font-black">
+        <p className="text-manso-cream/62 text-[13px] text-center py-8 uppercase tracking-widest font-black">
           Sin publicaciones todavía
         </p>
       ) : (
@@ -99,18 +99,18 @@ export function ActividadForo() {
               className="flex items-center justify-between gap-3 bg-manso-cream/5 rounded-2xl px-4 py-3 border border-manso-cream/10 hover:border-manso-terra/40 transition-all"
             >
               <div className="min-w-0">
-                <p className="text-manso-cream text-xs font-bold truncate">{t.titulo}</p>
-                <p className="text-manso-cream/40 text-[11px] mt-0.5">
+                <p className="text-manso-cream text-[13px] font-bold truncate">{t.titulo}</p>
+                <p className="text-manso-cream/62 text-[13px] mt-0.5">
                   {t.autor_nombre ?? 'Anónimo'} · {formatFecha(t.created_at)}
                 </p>
               </div>
               <div className="flex items-center gap-4 shrink-0 text-manso-cream/60">
-                <span className="flex items-center gap-1.5 text-xs font-black">
+                <span className="flex items-center gap-1.5 text-[13px] font-black">
                   <Eye size={13} className="text-manso-terra" />
                   {t.views ?? 0}
                 </span>
-                <span className="flex items-center gap-1.5 text-xs font-black">
-                  <MessageSquare size={13} className="text-manso-cream/40" />
+                <span className="flex items-center gap-1.5 text-[13px] font-black">
+                  <MessageSquare size={13} className="text-manso-cream/62" />
                   {t.reply_count ?? 0}
                 </span>
               </div>

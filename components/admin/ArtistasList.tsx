@@ -132,7 +132,7 @@ export function ArtistasList({ refreshTrigger }: ArtistasListProps) {
       </h3>
 
       {artistas.length === 0 ? (
-        <div className="text-center text-manso-cream/40 py-8">
+        <div className="text-center text-manso-cream/62 py-8">
           No hay artistas registrados
         </div>
       ) : (
@@ -156,7 +156,7 @@ export function ArtistasList({ refreshTrigger }: ArtistasListProps) {
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <User size={24} className="text-manso-cream/30" />
+                    <User size={24} className="text-manso-cream/62" />
                   </div>
                 )}
               </div>
@@ -170,28 +170,28 @@ export function ArtistasList({ refreshTrigger }: ArtistasListProps) {
                 </h4>
                 <div className="flex flex-wrap gap-2 mt-1">
                   {(artista.social_links?.instagram || artista.redes_sociales?.instagram) && (
-                    <span className="text-[9px] uppercase tracking-widest text-manso-cream/60 px-2 py-0.5 border border-manso-cream/20 rounded">
+                    <span className="text-[12px] uppercase tracking-widest text-manso-cream/60 px-2 py-0.5 border border-manso-cream/20 rounded">
                       @{(artista.social_links?.instagram || artista.redes_sociales?.instagram || '').replace('@', '')}
                     </span>
                   )}
                   {artista.estilo && (
-                    <span className="text-[9px] uppercase tracking-widest text-manso-cream/60 px-2 py-0.5 border border-manso-cream/20 rounded">
+                    <span className="text-[12px] uppercase tracking-widest text-manso-cream/60 px-2 py-0.5 border border-manso-cream/20 rounded">
                       {artista.estilo}
                     </span>
                   )}
                   {(artista.soundcloud_url || artista.social_links?.soundcloud || artista.redes_sociales?.soundcloud) && (
-                    <span className="text-[9px] uppercase tracking-widest text-manso-terra px-2 py-0.5 border border-manso-terra/30 rounded">
+                    <span className="text-[12px] uppercase tracking-widest text-manso-terra px-2 py-0.5 border border-manso-terra/30 rounded">
                       SoundCloud
                     </span>
                   )}
                   {!artista.active && (
-                    <span className="text-[9px] uppercase font-bold text-red-400 px-2 py-0.5 border border-red-400/30 rounded">
+                    <span className="text-[12px] uppercase font-bold text-red-400 px-2 py-0.5 border border-red-400/30 rounded">
                       Inactivo
                     </span>
                   )}
                 </div>
                 {artista.bio && (
-                  <p className="text-[10px] text-manso-cream/50 mt-1 line-clamp-1">
+                  <p className="text-[13px] text-manso-cream/50 mt-1 line-clamp-1">
                     {artista.bio}
                   </p>
                 )}

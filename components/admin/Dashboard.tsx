@@ -1,18 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { logoutAction } from '../../app/mansoadm/actions';
-import { FormProducto } from './FormProducto';
+import { useState, useEffect, type ReactNode } from 'react';
+import { FileText, BookOpen } from 'lucide-react';
+import { AdminNav } from './AdminNav';
+import type { SeccionId } from './adminNav';
 import { FormArtista } from './FormArtista';
 import { FormEventoHome } from './FormEventoHome';
 import { FormAgenda } from './FormAgenda';
-import { ItemList } from './ItemList';
 import { EventosHomeList } from './EventosHomeList';
 import { AgendaList } from './AgendaList';
 import { ArtistasList } from './ArtistasList';
-import { FormMainMusic } from './FormMainMusic';
-import { MainMusicList } from './MainMusicList';
-import { FormMembresia } from './FormMembresia';
 import { MembresiasAdmin } from './MembresiasAdmin';
 import { CulturaAdmin } from './CulturaAdmin';
 import { EspacioAdmin } from './EspacioAdmin';
@@ -25,304 +22,127 @@ import { FormHero } from './FormHero';
 import { HeroList } from './HeroList';
 import { FormGallery } from './FormGallery';
 import { GalleryList } from './GalleryList';
-import { FormSiteConfig } from './FormSiteConfig';
-import { SiteConfigList } from './SiteConfigList';
 import { FormAboutUs } from './FormAboutUs';
-import { FormCheckoutConfig } from './FormCheckoutConfig';
-import { PedidosList } from './PedidosList';
-import { FormMembresiaGallery } from './FormMembresiaGallery';
-import { MembresiaGalleryList } from './MembresiaGalleryList';
-import { FormMembresiaTexto } from './FormMembresiaTexto';
 import { FormMultimedia } from './FormMultimedia';
 import { MultimediaList } from './MultimediaList';
 import { StreamingAdmin } from './StreamingAdmin';
 import { TiendaAdmin } from './TiendaAdmin';
-import { PropuestasList } from './PropuestasList';
 import { FormManifiesto } from './FormManifiesto';
-import { FormOfertaEmpleo } from './FormOfertaEmpleo';
-import { OfertasEmpleoList } from './OfertasEmpleoList';
-import { LogOut, ShoppingBag, User, Home, Calendar, Music, Crown, Settings, Star, Users, Image, Layout, FileText, CreditCard, Package, Video, BookOpen, Calculator, Briefcase, Mail, Network, MessageSquare, BarChart2, Search, Sparkles, DoorOpen, Ticket } from 'lucide-react';
 import { CotizadorConfigAdmin } from './CotizadorConfigAdmin';
 import { CotizacionesList } from './CotizacionesList';
 import { MailingAdmin } from './MailingAdmin';
 import { ComunidadAdmin } from './ComunidadAdmin';
 import { ChatAdmin } from './ChatAdmin';
-import { AsignarMembresia } from './AsignarMembresia';
-import { MembresiaActivasList } from './MembresiaActivasList';
 import { CRMAdmin } from './CRMAdmin';
 
+/** Pantallas que ocupan todo el ancho. */
+function pantallaCompleta(id: SeccionId, r: number): ReactNode | null {
+  switch (id) {
+    case 'crm': return <CRMAdmin />;
+    case 'comunidad': return <ComunidadAdmin />;
+    case 'chat': return <ChatAdmin />;
+    case 'streaming': return <StreamingAdmin refreshTrigger={r} />;
+    case 'membresias': return <MembresiasAdmin refreshTrigger={r} />;
+    case 'cultura': return <CulturaAdmin />;
+    case 'espacio': return <EspacioAdmin />;
+    case 'festival': return <FestivalAdmin />;
+    case 'tienda': return <TiendaAdmin refreshTrigger={r} />;
+    case 'newsletter': return <MailingAdmin />;
+    default: return null;
+  }
+}
+
+function Nota({ icono, titulo, texto, pie }: { icono: ReactNode; titulo: string; texto: string; pie: string }) {
+  return (
+    <div className="bg-manso-cream/5 p-8 rounded-[2.5rem] border border-manso-cream/10 text-center">
+      <div className="mx-auto mb-4 w-fit text-manso-cream/62">{icono}</div>
+      <h3 className="text-xl font-black uppercase tracking-tighter text-manso-cream mb-2">{titulo}</h3>
+      <p className="text-[15px] text-manso-cream/70 mb-4">{texto}</p>
+      <p className="text-[13px] text-manso-cream/62">{pie}</p>
+    </div>
+  );
+}
+
+/** Pantallas de dos columnas: formulario a la izquierda, lista a la derecha. */
+function pantallaDividida(id: SeccionId, r: number): { titulo: string; form: ReactNode; lista: ReactNode } | null {
+  switch (id) {
+    case 'about': return {
+      titulo: 'Editar About Us', form: <FormAboutUs />,
+      lista: <Nota icono={<FileText size={48} />} titulo="About Us"
+        texto="Editá el contenido de la sección About Us desde el formulario de la izquierda."
+        pie="Los cambios se reflejan al instante en /about" />,
+    };
+    case 'home': return { titulo: 'Evento del Home', form: <FormEventoHome />, lista: <EventosHomeList refreshTrigger={r} /> };
+    case 'artistas': return { titulo: 'Artista', form: <FormArtista />, lista: <ArtistasList refreshTrigger={r} /> };
+    case 'agenda': return { titulo: 'Evento de Agenda', form: <FormAgenda />, lista: <AgendaList refreshTrigger={r} /> };
+    case 'eventos': return { titulo: 'Evento', form: <FormEvento />, lista: <EventosList refreshTrigger={r} /> };
+    case 'team': return { titulo: 'Miembro del Team', form: <FormTeam />, lista: <TeamList refreshTrigger={r} /> };
+    case 'hero': return { titulo: 'Slide del Hero', form: <FormHero />, lista: <HeroList refreshTrigger={r} /> };
+    case 'galeria': return { titulo: 'Foto de Galería', form: <FormGallery />, lista: <GalleryList refreshTrigger={r} /> };
+    case 'contenidos': return { titulo: 'Nuevo Video', form: <FormMultimedia />, lista: <MultimediaList refreshTrigger={r} /> };
+    case 'cotizador': return { titulo: 'Configuración', form: <CotizadorConfigAdmin />, lista: <CotizacionesList refreshTrigger={r} /> };
+    case 'manifiesto': return {
+      titulo: 'Editar Manifiesto', form: <FormManifiesto />,
+      lista: <Nota icono={<BookOpen size={48} />} titulo="Manifiesto"
+        texto="Escribí el texto desde el formulario de la izquierda. Cada párrafo va separado por una línea en blanco."
+        pie="Los cambios se reflejan en /manifiesto al guardar." />,
+    };
+    default: return null;
+  }
+}
+
 export function Dashboard() {
-  const [tab, setTab] = useState<'crm' | 'home' | 'tienda' | 'artistas' | 'agenda' | 'eventos' | 'musica' | 'membresias' | 'cultura' | 'espacio' | 'festival' | 'team' | 'hero' | 'galeria' | 'why' | 'about' | 'contenidos' | 'manifiesto' | 'cotizador' | 'streaming' | 'empleos' | 'newsletter' | 'comunidad' | 'chat'>('crm');
+  const [tab, setTab] = useState<SeccionId>('crm');
   const [userEmail, setUserEmail] = useState<string | null>(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
-  const handleEditProduct = (product: any) => {
-    // Usar la función global expuesta por FormProducto
-    if ((window as any).editProduct) {
-      (window as any).editProduct(product);
-    }
-  };
-
   useEffect(() => {
-    // Obtener información del usuario actual
     const fetchUser = async () => {
       try {
         const response = await fetch('/api/auth/session');
         const data = await response.json();
-        if (data.authenticated && data.user?.email) {
-          setUserEmail(data.user.email);
-        }
+        if (data.authenticated && data.user?.email) setUserEmail(data.user.email);
       } catch (error) {
         console.error('Error fetching user session:', error);
       }
     };
-
     fetchUser();
   }, []);
 
   useEffect(() => {
-    // Escuchar eventos de actualización del dashboard
-    const handleDashboardRefresh = () => {
-      setRefreshTrigger(prev => prev + 1);
-    };
-
+    // Los formularios avisan con este evento cuando guardan, para refrescar las listas.
+    const handleDashboardRefresh = () => setRefreshTrigger(prev => prev + 1);
     window.addEventListener('dashboardRefresh', handleDashboardRefresh);
-    return () => {
-      window.removeEventListener('dashboardRefresh', handleDashboardRefresh);
-    };
+    return () => window.removeEventListener('dashboardRefresh', handleDashboardRefresh);
   }, []);
 
+  const completa = pantallaCompleta(tab, refreshTrigger);
+  const dividida = completa ? null : pantallaDividida(tab, refreshTrigger);
+
   return (
-    <div className="min-h-screen" style={{ backgroundColor: '#000000' }}>
-      <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto min-h-screen pt-16 sm:pt-20 lg:pt-20">
-        {/* Header Superior */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 sm:mb-12">
-          <div>
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black italic tracking-tighter uppercase text-manso-cream mb-2">Manso Admin_</h1>
-            <p className="text-[9px] sm:text-[10px] font-bold text-manso-cream/60 uppercase tracking-[0.3em]">Panel de Control Centralizado</p>
-          </div>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
-            {userEmail && (
-              <div className="hidden sm:flex items-center gap-2 px-3 py-2 bg-manso-cream/5 text-manso-cream/60 rounded-xl text-[9px] font-medium">
-                <User size={12} />
-                <span className="truncate max-w-[120px]">{userEmail}</span>
-              </div>
-            )}
-            <a 
-              href="/mansoadm/login"
-              className="flex-1 sm:flex-none items-center justify-center gap-2 px-3 py-2 bg-manso-cream/10 text-manso-cream/80 border border-manso-cream/20 rounded-xl text-[10px] font-bold uppercase hover:bg-manso-cream/20 transition-all"
-              title="Cambiar de usuario"
-            >
-              👤 Cambiar Usuario
-            </a>
-            <form action={logoutAction} className="flex-1 sm:flex-none">
-              <button 
-                type="submit"
-                className="w-full sm:w-auto flex items-center justify-center gap-2 px-3 sm:px-4 py-2 bg-manso-cream text-manso-black border border-manso-cream/20 rounded-xl text-xs font-bold uppercase hover:bg-manso-white transition-all shadow-sm"
-              >
-                <LogOut size={14} />
-                <span className="hidden sm:inline">Salir</span>
-              </button>
-            </form>
-          </div>
-        </div>
+    <div className="min-h-screen bg-manso-black">
+      <AdminNav tab={tab} onChange={setTab} userEmail={userEmail} />
 
-        {/* Selector de Pestañas Estilizado */}
-        <div className="flex flex-wrap gap-1 sm:gap-2 mb-6 sm:mb-10 bg-manso-cream/10 p-1 rounded-2xl w-full">
-          <button onClick={() => setTab('crm')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'crm' ? 'bg-manso-terra text-white shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
-            <BarChart2 size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">CRM</span>
-          </button>
-          <button onClick={() => setTab('comunidad')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'comunidad' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
-            <Network size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Comunidad</span>
-          </button>
-          <button onClick={() => setTab('chat')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'chat' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
-            <MessageSquare size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Chat</span>
-          </button>
-          <button onClick={() => setTab('membresias')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'membresias' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
-            <Crown size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Membresías</span>
-          </button>
-          <button onClick={() => setTab('cultura')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'cultura' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
-            <Sparkles size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Cultura</span>
-          </button>
-          <button onClick={() => setTab('espacio')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'espacio' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
-            <DoorOpen size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Espacio</span>
-          </button>
-          <button onClick={() => setTab('festival')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'festival' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
-            <Ticket size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Festival</span>
-          </button>
-          <button onClick={() => setTab('agenda')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'agenda' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
-            <Calendar size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Agenda</span>
-          </button>
-          <button onClick={() => setTab('streaming')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'streaming' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
-            <Video size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Streaming</span>
-          </button>
-          <button onClick={() => setTab('artistas')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'artistas' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
-            <User size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Artistas</span>
-          </button>
-          <button onClick={() => setTab('home')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'home' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
-            <Home size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Home</span>
-          </button>
-          <button onClick={() => setTab('contenidos')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'contenidos' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
-            <Video size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Contenidos</span>
-          </button>
-          <button onClick={() => setTab('empleos')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'empleos' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
-            <Briefcase size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Empleos</span>
-          </button>
-          <button onClick={() => setTab('newsletter')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'newsletter' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
-            <Mail size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Mailing</span>
-          </button>
-          <button onClick={() => setTab('tienda')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'tienda' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
-            <ShoppingBag size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Tienda</span>
-          </button>
-          <button onClick={() => setTab('eventos')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'eventos' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
-            <Star size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Eventos</span>
-          </button>
-          <button onClick={() => setTab('musica')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'musica' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
-            <Music size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Música</span>
-          </button>
-          <button onClick={() => setTab('hero')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'hero' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
-            <Layout size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Hero</span>
-          </button>
-          <button onClick={() => setTab('galeria')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'galeria' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
-            <Image size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Galería</span>
-          </button>
-          <button onClick={() => setTab('cotizador')}className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'cotizador' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
-            <Calculator size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Cotizador</span>
-          </button>
-          <button onClick={() => setTab('team')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'team' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
-            <Users size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Team</span>
-          </button>
-          <button onClick={() => setTab('why')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'why' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
-            <Search size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">SEO</span>
-          </button>
-          <button onClick={() => setTab('about')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'about' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
-            <FileText size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">About</span>
-          </button>
-          <button onClick={() => setTab('manifiesto')} className={`flex-1 sm:flex-none items-center justify-center gap-1 sm:gap-2 px-3 sm:px-6 py-2 sm:py-3 rounded-xl text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all ${tab === 'manifiesto' ? 'bg-manso-cream text-manso-black shadow-sm' : 'text-manso-cream/60 hover:text-manso-cream'}`}>
-            <BookOpen size={12} className="sm:size-14" />
-            <span className="hidden sm:inline">Manifiesto</span>
-          </button>
-        </div>
+      <main className="w-full px-4 sm:px-6 lg:px-10 py-8 sm:py-10">
+        {completa}
 
-        {/* Módulos full-width */}
-        {tab === 'crm'       && <div className="mb-8"><CRMAdmin /></div>}
-        {tab === 'comunidad' && <div className="mb-8"><ComunidadAdmin /></div>}
-        {tab === 'chat' && <div className="mb-8"><ChatAdmin /></div>}
-        {tab === 'streaming' && <div className="mb-8"><StreamingAdmin refreshTrigger={refreshTrigger} /></div>}
-        {tab === 'membresias' && <div className="mb-8"><MembresiasAdmin refreshTrigger={refreshTrigger} /></div>}
-        {tab === 'cultura' && <div className="mb-8"><CulturaAdmin /></div>}
-        {tab === 'espacio' && <div className="mb-8"><EspacioAdmin /></div>}
-        {tab === 'festival' && <div className="mb-8"><FestivalAdmin /></div>}
-        {tab === 'tienda' && <div className="mb-8"><TiendaAdmin refreshTrigger={refreshTrigger} /></div>}
-        {tab === 'newsletter' && <div className="mb-8"><MailingAdmin /></div>}
-
-        {/* Contenido Principal — grid dos columnas */}
-        {tab !== 'crm' && tab !== 'comunidad' && tab !== 'chat' && tab !== 'streaming' && tab !== 'membresias' && tab !== 'cultura' && tab !== 'espacio' && tab !== 'festival' && tab !== 'tienda' && tab !== 'newsletter' && <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-12">
-            {/* Columna Izquierda: Formularios de Creación */}
+        {dividida && (
+          <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-12">
             <div className="xl:col-span-5">
-              <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
-                {tab === 'about' ? 'Editar About Us' : tab === 'home' ? 'Evento del Home' : tab === 'artistas' ? 'Artista' : tab === 'agenda' ? 'Evento de Agenda' : tab === 'eventos' ? 'Evento' : tab === 'musica' ? 'Track para el Home' : tab === 'team' ? 'Miembro del Team' : tab === 'hero' ? 'Slide del Hero' : tab === 'galeria' ? 'Foto de Galería' : tab === 'contenidos' ? 'Nuevo Video' : tab === 'manifiesto' ? 'Editar Manifiesto' : tab === 'cotizador' ? 'Configuración' : tab === 'empleos' ? 'Nueva Oferta' : 'Configuración Why'}
+              <h2 className="text-[14px] font-black uppercase tracking-[0.2em] text-manso-cream/70 mb-4 sm:mb-6 ml-2">
+                {dividida.titulo}
               </h2>
-              <div className="sticky top-4 sm:top-8">
-                {tab === 'about' ? <FormAboutUs /> : tab === 'home' ? <FormEventoHome /> : tab === 'artistas' ? <FormArtista /> : tab === 'agenda' ? <FormAgenda /> : tab === 'eventos' ? <FormEvento /> : tab === 'musica' ? <FormMainMusic /> : tab === 'team' ? <FormTeam /> : tab === 'hero' ? <FormHero /> : tab === 'galeria' ? <FormGallery /> : tab === 'contenidos' ? <FormMultimedia /> : tab === 'manifiesto' ? <FormManifiesto /> : tab === 'cotizador' ? <CotizadorConfigAdmin /> : tab === 'empleos' ? <FormOfertaEmpleo /> : <FormSiteConfig />}
-              </div>
+              <div className="sticky top-44">{dividida.form}</div>
             </div>
-
-            {/* Columna Derecha: Listas de Gestión */}
             <div className="xl:col-span-7">
-              <h2 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.2em] text-manso-cream/60 mb-4 sm:mb-6 ml-2">
-                Gestionar Existentes
+              <h2 className="text-[14px] font-black uppercase tracking-[0.2em] text-manso-cream/70 mb-4 sm:mb-6 ml-2">
+                Gestionar existentes
               </h2>
-              {tab === 'about' ? (
-                <div className="bg-manso-cream/5 p-8 rounded-[2.5rem] border border-manso-cream/10">
-                  <div className="text-center">
-                    <FileText className="mx-auto text-manso-cream/40 mb-4" size={48} />
-                    <h3 className="text-lg font-black uppercase tracking-tighter text-manso-cream mb-2">
-                      About Us
-                    </h3>
-                    <p className="text-sm text-manso-cream/60 mb-4">
-                      Edita el contenido de la sección About Us desde el formulario de la izquierda.
-                    </p>
-                    <p className="text-xs text-manso-cream/40">
-                      Los cambios se reflejarán inmediatamente en la página /about
-                    </p>
-                  </div>
-                </div>
-              ) : tab === 'home' ? (
-                <EventosHomeList refreshTrigger={refreshTrigger} />
-              ) : tab === 'artistas' ? (
-                <ArtistasList refreshTrigger={refreshTrigger} />
-              ) : tab === 'agenda' ? (
-                <AgendaList refreshTrigger={refreshTrigger} />
-              ) : tab === 'eventos' ? (
-                <EventosList refreshTrigger={refreshTrigger} />
-              ) : tab === 'musica' ? (
-                <MainMusicList refreshTrigger={refreshTrigger} />
-              ) : tab === 'team' ? (
-                <TeamList refreshTrigger={refreshTrigger} />
-              ) : tab === 'hero' ? (
-                <HeroList refreshTrigger={refreshTrigger} />
-              ) : tab === 'galeria' ? (
-                <GalleryList refreshTrigger={refreshTrigger} />
-              ) : tab === 'contenidos' ? (
-                <MultimediaList refreshTrigger={refreshTrigger} />
-              ) : tab === 'manifiesto' ? (
-                <div className="bg-manso-cream/5 p-8 rounded-[2.5rem] border border-manso-cream/10">
-                  <div className="text-center">
-                    <BookOpen className="mx-auto text-manso-cream/40 mb-4" size={48} />
-                    <h3 className="text-lg font-black uppercase tracking-tighter text-manso-cream mb-2">
-                      Manifiesto
-                    </h3>
-                    <p className="text-sm text-manso-cream/60 mb-4">
-                      Escribí el texto desde el formulario de la izquierda. Cada párrafo separado por una línea en blanco.
-                    </p>
-                    <p className="text-xs text-manso-cream/40">
-                      Los cambios se reflejan en /manifiesto al guardar.
-                    </p>
-                  </div>
-                </div>
-              ) : tab === 'cotizador' ? (
-                <CotizacionesList refreshTrigger={refreshTrigger} />
-              ) : tab === 'empleos' ? (
-                <div className="space-y-8">
-                  <OfertasEmpleoList refreshTrigger={refreshTrigger} />
-                  <div className="border-t border-manso-cream/10 pt-8">
-                    <PropuestasList refreshTrigger={refreshTrigger} />
-                  </div>
-                </div>
-              ) : tab === 'why' ? (
-                <SiteConfigList refreshTrigger={refreshTrigger} />
-              ) : (
-                <div></div>
-              )}
+              {dividida.lista}
             </div>
-        </div>}
-
-
-      </div>
+          </div>
+        )}
+      </main>
     </div>
   );
 }

@@ -90,7 +90,7 @@ export function EventosHomeList({ refreshTrigger }: EventosHomeListProps) {
       </h3>
       
       {eventos.length === 0 ? (
-        <div className="text-manso-cream/40 text-center py-8">
+        <div className="text-manso-cream/62 text-center py-8">
           No hay eventos configurados
         </div>
       ) : (
@@ -108,18 +108,18 @@ export function EventosHomeList({ refreshTrigger }: EventosHomeListProps) {
                 <div className={`flex items-center gap-3 mb-2 ${
                   !evento.activo ? 'opacity-60' : ''
                 }`}>
-                  <span className={`text-xs font-black text-manso-terra uppercase tracking-wider ${
+                  <span className={`text-[13px] font-black text-manso-terra uppercase tracking-wider ${
                     !evento.activo ? 'line-through decoration-1 decoration-manso-terra/50' : ''
                   }`}>
                     {evento.fecha}
                   </span>
-                  <span className={`text-[9px] uppercase tracking-widest text-manso-cream/60 px-2 py-1 border border-manso-cream/20 rounded ${
+                  <span className={`text-[12px] uppercase tracking-widest text-manso-cream/60 px-2 py-1 border border-manso-cream/20 rounded ${
                     !evento.activo ? 'line-through decoration-1 decoration-manso-cream/30' : ''
                   }`}>
                     {evento.categoria}
                   </span>
                   {!evento.disponible && (
-                    <span className="text-[9px] uppercase font-bold text-manso-cream/60 border border-manso-cream/20 px-2 py-1">
+                    <span className="text-[12px] uppercase font-bold text-manso-cream/60 border border-manso-cream/20 px-2 py-1">
                       Sold Out
                     </span>
                   )}

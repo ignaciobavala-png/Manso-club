@@ -30,7 +30,7 @@ const MODO_LABEL: Record<Modo, string> = {
 const MODO_COLOR: Record<Modo, string> = {
   en_vivo:  'text-red-400',
   grabado:  'text-manso-olive',
-  apagado:  'text-manso-cream/30',
+  apagado:  'text-manso-cream/62',
 };
 
 const MODO_DOT: Record<Modo, string> = {
@@ -113,13 +113,13 @@ export function CanalControl() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <div className={`w-2.5 h-2.5 rounded-full ${MODO_DOT[modo]}`} />
-          <span className={`text-sm font-black uppercase tracking-widest ${MODO_COLOR[modo]}`}>
+          <span className={`text-[15px] font-black uppercase tracking-widest ${MODO_COLOR[modo]}`}>
             Canal {MODO_LABEL[modo]}
           </span>
         </div>
         <button
           onClick={() => setAyuda(true)}
-          className="w-7 h-7 rounded-full border border-manso-cream/15 flex items-center justify-center text-manso-cream/30 hover:text-manso-cream/60 hover:border-manso-cream/30 transition-all"
+          className="w-7 h-7 rounded-full border border-manso-cream/15 flex items-center justify-center text-manso-cream/62 hover:text-manso-cream/60 hover:border-manso-cream/30 transition-all"
           title="¿Cómo funciona el canal?"
         >
           <HelpCircle size={14} />
@@ -131,7 +131,7 @@ export function CanalControl() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setAyuda(false)}>
           <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
           <div
-            className="relative bg-[#000000] border border-manso-cream/15 rounded-[2rem] p-8 max-w-md w-full shadow-2xl"
+            className="relative bg-manso-black border border-manso-cream/15 rounded-[2rem] p-8 max-w-md w-full shadow-2xl"
             onClick={e => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">
@@ -140,39 +140,39 @@ export function CanalControl() {
               </h3>
               <button
                 onClick={() => setAyuda(false)}
-                className="w-8 h-8 rounded-full border border-manso-cream/15 flex items-center justify-center text-manso-cream/40 hover:text-manso-cream transition-colors"
+                className="w-8 h-8 rounded-full border border-manso-cream/15 flex items-center justify-center text-manso-cream/62 hover:text-manso-cream transition-colors"
               >
                 <X size={14} />
               </button>
             </div>
 
-            <div className="space-y-5 text-sm text-manso-cream/60 leading-relaxed">
+            <div className="space-y-5 text-[15px] text-manso-cream/60 leading-relaxed">
               <p>
                 El canal es lo primero que ven los usuarios cuando entran a <span className="text-manso-cream font-bold">/streaming</span>. Funciona como una señal de TV: siempre hay algo "al aire".
               </p>
 
               <div className="space-y-3">
                 <div className="flex gap-3">
-                  <span className="flex-shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-600/20 border border-red-500/30 text-red-400 text-[8px] font-black uppercase tracking-widest mt-0.5">
+                  <span className="flex-shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-red-600/20 border border-red-500/30 text-red-400 text-[12px] font-black uppercase tracking-widest mt-0.5">
                     <Wifi size={8} /> En vivo
                   </span>
                   <p>Ingresás la URL del stream de YouTube Live. Los usuarios ven el embed en vivo.</p>
                 </div>
                 <div className="flex gap-3">
-                  <span className="flex-shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-manso-olive/15 border border-manso-olive/30 text-manso-olive text-[8px] font-black uppercase tracking-widest mt-0.5">
+                  <span className="flex-shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-manso-olive/15 border border-manso-olive/30 text-manso-olive text-[12px] font-black uppercase tracking-widest mt-0.5">
                     <Play size={8} /> Grabado
                   </span>
                   <p>Seleccionás un video del catálogo para que se reproduzca en loop. Útil para mantener el canal activo entre transmisiones.</p>
                 </div>
                 <div className="flex gap-3">
-                  <span className="flex-shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-manso-cream/10 border border-manso-cream/15 text-manso-cream/40 text-[8px] font-black uppercase tracking-widest mt-0.5">
+                  <span className="flex-shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-full bg-manso-cream/10 border border-manso-cream/15 text-manso-cream/62 text-[12px] font-black uppercase tracking-widest mt-0.5">
                     <PowerOff size={8} /> Apagado
                   </span>
                   <p>El canal muestra un placeholder. Los usuarios ven que no hay transmisión activa.</p>
                 </div>
               </div>
 
-              <div className="border-t border-manso-cream/10 pt-4 text-manso-cream/40 text-xs space-y-1.5">
+              <div className="border-t border-manso-cream/10 pt-4 text-manso-cream/62 text-[13px] space-y-1.5">
                 <p>
                   <span className="text-manso-cream/60 font-bold">Terminar un stream:</span> desde la lista de contenido, hacé click en "Terminar stream". El video se archiva automáticamente en la sección Multimedia para todos los usuarios registrados.
                 </p>
@@ -187,18 +187,18 @@ export function CanalControl() {
 
       {/* Selector de modo */}
       <div>
-        <p className="text-[9px] font-black uppercase tracking-[0.3em] text-manso-cream/40 mb-3">Modo</p>
+        <p className="text-[12px] font-black uppercase tracking-[0.2em] text-manso-cream/62 mb-3">Modo</p>
         <div className="grid grid-cols-3 gap-2">
           {(['en_vivo', 'grabado', 'apagado'] as Modo[]).map(m => (
             <button
               key={m}
               onClick={() => setModo(m)}
-              className={`py-3 px-3 rounded-xl text-[9px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-1.5 ${
+              className={`py-3 px-3 rounded-xl text-[12px] font-black uppercase tracking-widest transition-all flex items-center justify-center gap-1.5 ${
                 modo === m
                   ? m === 'en_vivo'  ? 'bg-red-600/30 border border-red-500/50 text-red-400'
                   : m === 'grabado'  ? 'bg-manso-olive/20 border border-manso-olive/40 text-manso-olive'
                   :                    'bg-manso-cream/10 border border-manso-cream/20 text-manso-cream/60'
-                  : 'bg-manso-cream/5 border border-manso-cream/10 text-manso-cream/30 hover:border-manso-cream/20 hover:text-manso-cream/50'
+                  : 'bg-manso-cream/5 border border-manso-cream/10 text-manso-cream/62 hover:border-manso-cream/20 hover:text-manso-cream/50'
               }`}
             >
               {m === 'en_vivo' && <Wifi size={10} />}
@@ -213,7 +213,7 @@ export function CanalControl() {
       {/* Config específica por modo */}
       {modo === 'en_vivo' && (
         <div>
-          <label className="text-[9px] font-black uppercase tracking-[0.3em] text-manso-cream/40 block mb-2">
+          <label className="text-[12px] font-black uppercase tracking-[0.2em] text-manso-cream/62 block mb-2">
             URL del stream (YouTube Live, HLS, etc.)
           </label>
           <input
@@ -221,9 +221,9 @@ export function CanalControl() {
             value={streamUrl}
             onChange={e => setStreamUrl(e.target.value)}
             placeholder="https://youtube.com/live/..."
-            className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 text-sm text-manso-cream placeholder:text-manso-cream/20 font-mono focus:outline-none focus:border-red-500/50"
+            className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 text-[15px] text-manso-cream placeholder:text-manso-cream/62 font-mono focus:outline-none focus:border-red-500/50"
           />
-          <p className="text-[10px] text-manso-cream/25 mt-1.5">
+          <p className="text-[13px] text-manso-cream/62 mt-1.5">
             También podés cargar el video en "Contenido" y usar el YouTube Video ID
           </p>
         </div>
@@ -231,16 +231,16 @@ export function CanalControl() {
 
       {modo === 'grabado' && (
         <div>
-          <label className="text-[9px] font-black uppercase tracking-[0.3em] text-manso-cream/40 block mb-2">
+          <label className="text-[12px] font-black uppercase tracking-[0.2em] text-manso-cream/62 block mb-2">
             Contenido en loop
           </label>
           {contenidos.length === 0 ? (
-            <p className="text-xs text-manso-cream/30">No hay contenido activo cargado aún.</p>
+            <p className="text-[13px] text-manso-cream/62">No hay contenido activo cargado aún.</p>
           ) : (
             <select
               value={contenidoId}
               onChange={e => setContenidoId(e.target.value)}
-              className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 text-sm text-manso-cream focus:outline-none focus:border-manso-olive/50"
+              className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 text-[15px] text-manso-cream focus:outline-none focus:border-manso-olive/50"
             >
               <option value="">— Seleccionar video —</option>
               {contenidos.map(c => (
@@ -254,7 +254,7 @@ export function CanalControl() {
       )}
 
       {modo === 'apagado' && (
-        <p className="text-xs text-manso-cream/25">
+        <p className="text-[13px] text-manso-cream/62">
           El canal está apagado. Los usuarios verán un placeholder de "próxima transmisión".
         </p>
       )}
@@ -263,7 +263,7 @@ export function CanalControl() {
       <button
         onClick={guardar}
         disabled={saving}
-        className="w-full py-3 bg-manso-cream text-manso-black font-black text-[10px] uppercase tracking-widest rounded-xl hover:bg-manso-cream/90 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+        className="w-full py-3 bg-manso-cream text-manso-black font-black text-[13px] uppercase tracking-widest rounded-xl hover:bg-manso-cream/90 transition-all disabled:opacity-50 flex items-center justify-center gap-2"
       >
         {saving ? (
           <div className="w-4 h-4 border-2 border-manso-black/30 border-t-manso-black rounded-full animate-spin" />

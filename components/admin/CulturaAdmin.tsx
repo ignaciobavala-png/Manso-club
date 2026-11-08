@@ -19,11 +19,11 @@ import { ImageUploader } from './ImageUploader';
 
 const BUCKET = 'membresias-gallery';
 const INPUT =
-  'w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra/50 transition-colors';
-const LABEL = 'text-[10px] font-black uppercase tracking-widest text-manso-cream/60 mb-2 block';
+  'w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 text-[15px] text-manso-cream placeholder:text-manso-cream/62 focus:outline-none focus:border-manso-terra/50 transition-colors';
+const LABEL = 'text-[13px] font-black uppercase tracking-widest text-manso-cream/60 mb-2 block';
 const CARD = 'bg-manso-cream/5 border border-manso-cream/10 rounded-2xl p-4 space-y-4';
 const BOTON_ICONO =
-  'w-8 h-8 flex items-center justify-center rounded-lg text-manso-cream/40 hover:text-manso-cream hover:bg-manso-cream/10 transition-colors disabled:opacity-25 disabled:hover:bg-transparent disabled:hover:text-manso-cream/40';
+  'w-8 h-8 flex items-center justify-center rounded-lg text-manso-cream/62 hover:text-manso-cream hover:bg-manso-cream/10 transition-colors disabled:opacity-25 disabled:hover:bg-transparent disabled:hover:text-manso-cream/62';
 
 /**
  * Sección Cultura: edita todo lo que se ve en /mansocultural — el encabezado,
@@ -141,7 +141,7 @@ export function CulturaAdmin() {
 
   if (cargando) {
     return (
-      <div className="flex items-center gap-2 text-xs text-manso-cream/40 py-10">
+      <div className="flex items-center gap-2 text-[13px] text-manso-cream/62 py-10">
         <Loader2 size={14} className="animate-spin" />
         Cargando…
       </div>
@@ -151,14 +151,14 @@ export function CulturaAdmin() {
   return (
     <div className="space-y-10">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-xs text-manso-cream/50">
+        <p className="text-[13px] text-manso-cream/50">
           Todo lo que se ve en la página de Cultura.
         </p>
         <a
           href="/mansocultural"
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-manso-terra hover:text-manso-cream transition-colors"
+          className="inline-flex items-center gap-2 text-[12px] font-black uppercase tracking-widest text-manso-terra hover:text-manso-cream transition-colors"
         >
           Ver la página
           <ExternalLink size={11} />
@@ -167,7 +167,7 @@ export function CulturaAdmin() {
 
       {/* ── Encabezado ──────────────────────────────────────────────── */}
       <section className={CARD}>
-        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-manso-cream">
+        <h3 className="text-[13px] font-black uppercase tracking-[0.2em] text-manso-cream">
           Encabezado
         </h3>
 
@@ -197,7 +197,7 @@ export function CulturaAdmin() {
           type="button"
           onClick={guardarConfig}
           disabled={guardando === 'config'}
-          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-manso-terra/20 text-manso-terra text-[9px] font-black uppercase tracking-widest hover:bg-manso-terra/30 transition-colors disabled:opacity-40"
+          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-manso-terra/20 text-manso-terra text-[12px] font-black uppercase tracking-widest hover:bg-manso-terra/30 transition-colors disabled:opacity-40"
         >
           {guardando === 'config' ? <Loader2 size={12} className="animate-spin" /> : <Save size={12} />}
           Guardar
@@ -207,23 +207,23 @@ export function CulturaAdmin() {
       {/* ── Bandas horizontales ─────────────────────────────────────── */}
       <section className="space-y-4">
         <div>
-          <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-manso-cream">
+          <h3 className="text-[13px] font-black uppercase tracking-[0.2em] text-manso-cream">
             Bandas horizontales
           </h3>
-          <p className="text-[11px] text-manso-cream/40 mt-1 leading-relaxed">
+          <p className="text-[13px] text-manso-cream/62 mt-1 leading-relaxed">
             Las franjas de foto con texto encima. La segunda se ve más alta que las otras, y el
             patrón se repite cada tres.
           </p>
         </div>
 
         {banners.length === 0 && (
-          <p className="text-xs text-manso-cream/40">Sin bandas todavía.</p>
+          <p className="text-[13px] text-manso-cream/62">Sin bandas todavía.</p>
         )}
 
         {banners.map((banner, i) => (
           <div key={banner.id} className={CARD}>
             <div className="flex items-center justify-between gap-2">
-              <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40">
+              <span className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62">
                 Banda {i + 1}
               </span>
               <div className="flex items-center gap-1">
@@ -268,7 +268,7 @@ export function CulturaAdmin() {
             </div>
 
             {!banner.activo && (
-              <p className="text-[10px] font-black uppercase tracking-widest text-manso-cream/30">
+              <p className="text-[13px] font-black uppercase tracking-widest text-manso-cream/62">
                 Oculta — no se ve en la página
               </p>
             )}
@@ -321,7 +321,7 @@ export function CulturaAdmin() {
                 })
               }
               disabled={guardando === banner.id}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-manso-terra/20 text-manso-terra text-[9px] font-black uppercase tracking-widest hover:bg-manso-terra/30 transition-colors disabled:opacity-40"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-manso-terra/20 text-manso-terra text-[12px] font-black uppercase tracking-widest hover:bg-manso-terra/30 transition-colors disabled:opacity-40"
             >
               {guardando === banner.id ? (
                 <Loader2 size={12} className="animate-spin" />
@@ -336,7 +336,7 @@ export function CulturaAdmin() {
         <button
           type="button"
           onClick={agregarBanner}
-          className="w-full flex items-center justify-center gap-2 py-3 border border-dashed border-manso-terra/30 rounded-2xl text-[9px] font-black uppercase tracking-widest text-manso-terra/60 hover:text-manso-terra hover:border-manso-terra/60 hover:bg-manso-terra/5 transition-all"
+          className="w-full flex items-center justify-center gap-2 py-3 border border-dashed border-manso-terra/30 rounded-2xl text-[12px] font-black uppercase tracking-widest text-manso-terra/60 hover:text-manso-terra hover:border-manso-terra/60 hover:bg-manso-terra/5 transition-all"
         >
           <Plus size={12} />
           Agregar banda
@@ -346,23 +346,23 @@ export function CulturaAdmin() {
       {/* ── Frases con fotos ────────────────────────────────────────── */}
       <section className="space-y-4">
         <div>
-          <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-manso-cream">
+          <h3 className="text-[13px] font-black uppercase tracking-[0.2em] text-manso-cream">
             Frases con fotos
           </h3>
-          <p className="text-[11px] text-manso-cream/40 mt-1 leading-relaxed">
+          <p className="text-[13px] text-manso-cream/62 mt-1 leading-relaxed">
             Cada frase va centrada, con una foto a cada lado. Los tamaños y las alturas los acomoda
             la web sola para que queden desparramadas.
           </p>
         </div>
 
         {bloques.length === 0 && (
-          <p className="text-xs text-manso-cream/40">Sin frases todavía.</p>
+          <p className="text-[13px] text-manso-cream/62">Sin frases todavía.</p>
         )}
 
         {bloques.map((bloque, i) => (
           <div key={bloque.id} className={CARD}>
             <div className="flex items-center justify-between gap-2">
-              <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40">
+              <span className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62">
                 Frase {i + 1}
               </span>
               <div className="flex items-center gap-1">
@@ -407,7 +407,7 @@ export function CulturaAdmin() {
             </div>
 
             {!bloque.activo && (
-              <p className="text-[10px] font-black uppercase tracking-widest text-manso-cream/30">
+              <p className="text-[13px] font-black uppercase tracking-widest text-manso-cream/62">
                 Oculta — no se ve en la página
               </p>
             )}
@@ -456,7 +456,7 @@ export function CulturaAdmin() {
               type="button"
               onClick={() => guardarFila('cultura_bloques', bloque.id, { texto: bloque.texto })}
               disabled={guardando === bloque.id}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-manso-terra/20 text-manso-terra text-[9px] font-black uppercase tracking-widest hover:bg-manso-terra/30 transition-colors disabled:opacity-40"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl bg-manso-terra/20 text-manso-terra text-[12px] font-black uppercase tracking-widest hover:bg-manso-terra/30 transition-colors disabled:opacity-40"
             >
               {guardando === bloque.id ? (
                 <Loader2 size={12} className="animate-spin" />
@@ -471,7 +471,7 @@ export function CulturaAdmin() {
         <button
           type="button"
           onClick={agregarBloque}
-          className="w-full flex items-center justify-center gap-2 py-3 border border-dashed border-manso-terra/30 rounded-2xl text-[9px] font-black uppercase tracking-widest text-manso-terra/60 hover:text-manso-terra hover:border-manso-terra/60 hover:bg-manso-terra/5 transition-all"
+          className="w-full flex items-center justify-center gap-2 py-3 border border-dashed border-manso-terra/30 rounded-2xl text-[12px] font-black uppercase tracking-widest text-manso-terra/60 hover:text-manso-terra hover:border-manso-terra/60 hover:bg-manso-terra/5 transition-all"
         >
           <Plus size={12} />
           Agregar frase

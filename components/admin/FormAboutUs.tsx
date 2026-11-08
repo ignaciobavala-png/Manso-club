@@ -198,7 +198,7 @@ export function FormAboutUs() {
           <h2 className="text-lg md:text-xl font-black uppercase tracking-tighter text-manso-cream mb-1">
             Editar About Us
           </h2>
-          <p className="text-xs text-manso-cream/60">
+          <p className="text-[13px] text-manso-cream/60">
             Modifica el contenido de la sección About Us
           </p>
         </div>
@@ -207,7 +207,7 @@ export function FormAboutUs() {
         {error && (
           <div className="mb-4 flex items-center gap-2 p-3 bg-red-500/20 border border-red-500/30 rounded-lg">
             <AlertCircle className="text-red-400 flex-shrink-0" size={16} />
-            <p className="text-red-300 text-xs flex-1">{error}</p>
+            <p className="text-red-300 text-[13px] flex-1">{error}</p>
             <button onClick={resetError} className="text-red-400 hover:text-red-300">
               <X size={14} />
             </button>
@@ -217,7 +217,7 @@ export function FormAboutUs() {
         {success && (
           <div className="mb-4 flex items-center gap-2 p-3 bg-green-500/20 border border-green-500/30 rounded-lg">
             <CheckCircle className="text-green-400 flex-shrink-0" size={16} />
-            <p className="text-green-300 text-xs flex-1">¡About Us actualizado!</p>
+            <p className="text-green-300 text-[13px] flex-1">¡About Us actualizado!</p>
             <button onClick={resetSuccess} className="text-green-400 hover:text-green-300">
               <X size={14} />
             </button>
@@ -231,7 +231,7 @@ export function FormAboutUs() {
               <input 
                 type="text" 
                 placeholder="SUBTÍTULO"
-                className="w-full bg-manso-cream/10 p-3 pl-10 rounded-xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all text-sm"
+                className="w-full bg-manso-cream/10 p-3 pl-10 rounded-xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/62 transition-all text-[15px]"
                 value={formData.subtitle}
                 onChange={e => setFormData({...formData, subtitle: e.target.value})}
                 required
@@ -242,7 +242,7 @@ export function FormAboutUs() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {/* Columna izquierda: Foto Principal */}
               <div className="space-y-2">
-                <label className="text-[9px] font-black uppercase tracking-widest text-manso-cream/60 ml-2">
+                <label className="text-[12px] font-black uppercase tracking-widest text-manso-cream/60 ml-2">
                   Foto Principal <span className="text-red-400">*</span>
                 </label>
                 {formData.main_photo_url ? (
@@ -262,7 +262,7 @@ export function FormAboutUs() {
                   </div>
                 ) : (
                   <div className="aspect-[4/3] bg-manso-cream/10 rounded-lg border border-manso-cream/20 flex items-center justify-center">
-                    <p className="text-xs text-manso-cream/60 text-center">
+                    <p className="text-[13px] text-manso-cream/60 text-center">
                       📷 Sube una foto principal
                     </p>
                   </div>
@@ -281,20 +281,20 @@ export function FormAboutUs() {
 
               {/* Columna derecha: Descripción */}
               <div className="space-y-2">
-                <label className="text-[9px] font-black uppercase tracking-widest text-manso-cream/60 ml-2">
+                <label className="text-[12px] font-black uppercase tracking-widest text-manso-cream/60 ml-2">
                   Descripción (mínimo 10 caracteres)
                 </label>
                 <div className="relative">
                   <textarea
                     placeholder="Describe qué es Manso Club..."
-                    className="w-full bg-manso-cream/10 p-3 rounded-xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-medium text-manso-cream placeholder:text-manso-cream/40 transition-all resize-none min-h-[200px] max-h-[400px] overflow-y-auto text-sm"
+                    className="w-full bg-manso-cream/10 p-3 rounded-xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-medium text-manso-cream placeholder:text-manso-cream/62 transition-all resize-none min-h-[200px] max-h-[400px] overflow-y-auto text-[15px]"
                     value={formData.description}
                     onChange={e => setFormData({...formData, description: e.target.value})}
                     required
                     minLength={10}
                   />
                 </div>
-                <p className="text-[10px] text-manso-cream/40 text-right">
+                <p className="text-[13px] text-manso-cream/62 text-right">
                   {formData.description.length} caracteres
                 </p>
               </div>
@@ -302,13 +302,13 @@ export function FormAboutUs() {
 
             {/* Galería de Fotos */}
             <div className="space-y-2">
-              <label className="text-[9px] font-black uppercase tracking-widest text-manso-cream/60 ml-2">
+              <label className="text-[12px] font-black uppercase tracking-widest text-manso-cream/60 ml-2">
                 Galería de Fotos (máximo 3)
               </label>
               
               {formData.gallery_photos.length === 0 && (
                 <div className="p-3 bg-manso-cream/10 rounded-lg border border-manso-cream/20">
-                  <p className="text-xs text-manso-cream/60 text-center">
+                  <p className="text-[13px] text-manso-cream/60 text-center">
                     🖼️ Sube hasta 3 fotos para la galería de About
                   </p>
                 </div>
@@ -361,7 +361,7 @@ export function FormAboutUs() {
             <button 
               type="submit"
               disabled={loading}
-              className="w-full bg-manso-terra text-manso-cream py-3 rounded-2xl font-black uppercase tracking-[0.2em] hover:bg-manso-cream hover:text-manso-black transition-all active:scale-95 disabled:opacity-50 text-sm"
+              className="w-full bg-manso-terra text-manso-cream py-3 rounded-2xl font-black uppercase tracking-[0.2em] hover:bg-manso-cream hover:text-manso-black transition-all active:scale-95 disabled:opacity-50 text-[15px]"
             >
               {loading ? 'GUARDANDO...' : 'GUARDAR CAMBIOS'}
             </button>

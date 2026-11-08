@@ -53,63 +53,63 @@ export function CRMResumen({ users }: CRMResumenProps) {
 
       {/* Crecimiento */}
       <div>
-        <p className="text-[9px] font-black uppercase tracking-[0.3em] text-manso-cream/30 mb-3 flex items-center gap-2">
+        <p className="text-[12px] font-black uppercase tracking-[0.2em] text-manso-cream/62 mb-3 flex items-center gap-2">
           <TrendingUp size={11} /> Crecimiento de usuarios registrados
         </p>
         <div className="grid grid-cols-2 gap-2">
           <div className="bg-manso-cream/5 border border-manso-cream/10 rounded-2xl p-4">
             <p className="text-3xl font-black text-manso-cream leading-none">+{nuevos7d}</p>
-            <p className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40 mt-2">Usuarios nuevos esta semana</p>
-            <p className="text-[8px] text-manso-cream/20 mt-0.5">Se registraron en los últimos 7 días</p>
+            <p className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62 mt-2">Usuarios nuevos esta semana</p>
+            <p className="text-[12px] text-manso-cream/62 mt-0.5">Se registraron en los últimos 7 días</p>
           </div>
           <div className="bg-manso-cream/5 border border-manso-cream/10 rounded-2xl p-4">
             <p className="text-3xl font-black text-manso-cream leading-none">+{nuevos30d}</p>
-            <p className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40 mt-2">Usuarios nuevos este mes</p>
-            <p className="text-[8px] text-manso-cream/20 mt-0.5">{nonAdmin.length} usuarios en total</p>
+            <p className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62 mt-2">Usuarios nuevos este mes</p>
+            <p className="text-[12px] text-manso-cream/62 mt-0.5">{nonAdmin.length} usuarios en total</p>
           </div>
         </div>
       </div>
 
       {/* Leads */}
       <div>
-        <p className="text-[9px] font-black uppercase tracking-[0.3em] text-manso-cream/30 mb-3 flex items-center gap-2">
+        <p className="text-[12px] font-black uppercase tracking-[0.2em] text-manso-cream/62 mb-3 flex items-center gap-2">
           <Users size={11} /> Usuarios registrados sin membresía activa
         </p>
         <div className="grid grid-cols-2 gap-2">
           <div className="bg-manso-terra/5 border border-manso-terra/20 rounded-2xl p-4">
             <div className="flex items-center gap-1.5 mb-2">
               <Flame size={12} className="text-manso-terra" />
-              <p className="text-[8px] font-black uppercase tracking-widest text-manso-terra/70">Leads calientes</p>
+              <p className="text-[12px] font-black uppercase tracking-widest text-manso-terra/70">Leads calientes</p>
             </div>
             <p className="text-3xl font-black text-manso-terra leading-none">{leadsCalientes.length}</p>
-            <p className="text-[8px] text-manso-terra/40 mt-1.5">Se registraron hace menos de 30 días — oportunidad de conversión</p>
+            <p className="text-[12px] text-manso-terra/40 mt-1.5">Se registraron hace menos de 30 días — oportunidad de conversión</p>
             {leadsCalientes.length > 0 && (
               <div className="mt-2 space-y-0.5">
                 {leadsCalientes.slice(0, 3).map(u => (
-                  <p key={u.id} className="text-[8px] text-manso-cream/40 truncate">
+                  <p key={u.id} className="text-[12px] text-manso-cream/62 truncate">
                     {u.display_name ?? u.email}
                   </p>
                 ))}
                 {leadsCalientes.length > 3 && (
-                  <p className="text-[8px] text-manso-cream/20">+{leadsCalientes.length - 3} más</p>
+                  <p className="text-[12px] text-manso-cream/62">+{leadsCalientes.length - 3} más</p>
                 )}
               </div>
             )}
           </div>
           <div className="bg-manso-cream/5 border border-manso-cream/10 rounded-2xl p-4">
             <div className="flex items-center gap-1.5 mb-2">
-              <UserMinus size={12} className="text-manso-cream/40" />
-              <p className="text-[8px] font-black uppercase tracking-widest text-manso-cream/30">Leads fríos</p>
+              <UserMinus size={12} className="text-manso-cream/62" />
+              <p className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62">Leads fríos</p>
             </div>
-            <p className="text-3xl font-black text-manso-cream/40 leading-none">{leadsFrios.length}</p>
-            <p className="text-[8px] text-manso-cream/20 mt-1.5">Registrados hace más de 30 días sin convertir</p>
+            <p className="text-3xl font-black text-manso-cream/62 leading-none">{leadsFrios.length}</p>
+            <p className="text-[12px] text-manso-cream/62 mt-1.5">Registrados hace más de 30 días sin convertir</p>
           </div>
         </div>
       </div>
 
       {/* Tienda */}
       <div>
-        <p className="text-[9px] font-black uppercase tracking-[0.3em] text-manso-cream/30 mb-3 flex items-center gap-2">
+        <p className="text-[12px] font-black uppercase tracking-[0.2em] text-manso-cream/62 mb-3 flex items-center gap-2">
           <ShoppingBag size={11} /> Ventas en tienda — mes en curso
         </p>
         <div className="grid grid-cols-2 gap-2">
@@ -117,15 +117,15 @@ export function CRMResumen({ users }: CRMResumenProps) {
             <p className="text-3xl font-black text-manso-terra leading-none">
               {pedidosMes ? formatARS(pedidosMes.total) : '—'}
             </p>
-            <p className="text-[9px] font-black uppercase tracking-widest text-manso-terra/50 mt-2">Total facturado</p>
-            <p className="text-[8px] text-manso-terra/30 mt-0.5">Suma de todos los pedidos del mes</p>
+            <p className="text-[12px] font-black uppercase tracking-widest text-manso-terra/50 mt-2">Total facturado</p>
+            <p className="text-[12px] text-manso-terra/30 mt-0.5">Suma de todos los pedidos del mes</p>
           </div>
           <div className="bg-manso-cream/5 border border-manso-cream/10 rounded-2xl p-4">
             <p className="text-3xl font-black text-manso-cream leading-none">
               {pedidosMes?.count ?? '—'}
             </p>
-            <p className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40 mt-2">Pedidos recibidos</p>
-            <p className="text-[8px] text-manso-cream/20 mt-0.5">Desde el 1ro del mes</p>
+            <p className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62 mt-2">Pedidos recibidos</p>
+            <p className="text-[12px] text-manso-cream/62 mt-0.5">Desde el 1ro del mes</p>
           </div>
         </div>
       </div>

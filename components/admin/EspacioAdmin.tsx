@@ -25,13 +25,13 @@ import { CompactImageUploader } from './CompactImageUploader';
 
 const BUCKET = 'membresias-gallery';
 const INPUT =
-  'w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra/50 transition-colors';
-const LABEL = 'text-[10px] font-black uppercase tracking-widest text-manso-cream/60 mb-2 block';
+  'w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 text-[15px] text-manso-cream placeholder:text-manso-cream/62 focus:outline-none focus:border-manso-terra/50 transition-colors';
+const LABEL = 'text-[13px] font-black uppercase tracking-widest text-manso-cream/60 mb-2 block';
 const CARD = 'bg-manso-cream/5 border border-manso-cream/10 rounded-2xl p-4 space-y-4';
 const BOTON_ICONO =
-  'w-8 h-8 flex items-center justify-center rounded-lg text-manso-cream/40 hover:text-manso-cream hover:bg-manso-cream/10 transition-colors disabled:opacity-25 disabled:hover:bg-transparent disabled:hover:text-manso-cream/40';
+  'w-8 h-8 flex items-center justify-center rounded-lg text-manso-cream/62 hover:text-manso-cream hover:bg-manso-cream/10 transition-colors disabled:opacity-25 disabled:hover:bg-transparent disabled:hover:text-manso-cream/62';
 const BOTON_GUARDAR =
-  'flex items-center gap-2 px-4 py-2 rounded-xl bg-manso-terra/20 text-manso-terra text-[9px] font-black uppercase tracking-widest hover:bg-manso-terra/30 transition-colors disabled:opacity-40';
+  'flex items-center gap-2 px-4 py-2 rounded-xl bg-manso-terra/20 text-manso-terra text-[12px] font-black uppercase tracking-widest hover:bg-manso-terra/30 transition-colors disabled:opacity-40';
 
 /**
  * Sección "Nuestro espacio": las salas que se ven en /nuestro-espacio.
@@ -147,7 +147,7 @@ export function EspacioAdmin() {
 
   if (cargando) {
     return (
-      <div className="flex items-center gap-2 text-xs text-manso-cream/40 py-10">
+      <div className="flex items-center gap-2 text-[13px] text-manso-cream/62 py-10">
         <Loader2 size={14} className="animate-spin" />
         Cargando…
       </div>
@@ -159,14 +159,14 @@ export function EspacioAdmin() {
   return (
     <div className="space-y-10">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-xs text-manso-cream/50">
+        <p className="text-[13px] text-manso-cream/50">
           Las salas que se ven en la página de Nuestro espacio.
         </p>
         <a
           href="/nuestro-espacio"
           target="_blank"
           rel="noreferrer"
-          className="inline-flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-manso-terra hover:text-manso-cream transition-colors"
+          className="inline-flex items-center gap-2 text-[12px] font-black uppercase tracking-widest text-manso-terra hover:text-manso-cream transition-colors"
         >
           Ver la página
           <ExternalLink size={11} />
@@ -174,7 +174,7 @@ export function EspacioAdmin() {
       </div>
 
       {sinFoto > 0 && (
-        <p className="text-[11px] text-manso-cream/40 leading-relaxed">
+        <p className="text-[13px] text-manso-cream/62 leading-relaxed">
           {sinFoto === 1
             ? 'Queda 1 sala sin foto: en la página se ve un placeholder hasta que la subas.'
             : `Quedan ${sinFoto} salas sin foto: en la página se ve un placeholder hasta que las subas.`}
@@ -183,7 +183,7 @@ export function EspacioAdmin() {
 
       {/* ── Encabezado ──────────────────────────────────────────────── */}
       <section className={CARD}>
-        <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-manso-cream">
+        <h3 className="text-[13px] font-black uppercase tracking-[0.2em] text-manso-cream">
           Encabezado
         </h3>
 
@@ -227,21 +227,21 @@ export function EspacioAdmin() {
       {/* ── Salas ───────────────────────────────────────────────────── */}
       <section className="space-y-4">
         <div>
-          <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-manso-cream">
+          <h3 className="text-[13px] font-black uppercase tracking-[0.2em] text-manso-cream">
             Salas
           </h3>
-          <p className="text-[11px] text-manso-cream/40 mt-1 leading-relaxed">
+          <p className="text-[13px] text-manso-cream/62 mt-1 leading-relaxed">
             En la página los nombres van en una lista y la foto de la sala elegida se muestra al
             costado. El orden de acá es el orden de la lista.
           </p>
         </div>
 
-        {salas.length === 0 && <p className="text-xs text-manso-cream/40">Sin salas todavía.</p>}
+        {salas.length === 0 && <p className="text-[13px] text-manso-cream/62">Sin salas todavía.</p>}
 
         {salas.map((sala, i) => (
           <div key={sala.id} className={CARD}>
             <div className="flex items-center justify-between gap-2">
-              <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40">
+              <span className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62">
                 {sala.nombre || `Sala ${i + 1}`}
               </span>
               <div className="flex items-center gap-1">
@@ -286,7 +286,7 @@ export function EspacioAdmin() {
             </div>
 
             {!sala.activo && (
-              <p className="text-[10px] font-black uppercase tracking-widest text-manso-cream/30">
+              <p className="text-[13px] font-black uppercase tracking-widest text-manso-cream/62">
                 Oculta — no se ve en la página
               </p>
             )}
@@ -339,7 +339,7 @@ export function EspacioAdmin() {
                 })}
               </div>
 
-              <p className="text-[10px] text-manso-cream/30 mt-2 leading-relaxed">
+              <p className="text-[13px] text-manso-cream/62 mt-2 leading-relaxed">
                 En la página rotan solas dentro del mismo cuadro. Con una sola
                 foto se ve como hasta ahora; las que faltan no dejan hueco.
               </p>
@@ -388,7 +388,7 @@ export function EspacioAdmin() {
         <button
           type="button"
           onClick={agregarSala}
-          className="w-full flex items-center justify-center gap-2 py-3 border border-dashed border-manso-terra/30 rounded-2xl text-[9px] font-black uppercase tracking-widest text-manso-terra/60 hover:text-manso-terra hover:border-manso-terra/60 hover:bg-manso-terra/5 transition-all"
+          className="w-full flex items-center justify-center gap-2 py-3 border border-dashed border-manso-terra/30 rounded-2xl text-[12px] font-black uppercase tracking-widest text-manso-terra/60 hover:text-manso-terra hover:border-manso-terra/60 hover:bg-manso-terra/5 transition-all"
         >
           <Plus size={12} />
           Agregar sala

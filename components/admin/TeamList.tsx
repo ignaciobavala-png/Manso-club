@@ -64,7 +64,7 @@ export function TeamList({ refreshTrigger }: TeamListProps) {
       </h3>
 
       {teamMembers.length === 0 ? (
-        <div className="text-center text-manso-cream/40 py-8">
+        <div className="text-center text-manso-cream/62 py-8">
           No hay miembros del team registrados
         </div>
       ) : (
@@ -88,7 +88,7 @@ export function TeamList({ refreshTrigger }: TeamListProps) {
                   />
                 ) : (
                   <div className="w-full h-full flex items-center justify-center">
-                    <Users size={24} className="text-manso-cream/30" />
+                    <Users size={24} className="text-manso-cream/62" />
                   </div>
                 )}
               </div>
@@ -101,15 +101,15 @@ export function TeamList({ refreshTrigger }: TeamListProps) {
                   {member.name}
                 </h4>
                 <div className="flex flex-wrap gap-2 mt-1">
-                  <span className="text-[9px] uppercase tracking-widest text-manso-cream/60 px-2 py-0.5 border border-manso-cream/20 rounded flex items-center gap-1">
+                  <span className="text-[12px] uppercase tracking-widest text-manso-cream/60 px-2 py-0.5 border border-manso-cream/20 rounded flex items-center gap-1">
                     <Briefcase size={10} />
                     {member.role}
                   </span>
-                  <span className="text-[9px] uppercase tracking-widest text-manso-terra px-2 py-0.5 border border-manso-terra/30 rounded">
+                  <span className="text-[12px] uppercase tracking-widest text-manso-terra px-2 py-0.5 border border-manso-terra/30 rounded">
                     Orden: {member.order_index}
                   </span>
                   {!member.active && (
-                    <span className="text-[9px] uppercase font-bold text-red-400 px-2 py-0.5 border border-red-400/30 rounded">
+                    <span className="text-[12px] uppercase font-bold text-red-400 px-2 py-0.5 border border-red-400/30 rounded">
                       Inactivo
                     </span>
                   )}

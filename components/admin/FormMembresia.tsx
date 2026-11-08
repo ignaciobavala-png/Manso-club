@@ -227,13 +227,13 @@ export function FormMembresia() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5 bg-manso-cream/5 border border-manso-cream/10 rounded-3xl p-6">
-      <h3 className="text-xs font-black uppercase tracking-[0.2em] text-manso-terra mb-4">
+      <h3 className="text-[13px] font-black uppercase tracking-[0.2em] text-manso-terra mb-4">
         {editingId ? '✏️ Editando Membresía' : '👑 Nueva Membresía'}
       </h3>
 
       {feedback && (
         <div
-          className={`p-3 rounded-xl text-xs font-black uppercase tracking-widest ${
+          className={`p-3 rounded-xl text-[13px] font-black uppercase tracking-widest ${
             feedback.type === 'success'
               ? 'bg-green-500/20 text-green-400 border border-green-500/30'
               : 'bg-red-500/20 text-red-400 border border-red-500/30'
@@ -245,25 +245,25 @@ export function FormMembresia() {
 
       {/* Nombre */}
       <div>
-        <label className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/60 mb-2 block">
+        <label className="text-[13px] font-bold uppercase tracking-widest text-manso-cream/60 mb-2 block">
           Nombre del Plan
         </label>
         <div className="relative">
-          <Crown size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-manso-cream/40" />
+          <Crown size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-manso-cream/62" />
           <input
             type="text"
             value={formData.nombre}
             onChange={(e) => setFormData({ ...formData, nombre: e.target.value })}
             placeholder="Ej: Coworker, Miembro Club"
             required
-            className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 pl-10 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra/50 transition-colors"
+            className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 pl-10 text-[15px] text-manso-cream placeholder:text-manso-cream/62 focus:outline-none focus:border-manso-terra/50 transition-colors"
           />
         </div>
       </div>
 
       {/* Precio */}
       <div>
-        <label className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/60 mb-2 block">
+        <label className="text-[13px] font-bold uppercase tracking-widest text-manso-cream/60 mb-2 block">
           Precio de referencia
         </label>
         <div className="flex gap-2 mb-2">
@@ -275,7 +275,7 @@ export function FormMembresia() {
               key={op.id}
               type="button"
               onClick={() => setFormData({ ...formData, moneda: op.id })}
-              className={`flex-1 px-4 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all border ${
+              className={`flex-1 px-4 py-2.5 rounded-xl text-[13px] font-black uppercase tracking-widest transition-all border ${
                 formData.moneda === op.id
                   ? 'bg-manso-terra text-manso-cream border-manso-terra'
                   : 'bg-manso-cream/5 text-manso-cream/60 border-manso-cream/10 hover:border-manso-cream/40'
@@ -286,7 +286,7 @@ export function FormMembresia() {
           ))}
         </div>
         <div className="relative">
-          <DollarSign size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-manso-cream/40" />
+          <DollarSign size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-manso-cream/62" />
           <input
             type="number"
             value={formData.precio}
@@ -295,10 +295,10 @@ export function FormMembresia() {
             min="0"
             step="0.01"
             required
-            className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 pl-10 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra/50 transition-colors"
+            className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 pl-10 text-[15px] text-manso-cream placeholder:text-manso-cream/62 focus:outline-none focus:border-manso-terra/50 transition-colors"
           />
         </div>
-        <p className="text-[10px] text-manso-cream/30 mt-2 leading-relaxed">
+        <p className="text-[13px] text-manso-cream/62 mt-2 leading-relaxed">
           {formData.moneda === 'ARS'
             ? 'Los pesos quedan fijos y los dólares se recalculan con el blue.'
             : 'Los dólares quedan fijos y los pesos se recalculan con el blue.'}
@@ -307,15 +307,15 @@ export function FormMembresia() {
 
       {/* Periodo */}
       <div>
-        <label className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/60 mb-2 block">
+        <label className="text-[13px] font-bold uppercase tracking-widest text-manso-cream/60 mb-2 block">
           Periodo
         </label>
         <div className="relative">
-          <Calendar size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-manso-cream/40" />
+          <Calendar size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-manso-cream/62" />
           <select
             value={formData.periodo}
             onChange={(e) => setFormData({ ...formData, periodo: e.target.value as 'mes' | 'año' })}
-            className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 pl-10 text-sm text-manso-cream focus:outline-none focus:border-manso-terra/50 transition-colors appearance-none"
+            className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 pl-10 text-[15px] text-manso-cream focus:outline-none focus:border-manso-terra/50 transition-colors appearance-none"
           >
             <option value="mes">Mensual</option>
             <option value="año">Anual</option>
@@ -325,13 +325,13 @@ export function FormMembresia() {
 
       {/* Categoría */}
       <div>
-        <label className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/60 mb-2 block">
+        <label className="text-[13px] font-bold uppercase tracking-widest text-manso-cream/60 mb-2 block">
           Categoría
         </label>
         <select
           value={formData.categoria}
           onChange={(e) => setFormData({ ...formData, categoria: e.target.value })}
-          className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 text-sm text-manso-cream focus:outline-none focus:border-manso-terra/50 transition-colors appearance-none"
+          className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 text-[15px] text-manso-cream focus:outline-none focus:border-manso-terra/50 transition-colors appearance-none"
         >
           <option value="Cowork">Cowork</option>
           <option value="Socios & Residentes">Socios &amp; Residentes</option>
@@ -342,41 +342,41 @@ export function FormMembresia() {
           Escribe en `descripcion_corta`; `descripcion` queda como estaba para no
           perder lo que ya había cargado. */}
       <div>
-        <label className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/60 mb-2 block">
+        <label className="text-[13px] font-bold uppercase tracking-widest text-manso-cream/60 mb-2 block">
           Descripción de la tarjeta
         </label>
         <div className="relative">
-          <Text size={14} className="absolute left-3 top-3 text-manso-cream/40" />
+          <Text size={14} className="absolute left-3 top-3 text-manso-cream/62" />
           <textarea
             value={formData.descripcion_corta}
             onChange={(e) => setFormData({ ...formData, descripcion_corta: e.target.value })}
             placeholder="Se ve en la tarjeta del home y de /membresías..."
             rows={3}
-            className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 pl-10 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra/50 transition-colors resize-none"
+            className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 pl-10 text-[15px] text-manso-cream placeholder:text-manso-cream/62 focus:outline-none focus:border-manso-terra/50 transition-colors resize-none"
           />
         </div>
       </div>
 
       {/* Descripción completa — la de la página de detalle */}
       <div>
-        <label className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/60 mb-2 block">
+        <label className="text-[13px] font-bold uppercase tracking-widest text-manso-cream/60 mb-2 block">
           Descripción completa
         </label>
         <div className="relative">
-          <Text size={14} className="absolute left-3 top-3 text-manso-cream/40" />
+          <Text size={14} className="absolute left-3 top-3 text-manso-cream/62" />
           <textarea
             value={formData.descripcion_completa}
             onChange={(e) => setFormData({ ...formData, descripcion_completa: e.target.value })}
             placeholder="Se ve al hacer click sobre la tarjeta. Dejá una línea en blanco para separar párrafos."
             rows={5}
-            className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 pl-10 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra/50 transition-colors resize-none"
+            className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 pl-10 text-[15px] text-manso-cream placeholder:text-manso-cream/62 focus:outline-none focus:border-manso-terra/50 transition-colors resize-none"
           />
         </div>
       </div>
 
       {/* Dirección del detalle */}
       <div>
-        <label className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/60 mb-2 block">
+        <label className="text-[13px] font-bold uppercase tracking-widest text-manso-cream/60 mb-2 block">
           Dirección de la página
         </label>
         <input
@@ -384,22 +384,22 @@ export function FormMembresia() {
           value={formData.slug}
           onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
           placeholder="Se arma sola con el nombre del plan"
-          className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra/50 transition-colors"
+          className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 text-[15px] text-manso-cream placeholder:text-manso-cream/62 focus:outline-none focus:border-manso-terra/50 transition-colors"
         />
-        <p className="text-[10px] text-manso-cream/40 mt-2">
+        <p className="text-[13px] text-manso-cream/62 mt-2">
           mansoclub.com.ar/membresias/<span className="text-manso-cream/70">{toSlug(formData.slug || formData.nombre) || 'nombre-del-plan'}</span>
         </p>
       </div>
 
       {/* Color del detalle */}
       <div>
-        <label className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/60 mb-2 block">
+        <label className="text-[13px] font-bold uppercase tracking-widest text-manso-cream/60 mb-2 block">
           Color de la página de detalle
         </label>
         <select
           value={formData.color_acento}
           onChange={(e) => setFormData({ ...formData, color_acento: e.target.value as typeof formData.color_acento })}
-          className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra/50 transition-colors appearance-none"
+          className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 text-[15px] text-manso-cream placeholder:text-manso-cream/62 focus:outline-none focus:border-manso-terra/50 transition-colors appearance-none"
         >
           {COLORES_ACENTO.map((color) => (
             <option key={color} value={color}>{NOMBRE_COLOR[color]}</option>
@@ -409,16 +409,16 @@ export function FormMembresia() {
 
       {/* Orden */}
       <div>
-        <label className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/60 mb-2 block">
+        <label className="text-[13px] font-bold uppercase tracking-widest text-manso-cream/60 mb-2 block">
           Orden (menor = primero)
         </label>
         <div className="relative">
-          <Hash size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-manso-cream/40" />
+          <Hash size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-manso-cream/62" />
           <input
             type="number"
             value={formData.orden}
             onChange={(e) => setFormData({ ...formData, orden: e.target.value })}
-            className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 pl-10 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra/50 transition-colors"
+            className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-3 pl-10 text-[15px] text-manso-cream placeholder:text-manso-cream/62 focus:outline-none focus:border-manso-terra/50 transition-colors"
           />
         </div>
       </div>
@@ -432,7 +432,7 @@ export function FormMembresia() {
             onChange={(e) => setFormData({ ...formData, destacado: e.target.checked })}
             className="w-4 h-4 text-manso-terra bg-manso-cream/10 border-manso-cream/20 rounded focus:ring-manso-terra/50"
           />
-          <span className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/60">
+          <span className="text-[13px] font-bold uppercase tracking-widest text-manso-cream/60">
             Destacado (muestra badge "Más popular")
           </span>
         </label>
@@ -444,7 +444,7 @@ export function FormMembresia() {
             onChange={(e) => setFormData({ ...formData, activo: e.target.checked })}
             className="w-4 h-4 text-manso-terra bg-manso-cream/10 border-manso-cream/20 rounded focus:ring-manso-terra/50"
           />
-          <span className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/60">
+          <span className="text-[13px] font-bold uppercase tracking-widest text-manso-cream/60">
             Activo (visible en la web)
           </span>
         </label>
@@ -456,7 +456,7 @@ export function FormMembresia() {
             onChange={(e) => setFormData({ ...formData, es_cultural: e.target.checked })}
             className="w-4 h-4 text-manso-terra bg-manso-cream/10 border-manso-cream/20 rounded focus:ring-manso-terra/50"
           />
-          <span className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/60">
+          <span className="text-[13px] font-bold uppercase tracking-widest text-manso-cream/60">
             Cultural Manso (card de color sin precio, lleva a /mansocultural)
           </span>
         </label>
@@ -465,13 +465,13 @@ export function FormMembresia() {
       {/* Beneficios */}
       <div>
         <div className="flex items-center justify-between mb-3">
-          <label className="text-[10px] font-bold uppercase tracking-widest text-manso-cream/60">
+          <label className="text-[13px] font-bold uppercase tracking-widest text-manso-cream/60">
             Beneficios del Plan
           </label>
           <button
             type="button"
             onClick={addBeneficio}
-            className="flex items-center gap-1 px-2 py-1 bg-manso-terra/20 text-manso-terra rounded-lg text-[9px] font-black uppercase hover:bg-manso-terra/30 transition-colors"
+            className="flex items-center gap-1 px-2 py-1 bg-manso-terra/20 text-manso-terra rounded-lg text-[12px] font-black uppercase hover:bg-manso-terra/30 transition-colors"
           >
             <Plus size={10} />
             Agregar
@@ -486,7 +486,7 @@ export function FormMembresia() {
                 value={beneficio.texto}
                 onChange={(e) => updateBeneficio(index, 'texto', e.target.value)}
                 placeholder="Descripción del beneficio..."
-                className="flex-1 bg-manso-cream/5 border border-manso-cream/10 rounded px-2 py-1 text-xs text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra/50 transition-colors"
+                className="flex-1 bg-manso-cream/5 border border-manso-cream/10 rounded px-2 py-1 text-[13px] text-manso-cream placeholder:text-manso-cream/62 focus:outline-none focus:border-manso-terra/50 transition-colors"
               />
               
               <label className="flex items-center gap-1 cursor-pointer">
@@ -506,7 +506,7 @@ export function FormMembresia() {
               <button
                 type="button"
                 onClick={() => removeBeneficio(index)}
-                className="w-6 h-6 flex items-center justify-center text-manso-cream/40 hover:text-red-400 transition-colors"
+                className="w-6 h-6 flex items-center justify-center text-manso-cream/62 hover:text-red-400 transition-colors"
               >
                 <Trash2 size={10} />
               </button>
@@ -514,7 +514,7 @@ export function FormMembresia() {
           ))}
 
           {formData.beneficios.length === 0 && (
-            <div className="text-center py-4 text-manso-cream/30 text-[10px]">
+            <div className="text-center py-4 text-manso-cream/62 text-[13px]">
               No hay beneficios agregados
             </div>
           )}
@@ -526,7 +526,7 @@ export function FormMembresia() {
         <button
           type="submit"
           disabled={loading}
-          className="flex-1 bg-manso-terra text-manso-cream py-3 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-manso-terra/80 transition-all disabled:opacity-50"
+          className="flex-1 bg-manso-terra text-manso-cream py-3 rounded-xl text-[13px] font-black uppercase tracking-widest hover:bg-manso-terra/80 transition-all disabled:opacity-50"
         >
           {loading ? 'Guardando...' : editingId ? 'Actualizar' : 'Crear Membresía'}
         </button>
@@ -534,7 +534,7 @@ export function FormMembresia() {
           <button
             type="button"
             onClick={resetForm}
-            className="px-6 py-3 bg-manso-cream/10 text-manso-cream/60 rounded-xl text-xs font-black uppercase tracking-widest hover:bg-manso-cream/20 transition-all"
+            className="px-6 py-3 bg-manso-cream/10 text-manso-cream/60 rounded-xl text-[13px] font-black uppercase tracking-widest hover:bg-manso-cream/20 transition-all"
           >
             Cancelar
           </button>

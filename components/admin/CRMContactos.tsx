@@ -70,13 +70,13 @@ export function CRMContactos({ users, onRefresh }: CRMContactosProps) {
     <div className="space-y-4">
       {/* Búsqueda */}
       <div className="relative">
-        <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-manso-cream/30" />
+        <Search size={13} className="absolute left-3 top-1/2 -translate-y-1/2 text-manso-cream/62" />
         <input
           type="text"
           placeholder="Buscar por nombre o email..."
           value={search}
           onChange={e => setSearch(e.target.value)}
-          className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl pl-9 pr-4 py-2.5 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra/50 transition-colors"
+          className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl pl-9 pr-4 py-2.5 text-[15px] text-manso-cream placeholder:text-manso-cream/62 focus:outline-none focus:border-manso-terra/50 transition-colors"
         />
       </div>
 
@@ -86,7 +86,7 @@ export function CRMContactos({ users, onRefresh }: CRMContactosProps) {
           <button
             key={f.id}
             onClick={() => setFilter(f.id)}
-            className={`px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest transition-all ${
+            className={`px-3 py-1 rounded-lg text-[12px] font-black uppercase tracking-widest transition-all ${
               filter === f.id
                 ? 'bg-manso-terra text-white'
                 : 'bg-manso-cream/5 border border-manso-cream/10 text-manso-cream/50 hover:text-manso-cream hover:border-manso-cream/30'
@@ -98,14 +98,14 @@ export function CRMContactos({ users, onRefresh }: CRMContactosProps) {
       </div>
 
       {/* Conteo */}
-      <p className="text-[9px] font-black uppercase tracking-[0.3em] text-manso-cream/30">
+      <p className="text-[12px] font-black uppercase tracking-[0.2em] text-manso-cream/62">
         {filtered.length} usuario{filtered.length !== 1 ? 's' : ''}
       </p>
 
       {/* Lista */}
       <div className="space-y-1.5">
         {filtered.length === 0 ? (
-          <div className="text-center py-10 text-manso-cream/30 text-xs">Sin resultados</div>
+          <div className="text-center py-10 text-manso-cream/62 text-[13px]">Sin resultados</div>
         ) : (
           filtered.map(u => {
             const badge = membresíaBadge(u);
@@ -117,15 +117,15 @@ export function CRMContactos({ users, onRefresh }: CRMContactosProps) {
                 className="w-full flex items-center justify-between gap-3 px-4 py-3 bg-manso-cream/5 border border-manso-cream/10 rounded-xl hover:border-manso-cream/30 hover:bg-manso-cream/[0.08] transition-all text-left"
               >
                 <div className="flex items-center gap-3 min-w-0">
-                  <div className="w-8 h-8 rounded-full bg-manso-cream/10 flex items-center justify-center flex-shrink-0 text-[10px] font-black text-manso-cream/60">
+                  <div className="w-8 h-8 rounded-full bg-manso-cream/10 flex items-center justify-center flex-shrink-0 text-[13px] font-black text-manso-cream/60">
                     {inicial(u)}
                   </div>
                   <div className="min-w-0">
-                    <p className="text-sm font-bold text-manso-cream truncate">
+                    <p className="text-[15px] font-bold text-manso-cream truncate">
                       {u.display_name ?? u.email}
                     </p>
                     {u.display_name && (
-                      <p className="text-[10px] text-manso-cream/40 truncate">{u.email}</p>
+                      <p className="text-[13px] text-manso-cream/62 truncate">{u.email}</p>
                     )}
                   </div>
                 </div>
@@ -137,11 +137,11 @@ export function CRMContactos({ users, onRefresh }: CRMContactosProps) {
                     </span>
                   )}
                   {badge ? (
-                    <span className={`px-2 py-0.5 border rounded-full text-[7px] font-black uppercase tracking-widest ${badge.cls}`}>
+                    <span className={`px-2 py-0.5 border rounded-full text-[12px] font-black uppercase tracking-widest ${badge.cls}`}>
                       {badge.text}
                     </span>
                   ) : (
-                    <span className="px-2 py-0.5 border rounded-full text-[7px] font-black uppercase tracking-widest text-manso-cream/20 border-manso-cream/10">
+                    <span className="px-2 py-0.5 border rounded-full text-[12px] font-black uppercase tracking-widest text-manso-cream/62 border-manso-cream/10">
                       Sin plan
                     </span>
                   )}

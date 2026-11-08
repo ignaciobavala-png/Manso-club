@@ -98,8 +98,8 @@ const frecuencias = ['Semanal', 'Quincenal', 'Mensual', 'Bimensual', 'Trimestral
 import { VisibilidadToggle } from './VisibilidadToggle';
 import { AgendaFotosList } from './AgendaFotosList';
 
-const inputCls = "w-full p-3 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/40 text-sm";
-const labelCls = "block text-[10px] font-black uppercase tracking-widest text-manso-cream/50 mb-1";
+const inputCls = "w-full p-3 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/62 text-[15px]";
+const labelCls = "block text-[13px] font-black uppercase tracking-widest text-manso-cream/50 mb-1";
 
 export function FormAgenda() {
   const [loading, setLoading]     = useState(false);
@@ -250,11 +250,11 @@ export function FormAgenda() {
           <textarea
             placeholder={'Texto completo que se ve en la página de detalle (columna derecha).\n\nDejá una línea en blanco para separar párrafos.\nUna línea EN MAYÚSCULAS se muestra como subtítulo (ej: ENCUENTRO I: IDEAS Y FORMA).\nUna línea que empieza con "." o "-" se muestra como ítem de lista.'}
             rows={10}
-            className={`${inputCls} resize-none font-mono text-xs`}
+            className={`${inputCls} resize-none font-mono text-[13px]`}
             value={formData.contenido_detalle}
             onChange={e => set('contenido_detalle', e.target.value)}
           />
-          <p className="text-[9px] text-manso-cream/30 mt-1 font-light">
+          <p className="text-[12px] text-manso-cream/62 mt-1 font-light">
             Línea en blanco = nuevo párrafo · línea EN MAYÚSCULAS = subtítulo · línea con &quot;.&quot; o &quot;-&quot; adelante = ítem de lista
           </p>
         </div>
@@ -321,7 +321,7 @@ export function FormAgenda() {
               />
             </div>
           </div>
-          <p className="text-[9px] text-manso-cream/30 mt-1 font-light">
+          <p className="text-[12px] text-manso-cream/62 mt-1 font-light">
             Día y hora de cursada: el calendario los usa para ubicar el taller en el día correcto.
           </p>
         </div>
@@ -335,7 +335,7 @@ export function FormAgenda() {
             value={formData.fecha_inicio}
             onChange={e => set('fecha_inicio', e.target.value)}
           />
-          <p className="text-[9px] text-manso-cream/30 mt-1 font-light">
+          <p className="text-[12px] text-manso-cream/62 mt-1 font-light">
             Desde cuándo arranca el ciclo. El calendario recién muestra ocurrencias a partir de esta fecha. Vacío = usa la fecha de alta del taller (menos preciso).
           </p>
         </div>
@@ -349,7 +349,7 @@ export function FormAgenda() {
             value={formData.fecha_fin}
             onChange={e => set('fecha_fin', e.target.value)}
           />
-          <p className="text-[9px] text-manso-cream/30 mt-1 font-light">
+          <p className="text-[12px] text-manso-cream/62 mt-1 font-light">
             Si el taller/curso tiene un ciclo con fin, el calendario deja de repetirlo después de esta fecha. Vacío = se repite indefinidamente.
           </p>
         </div>
@@ -412,7 +412,7 @@ export function FormAgenda() {
             value={formData.luma_url}
             onChange={e => set('luma_url', e.target.value)}
           />
-          <p className="text-[9px] text-manso-cream/30 mt-1 font-light">
+          <p className="text-[12px] text-manso-cream/62 mt-1 font-light">
             Si tiene link de Luma, el botón "Inscribirme" irá directo ahí. Si no, irá por WhatsApp.
           </p>
         </div>

@@ -106,8 +106,8 @@ export function ImageUploader({ onUpload, bucket = 'flyers', folder, maxLado = 1
             ) : (
               <>
                 <Upload className="w-8 h-8 text-zinc-400 mb-2 group-hover:text-orange-500 transition-colors" />
-                <p className="text-xs font-bold text-zinc-500 tracking-tighter uppercase">Soltá el arte acá</p>
-                <p className="text-[9px] text-zinc-400 font-medium">Se comprime automáticamente</p>
+                <p className="text-[13px] font-bold text-zinc-500 tracking-tighter uppercase">Soltá el arte acá</p>
+                <p className="text-[12px] text-zinc-400 font-medium">Se comprime automáticamente</p>
               </>
             )}
           </div>
@@ -124,10 +124,10 @@ export function ImageUploader({ onUpload, bucket = 'flyers', folder, maxLado = 1
       
       {preview && (
         <div className="mt-2 space-y-1">
-          <p className="text-[10px] text-green-600 font-bold flex items-center gap-1">
+          <p className="text-[13px] text-green-600 font-bold flex items-center gap-1">
             <CheckCircle2 size={12} /> IMAGEN LISTA PARA PUBLICAR
           </p>
-          <p className="text-[9px] text-zinc-500 font-medium flex items-center gap-1">
+          <p className="text-[12px] text-zinc-500 font-medium flex items-center gap-1">
             <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
             Optimizada para web
           </p>

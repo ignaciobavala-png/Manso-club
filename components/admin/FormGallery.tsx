@@ -72,7 +72,7 @@ export function FormGallery() {
         <h2 className="text-2xl font-black uppercase tracking-tighter text-manso-cream mb-2">
           Nueva Imagen de Galería
         </h2>
-        <p className="text-sm text-manso-cream/60">
+        <p className="text-[15px] text-manso-cream/60">
           Agrega una nueva imagen a la galería del sitio
         </p>
       </div>
@@ -81,7 +81,7 @@ export function FormGallery() {
         
         {/* Zona de Carga de Imagen */}
         <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2 flex items-center gap-2">
+          <label className="text-[13px] font-black uppercase tracking-widest text-manso-cream/60 ml-2 flex items-center gap-2">
             <ImageIcon size={16} />
             Imagen de la Galería
           </label>
@@ -97,14 +97,14 @@ export function FormGallery() {
 
         {/* Orden */}
         <div className="relative">
-          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-manso-cream/60 text-[10px] font-black uppercase tracking-widest">
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 text-manso-cream/60 text-[13px] font-black uppercase tracking-widest">
             #
           </div>
           <input 
             type="number" 
             placeholder="ORDEN (opcional, se asignará automáticamente)"
             min="1"
-            className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all"
+            className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/62 transition-all"
             value={formData.order_index}
             onChange={e => setFormData({...formData, order_index: e.target.value})}
           />

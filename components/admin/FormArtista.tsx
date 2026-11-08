@@ -208,7 +208,7 @@ export function FormArtista() {
             {editingId ? 'Editar Artista' : 'Nuevo Artista'}
           </h2>
           {editingId && (
-            <p className="text-sm text-manso-cream/60">
+            <p className="text-[15px] text-manso-cream/60">
               Modificando el perfil de {formData.nombre}
             </p>
           )}
@@ -218,7 +218,7 @@ export function FormArtista() {
         
         {/* Zona de Carga de Imagen */}
         <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2">
+          <label className="text-[13px] font-black uppercase tracking-widest text-manso-cream/60 ml-2">
             Foto del Artista
           </label>
           <ImageUploader
@@ -238,7 +238,7 @@ export function FormArtista() {
             <input 
               type="text" 
               placeholder="NOMBRE DEL ARTISTA"
-              className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all"
+              className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/62 transition-all"
               value={formData.nombre}
               onChange={e => setFormData({...formData, nombre: e.target.value})}
               required
@@ -263,7 +263,7 @@ export function FormArtista() {
             <input 
               type="text" 
               placeholder="ESTILO / GÉNERO (ej: Techno / House)"
-              className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all"
+              className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/62 transition-all"
               value={formData.estilo}
               onChange={e => setFormData({...formData, estilo: e.target.value})}
             />
@@ -274,7 +274,7 @@ export function FormArtista() {
             <Music className="absolute left-4 top-4 text-manso-cream/60" size={20} />
             <textarea 
               placeholder="BIOGRAFÍA / DESCRIPCIÓN"
-              className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none h-32 resize-none text-manso-cream placeholder:text-manso-cream/40"
+              className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none h-32 resize-none text-manso-cream placeholder:text-manso-cream/62"
               value={formData.bio}
               onChange={e => setFormData({...formData, bio: e.target.value})}
             />
@@ -282,7 +282,7 @@ export function FormArtista() {
 
           {/* SoundCloud embed (para el reproductor) */}
           <div className="space-y-2">
-            <p className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2">
+            <p className="text-[13px] font-black uppercase tracking-widest text-manso-cream/60 ml-2">
               SoundCloud — Reproductor (Opcional)
             </p>
             <div className="relative">
@@ -294,26 +294,26 @@ export function FormArtista() {
                   soundcloudError
                     ? 'border-red-500/50 focus:ring-red-500'
                     : 'border-manso-cream/20 focus:ring-manso-terra'
-                } outline-none font-mono text-sm text-manso-cream placeholder:text-manso-cream/40`}
+                } outline-none font-mono text-[15px] text-manso-cream placeholder:text-manso-cream/62`}
                 value={formData.soundcloud}
                 onChange={e => handleSoundCloudChange(e.target.value)}
               />
             </div>
             {soundcloudError && (
-              <p className="text-red-400 text-xs font-medium ml-2">{soundcloudError}</p>
+              <p className="text-red-400 text-[13px] font-medium ml-2">{soundcloudError}</p>
             )}
           </div>
 
           {/* Links dinámicos */}
           <div className="space-y-3">
             <div className="flex items-center justify-between ml-2">
-              <p className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60">
+              <p className="text-[13px] font-black uppercase tracking-widest text-manso-cream/60">
                 Links (Instagram, Web, Spotify, etc.)
               </p>
               <button
                 type="button"
                 onClick={() => setLinks(prev => [...prev, { label: '', url: '' }])}
-                className="flex items-center gap-1 px-3 py-1.5 bg-manso-terra/20 border border-manso-terra/30 rounded-full text-manso-terra text-[10px] font-black uppercase tracking-widest hover:bg-manso-terra/30 transition-all"
+                className="flex items-center gap-1 px-3 py-1.5 bg-manso-terra/20 border border-manso-terra/30 rounded-full text-manso-terra text-[13px] font-black uppercase tracking-widest hover:bg-manso-terra/30 transition-all"
               >
                 <Plus size={12} /> Agregar link
               </button>
@@ -324,14 +324,14 @@ export function FormArtista() {
                 <input
                   type="text"
                   placeholder="Nombre (ej: Instagram)"
-                  className="w-32 shrink-0 bg-manso-cream/10 px-3 py-3 rounded-xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-sm text-manso-cream placeholder:text-manso-cream/30"
+                  className="w-32 shrink-0 bg-manso-cream/10 px-3 py-3 rounded-xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-[15px] text-manso-cream placeholder:text-manso-cream/62"
                   value={link.label}
                   onChange={e => setLinks(prev => prev.map((l, j) => j === i ? { ...l, label: e.target.value } : l))}
                 />
                 <input
                   type="url"
                   placeholder="https://..."
-                  className="flex-1 bg-manso-cream/10 px-3 py-3 rounded-xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-sm text-manso-cream placeholder:text-manso-cream/30"
+                  className="flex-1 bg-manso-cream/10 px-3 py-3 rounded-xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-[15px] text-manso-cream placeholder:text-manso-cream/62"
                   value={link.url}
                   onChange={e => setLinks(prev => prev.map((l, j) => j === i ? { ...l, url: e.target.value } : l))}
                 />
@@ -346,7 +346,7 @@ export function FormArtista() {
             ))}
 
             {links.length === 0 && (
-              <p className="text-manso-cream/30 text-xs ml-2">Sin links todavía — usá el botón de arriba para agregar.</p>
+              <p className="text-manso-cream/62 text-[13px] ml-2">Sin links todavía — usá el botón de arriba para agregar.</p>
             )}
           </div>
         </div>
@@ -379,7 +379,7 @@ export function FormArtista() {
       {formData.soundcloud && (
         <div className="mt-6 space-y-4">
           <div className="flex items-center justify-between">
-            <p className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60">
+            <p className="text-[13px] font-black uppercase tracking-widest text-manso-cream/60">
               Vista previa del reproductor
             </p>
             <button
@@ -388,7 +388,7 @@ export function FormArtista() {
               className="flex items-center gap-2 px-3 py-1 bg-manso-cream/10 border border-manso-cream/20 rounded-full text-manso-cream/80 hover:bg-manso-cream/20 transition-colors"
             >
               <Eye size={12} />
-              <span className="text-xs font-medium">
+              <span className="text-[13px] font-medium">
                 {showPreview ? 'Ocultar' : 'Mostrar'}
               </span>
             </button>

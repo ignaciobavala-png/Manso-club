@@ -274,3 +274,55 @@
 @media (prefers-reduced-motion: reduce) {
   .chat-luz-a, .chat-luz-b { animation: none; }
 }
+
+/* Panel admin, solo mobile: iOS hace zoom al enfocar un campo de menos de 16px.
+   Va fuera de los @layer a propósito, para ganarle a las utilidades text-*. */
+@media (max-width: 767px) {
+  [data-admin] input:not([type='checkbox']):not([type='radio']):not([type='range']):not([type='color']),
+  [data-admin] select,
+  [data-admin] textarea {
+    font-size: 16px;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   Panel admin — tema claro.
+   Los componentes del panel se escribieron como "texto crema sobre negro".
+   En vez de reescribir miles de clases, acá se invierten los tokens SOLO
+   dentro de [data-admin] (la web pública no cambia):
+     manso-cream  = la tinta (texto, bordes y velos: text-manso-cream/60, bg-manso-cream/5…)
+     manso-black  = el papel (fondo, y texto sobre botones de tinta)
+   Va fuera de los @layer a propósito. Los colores de estado (rojo/verde/…)
+   pasan a tonos oscuros: los -300/-400 pensados para fondo negro no se leen sobre claro.
+   ───────────────────────────────────────────────────────────────────────── */
+[data-admin] {
+  color-scheme: light;
+  --color-manso-cream: #0a0905;
+  --color-manso-black: #f5f2e8;
+  --color-manso-white: #000000;
+  --color-black: #f5f2e8;
+  --color-zinc-950: #fdfcf8;
+  --color-zinc-900: #e9e6db;
+  --color-zinc-500: #6b685e;
+  --color-zinc-400: #57544b;
+  --color-gray-400: #57544b;
+
+  --color-red-200: #7f1d1d;
+  --color-red-300: #991b1b;
+  --color-red-400: #b91c1c;
+  --color-green-300: #166534;
+  --color-green-400: #15803d;
+  --color-emerald-300: #047857;
+  --color-yellow-300: #854d0e;
+  --color-yellow-400: #a16207;
+  --color-orange-400: #c2410c;
+  --color-orange-500: #c2410c;
+  --color-blue-200: #1e3a8a;
+  --color-blue-300: #1e40af;
+  --color-blue-400: #1d4ed8;
+  --color-purple-400: #7e22ce;
+  --color-cyan-400: #0e7490;
+
+  background-color: var(--color-manso-black);
+  color: var(--color-manso-cream);
+}

@@ -80,7 +80,7 @@ export function GalleryList({ refreshTrigger }: GalleryListProps) {
       </h3>
 
       {galleryImages.length === 0 ? (
-        <div className="text-center text-manso-cream/40 py-8">
+        <div className="text-center text-manso-cream/62 py-8">
           No hay imágenes en la galería
         </div>
       ) : (
@@ -108,11 +108,11 @@ export function GalleryList({ refreshTrigger }: GalleryListProps) {
                 <div className="absolute bottom-0 left-0 right-0 p-4">
                   {/* Info */}
                   <div className="mb-3">
-                    <span className="text-[10px] uppercase tracking-widest text-manso-terra px-2 py-0.5 border border-manso-terra/30 rounded inline-block">
+                    <span className="text-[13px] uppercase tracking-widest text-manso-terra px-2 py-0.5 border border-manso-terra/30 rounded inline-block">
                       Orden: {image.order_index}
                     </span>
                     {!image.active && (
-                      <span className="text-[9px] uppercase font-bold text-red-400 px-2 py-0.5 border border-red-400/30 rounded ml-2">
+                      <span className="text-[12px] uppercase font-bold text-red-400 px-2 py-0.5 border border-red-400/30 rounded ml-2">
                         Inactivo
                       </span>
                     )}
@@ -164,7 +164,7 @@ export function GalleryList({ refreshTrigger }: GalleryListProps) {
 
               {replacingId === image.id && (
                 <div className="mt-2 p-3 bg-manso-cream/5 rounded-2xl border border-manso-cream/10">
-                  <p className="text-[10px] text-manso-cream/40 uppercase tracking-widest mb-2">Nueva foto</p>
+                  <p className="text-[13px] text-manso-cream/62 uppercase tracking-widest mb-2">Nueva foto</p>
                   <ImageUploader
                     bucket="gallery-images"
                     folder="photos"

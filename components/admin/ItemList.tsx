@@ -69,7 +69,7 @@ export function ItemList({ table, title, refreshTrigger, onEdit }: Props) {
     setSavingId(null);
   };
 
-  if (loading) return <div className="p-8 text-center opacity-50 font-black uppercase text-[10px] tracking-widest text-manso-cream/60">Cargando gestión...</div>;
+  if (loading) return <div className="p-8 text-center opacity-50 font-black uppercase text-[13px] tracking-widest text-manso-cream/60">Cargando gestión...</div>;
 
   const activos = usaSoftDelete ? items.filter(i => i.active ?? true).length : items.length;
   const ocultos = items.length - activos;
@@ -77,12 +77,12 @@ export function ItemList({ table, title, refreshTrigger, onEdit }: Props) {
   return (
     <div className="bg-manso-cream/5 rounded-[2.5rem] border border-manso-cream/10 overflow-hidden shadow-sm mt-4 sm:mt-8">
       <div className="p-4 sm:p-6 border-b border-manso-cream/10 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0 bg-manso-cream/5">
-        <h3 className="font-black uppercase tracking-tighter flex items-center gap-2 text-manso-cream text-sm sm:text-base">
+        <h3 className="font-black uppercase tracking-tighter flex items-center gap-2 text-manso-cream text-[15px] sm:text-base">
           {table === 'eventos' ? <Calendar size={14} /> : table === 'artistas' ? <User size={14} /> : <Package size={14} />}
-          <span className="text-xs sm:text-sm">{title} ({activos})</span>
+          <span className="text-[13px] sm:text-[15px]">{title} ({activos})</span>
         </h3>
         {ocultos > 0 && (
-          <span className="text-[9px] font-black uppercase tracking-[0.2em] text-manso-cream/40">
+          <span className="text-[12px] font-black uppercase tracking-[0.2em] text-manso-cream/62">
             + {ocultos} oculto{ocultos > 1 ? 's' : ''}
           </span>
         )}
@@ -103,15 +103,15 @@ export function ItemList({ table, title, refreshTrigger, onEdit }: Props) {
                   alt=""
                 />
                 <div className="flex-1 min-w-0">
-                  <p className="font-bold uppercase text-xs sm:text-xs tracking-tight text-manso-cream truncate flex items-center gap-2">
+                  <p className="font-bold uppercase text-[13px] sm:text-[13px] tracking-tight text-manso-cream truncate flex items-center gap-2">
                     {item.titulo || item.nombre}
                     {usaSoftDelete && !activo && (
-                      <span className="shrink-0 px-1.5 py-0.5 rounded bg-manso-cream/10 text-[8px] font-black uppercase tracking-widest text-manso-cream/50">
+                      <span className="shrink-0 px-1.5 py-0.5 rounded bg-manso-cream/10 text-[12px] font-black uppercase tracking-widest text-manso-cream/50">
                         Oculto
                       </span>
                     )}
                   </p>
-                  <p className="text-[9px] sm:text-[10px] text-manso-cream/60 font-mono truncate">
+                  <p className="text-[12px] sm:text-[13px] text-manso-cream/60 font-mono truncate">
                     {item.fecha
                       ? new Date(item.fecha).toLocaleDateString()
                       : item.precio
@@ -158,7 +158,7 @@ export function ItemList({ table, title, refreshTrigger, onEdit }: Props) {
         })}
 
         {items.length === 0 && (
-          <div className="p-8 sm:p-12 text-center text-manso-cream/40 text-[9px] sm:text-[10px] font-bold uppercase tracking-[0.2em]">
+          <div className="p-8 sm:p-12 text-center text-manso-cream/62 text-[12px] sm:text-[13px] font-bold uppercase tracking-[0.2em]">
             No hay nada publicado todavía.
           </div>
         )}

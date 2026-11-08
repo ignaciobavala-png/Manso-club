@@ -7,8 +7,8 @@ import { VideoUploader } from './VideoUploader';
 import { ImageUploader } from './ImageUploader';
 import { VisibilidadToggle } from './VisibilidadToggle';
 
-const inputCls = "w-full p-3 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/40 text-sm";
-const labelCls = "block text-[10px] font-black uppercase tracking-widest text-manso-cream/50 mb-1";
+const inputCls = "w-full p-3 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/62 text-[15px]";
+const labelCls = "block text-[13px] font-black uppercase tracking-widest text-manso-cream/50 mb-1";
 
 const TIPOS = [
   { value: 'youtube', label: 'YouTube', icon: Youtube },
@@ -88,7 +88,7 @@ export function FormMultimedia() {
         <h2 className="text-lg font-black uppercase tracking-tighter text-manso-cream mb-1">
           Nuevo Contenido
         </h2>
-        <p className="text-xs text-manso-cream/50">Agregá un video o imagen a la sección Multimedia</p>
+        <p className="text-[13px] text-manso-cream/50">Agregá un video o imagen a la sección Multimedia</p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -101,7 +101,7 @@ export function FormMultimedia() {
                 key={value}
                 type="button"
                 onClick={() => { setTipo(value); setArchivoUrl(''); }}
-                className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all text-xs font-bold uppercase tracking-wider ${
+                className={`flex flex-col items-center gap-1.5 p-3 rounded-xl border-2 transition-all text-[13px] font-bold uppercase tracking-wider ${
                   tipo === value
                     ? 'bg-manso-terra/20 border-manso-terra text-manso-cream'
                     : 'bg-manso-cream/5 border-manso-cream/10 text-manso-cream/50 hover:border-manso-cream/30'
@@ -126,7 +126,7 @@ export function FormMultimedia() {
           <div>
             <label className={labelCls}>URL de YouTube</label>
             <div className="relative">
-              <Youtube className="absolute left-3 top-1/2 -translate-y-1/2 text-manso-cream/40" size={16} />
+              <Youtube className="absolute left-3 top-1/2 -translate-y-1/2 text-manso-cream/62" size={16} />
               <input type="url" placeholder="https://youtube.com/watch?v=..." className={`${inputCls} pl-9`}
                 value={youtubeUrl} onChange={e => setYoutubeUrl(e.target.value)} required />
             </div>
@@ -141,7 +141,7 @@ export function FormMultimedia() {
               <button
                 type="button"
                 onClick={() => setPermitirYoutube(false)}
-                className={`flex items-center justify-center gap-1.5 p-3 rounded-xl border-2 transition-all text-xs font-bold uppercase tracking-wider ${
+                className={`flex items-center justify-center gap-1.5 p-3 rounded-xl border-2 transition-all text-[13px] font-bold uppercase tracking-wider ${
                   !permitirYoutube
                     ? 'bg-manso-terra/20 border-manso-terra text-manso-cream'
                     : 'bg-manso-cream/5 border-manso-cream/10 text-manso-cream/50 hover:border-manso-cream/30'
@@ -152,7 +152,7 @@ export function FormMultimedia() {
               <button
                 type="button"
                 onClick={() => setPermitirYoutube(true)}
-                className={`flex items-center justify-center gap-1.5 p-3 rounded-xl border-2 transition-all text-xs font-bold uppercase tracking-wider ${
+                className={`flex items-center justify-center gap-1.5 p-3 rounded-xl border-2 transition-all text-[13px] font-bold uppercase tracking-wider ${
                   permitirYoutube
                     ? 'bg-manso-terra/20 border-manso-terra text-manso-cream'
                     : 'bg-manso-cream/5 border-manso-cream/10 text-manso-cream/50 hover:border-manso-cream/30'
@@ -161,7 +161,7 @@ export function FormMultimedia() {
                 <ExternalLink size={14} /> Lleva a YouTube
               </button>
             </div>
-            <p className="text-[10px] text-manso-cream/40 mt-1.5">
+            <p className="text-[13px] text-manso-cream/62 mt-1.5">
               &quot;Bloqueado&quot; mantiene al usuario en la página. &quot;Lleva a YouTube&quot; muestra los controles nativos y permite ir al canal.
             </p>
           </div>
@@ -202,7 +202,7 @@ export function FormMultimedia() {
         </div>
 
         <button type="submit" disabled={loading || !canSubmit}
-          className="w-full bg-manso-terra text-manso-cream py-4 rounded-2xl font-black uppercase tracking-[0.2em] hover:bg-manso-cream hover:text-manso-black transition-all active:scale-95 disabled:opacity-50 text-sm">
+          className="w-full bg-manso-terra text-manso-cream py-4 rounded-2xl font-black uppercase tracking-[0.2em] hover:bg-manso-cream hover:text-manso-black transition-all active:scale-95 disabled:opacity-50 text-[15px]">
           {loading ? 'Agregando...' : 'Agregar'}
         </button>
       </form>

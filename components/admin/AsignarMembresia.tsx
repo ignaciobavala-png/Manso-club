@@ -62,13 +62,13 @@ export function AsignarMembresia() {
     <div>
       {/* Buscador */}
       <div className="relative mb-4">
-        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-manso-cream/30" />
+        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-manso-cream/62" />
         <input
           type="text"
           value={query}
           onChange={e => setQuery(e.target.value)}
           placeholder="Filtrar por email o nombre..."
-          className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl pl-9 pr-4 py-3 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra transition-colors"
+          className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl pl-9 pr-4 py-3 text-[15px] text-manso-cream placeholder:text-manso-cream/62 focus:outline-none focus:border-manso-terra transition-colors"
         />
         {loading && (
           <div className="absolute right-3 top-1/2 -translate-y-1/2 w-3 h-3 border border-manso-cream/20 border-t-manso-cream/60 rounded-full animate-spin" />
@@ -77,7 +77,7 @@ export function AsignarMembresia() {
 
       {/* Conteo */}
       {!loading && (
-        <p className="text-[9px] font-black uppercase tracking-widest text-manso-cream/30 mb-3">
+        <p className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62 mb-3">
           {filtrados.length} usuario{filtrados.length !== 1 ? 's' : ''}
           {query && ` · "${query}"`}
         </p>
@@ -95,22 +95,22 @@ export function AsignarMembresia() {
             >
               <div className="min-w-0">
                 {u.display_name && (
-                  <p className="text-sm font-bold text-manso-cream truncate">{u.display_name}</p>
+                  <p className="text-[15px] font-bold text-manso-cream truncate">{u.display_name}</p>
                 )}
-                <p className={`text-xs truncate ${u.display_name ? 'text-manso-cream/40' : 'text-manso-cream font-medium'}`}>
+                <p className={`text-[13px] truncate ${u.display_name ? 'text-manso-cream/62' : 'text-manso-cream font-medium'}`}>
                   {u.email}
                 </p>
               </div>
               <div className="flex items-center gap-2 flex-shrink-0">
                 {esActiva ? (
                   <>
-                    <span className="text-[8px] font-black uppercase tracking-widest text-manso-terra">
+                    <span className="text-[12px] font-black uppercase tracking-widest text-manso-terra">
                       {u.membresia_tipo ?? 'activa'}
                     </span>
                     <Crown size={14} className="text-manso-terra" />
                   </>
                 ) : (
-                  <UserX size={14} className="text-manso-cream/30 group-hover:text-manso-cream/60 transition-colors" />
+                  <UserX size={14} className="text-manso-cream/62 group-hover:text-manso-cream/60 transition-colors" />
                 )}
               </div>
             </button>
@@ -118,9 +118,9 @@ export function AsignarMembresia() {
         })}
 
         {!loading && filtrados.length === 0 && (
-          <div className="flex items-center gap-2 py-4 text-manso-cream/30">
+          <div className="flex items-center gap-2 py-4 text-manso-cream/62">
             <UserCheck size={14} />
-            <span className="text-xs">No se encontraron usuarios</span>
+            <span className="text-[13px]">No se encontraron usuarios</span>
           </div>
         )}
       </div>

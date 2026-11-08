@@ -184,7 +184,7 @@ export function FormHero() {
           {editingId ? 'Editar Slide del Hero' : 'Nuevo Slide del Hero'}
         </h2>
         {editingId && (
-          <p className="text-sm text-manso-cream/60">
+          <p className="text-[15px] text-manso-cream/60">
             Modificando: {formData.title_line1}
           </p>
         )}
@@ -194,7 +194,7 @@ export function FormHero() {
         
         {/* Tipo de Slide */}
         <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2">
+          <label className="text-[13px] font-black uppercase tracking-widest text-manso-cream/60 ml-2">
             Tipo de Slide
           </label>
           <div className="grid grid-cols-3 gap-3">
@@ -203,7 +203,7 @@ export function FormHero() {
                 key={tipo}
                 type="button"
                 onClick={() => setFormData({...formData, tipo, media_url: ''})}
-                className={`p-3 rounded-xl border-2 transition-all font-bold uppercase tracking-wider text-xs ${
+                className={`p-3 rounded-xl border-2 transition-all font-bold uppercase tracking-wider text-[13px] ${
                   formData.tipo === tipo
                     ? 'bg-manso-terra text-manso-cream border-manso-terra'
                     : 'bg-manso-cream/10 text-manso-cream/60 border-manso-cream/20 hover:border-manso-cream/40'
@@ -216,7 +216,7 @@ export function FormHero() {
               </button>
             ))}
           </div>
-          <p className="text-[10px] text-manso-cream/40 ml-2 mt-1">
+          <p className="text-[13px] text-manso-cream/62 ml-2 mt-1">
             Seleccioná primero el tipo de slide antes de subir contenido
           </p>
         </div>
@@ -226,7 +226,7 @@ export function FormHero() {
           <div className="space-y-6">
             {/* Imagen Desktop */}
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2 flex items-center gap-2">
+              <label className="text-[13px] font-black uppercase tracking-widest text-manso-cream/60 ml-2 flex items-center gap-2">
                 <Monitor size={16} />
                 Imagen para Desktop
               </label>
@@ -240,14 +240,14 @@ export function FormHero() {
                   onUpload={(url) => setFormData({...formData, media_url_desktop: url})} 
                 />
               </div>
-              <p className="text-[10px] text-manso-cream/40 ml-2">
+              <p className="text-[13px] text-manso-cream/62 ml-2">
                 Imagen optimizada para pantallas grandes (desktop)
               </p>
             </div>
 
             {/* Imagen Mobile */}
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2 flex items-center gap-2">
+              <label className="text-[13px] font-black uppercase tracking-widest text-manso-cream/60 ml-2 flex items-center gap-2">
                 <Smartphone size={16} />
                 Imagen para Mobile
               </label>
@@ -261,7 +261,7 @@ export function FormHero() {
                   onUpload={(url) => setFormData({...formData, media_url_mobile: url})} 
                 />
               </div>
-              <p className="text-[10px] text-manso-cream/40 ml-2">
+              <p className="text-[13px] text-manso-cream/62 ml-2">
                 Imagen optimizada para pantallas móviles (vertical)
               </p>
             </div>
@@ -280,7 +280,7 @@ export function FormHero() {
                   }}
                   className="w-4 h-4 rounded border-manso-cream/30 bg-manso-cream/10 text-manso-terra focus:ring-manso-terra"
                 />
-                <label htmlFor="useSameImage" className="text-sm text-manso-cream/80">
+                <label htmlFor="useSameImage" className="text-[15px] text-manso-cream/80">
                   Usar la misma imagen para desktop y mobile
                 </label>
               </div>
@@ -291,7 +291,7 @@ export function FormHero() {
         {formData.tipo === 'video' && (
           <div className="space-y-4">
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2 flex items-center gap-2">
+              <label className="text-[13px] font-black uppercase tracking-widest text-manso-cream/60 ml-2 flex items-center gap-2">
                 <Film size={16} />
                 Subir video desde tu computadora
               </label>
@@ -309,12 +309,12 @@ export function FormHero() {
                 <div className="w-full border-t border-manso-cream/10" />
               </div>
               <div className="relative flex justify-center">
-                <span className="bg-manso-black px-3 text-[9px] text-manso-cream/30 uppercase tracking-widest">o</span>
+                <span className="bg-manso-black px-3 text-[12px] text-manso-cream/62 uppercase tracking-widest">o</span>
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2 flex items-center gap-2">
+              <label className="text-[13px] font-black uppercase tracking-widest text-manso-cream/60 ml-2 flex items-center gap-2">
                 <Link2 size={16} />
                 Pegar URL externa
               </label>
@@ -323,13 +323,13 @@ export function FormHero() {
                 <input
                   type="url"
                   placeholder="https://ejemplo.com/video.mp4"
-                  className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all"
+                  className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/62 transition-all"
                   value={formData.media_url}
                   onChange={e => setFormData({...formData, media_url: e.target.value})}
                 />
               </div>
               {isUnsupportedVideoUrl(formData.media_url) && (
-                <p className="flex items-start gap-2 text-[10px] text-red-400 ml-2 mt-1">
+                <p className="flex items-start gap-2 text-[13px] text-red-400 ml-2 mt-1">
                   <AlertTriangle size={14} className="flex-shrink-0 mt-0.5" />
                   Los links de YouTube/Vimeo no funcionan acá: el banner necesita un archivo de video directo (.mp4, .webm). Descargá el video y subilo con el botón de arriba.
                 </p>
@@ -340,11 +340,11 @@ export function FormHero() {
 
         {formData.tipo === 'texto' && (
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 ml-2 flex items-center gap-2">
+            <label className="text-[13px] font-black uppercase tracking-widest text-manso-cream/60 ml-2 flex items-center gap-2">
               {getTipoIcon('texto')}
               Contenido del Slide
             </label>
-            <div className="bg-manso-cream/5 rounded-2xl p-4 border border-manso-cream/10 text-center text-manso-cream/40 text-xs">
+            <div className="bg-manso-cream/5 rounded-2xl p-4 border border-manso-cream/10 text-center text-manso-cream/62 text-[13px]">
               Los slides de tipo TEXTO no llevan imagen ni video
             </div>
           </div>
@@ -357,7 +357,7 @@ export function FormHero() {
             <input 
               type="text" 
               placeholder="TAG (opcional)"
-              className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all"
+              className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/62 transition-all"
               value={formData.tag}
               onChange={e => setFormData({...formData, tag: e.target.value})}
             />
@@ -369,7 +369,7 @@ export function FormHero() {
             <input 
               type="text" 
               placeholder="TÍTULO LÍNEA 1 (requerido)"
-              className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all"
+              className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/62 transition-all"
               value={formData.title_line1}
               onChange={e => setFormData({...formData, title_line1: e.target.value})}
               required
@@ -382,7 +382,7 @@ export function FormHero() {
             <input 
               type="text" 
               placeholder="TÍTULO LÍNEA 2 (opcional)"
-              className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all"
+              className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/62 transition-all"
               value={formData.title_line2}
               onChange={e => setFormData({...formData, title_line2: e.target.value})}
             />
@@ -391,11 +391,11 @@ export function FormHero() {
           {/* Tamaño del título */}
           <div className="bg-manso-cream/5 rounded-2xl p-4 border border-manso-cream/10 space-y-3">
             <div className="flex items-center justify-between gap-2">
-              <label htmlFor="title_scale" className="text-[10px] font-black uppercase tracking-widest text-manso-cream/60 flex items-center gap-2">
+              <label htmlFor="title_scale" className="text-[13px] font-black uppercase tracking-widest text-manso-cream/60 flex items-center gap-2">
                 <CaseSensitive size={18} />
                 Tamaño del título
               </label>
-              <span className="text-sm font-black text-manso-cream tabular-nums">
+              <span className="text-[15px] font-black text-manso-cream tabular-nums">
                 {formData.title_scale}%
               </span>
             </div>
@@ -410,20 +410,20 @@ export function FormHero() {
               className="w-full accent-manso-terra cursor-pointer"
             />
             <div className="flex items-center justify-between">
-              <span className="text-[9px] font-bold uppercase tracking-widest text-manso-cream/30">Más chico</span>
+              <span className="text-[12px] font-bold uppercase tracking-widest text-manso-cream/62">Más chico</span>
               <button
                 type="button"
                 onClick={() => setFormData({...formData, title_scale: 100})}
-                className="text-[9px] font-bold uppercase tracking-widest text-manso-cream/50 hover:text-manso-cream transition-colors underline underline-offset-2 disabled:opacity-30 disabled:no-underline"
+                className="text-[12px] font-bold uppercase tracking-widest text-manso-cream/50 hover:text-manso-cream transition-colors underline underline-offset-2 disabled:opacity-30 disabled:no-underline"
                 disabled={formData.title_scale === 100}
               >
                 Volver al normal
               </button>
-              <span className="text-[9px] font-bold uppercase tracking-widest text-manso-cream/30">Más grande</span>
+              <span className="text-[12px] font-bold uppercase tracking-widest text-manso-cream/62">Más grande</span>
             </div>
             {/* El título se achica y agranda solo según la pantalla; esto mueve
                 esa escala entera, así no se rompe en celular. */}
-            <p className="text-[9px] text-manso-cream/30 font-medium leading-relaxed">
+            <p className="text-[12px] text-manso-cream/62 font-medium leading-relaxed">
               100% es el tamaño de diseño. El título se adapta solo a cada pantalla:
               esto lo hace más chico o más grande en todas por igual.
             </p>
@@ -435,7 +435,7 @@ export function FormHero() {
             <textarea
               placeholder="DESCRIPCIÓN (opcional)"
               rows={3}
-              className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all resize-none"
+              className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/62 transition-all resize-none"
               value={formData.description}
               onChange={e => setFormData({...formData, description: e.target.value})}
             />
@@ -443,14 +443,14 @@ export function FormHero() {
 
           {/* Orden */}
           <div className="relative">
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-manso-cream/60 text-[10px] font-black uppercase tracking-widest">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-manso-cream/60 text-[13px] font-black uppercase tracking-widest">
               #
             </div>
             <input 
               type="number" 
               placeholder="ORDEN (1, 2, 3...)"
               min="1"
-              className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/40 transition-all"
+              className="w-full bg-manso-cream/10 p-4 pl-12 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-bold text-manso-cream placeholder:text-manso-cream/62 transition-all"
               value={formData.order_index}
               onChange={e => setFormData({...formData, order_index: e.target.value})}
               required

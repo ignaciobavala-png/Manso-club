@@ -8,8 +8,8 @@ import { ImageUploader } from './ImageUploader';
 import { VisibilidadToggle } from './VisibilidadToggle';
 import { ChevronDown, HelpCircle, X, Wifi, Eye } from 'lucide-react';
 
-const inputCls = "w-full p-3 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/40 text-sm";
-const labelCls = "block text-[10px] font-black uppercase tracking-widest text-manso-cream/50 mb-1";
+const inputCls = "w-full p-3 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none text-manso-cream placeholder:text-manso-cream/62 text-[15px]";
+const labelCls = "block text-[13px] font-black uppercase tracking-widest text-manso-cream/50 mb-1";
 
 interface Categoria { slug: string; nombre: string; }
 
@@ -154,7 +154,7 @@ export function FormStreamingContenido() {
         <button
           type="button"
           onClick={() => setAyuda(true)}
-          className="w-7 h-7 rounded-full border border-manso-cream/15 flex items-center justify-center text-manso-cream/30 hover:text-manso-cream/60 hover:border-manso-cream/30 transition-all"
+          className="w-7 h-7 rounded-full border border-manso-cream/15 flex items-center justify-center text-manso-cream/62 hover:text-manso-cream/60 hover:border-manso-cream/30 transition-all"
           title="¿Qué es Contenido de Streaming?"
         >
           <HelpCircle size={14} />
@@ -166,28 +166,28 @@ export function FormStreamingContenido() {
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setAyuda(false)}>
           <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
           <div
-            className="relative bg-[#000000] border border-manso-cream/15 rounded-[2rem] p-8 max-w-md w-full shadow-2xl"
+            className="relative bg-manso-black border border-manso-cream/15 rounded-[2rem] p-8 max-w-md w-full shadow-2xl"
             onClick={e => e.stopPropagation()}
           >
             <div className="flex items-center justify-between mb-6">
               <h3 className="text-base font-black uppercase tracking-tight text-manso-cream">Contenido de Streaming</h3>
-              <button onClick={() => setAyuda(false)} className="w-8 h-8 rounded-full border border-manso-cream/15 flex items-center justify-center text-manso-cream/40 hover:text-manso-cream transition-colors">
+              <button onClick={() => setAyuda(false)} className="w-8 h-8 rounded-full border border-manso-cream/15 flex items-center justify-center text-manso-cream/62 hover:text-manso-cream transition-colors">
                 <X size={14} />
               </button>
             </div>
-            <div className="space-y-4 text-sm text-manso-cream/60 leading-relaxed">
+            <div className="space-y-4 text-[15px] text-manso-cream/60 leading-relaxed">
               <p>Cada item acá es un video que aparece en el <span className="text-manso-cream font-bold">catálogo de /streaming</span> — debajo del canal en vivo.</p>
               <div className="space-y-3">
                 <div className="flex gap-3 items-start">
-                  <span className="flex-shrink-0 text-[8px] font-black uppercase tracking-widest bg-manso-cream/10 text-manso-cream/50 px-2 py-1 rounded-full mt-0.5">YouTube ID</span>
-                  <p>El código al final de la URL de YouTube (ej: <span className="font-mono text-manso-cream/80 text-xs">dQw4w9WgXcQ</span>). Funciona para videos grabados y streams en vivo.</p>
+                  <span className="flex-shrink-0 text-[12px] font-black uppercase tracking-widest bg-manso-cream/10 text-manso-cream/50 px-2 py-1 rounded-full mt-0.5">YouTube ID</span>
+                  <p>El código al final de la URL de YouTube (ej: <span className="font-mono text-manso-cream/80 text-[13px]">dQw4w9WgXcQ</span>). Funciona para videos grabados y streams en vivo.</p>
                 </div>
                 <div className="flex gap-3 items-start">
-                  <span className="flex-shrink-0 inline-flex items-center gap-1 text-[8px] font-black uppercase tracking-widest bg-red-600/20 text-red-400 px-2 py-1 rounded-full mt-0.5"><Wifi size={8} />Live</span>
+                  <span className="flex-shrink-0 inline-flex items-center gap-1 text-[12px] font-black uppercase tracking-widest bg-red-600/20 text-red-400 px-2 py-1 rounded-full mt-0.5"><Wifi size={8} />Live</span>
                   <p>Marcá "En vivo" mientras el stream está activo. Al terminarlo desde la lista, el badge se apaga y el video queda como grabación en Multimedia.</p>
                 </div>
                 <div className="flex gap-3 items-start">
-                  <span className="flex-shrink-0 inline-flex items-center gap-1 text-[8px] font-black uppercase tracking-widest bg-manso-cream/10 text-manso-cream/50 px-2 py-1 rounded-full mt-0.5"><Eye size={8} />Visibilidad</span>
+                  <span className="flex-shrink-0 inline-flex items-center gap-1 text-[12px] font-black uppercase tracking-widest bg-manso-cream/10 text-manso-cream/50 px-2 py-1 rounded-full mt-0.5"><Eye size={8} />Visibilidad</span>
                   <p>Controla quién puede ver el video en el catálogo. No afecta el canal principal.</p>
                 </div>
               </div>
@@ -222,7 +222,7 @@ export function FormStreamingContenido() {
                 key={cat.slug}
                 type="button"
                 onClick={() => set('tipo', cat.slug)}
-                className={`flex-1 py-2 rounded-xl text-xs font-black uppercase tracking-widest transition-all ${
+                className={`flex-1 py-2 rounded-xl text-[13px] font-black uppercase tracking-widest transition-all ${
                   form.tipo === cat.slug
                     ? 'bg-manso-terra text-manso-cream'
                     : 'bg-manso-cream/10 text-manso-cream/60 hover:bg-manso-cream/20'
@@ -238,13 +238,13 @@ export function FormStreamingContenido() {
         <div>
           <label className={labelCls}>YouTube — URL o ID del video</label>
           <input
-            className={inputCls + ' font-mono text-xs'}
+            className={inputCls + ' font-mono text-[13px]'}
             placeholder="https://youtube.com/watch?v=... o solo el ID"
             value={form.youtube_video_id}
             onChange={e => set('youtube_video_id', extractYouTubeId(e.target.value))}
           />
           {form.youtube_video_id && (
-            <p className="mt-1 text-[9px] text-manso-cream/30 font-mono pl-1">
+            <p className="mt-1 text-[12px] text-manso-cream/62 font-mono pl-1">
               ID guardado: {form.youtube_video_id}
             </p>
           )}
@@ -287,10 +287,10 @@ export function FormStreamingContenido() {
               key={key}
               type="button"
               onClick={() => set(key, !form[key])}
-              className={`flex-1 py-2.5 rounded-xl text-[9px] font-black uppercase tracking-widest border transition-all ${
+              className={`flex-1 py-2.5 rounded-xl text-[12px] font-black uppercase tracking-widest border transition-all ${
                 form[key]
                   ? activeColor
-                  : 'bg-manso-cream/5 border-manso-cream/10 text-manso-cream/30 hover:border-manso-cream/20'
+                  : 'bg-manso-cream/5 border-manso-cream/10 text-manso-cream/62 hover:border-manso-cream/20'
               }`}
             >
               {label}
@@ -302,7 +302,7 @@ export function FormStreamingContenido() {
         <button
           type="button"
           onClick={() => setExpanded(!expanded)}
-          className="flex items-center gap-2 text-[9px] font-black uppercase tracking-widest text-manso-cream/30 hover:text-manso-cream/60 transition-colors"
+          className="flex items-center gap-2 text-[12px] font-black uppercase tracking-widest text-manso-cream/62 hover:text-manso-cream/60 transition-colors"
         >
           <ChevronDown size={12} className={`transition-transform ${expanded ? 'rotate-180' : ''}`} />
           {expanded ? 'Ocultar opcionales' : 'Slug + Descripción'}
@@ -312,7 +312,7 @@ export function FormStreamingContenido() {
           <div className="space-y-4 pt-1">
             <div>
               <label className={labelCls}>Slug (URL)</label>
-              <input className={inputCls + ' font-mono text-xs'} placeholder="mi-concierto-2025"
+              <input className={inputCls + ' font-mono text-[13px]'} placeholder="mi-concierto-2025"
                 value={form.slug} onChange={e => set('slug', toSlug(e.target.value))} />
             </div>
             <div>

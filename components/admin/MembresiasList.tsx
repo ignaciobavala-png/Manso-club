@@ -111,8 +111,8 @@ export function MembresiasList({ refreshTrigger }: MembresiasListProps) {
   if (membresias.length === 0) {
     return (
       <div className="text-center py-12 bg-manso-cream/5 border border-manso-cream/10 rounded-3xl">
-        <Crown size={32} className="text-manso-cream/20 mx-auto mb-3" />
-        <p className="text-sm text-manso-cream/40">No hay membresías creadas</p>
+        <Crown size={32} className="text-manso-cream/62 mx-auto mb-3" />
+        <p className="text-[15px] text-manso-cream/62">No hay membresías creadas</p>
       </div>
     );
   }
@@ -133,15 +133,15 @@ export function MembresiasList({ refreshTrigger }: MembresiasListProps) {
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <h4 className="text-sm font-bold text-manso-cream truncate">{membresia.nombre}</h4>
+                  <h4 className="text-[15px] font-bold text-manso-cream truncate">{membresia.nombre}</h4>
                   {membresia.destacado && (
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-manso-terra/20 text-manso-terra rounded-full text-[8px] font-black uppercase tracking-widest">
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-manso-terra/20 text-manso-terra rounded-full text-[12px] font-black uppercase tracking-widest">
                       <Star size={8} />
                       Popular
                     </span>
                   )}
                 </div>
-                <div className="flex items-center gap-3 text-[10px] font-bold uppercase tracking-widest text-manso-cream/50">
+                <div className="flex items-center gap-3 text-[13px] font-bold uppercase tracking-widest text-manso-cream/50">
                   <span className="flex items-center gap-1">
                     <DollarSign size={10} />
                     {membresia.moneda === 'ARS' ? 'ARS' : 'USD'} {membresia.precio.toLocaleString('es-AR')}
@@ -151,7 +151,7 @@ export function MembresiasList({ refreshTrigger }: MembresiasListProps) {
                   <span>{membresia.membresia_beneficios?.length || 0} beneficios</span>
                 </div>
                 {membresia.descripcion && (
-                  <p className="text-[9px] text-manso-cream/40 mt-1 line-clamp-2">
+                  <p className="text-[12px] text-manso-cream/62 mt-1 line-clamp-2">
                     {membresia.descripcion}
                   </p>
                 )}
@@ -166,8 +166,8 @@ export function MembresiasList({ refreshTrigger }: MembresiasListProps) {
                   disabled={index === 0}
                   className={`w-6 h-6 flex items-center justify-center rounded transition-colors ${
                     index === 0 
-                      ? 'text-manso-cream/20 cursor-not-allowed' 
-                      : 'text-manso-cream/40 hover:text-manso-terra hover:bg-manso-cream/10'
+                      ? 'text-manso-cream/62 cursor-not-allowed' 
+                      : 'text-manso-cream/62 hover:text-manso-terra hover:bg-manso-cream/10'
                   }`}
                   title="Mover hacia arriba"
                 >
@@ -178,8 +178,8 @@ export function MembresiasList({ refreshTrigger }: MembresiasListProps) {
                   disabled={index === membresias.length - 1}
                   className={`w-6 h-6 flex items-center justify-center rounded transition-colors ${
                     index === membresias.length - 1 
-                      ? 'text-manso-cream/20 cursor-not-allowed' 
-                      : 'text-manso-cream/40 hover:text-manso-terra hover:bg-manso-cream/10'
+                      ? 'text-manso-cream/62 cursor-not-allowed' 
+                      : 'text-manso-cream/62 hover:text-manso-terra hover:bg-manso-cream/10'
                   }`}
                   title="Mover hacia abajo"
                 >
@@ -192,7 +192,7 @@ export function MembresiasList({ refreshTrigger }: MembresiasListProps) {
                 className={`w-8 h-8 flex items-center justify-center rounded-lg transition-colors ${
                   membresia.activo
                     ? 'text-green-400 hover:bg-green-400/10'
-                    : 'text-manso-cream/30 hover:bg-manso-cream/10'
+                    : 'text-manso-cream/62 hover:bg-manso-cream/10'
                 }`}
                 title={membresia.activo ? 'Desactivar' : 'Activar'}
               >
@@ -200,14 +200,14 @@ export function MembresiasList({ refreshTrigger }: MembresiasListProps) {
               </button>
               <button
                 onClick={() => handleEdit(membresia)}
-                className="w-8 h-8 flex items-center justify-center text-manso-cream/40 hover:text-manso-terra transition-colors"
+                className="w-8 h-8 flex items-center justify-center text-manso-cream/62 hover:text-manso-terra transition-colors"
                 title="Editar"
               >
                 <Pencil size={14} />
               </button>
               <button
                 onClick={() => handleDelete(membresia.id, membresia.nombre)}
-                className="w-8 h-8 flex items-center justify-center text-manso-cream/40 hover:text-red-400 transition-colors"
+                className="w-8 h-8 flex items-center justify-center text-manso-cream/62 hover:text-red-400 transition-colors"
                 title="Eliminar"
               >
                 <Trash2 size={14} />

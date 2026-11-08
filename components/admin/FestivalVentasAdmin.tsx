@@ -126,7 +126,7 @@ export function FestivalVentasAdmin() {
             key={valor}
             type="button"
             onClick={() => setVista(valor)}
-            className={`px-3 py-1.5 rounded-lg border text-[9px] font-black uppercase tracking-widest transition-colors ${
+            className={`px-3 py-1.5 rounded-lg border text-[12px] font-black uppercase tracking-widest transition-colors ${
               vista === valor ? 'border-manso-cream bg-manso-cream text-manso-black' : 'border-manso-cream/20 text-manso-cream/50 hover:text-manso-cream'
             }`}
           >
@@ -145,7 +145,7 @@ export function FestivalVentasAdmin() {
             key={valor}
             type="button"
             onClick={() => setFiltro(valor)}
-            className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-colors ${
+            className={`px-3 py-1.5 rounded-lg text-[12px] font-black uppercase tracking-widest transition-colors ${
               filtro === valor ? 'bg-manso-cream text-manso-black' : 'text-manso-cream/50 hover:text-manso-cream'
             }`}
           >
@@ -155,9 +155,9 @@ export function FestivalVentasAdmin() {
       </div>
 
       {cargando ? (
-        <Loader2 size={16} className="animate-spin text-manso-cream/40" />
+        <Loader2 size={16} className="animate-spin text-manso-cream/62" />
       ) : ventas.length === 0 ? (
-        <p className="text-[11px] text-manso-cream/40">
+        <p className="text-[13px] text-manso-cream/62">
           {filtro === 'por_confirmar'
             ? 'Ninguna transferencia avisó pago: no hay nada para confirmar.'
             : filtro === 'sin_avisar'
@@ -169,32 +169,32 @@ export function FestivalVentasAdmin() {
           {ventas.map(v => (
             <li key={v.id} className="py-3 flex flex-wrap items-center gap-x-4 gap-y-1.5">
               <div className="min-w-0 flex-1">
-                <p className="text-sm text-manso-cream truncate">
+                <p className="text-[15px] text-manso-cream truncate">
                   <span className="font-mono text-manso-cream/50 mr-2">{v.id.slice(0, 8).toUpperCase()}</span>
                   {v.nombre}
                   {v.metodo === 'transferencia' && v.estado === 'pendiente' && (
                     <span
-                      className={`ml-2 align-middle px-2 py-0.5 rounded-full text-[8px] font-black uppercase tracking-widest ${
-                        v.transferencia_declarada_at ? 'bg-manso-olive/20 text-manso-olive' : 'bg-manso-cream/10 text-manso-cream/45'
+                      className={`ml-2 align-middle px-2 py-0.5 rounded-full text-[12px] font-black uppercase tracking-widest ${
+                        v.transferencia_declarada_at ? 'bg-manso-olive/20 text-manso-olive' : 'bg-manso-cream/10 text-manso-cream/62'
                       }`}
                     >
                       {v.transferencia_declarada_at ? 'Avisó pago' : v.comprobante_at ? 'Subió comprobante, sin avisar' : 'Sin avisar'}
                     </span>
                   )}
                 </p>
-                <p className="text-[11px] text-manso-cream/40 truncate">
+                <p className="text-[13px] text-manso-cream/62 truncate">
                   {v.email} · {v.cantidad_entradas} entrada(s) · {MEDIOS_PAGO[v.metodo].nombre} ·{' '}
                   {new Date(v.created_at).toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short' })}
                 </p>
-                {v.observacion && <p className="text-[11px] text-manso-terra mt-0.5">{v.observacion}</p>}
+                {v.observacion && <p className="text-[13px] text-manso-terra mt-0.5">{v.observacion}</p>}
               </div>
-              <span className="text-sm font-mono text-manso-cream tabular-nums">{formatArs(v.total_ars)}</span>
+              <span className="text-[15px] font-mono text-manso-cream tabular-nums">{formatArs(v.total_ars)}</span>
               {v.estado === 'pagada' ? (
                 <a
                   href={`/blur/compra/${v.id}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-manso-olive hover:text-manso-cream"
+                  className="inline-flex items-center gap-1.5 text-[12px] font-black uppercase tracking-widest text-manso-olive hover:text-manso-cream"
                 >
                   Pagada <ExternalLink size={11} />
                 </a>
@@ -205,7 +205,7 @@ export function FestivalVentasAdmin() {
                       href={`/api/festival/ordenes/${v.id}/comprobante`}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-manso-olive/60 text-manso-olive text-[9px] font-black uppercase tracking-widest hover:text-manso-cream"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-manso-olive/60 text-manso-olive text-[12px] font-black uppercase tracking-widest hover:text-manso-cream"
                     >
                       <FileImage size={11} />
                       Ver comprobante
@@ -217,7 +217,7 @@ export function FestivalVentasAdmin() {
                       onClick={() => accion(v, 'descartar')}
                       disabled={ocupada === v.id}
                       title="La transferencia no va a llegar: libera los lugares"
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-manso-cream/20 text-manso-cream/60 text-[9px] font-black uppercase tracking-widest hover:text-manso-cream disabled:opacity-40"
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-manso-cream/20 text-manso-cream/60 text-[12px] font-black uppercase tracking-widest hover:text-manso-cream disabled:opacity-40"
                     >
                       <X size={11} />
                       Descartar
@@ -227,14 +227,14 @@ export function FestivalVentasAdmin() {
                     type="button"
                     onClick={() => accion(v, 'confirmar')}
                     disabled={ocupada === v.id}
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-manso-terra text-manso-cream text-[9px] font-black uppercase tracking-widest hover:bg-manso-terra/80 disabled:opacity-40"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-manso-terra text-manso-cream text-[12px] font-black uppercase tracking-widest hover:bg-manso-terra/80 disabled:opacity-40"
                   >
                     {ocupada === v.id ? <Loader2 size={11} className="animate-spin" /> : <Check size={11} />}
                     Confirmar pago
                   </button>
                 </span>
               ) : (
-                <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40">
+                <span className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62">
                   {v.estado === 'vencida' ? 'Vencida' : 'Esperando pago'}
                 </span>
               )}

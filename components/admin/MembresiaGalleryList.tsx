@@ -61,7 +61,7 @@ export function MembresiaGalleryList({ refreshTrigger }: Props) {
       </h3>
 
       {images.length === 0 ? (
-        <div className="text-center text-manso-cream/40 py-8 text-sm">
+        <div className="text-center text-manso-cream/62 py-8 text-[15px]">
           No hay fotos en la galería todavía
         </div>
       ) : (

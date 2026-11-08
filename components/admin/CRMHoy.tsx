@@ -43,10 +43,10 @@ function Grupo({ titulo, ayuda, tono, filas }: {
     <div className="bg-manso-cream/5 border border-manso-cream/10 rounded-2xl overflow-hidden">
       <div className="px-5 pt-4 pb-3 flex items-baseline justify-between gap-3">
         <div>
-          <p className={`text-[11px] font-black uppercase tracking-[0.2em] ${tono}`}>
-            {titulo} <span className="text-manso-cream/40">· {filas.length}</span>
+          <p className={`text-[13px] font-black uppercase tracking-[0.2em] ${tono}`}>
+            {titulo} <span className="text-manso-cream/62">· {filas.length}</span>
           </p>
-          <p className="text-[10px] text-manso-cream/40 mt-0.5">{ayuda}</p>
+          <p className="text-[13px] text-manso-cream/62 mt-0.5">{ayuda}</p>
         </div>
       </div>
       <ul className="divide-y divide-manso-cream/5">
@@ -55,29 +55,29 @@ function Grupo({ titulo, ayuda, tono, filas }: {
           return (
             <li key={user.id} className="px-5 py-3 flex items-center justify-between gap-3">
               <div className="min-w-0">
-                <p className="text-sm font-bold text-manso-cream truncate">
+                <p className="text-[15px] font-bold text-manso-cream truncate">
                   {user.display_name ?? user.email}
                 </p>
-                <p className="text-[11px] text-manso-cream/50 truncate">{detalle}</p>
+                <p className="text-[13px] text-manso-cream/50 truncate">{detalle}</p>
               </div>
               {wa ? (
                 <a
                   href={wa}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-manso-olive/30 text-manso-olive hover:bg-manso-olive/10 transition-colors text-[10px] font-black uppercase tracking-widest"
+                  className="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-manso-olive/30 text-manso-olive hover:bg-manso-olive/10 transition-colors text-[13px] font-black uppercase tracking-widest"
                 >
                   <MessageCircle size={12} /> WhatsApp
                 </a>
               ) : (
-                <span className="flex-shrink-0 text-[10px] text-manso-cream/25">sin teléfono</span>
+                <span className="flex-shrink-0 text-[13px] text-manso-cream/62">sin teléfono</span>
               )}
             </li>
           );
         })}
       </ul>
       {filas.length > visibles.length && (
-        <p className="px-5 py-3 text-[10px] text-manso-cream/40 border-t border-manso-cream/5">
+        <p className="px-5 py-3 text-[13px] text-manso-cream/62 border-t border-manso-cream/5">
           y {filas.length - visibles.length} más — están en Contactos
         </p>
       )}
@@ -136,17 +136,17 @@ export function CRMHoy({ users, events, mrr }: CRMHoyProps) {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
         <div className="bg-manso-cream/5 border border-manso-cream/10 rounded-2xl px-5 py-4">
           <p className="text-4xl font-black text-manso-cream leading-none">{activos}</p>
-          <p className="text-[11px] font-bold text-manso-cream/70 mt-2">miembros con membresía vigente</p>
+          <p className="text-[13px] font-bold text-manso-cream/70 mt-2">miembros con membresía vigente</p>
         </div>
         <div className="bg-manso-cream/5 border border-manso-cream/10 rounded-2xl px-5 py-4">
           <p className="text-4xl font-black text-manso-cream leading-none">{formatARS(mrr)}</p>
-          <p className="text-[11px] font-bold text-manso-cream/70 mt-2">de membresías por mes</p>
+          <p className="text-[13px] font-bold text-manso-cream/70 mt-2">de membresías por mes</p>
         </div>
         <div className="bg-manso-cream/5 border border-manso-cream/10 rounded-2xl px-5 py-4">
           {proximo ? (
             <>
               <p className="text-lg font-black text-manso-cream leading-tight truncate">{proximo.name}</p>
-              <p className="text-[11px] font-bold text-manso-cream/70 mt-2">
+              <p className="text-[13px] font-bold text-manso-cream/70 mt-2">
                 {formatFecha(proximo.start_date)}
                 {proximo.max_capacity
                   ? ` · ${proximo.registrations_count} de ${proximo.max_capacity} cupos`
@@ -156,20 +156,20 @@ export function CRMHoy({ users, events, mrr }: CRMHoyProps) {
             </>
           ) : (
             <>
-              <p className="text-lg font-black text-manso-cream/40 leading-tight">Sin eventos próximos</p>
-              <p className="text-[11px] text-manso-cream/40 mt-2">cargá el siguiente en Gestión</p>
+              <p className="text-lg font-black text-manso-cream/62 leading-tight">Sin eventos próximos</p>
+              <p className="text-[13px] text-manso-cream/62 mt-2">cargá el siguiente en Gestión</p>
             </>
           )}
         </div>
       </div>
 
       {/* Qué hacer hoy */}
-      <p className="text-[11px] font-black uppercase tracking-[0.25em] text-manso-cream/60 pt-1">
+      <p className="text-[13px] font-black uppercase tracking-[0.2em] text-manso-cream/60 pt-1">
         Para hacer hoy
       </p>
 
       {nada && (
-        <div className="bg-manso-cream/5 border border-manso-cream/10 rounded-2xl px-5 py-6 text-sm text-manso-cream/60">
+        <div className="bg-manso-cream/5 border border-manso-cream/10 rounded-2xl px-5 py-6 text-[15px] text-manso-cream/60">
           Nada pendiente: no hay membresías vencidas ni por vencer, y no entraron registros nuevos este mes.
         </div>
       )}

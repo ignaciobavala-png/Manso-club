@@ -149,15 +149,15 @@ export function AudienciasList() {
     <div className="bg-manso-cream/5 rounded-[2rem] border border-manso-cream/10 p-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
-          <Mail size={20} className="text-manso-cream/40" />
-          <h3 className="text-sm font-black uppercase tracking-widest text-manso-cream">
+          <Mail size={20} className="text-manso-cream/62" />
+          <h3 className="text-[15px] font-black uppercase tracking-widest text-manso-cream">
             Total de mails ({contactos.length})
           </h3>
         </div>
         {contactos.length > 0 && (
           <button
             onClick={exportCSV}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-manso-cream/10 hover:bg-manso-cream/20 text-manso-cream text-[9px] font-black uppercase tracking-widest transition-colors"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-manso-cream/10 hover:bg-manso-cream/20 text-manso-cream text-[12px] font-black uppercase tracking-widest transition-colors"
           >
             <Download size={12} />
             CSV
@@ -165,33 +165,33 @@ export function AudienciasList() {
         )}
       </div>
 
-      <p className="text-[10px] text-manso-cream/40 mb-4">
+      <p className="text-[13px] text-manso-cream/62 mb-4">
         Unión de suscriptores de newsletter + usuarios registrados en la web, sin duplicados.
       </p>
 
       <div className="relative mb-3">
-        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-manso-cream/30" />
+        <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-manso-cream/62" />
         <input
           value={busqueda}
           onChange={(e) => setBusqueda(e.target.value)}
           placeholder="Buscar por email..."
-          className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl pl-9 pr-4 py-2 text-sm text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra"
+          className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl pl-9 pr-4 py-2 text-[15px] text-manso-cream placeholder:text-manso-cream/62 focus:outline-none focus:border-manso-terra"
         />
       </div>
 
       {feedback && (
-        <div className="mb-3 p-3 rounded-xl bg-manso-cream/10 text-manso-cream text-xs">{feedback}</div>
+        <div className="mb-3 p-3 rounded-xl bg-manso-cream/10 text-manso-cream text-[13px]">{feedback}</div>
       )}
 
       {seleccionados.size > 0 && (
         <div className="mb-3 p-3 rounded-xl bg-manso-terra/10 border border-manso-terra/20 flex flex-wrap items-center gap-2">
-          <span className="text-[10px] font-black uppercase tracking-widest text-manso-cream">
+          <span className="text-[13px] font-black uppercase tracking-widest text-manso-cream">
             {seleccionados.size} seleccionado(s)
           </span>
           <select
             value={campaniaPrueba}
             onChange={(e) => setCampaniaPrueba(e.target.value)}
-            className="bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-2 py-1.5 text-xs text-manso-cream focus:outline-none"
+            className="bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-2 py-1.5 text-[13px] text-manso-cream focus:outline-none"
           >
             <option value="" className="bg-manso-black">Elegir campaña...</option>
             {borradores.map((b) => (
@@ -201,7 +201,7 @@ export function AudienciasList() {
           <button
             onClick={enviarPrueba}
             disabled={!campaniaPrueba || enviandoPrueba}
-            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-manso-terra hover:bg-manso-terra/90 text-manso-cream text-[9px] font-black uppercase tracking-widest transition-colors disabled:opacity-50"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-manso-terra hover:bg-manso-terra/90 text-manso-cream text-[12px] font-black uppercase tracking-widest transition-colors disabled:opacity-50"
           >
             {enviandoPrueba ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
             Enviar prueba
@@ -210,12 +210,12 @@ export function AudienciasList() {
       )}
 
       {loading ? (
-        <p className="text-xs text-manso-cream/30 uppercase tracking-widest">Cargando...</p>
+        <p className="text-[13px] text-manso-cream/62 uppercase tracking-widest">Cargando...</p>
       ) : contactosFiltrados.length === 0 ? (
-        <p className="text-xs text-manso-cream/30 uppercase tracking-widest">Sin resultados</p>
+        <p className="text-[13px] text-manso-cream/62 uppercase tracking-widest">Sin resultados</p>
       ) : (
         <div className="space-y-1 max-h-[500px] overflow-y-auto pr-3">
-          <label className="flex items-center gap-2 py-1 text-[9px] font-black uppercase tracking-widest text-manso-cream/40 cursor-pointer">
+          <label className="flex items-center gap-2 py-1 text-[12px] font-black uppercase tracking-widest text-manso-cream/62 cursor-pointer">
             <input
               type="checkbox"
               checked={seleccionados.size > 0 && seleccionados.size === contactosFiltrados.length}
@@ -234,26 +234,26 @@ export function AudienciasList() {
                   onChange={() => toggleSeleccionado(c.email)}
                   className="accent-manso-terra shrink-0"
                 />
-                <span className="text-sm text-manso-cream/80 truncate">{c.email}</span>
+                <span className="text-[15px] text-manso-cream/80 truncate">{c.email}</span>
               </div>
               <div className="flex items-center gap-3 shrink-0">
-                <span className={`text-[8px] font-black uppercase tracking-widest ${fuenteColor[c.fuente]}`}>
+                <span className={`text-[12px] font-black uppercase tracking-widest ${fuenteColor[c.fuente]}`}>
                   {fuenteLabel[c.fuente]}
                 </span>
-                <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/30">
+                <span className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62">
                   {new Date(c.fecha).toLocaleDateString('es-AR')}
                 </span>
                 {c.excluido ? (
-                  <button onClick={() => reincluir(c.email)} className="text-[8px] font-black uppercase tracking-widest text-manso-cream/40 hover:text-manso-cream">
+                  <button onClick={() => reincluir(c.email)} className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62 hover:text-manso-cream">
                     Reincluir
                   </button>
                 ) : (
-                  <button onClick={() => excluir(c.email)} title="Excluir de mailing" className="text-manso-cream/30 hover:text-yellow-400">
+                  <button onClick={() => excluir(c.email)} title="Excluir de mailing" className="text-manso-cream/62 hover:text-yellow-400">
                     <XCircle size={13} />
                   </button>
                 )}
                 {c.fuente === 'newsletter' && (
-                  <button onClick={() => darDeBaja(c.email)} className="text-[8px] font-black uppercase tracking-widest text-manso-cream/30 hover:text-red-400">
+                  <button onClick={() => darDeBaja(c.email)} className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62 hover:text-red-400">
                     Dar de baja
                   </button>
                 )}

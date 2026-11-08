@@ -64,7 +64,7 @@ const ESTILO_ESTADO: Record<EstadoVoluntario, string> = {
   contactado: 'bg-manso-cream/15 text-manso-cream',
   confirmado: 'bg-manso-olive/30 text-manso-olive',
   en_espera: 'bg-manso-cream/10 text-manso-cream/60',
-  descartado: 'bg-manso-cream/5 text-manso-cream/30 line-through',
+  descartado: 'bg-manso-cream/5 text-manso-cream/62 line-through',
 };
 
 const fechaHora = (iso: string) =>
@@ -254,7 +254,7 @@ export function FestivalVoluntariosAdmin() {
       <FestivalVoluntariosLink />
 
       {errorCarga && (
-        <p className="text-[12px] text-manso-terra bg-manso-terra/10 border border-manso-terra/30 rounded-xl p-3">
+        <p className="text-[13px] text-manso-terra bg-manso-terra/10 border border-manso-terra/30 rounded-xl p-3">
           No se pudieron leer las postulaciones: {errorCarga}. ¿Corrió <code>supabase/migration_festival_voluntarios.sql</code>?
         </p>
       )}
@@ -265,7 +265,7 @@ export function FestivalVoluntariosAdmin() {
           <span className={TITULO}>
             Convocatoria · {abiertaHoy ? 'abierta' : 'cerrada'}
           </span>
-          <ChevronDown size={14} className="text-manso-cream/40" />
+          <ChevronDown size={14} className="text-manso-cream/62" />
         </summary>
 
         <div className="space-y-4 pt-2">
@@ -352,7 +352,7 @@ export function FestivalVoluntariosAdmin() {
               key={e}
               type="button"
               onClick={() => setFiltroEstado(e)}
-              className={`px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-widest transition-colors ${
+              className={`px-3 py-1.5 rounded-lg text-[12px] font-black uppercase tracking-widest transition-colors ${
                 filtroEstado === e ? 'bg-manso-cream text-manso-black' : 'bg-manso-cream/5 text-manso-cream/60 hover:bg-manso-cream/10'
               }`}
             >
@@ -457,7 +457,7 @@ function Tarjeta({
   const dato = (etiqueta: string, valor: React.ReactNode) =>
     valor ? (
       <div>
-        <dt className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40">{etiqueta}</dt>
+        <dt className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62">{etiqueta}</dt>
         <dd className="text-[13px] text-manso-cream/90 whitespace-pre-line break-words">{valor}</dd>
       </div>
     ) : null;
@@ -467,29 +467,29 @@ function Tarjeta({
       <button type="button" onClick={alternar} aria-expanded={abierta} className="w-full text-left p-4 flex items-start gap-3">
         <div className="min-w-0 flex-1 space-y-1">
           <div className="flex flex-wrap items-center gap-2">
-            <span className="text-sm font-black text-manso-cream">{f.nombre}</span>
-            <span className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest ${ESTILO_ESTADO[f.estado]}`}>
+            <span className="text-[15px] font-black text-manso-cream">{f.nombre}</span>
+            <span className={`px-2 py-0.5 rounded-md text-[12px] font-black uppercase tracking-widest ${ESTILO_ESTADO[f.estado]}`}>
               {ETIQUETA_ESTADO[f.estado]}
             </span>
             {f.duplicado && (
-              <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest bg-manso-cream/10 text-manso-cream/70" title="Ese mail ya se había anotado antes">
+              <span className="px-2 py-0.5 rounded-md text-[12px] font-black uppercase tracking-widest bg-manso-cream/10 text-manso-cream/70" title="Ese mail ya se había anotado antes">
                 Duplicado
               </span>
             )}
             {!f.mail_confirmacion_at && (
-              <span className="px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-widest bg-manso-terra/15 text-manso-terra" title="No salió el mail de confirmación a la persona">
+              <span className="px-2 py-0.5 rounded-md text-[12px] font-black uppercase tracking-widest bg-manso-terra/15 text-manso-terra" title="No salió el mail de confirmación a la persona">
                 Sin mail
               </span>
             )}
           </div>
-          <p className="text-[12px] text-manso-cream/60 truncate">{f.areas.join(' · ')}</p>
-          <p className="text-[11px] text-manso-cream/40">
+          <p className="text-[13px] text-manso-cream/60 truncate">{f.areas.join(' · ')}</p>
+          <p className="text-[13px] text-manso-cream/62">
             {fechaHora(f.created_at)}{f.ciudad ? ` · ${f.ciudad}` : ''}
             {edad !== null && ` · ${edad} años`}
             {f.idiomas.length > 0 && ` · ${f.idiomas.join(', ')}`}
           </p>
         </div>
-        <ChevronDown size={16} className={`mt-1 shrink-0 text-manso-cream/40 transition-transform ${abierta ? 'rotate-180' : ''}`} />
+        <ChevronDown size={16} className={`mt-1 shrink-0 text-manso-cream/62 transition-transform ${abierta ? 'rotate-180' : ''}`} />
       </button>
 
       {abierta && (

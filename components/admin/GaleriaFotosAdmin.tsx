@@ -87,7 +87,7 @@ export function GaleriaFotosAdmin({ fotos, onChange, bucket = 'flyers', folder, 
             } ${arrastrada === i ? 'opacity-40' : ''}`}
           >
             <img src={url} alt="" draggable={false} className="w-full h-28 object-cover pointer-events-none" />
-            <span className="absolute top-1.5 left-1.5 px-1.5 rounded bg-black/70 text-[10px] font-black text-manso-cream">
+            <span className="absolute top-1.5 left-1.5 px-1.5 rounded bg-black/70 text-[13px] font-black text-manso-cream">
               {i + 1}
             </span>
             <div className="absolute bottom-1.5 right-1.5 flex gap-1 bg-black/60 rounded-lg">
@@ -112,20 +112,20 @@ export function GaleriaFotosAdmin({ fotos, onChange, bucket = 'flyers', folder, 
           {subiendo ? (
             <>
               <Loader2 size={16} className="text-manso-terra animate-spin" />
-              <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/50">
+              <span className="text-[12px] font-black uppercase tracking-widest text-manso-cream/50">
                 Subiendo {subiendo.hecho + 1} de {subiendo.total}
               </span>
             </>
           ) : (
             <>
-              <Upload size={16} className="text-manso-cream/40" />
-              <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/40">Sumar fotos</span>
+              <Upload size={16} className="text-manso-cream/62" />
+              <span className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62">Sumar fotos</span>
             </>
           )}
           <input type="file" accept="image/*" multiple className="hidden" onChange={subir} disabled={Boolean(subiendo)} />
         </label>
       </div>
-      {error && <p className="mt-2 text-[10px] text-red-400">{error}</p>}
+      {error && <p className="mt-2 text-[13px] text-red-400">{error}</p>}
     </div>
   );
 }

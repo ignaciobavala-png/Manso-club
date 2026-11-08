@@ -19,7 +19,7 @@ type SectionId = 'nuevo' | 'contenidos' | 'canal' | 'categorias';
 const MODO_BADGE: Record<Modo, { label: string; icon: React.ReactNode; style: string }> = {
   en_vivo: { label: 'En vivo',  icon: <Wifi size={9} />,      style: 'bg-red-500/10 border-red-500/30 text-red-400' },
   grabado:  { label: 'Grabado', icon: <Play size={9} />,      style: 'bg-manso-olive/10 border-manso-olive/30 text-manso-olive' },
-  apagado:  { label: 'Apagado', icon: <PowerOff size={9} />,  style: 'bg-manso-cream/5 border-manso-cream/10 text-manso-cream/30' },
+  apagado:  { label: 'Apagado', icon: <PowerOff size={9} />,  style: 'bg-manso-cream/5 border-manso-cream/10 text-manso-cream/62' },
 };
 
 export function StreamingAdmin({ refreshTrigger }: StreamingAdminProps) {
@@ -89,7 +89,7 @@ export function StreamingAdmin({ refreshTrigger }: StreamingAdminProps) {
       icon: <Video size={14} />,
       desc: 'Todos los videos por audiencia',
       badge: totalContenidos > 0 ? (
-        <span className="text-[8px] font-black px-2 py-0.5 rounded-full bg-manso-cream/10 border border-manso-cream/10 text-manso-cream/40">
+        <span className="text-[12px] font-black px-2 py-0.5 rounded-full bg-manso-cream/10 border border-manso-cream/10 text-manso-cream/62">
           {totalContenidos}
         </span>
       ) : undefined,
@@ -100,7 +100,7 @@ export function StreamingAdmin({ refreshTrigger }: StreamingAdminProps) {
       icon: <Radio size={14} />,
       desc: 'Qué ven los usuarios al entrar a /streaming',
       badge: modo ? (
-        <span className={`inline-flex items-center gap-1 text-[8px] font-black px-2 py-0.5 rounded-full border ${MODO_BADGE[modo].style}`}>
+        <span className={`inline-flex items-center gap-1 text-[12px] font-black px-2 py-0.5 rounded-full border ${MODO_BADGE[modo].style}`}>
           {MODO_BADGE[modo].icon}
           {MODO_BADGE[modo].label}
         </span>
@@ -133,20 +133,20 @@ export function StreamingAdmin({ refreshTrigger }: StreamingAdminProps) {
               className="w-full flex items-center justify-between px-5 py-4 hover:bg-manso-cream/5 transition-colors"
             >
               <div className="flex items-center gap-3 min-w-0">
-                <span className="text-manso-cream/40 flex-shrink-0">{section.icon}</span>
+                <span className="text-manso-cream/62 flex-shrink-0">{section.icon}</span>
                 <div className="min-w-0 text-left">
                   <div className="flex items-center gap-2">
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-manso-cream">
+                    <span className="text-[13px] font-black uppercase tracking-[0.2em] text-manso-cream">
                       {section.label}
                     </span>
                     {section.badge}
                   </div>
-                  <p className="text-[8px] text-manso-cream/25 tracking-wide mt-0.5">{section.desc}</p>
+                  <p className="text-[12px] text-manso-cream/62 tracking-wide mt-0.5">{section.desc}</p>
                 </div>
               </div>
               <ChevronDown
                 size={14}
-                className={`text-manso-cream/30 transition-transform duration-200 flex-shrink-0 ml-3 ${isOpen ? 'rotate-180' : ''}`}
+                className={`text-manso-cream/62 transition-transform duration-200 flex-shrink-0 ml-3 ${isOpen ? 'rotate-180' : ''}`}
               />
             </button>
 

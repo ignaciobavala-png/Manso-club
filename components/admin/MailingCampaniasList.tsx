@@ -33,7 +33,7 @@ const ESTADOS_NO_RECIBIDOS = ['no_enviado', 'failed'];
 
 const ESTADO_LABEL: Record<string, { texto: string; clase: string }> = {
   delivered: { texto: 'Entregado', clase: 'text-manso-olive' },
-  enviado: { texto: 'Sin confirmar', clase: 'text-manso-cream/40' },
+  enviado: { texto: 'Sin confirmar', clase: 'text-manso-cream/62' },
   opened: { texto: 'Abierto', clase: 'text-blue-400' },
   bounced: { texto: 'Rebotó', clase: 'text-yellow-400' },
   failed: { texto: 'Falló', clase: 'text-red-400' },
@@ -352,14 +352,14 @@ export function MailingCampaniasList({ refreshTrigger }: Props) {
   return (
     <div className="bg-manso-cream/5 rounded-[2rem] border border-manso-cream/10 p-6">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-sm font-black uppercase tracking-widest text-manso-cream">
+        <h3 className="text-[15px] font-black uppercase tracking-widest text-manso-cream">
           Campañas ({campanias.length})
         </h3>
       </div>
 
       {feedback && (
         <div
-          className={`mb-4 p-3 rounded-xl text-xs ${
+          className={`mb-4 p-3 rounded-xl text-[13px] ${
             feedback.startsWith('⚠️') || feedback.startsWith('Error')
               ? 'bg-red-500/15 border border-red-500/40 text-red-200'
               : 'bg-manso-cream/10 text-manso-cream'
@@ -370,9 +370,9 @@ export function MailingCampaniasList({ refreshTrigger }: Props) {
       )}
 
       {loading ? (
-        <p className="text-xs text-manso-cream/30 uppercase tracking-widest">Cargando...</p>
+        <p className="text-[13px] text-manso-cream/62 uppercase tracking-widest">Cargando...</p>
       ) : campanias.length === 0 ? (
-        <p className="text-xs text-manso-cream/30 uppercase tracking-widest">Sin campañas aún</p>
+        <p className="text-[13px] text-manso-cream/62 uppercase tracking-widest">Sin campañas aún</p>
       ) : (
         <div className="space-y-2 max-h-[500px] overflow-y-auto">
           {campanias.map((c) => {
@@ -381,8 +381,8 @@ export function MailingCampaniasList({ refreshTrigger }: Props) {
               <div key={c.id} className="py-3 px-3 rounded-xl bg-manso-cream/5 border border-manso-cream/5">
                 <div className="flex items-center justify-between">
                   <div className="min-w-0">
-                    <p className="text-sm text-manso-cream/90 truncate">{c.asunto}</p>
-                    <p className="text-[9px] font-black uppercase tracking-widest text-manso-cream/30 flex items-center gap-1.5 mt-0.5">
+                    <p className="text-[15px] text-manso-cream/90 truncate">{c.asunto}</p>
+                    <p className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62 flex items-center gap-1.5 mt-0.5">
                       {c.estado === 'enviada' && <CheckCircle2 size={10} className="text-green-400" />}
                       {c.estado === 'programada' && <CalendarClock size={10} className="text-manso-terra" />}
                       {c.estado === 'borrador' && <Clock size={10} />}
@@ -397,7 +397,7 @@ export function MailingCampaniasList({ refreshTrigger }: Props) {
                     <div className="flex items-center gap-2 shrink-0">
                       <button
                         onClick={() => setPruebaAbiertaId(pruebaAbiertaId === c.id ? null : c.id)}
-                        className="p-1.5 text-manso-cream/30 hover:text-manso-cream"
+                        className="p-1.5 text-manso-cream/62 hover:text-manso-cream"
                         title="Enviar prueba a un email"
                       >
                         <FlaskConical size={12} />
@@ -405,7 +405,7 @@ export function MailingCampaniasList({ refreshTrigger }: Props) {
                       <button
                         onClick={() => enviar(c)}
                         disabled={enviandoId === c.id}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-manso-terra hover:bg-manso-terra/90 text-manso-cream text-[9px] font-black uppercase tracking-widest transition-colors disabled:opacity-50"
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-manso-terra hover:bg-manso-terra/90 text-manso-cream text-[12px] font-black uppercase tracking-widest transition-colors disabled:opacity-50"
                       >
                         {enviandoId === c.id ? <Loader2 size={12} className="animate-spin" /> : <Send size={12} />}
                         {c.estado === 'programada' ? 'Enviar ya' : 'Enviar'}
@@ -413,23 +413,23 @@ export function MailingCampaniasList({ refreshTrigger }: Props) {
                       {c.estado === 'programada' ? (
                         <button
                           onClick={() => cancelarProgramacion(c)}
-                          className="p-1.5 text-manso-cream/30 hover:text-yellow-400"
+                          className="p-1.5 text-manso-cream/62 hover:text-yellow-400"
                           title="Cancelar programación"
                         >
                           <XCircle size={12} />
                         </button>
                       ) : (
-                        <button onClick={() => eliminar(c)} className="p-1.5 text-manso-cream/30 hover:text-red-400">
+                        <button onClick={() => eliminar(c)} className="p-1.5 text-manso-cream/62 hover:text-red-400">
                           <Trash2 size={12} />
                         </button>
                       )}
                     </div>
                   ) : (
                     <div className="flex items-center gap-2 shrink-0">
-                      <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/30">
+                      <span className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62">
                         {c.sent_at && new Date(c.sent_at).toLocaleDateString('es-AR')}
                       </span>
-                      <button onClick={() => eliminar(c)} className="p-1.5 text-manso-cream/30 hover:text-red-400" title="Eliminar (borra el historial de este envío)">
+                      <button onClick={() => eliminar(c)} className="p-1.5 text-manso-cream/62 hover:text-red-400" title="Eliminar (borra el historial de este envío)">
                         <Trash2 size={12} />
                       </button>
                     </div>
@@ -442,12 +442,12 @@ export function MailingCampaniasList({ refreshTrigger }: Props) {
                       value={pruebaEmails[c.id] ?? ''}
                       onChange={(e) => setPruebaEmails({ ...pruebaEmails, [c.id]: e.target.value })}
                       placeholder="email@ejemplo.com, otro@ejemplo.com"
-                      className="flex-1 bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-1.5 text-xs text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra"
+                      className="flex-1 bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-1.5 text-[13px] text-manso-cream placeholder:text-manso-cream/62 focus:outline-none focus:border-manso-terra"
                     />
                     <button
                       onClick={() => enviarPrueba(c)}
                       disabled={enviandoPruebaId === c.id}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-manso-cream/10 hover:bg-manso-cream/20 text-manso-cream text-[9px] font-black uppercase tracking-widest transition-colors disabled:opacity-50 shrink-0"
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-manso-cream/10 hover:bg-manso-cream/20 text-manso-cream text-[12px] font-black uppercase tracking-widest transition-colors disabled:opacity-50 shrink-0"
                     >
                       {enviandoPruebaId === c.id ? <Loader2 size={12} className="animate-spin" /> : <FlaskConical size={12} />}
                       Mandar prueba
@@ -457,27 +457,27 @@ export function MailingCampaniasList({ refreshTrigger }: Props) {
 
                 {c.estado === 'enviada' && m && (
                   <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 pt-2 border-t border-manso-cream/5">
-                    <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-manso-cream/50">
+                    <span className="flex items-center gap-1 text-[12px] font-black uppercase tracking-widest text-manso-cream/50">
                       <MailCheck size={11} className="text-manso-olive" /> {m.delivered} entregados
                     </span>
-                    <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-manso-cream/50">
+                    <span className="flex items-center gap-1 text-[12px] font-black uppercase tracking-widest text-manso-cream/50">
                       <MailOpen size={11} className="text-blue-400" /> {m.opened} abiertos
                     </span>
-                    <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-manso-cream/50">
+                    <span className="flex items-center gap-1 text-[12px] font-black uppercase tracking-widest text-manso-cream/50">
                       <MousePointerClick size={11} className="text-manso-terra" /> {m.clicked} clicks
                     </span>
-                    <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-manso-cream/50">
+                    <span className="flex items-center gap-1 text-[12px] font-black uppercase tracking-widest text-manso-cream/50">
                       <MailWarning size={11} className="text-yellow-400" /> {m.bounced} rebotados
                     </span>
-                    <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-manso-cream/50">
+                    <span className="flex items-center gap-1 text-[12px] font-black uppercase tracking-widest text-manso-cream/50">
                       <MailX size={11} className="text-red-400" /> {m.failed} fallidos
                     </span>
                     {m.noEnviado > 0 && (
-                      <span className="flex items-center gap-1 text-[9px] font-black uppercase tracking-widest text-red-300">
+                      <span className="flex items-center gap-1 text-[12px] font-black uppercase tracking-widest text-red-300">
                         <MailQuestion size={11} className="text-red-400" /> {m.noEnviado} nunca salieron
                       </span>
                     )}
-                    <span className="text-[9px] font-black uppercase tracking-widest text-manso-cream/20">
+                    <span className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62">
                       de {m.total} destinatarios
                     </span>
                   </div>
@@ -487,14 +487,14 @@ export function MailingCampaniasList({ refreshTrigger }: Props) {
                   <div className="flex flex-wrap items-center gap-2 mt-2">
                     <button
                       onClick={() => toggleDetalle(c)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-manso-cream/10 hover:bg-manso-cream/20 text-manso-cream text-[9px] font-black uppercase tracking-widest transition-colors"
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-manso-cream/10 hover:bg-manso-cream/20 text-manso-cream text-[12px] font-black uppercase tracking-widest transition-colors"
                     >
                       <Users size={11} />
                       {detalleAbiertoId === c.id ? 'Ocultar detalle' : 'Ver a quién le llegó'}
                     </button>
                     <button
                       onClick={() => descargarCsv(c)}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-manso-cream/10 hover:bg-manso-cream/20 text-manso-cream text-[9px] font-black uppercase tracking-widest transition-colors"
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-manso-cream/10 hover:bg-manso-cream/20 text-manso-cream text-[12px] font-black uppercase tracking-widest transition-colors"
                     >
                       <Download size={11} /> CSV
                     </button>
@@ -502,7 +502,7 @@ export function MailingCampaniasList({ refreshTrigger }: Props) {
                       <button
                         onClick={() => reenviarNoRecibidos(c)}
                         disabled={reenviandoId === c.id}
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-manso-terra hover:bg-manso-terra/90 text-manso-cream text-[9px] font-black uppercase tracking-widest transition-colors disabled:opacity-50"
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-manso-terra hover:bg-manso-terra/90 text-manso-cream text-[12px] font-black uppercase tracking-widest transition-colors disabled:opacity-50"
                       >
                         {reenviandoId === c.id ? (
                           <Loader2 size={11} className="animate-spin" />
@@ -518,14 +518,14 @@ export function MailingCampaniasList({ refreshTrigger }: Props) {
                 {detalleAbiertoId === c.id && (
                   <div className="mt-2 pt-2 border-t border-manso-cream/5">
                     {detalleCargando ? (
-                      <p className="text-[10px] uppercase tracking-widest text-manso-cream/30">Cargando destinatarios...</p>
+                      <p className="text-[13px] uppercase tracking-widest text-manso-cream/62">Cargando destinatarios...</p>
                     ) : (
                       <>
                         <input
                           value={detalleFiltro}
                           onChange={(e) => setDetalleFiltro(e.target.value)}
                           placeholder="Buscar email o estado..."
-                          className="w-full mb-2 bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-1.5 text-xs text-manso-cream placeholder:text-manso-cream/30 focus:outline-none focus:border-manso-terra"
+                          className="w-full mb-2 bg-manso-cream/5 border border-manso-cream/10 rounded-lg px-3 py-1.5 text-[13px] text-manso-cream placeholder:text-manso-cream/62 focus:outline-none focus:border-manso-terra"
                         />
                         <div className="max-h-64 overflow-y-auto space-y-0.5">
                           {detalle
@@ -538,19 +538,19 @@ export function MailingCampaniasList({ refreshTrigger }: Props) {
                               );
                             })
                             .map((e) => {
-                              const label = ESTADO_LABEL[e.estado] ?? { texto: e.estado, clase: 'text-manso-cream/40' };
+                              const label = ESTADO_LABEL[e.estado] ?? { texto: e.estado, clase: 'text-manso-cream/62' };
                               return (
                                 <div
                                   key={e.destinatario}
                                   className="flex items-center justify-between gap-3 py-1 px-2 rounded-lg odd:bg-manso-cream/[0.03]"
                                 >
-                                  <span className="text-[11px] text-manso-cream/70 truncate" title={e.error_detalle ?? undefined}>
+                                  <span className="text-[13px] text-manso-cream/70 truncate" title={e.error_detalle ?? undefined}>
                                     {e.destinatario}
                                   </span>
                                   <span className="flex items-center gap-2 shrink-0">
                                     {e.opened_at && <MailOpen size={10} className="text-blue-400" />}
                                     {e.clicked_at && <MousePointerClick size={10} className="text-manso-terra" />}
-                                    <span className={`text-[9px] font-black uppercase tracking-widest ${label.clase}`}>
+                                    <span className={`text-[12px] font-black uppercase tracking-widest ${label.clase}`}>
                                       {label.texto}
                                     </span>
                                   </span>
