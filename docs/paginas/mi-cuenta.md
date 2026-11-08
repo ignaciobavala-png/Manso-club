@@ -101,4 +101,4 @@ La membresía viene anidada (`membresiaRaw.membresias`). Se extraen: `nombre`, `
 ## Relación con otros docs
 
 - La autenticación — `sistemas/autenticacion.md`
-- El middleware protege esta ruta — `middleware.ts:76-78`
+- El middleware protege esta ruta — `proxy.ts:76-78`

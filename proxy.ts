@@ -1,7 +1,7 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let response = NextResponse.next({
     request: { headers: request.headers },
   })
@@ -39,7 +39,6 @@ export async function middleware(request: NextRequest) {
   const isLoginRoute = pathname === '/login'
   const isRegistroRoute = pathname === '/registro'
   const isMiCuentaRoute = pathname.startsWith('/mi-cuenta')
-  const isStreamingRoute = pathname.startsWith('/streaming')
   const forceLogin = request.nextUrl.searchParams.get('force') === 'true'
 
   const getUserRole = async (userId: string): Promise<string | null> => {

@@ -7,7 +7,7 @@
 - Actualizar: `app/actualizar-contrasena/page.tsx:1-144`
 - Callback: `app/auth/callback/route.ts:1-29`
 - OAuth: `components/GoogleSignInButton.tsx`
-- Middleware: `middleware.ts:1-109`
+- Middleware: `proxy.ts:1-109`
 
 ---
 
@@ -144,7 +144,7 @@ Submit → `registroAction` (server action, en `app/registro/actions.ts`):
 ### Protección del middleware
 
 ```typescript
-// middleware.ts:52-58
+// proxy.ts:52-58
 if (user && !isActualizarContrasenaRoute) {
   const { data: pending } = await supabase.rpc('get_password_reset_pending', { user_id: user.id });
   if (pending === true) {

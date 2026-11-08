@@ -6,7 +6,7 @@
     "dev": "next dev --webpack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "eslint .",
     "email": "email dev --dir emails",
     "mails:preview": "tsx scripts/preview-institucionales.tsx"
   },

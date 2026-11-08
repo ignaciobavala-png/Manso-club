@@ -11,12 +11,10 @@ pnpm start        # Start production server
 pnpm email        # React Email preview server for the templates in emails/
 pnpm mails:preview # Render the institucionales set to one static HTML file
 npx tsc --noEmit  # Type check
-npx eslint .      # Lint — `pnpm lint` is broken (see below)
+pnpm lint         # Lint (eslint .)
 ```
 
-`pnpm lint` runs `next lint`, which Next 16 removed: it fails with "Invalid
-project directory provided, no such directory: ./lint". Use `npx eslint .`
-until the script is migrated.
+`pnpm lint` ahora corre `eslint .` (Next 16 sacó `next lint`). Línea base al 08/11/2026: 223 errores y 14 warnings, casi todos `no-explicit-any` y `no-unused-vars`; se bajan por fases, no de golpe.
 
 ## Architecture
 
@@ -30,7 +28,7 @@ until the script is migrated.
 
 ### Auth & Middleware
 
-`middleware.ts` protects `/mansoadm/*`. It uses Supabase SSR to check session, then calls an RPC (`get_user_roles`) to verify admin role. Login at `/login` redirects based on role.
+`proxy.ts` (antes `middleware.ts`, renombrado en Next 16; exporta `proxy`) protects `/mansoadm/*`. It uses Supabase SSR to check session, then calls an RPC (`get_user_roles`) to verify admin role. Login at `/login` redirects based on role.
 
 ### Key Directories
 

@@ -12,7 +12,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: [
           '/mansoadm/',
           '/api/',
-          '/setup-about-us/',
           '/mi-cuenta',
           '/checkout',
           '/ticket/',
