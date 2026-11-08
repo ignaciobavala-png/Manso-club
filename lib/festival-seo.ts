@@ -9,8 +9,22 @@ import type { FestivalConfig } from '@/lib/types/festival';
  */
 export const MARCA_SEO = 'BLUR';
 
-/** Imagen al compartir: el banner del panel o la foto del hero por defecto. 1200×630 no hay: va tal cual. */
-const IMAGEN_POR_DEFECTO = '/blur/hero-cabina.jpg';
+/** Foto del hero por defecto, si el panel no tiene ni flyer ni banner. */
+export const IMAGEN_POR_DEFECTO = '/blur/hero-cabina.jpg';
+
+/**
+ * Imagen al compartir. Con flyer cargado en el panel la arma `/blur/og` (el
+ * flyer entero en 1200×630: WhatsApp recorta lo vertical). El `v` es el nombre
+ * del archivo: al cambiar el flyer cambia la URL y WhatsApp vuelve a bajarla
+ * en vez de mostrar la vieja cacheada. Sin flyer: el banner, o la foto por defecto.
+ */
+function imagenAlCompartir(config: FestivalConfig | null) {
+  if (config?.flyer_url) {
+    const version = encodeURIComponent(config.flyer_url.split('/').pop() ?? '');
+    return { url: `/blur/og?v=${version}`, width: 1200, height: 630 };
+  }
+  return { url: config?.banner_url || IMAGEN_POR_DEFECTO };
+}
 
 const FECHA_LARGA = new Intl.DateTimeFormat('es-AR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
 
@@ -38,7 +52,7 @@ export function metadataFestival(config: FestivalConfig | null): Metadata {
   const titulo = tituloFestival(config?.nombre);
   const resumen = config ? resumenFestival(config) : '';
   const desc = descripcion([config?.bajada, resumen].filter(Boolean).join(' — ')) ?? `${MARCA_SEO}, festival de Manso Club en Buenos Aires.`;
-  const imagen = config?.banner_url || IMAGEN_POR_DEFECTO;
+  const imagen = imagenAlCompartir(config);
 
   return {
     title: { default: titulo, template: `%s — ${MARCA_SEO}` },
@@ -48,9 +62,9 @@ export function metadataFestival(config: FestivalConfig | null): Metadata {
     openGraph: og({
       title: titulo,
       description: desc,
-      images: [{ url: imagen, alt: titulo }],
+      images: [{ ...imagen, alt: titulo }],
     }),
-    twitter: { card: 'summary_large_image', title: titulo, description: desc, images: [imagen] },
+    twitter: { card: 'summary_large_image', title: titulo, description: desc, images: [imagen.url] },
   };
 }
 
