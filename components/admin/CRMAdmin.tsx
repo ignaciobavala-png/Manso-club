@@ -1,14 +1,13 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
-import { ChevronDown, BarChart2, Users, GitBranch, Calendar, DollarSign, RefreshCw, FileDown } from 'lucide-react';
+import { ChevronDown, Users, GitBranch, Calendar, DollarSign, RefreshCw, FileDown } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
-import { CRMResumen } from './CRMResumen';
 import { CRMContactos } from './CRMContactos';
 import { CRMPipeline } from './CRMPipeline';
 import { CRMEventos } from './CRMEventos';
 import { CRMFinanzas } from './CRMFinanzas';
-import { CRMKPIStrip } from './CRMKPIStrip';
+import { CRMHoy } from './CRMHoy';
 
 export interface CRMUser {
   id: string;
@@ -315,23 +314,14 @@ ${proximos.length === 0
         </div>
       </div>
 
-      {/* KPI Strip — siempre visible */}
-      <CRMKPIStrip users={users} events={events} mrr={mrr} ticketsRevenue={ticketsRevenue} loading={loading} />
-
-      {/* Resumen — siempre visible, no colapsable */}
-      <div className="bg-manso-cream/5 border border-manso-cream/10 rounded-2xl px-5 py-5">
-        <div className="flex items-center gap-3 mb-5">
-          <BarChart2 size={14} className="text-manso-cream/40" />
-          <span className="text-[10px] font-black uppercase tracking-[0.2em] text-manso-cream">Resumen</span>
+      {/* Vista de hoy: tres números y a quién escribirle */}
+      {loading ? (
+        <div className="flex items-center justify-center py-10 mb-5">
+          <div className="w-6 h-6 border-2 border-manso-terra/30 border-t-manso-terra rounded-full animate-spin" />
         </div>
-        {loading ? (
-          <div className="flex items-center justify-center py-8">
-            <div className="w-6 h-6 border-2 border-manso-terra/30 border-t-manso-terra rounded-full animate-spin" />
-          </div>
-        ) : (
-          <CRMResumen users={users} />
-        )}
-      </div>
+      ) : (
+        <CRMHoy users={users} events={events} mrr={mrr} />
+      )}
 
       {/* Acordeones */}
       {SECTIONS.map(section => {
