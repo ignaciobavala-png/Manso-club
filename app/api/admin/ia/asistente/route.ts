@@ -33,9 +33,10 @@ export async function POST(request: Request) {
   const hoy = new Intl.DateTimeFormat('es-AR', { dateStyle: 'full', timeZone: 'America/Argentina/Buenos_Aires' }).format(new Date());
 
   try {
+    const { data: perfil } = await auth.supabase.from('user_profiles').select('display_name').eq('id', auth.userId).maybeSingle();
     const result = await generateText({
       model: getModeloIA(),
-      system: promptAsistente({ hoy, persona: auth.email, emailEquipo: equipo ?? 'el mail de la persona que te habla' }),
+      system: promptAsistente({ hoy, persona: perfil?.display_name || auth.email, emailEquipo: equipo ?? 'el mail de la persona que te habla' }),
       messages: entrada.data.mensajes as ModelMessage[],
       tools: herramientas,
       stopWhen: stepCountIs(6),
@@ -50,7 +51,7 @@ export async function POST(request: Request) {
       user_id: auth.userId,
       evento: propuestasEmitidas.length ? 'propuesta' : 'consulta',
       herramienta: usadas.join(',') || null,
-      detalle: { pregunta: entrada.data.mensajes[entrada.data.mensajes.length - 1].content.slice(0, 300), propuestas: propuestasEmitidas.map(p => p.propuesta.para) },
+      detalle: { pregunta: entrada.data.mensajes[entrada.data.mensajes.length - 1].content.slice(0, 300), propuestas: propuestasEmitidas.map(p => `${p.accion.tipo}:${p.accion.tipo === 'mail' ? p.accion.datos.para : p.accion.datos.titulo}`) },
     });
 
     return NextResponse.json({

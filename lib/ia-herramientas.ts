@@ -1,9 +1,18 @@
 import { tool } from 'ai';
 import { z } from 'zod';
 import type { SupabaseClient } from '@supabase/supabase-js';
-import { firmarPropuesta, type PropuestaMail } from '@/lib/ia-aprobacion';
+import { firmarAccion, type AccionFirmada } from '@/lib/ia-aprobacion';
 
 export const MAX_PROPUESTAS = 5;
+
+/** Las fotos del chat se suben al bucket público "flyers"; no se acepta ninguna otra URL de imagen. */
+export function esImagenPropia(url: string): boolean {
+  const base = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  return !!base && url.startsWith(`${base}/storage/v1/object/public/flyers/`);
+}
+
+export const FECHA_LOCAL = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/;
+
 
 /**
  * Tablas que el asistente puede leer con leer_tabla. Quedan afuera a propósito
@@ -61,7 +70,7 @@ export async function destinatarioValido(supabase: SupabaseClient, para: string,
 export function crearHerramientas(ctx: { supabase: SupabaseClient; userId: string; email: string | null }) {
   const { supabase, userId } = ctx;
   const equipo = emailEquipo(ctx.email);
-  const propuestasEmitidas: ReturnType<typeof firmarPropuesta>[] = [];
+  const propuestasEmitidas: AccionFirmada[] = [];
 
   const herramientas = {
     membresias: tool({
@@ -170,10 +179,37 @@ export function crearHerramientas(ctx: { supabase: SupabaseClient; userId: strin
         if (!(await destinatarioValido(supabase, destino, equipo))) {
           return { error: 'Ese mail no figura en el sistema. Solo se puede escribir a miembros, solicitantes, proponentes o al equipo.' };
         }
-        const p: PropuestaMail = { para: destino, asunto: asunto.trim(), texto: texto.trim() };
-        const firmada = firmarPropuesta(userId, p);
-        propuestasEmitidas.push(firmada);
+        propuestasEmitidas.push(firmarAccion(userId, { tipo: 'mail', datos: { para: destino, asunto: asunto.trim(), texto: texto.trim() } }));
         return { ok: true, mensaje: 'Borrador listo; la persona decide si lo envía.' };
+      },
+    }),
+
+    proponer_evento: tool({
+      description: 'Deja armado un evento nuevo para que la persona lo revise y lo cree con un botón. NO crea nada. Usalo cuando pidan cargar/crear un evento. Si falta título o fecha, preguntá antes.',
+      inputSchema: z.object({
+        titulo: z.string().min(3).max(120),
+        fecha: z.string().regex(FECHA_LOCAL).describe('Inicio, hora de Buenos Aires, formato 2026-11-22T16:00'),
+        fecha_fin: z.string().regex(FECHA_LOCAL).optional().describe('Fin, mismo formato. Solo si te lo dijeron.'),
+        descripcion: z.string().max(1500).optional().describe('Solo con lo que dijeron; no inventes detalles.'),
+        categoria: z.enum(['Concierto', 'Festival', 'Workshop', 'Exposición', 'Show', 'Torneo', 'Otro']).optional(),
+        link_tickets: z.string().url().optional(),
+        imagen_url: z.string().url().optional().describe('URL de la foto adjunta en el chat ("[Foto adjunta: URL]"). Copiala tal cual.'),
+      }),
+      execute: async (e) => {
+        if (propuestasEmitidas.length >= MAX_PROPUESTAS) return { error: `Máximo ${MAX_PROPUESTAS} acciones por respuesta.` };
+        if (e.imagen_url && !esImagenPropia(e.imagen_url)) return { error: 'Esa imagen no es una foto subida desde el chat.' };
+        const inicio = new Date(`${e.fecha}:00-03:00`);
+        if (isNaN(inicio.getTime())) return { error: 'Fecha inválida.' };
+        if (e.fecha_fin && new Date(`${e.fecha_fin}:00-03:00`) < inicio) return { error: 'El fin es anterior al inicio.' };
+        propuestasEmitidas.push(firmarAccion(userId, {
+          tipo: 'evento',
+          datos: {
+            titulo: e.titulo.trim(), fecha: e.fecha, fecha_fin: e.fecha_fin ?? null,
+            descripcion: e.descripcion?.trim() || null, categoria: e.categoria ?? null,
+            link_tickets: e.link_tickets ?? null, imagen_url: e.imagen_url ?? null,
+          },
+        }));
+        return { ok: true, mensaje: 'Evento listo para revisar; la persona decide si lo crea.' };
       },
     }),
   };
