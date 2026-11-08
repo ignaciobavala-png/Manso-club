@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { AsistenteRedaccion } from './AsistenteRedaccion';
 import { supabase } from '@/lib/supabase';
 import { CompactImageUploader } from './CompactImageUploader';
 import { AUDIENCIAS, type Audiencia } from '@/lib/mailing-audiencias';
@@ -636,6 +637,9 @@ export function FormMailingCampania({ onSaved }: Props) {
       out.push({ mensaje: 'El pre-header no puede repetir el asunto — escribí un texto que lo complemente' });
     }
     if (bloques.length === 0) out.push({ mensaje: 'Agregá al menos un bloque' });
+    if (/\[COMPLETAR/i.test(asunto) || /\[COMPLETAR/i.test(preheader)) {
+      out.push({ mensaje: 'El asunto o el pre-header todavía tienen un [COMPLETAR] de la IA: reemplazalo por el dato real' });
+    }
 
     for (const [i, b] of bloques.entries()) {
       const n = i + 1;
@@ -657,6 +661,9 @@ export function FormMailingCampania({ onSaved }: Props) {
       }
       if (b.tipo === 'texto' && !b.contenido.trim()) {
         push(`El texto del bloque ${n} está vacío`);
+      }
+      if (b.tipo === 'texto' && /\[COMPLETAR/i.test(b.contenido)) {
+        push(`El texto del bloque ${n} todavía tiene un [COMPLETAR]: reemplazalo por el dato real`);
       }
       if (b.tipo === 'redes') {
         const conLink = b.items.filter((it) => it.link.trim());
@@ -780,6 +787,17 @@ export function FormMailingCampania({ onSaved }: Props) {
           <AlertCircle size={14} /> {errorMsg}
         </div>
       )}
+
+      <AsistenteRedaccion
+        onAplicar={(b) => {
+          setAsunto(b.asunto);
+          setPreheader(b.preheader);
+          setBloques((prev) => [
+            ...prev,
+            ...b.parrafos.map((contenido) => ({ ...bloqueNuevo('texto'), contenido }) as BloqueEditor),
+          ]);
+        }}
+      />
 
       <div>
         <label className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62 mb-1 block">
@@ -1408,7 +1426,7 @@ export function FormMailingCampania({ onSaved }: Props) {
           type="datetime-local"
           value={scheduledAt}
           onChange={(e) => setScheduledAt(e.target.value)}
-          className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-2.5 text-[15px] text-manso-cream focus:outline-none focus:border-manso-terra [color-scheme:light]"
+          className="w-full bg-manso-cream/5 border border-manso-cream/10 rounded-xl px-4 py-2.5 text-[15px] text-manso-cream focus:outline-none focus:border-manso-terra [color-scheme:dark]"
         />
       </div>
 

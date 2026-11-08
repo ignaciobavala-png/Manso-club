@@ -132,7 +132,7 @@ export function FormEventoHome() {
           <div className="grid grid-cols-2 gap-4">
             <input 
               type="date"
-              className="w-full p-4 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-[15px] text-manso-cream placeholder:text-manso-cream/62 [color-scheme:light]"
+              className="w-full p-4 bg-manso-cream/10 rounded-2xl border border-manso-cream/20 focus:ring-2 focus:ring-manso-terra outline-none font-mono text-[15px] text-manso-cream placeholder:text-manso-cream/62 [color-scheme:dark]"
               value={formData.fecha}
               onChange={e => setFormData({...formData, fecha: e.target.value})}
               required

@@ -371,7 +371,7 @@ export function FestivalAdmin() {
               type="date"
               value={config.fecha ?? ''}
               onChange={e => editarConfig({ fecha: e.target.value || null })}
-              className={`${INPUT} [color-scheme:light]`}
+              className={`${INPUT} [color-scheme:dark]`}
             />
           </div>
           <div>
@@ -720,7 +720,7 @@ export function FestivalAdmin() {
                   <select
                     value={entrada.estado}
                     onChange={e => editarEntrada(entrada.id, { estado: e.target.value as EstadoEntrada })}
-                    className={`${INPUT} [color-scheme:light]`}
+                    className={`${INPUT} [color-scheme:dark]`}
                   >
                     {ESTADOS_ENTRADA.map(e => (
                       <option key={e.valor} value={e.valor}>

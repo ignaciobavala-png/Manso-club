@@ -367,7 +367,7 @@ export function FestivalLineupAdmin() {
                 <select
                   value={a.escenario_id ?? ''}
                   onChange={e => cambiarEscenario(a, e.target.value)}
-                  className="bg-transparent border border-manso-cream/10 rounded-lg px-2 py-1.5 text-[13px] text-manso-cream/60 [color-scheme:light]"
+                  className="bg-transparent border border-manso-cream/10 rounded-lg px-2 py-1.5 text-[13px] text-manso-cream/60 [color-scheme:dark]"
                   title="Pasar a otro escenario"
                 >
                   {escenarios.map(e => (
@@ -515,7 +515,7 @@ export function FestivalLineupAdmin() {
                   <select
                     value=""
                     onChange={e => cambiarEscenario(a, e.target.value)}
-                    className="bg-transparent border border-manso-cream/10 rounded-lg px-2 py-1.5 text-[13px] [color-scheme:light]"
+                    className="bg-transparent border border-manso-cream/10 rounded-lg px-2 py-1.5 text-[13px] [color-scheme:dark]"
                   >
                     <option value="" disabled>
                       Pasar a…

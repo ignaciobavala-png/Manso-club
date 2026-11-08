@@ -1,9 +1,8 @@
 'use client';
 
 import { useState, useEffect, type ReactNode } from 'react';
-import { FileText, BookOpen } from 'lucide-react';
-import { AdminNav } from './AdminNav';
-import type { SeccionId } from './adminNav';
+import { logoutAction } from '../../app/mansoadm/actions';
+import { FileText, BookOpen, LogOut, User, Home, Calendar, Crown, Star, Users, Image, Layout, Video, Calculator, Briefcase, Mail, Network, MessageSquare, BarChart2, Sparkles, DoorOpen, Ticket, ShoppingBag, Bot } from 'lucide-react';
 import { FormArtista } from './FormArtista';
 import { FormEventoHome } from './FormEventoHome';
 import { FormAgenda } from './FormAgenda';
@@ -34,6 +33,39 @@ import { MailingAdmin } from './MailingAdmin';
 import { ComunidadAdmin } from './ComunidadAdmin';
 import { ChatAdmin } from './ChatAdmin';
 import { CRMAdmin } from './CRMAdmin';
+import { FormOfertaEmpleo } from './FormOfertaEmpleo';
+import { OfertasEmpleoList } from './OfertasEmpleoList';
+import { PropuestasList } from './PropuestasList';
+import { AsistenteIA } from './AsistenteIA';
+
+type SeccionId = 'crm' | 'comunidad' | 'chat' | 'membresias' | 'cultura' | 'espacio' | 'festival' | 'agenda' | 'streaming' | 'artistas' | 'home' | 'contenidos' | 'empleos' | 'newsletter' | 'tienda' | 'eventos' | 'hero' | 'galeria' | 'cotizador' | 'team' | 'about' | 'manifiesto' | 'ia';
+
+/** Mismo orden de botones que el panel de siempre; IA va al final. */
+const TABS: { id: SeccionId; label: string; Icon: typeof Home }[] = [
+  { id: 'crm', label: 'CRM', Icon: BarChart2 },
+  { id: 'comunidad', label: 'Comunidad', Icon: Network },
+  { id: 'chat', label: 'Chat', Icon: MessageSquare },
+  { id: 'membresias', label: 'Membresías', Icon: Crown },
+  { id: 'cultura', label: 'Cultura', Icon: Sparkles },
+  { id: 'espacio', label: 'Espacio', Icon: DoorOpen },
+  { id: 'festival', label: 'Festival', Icon: Ticket },
+  { id: 'agenda', label: 'Agenda', Icon: Calendar },
+  { id: 'streaming', label: 'Streaming', Icon: Video },
+  { id: 'artistas', label: 'Artistas', Icon: User },
+  { id: 'home', label: 'Home', Icon: Home },
+  { id: 'contenidos', label: 'Contenidos', Icon: Video },
+  { id: 'empleos', label: 'Empleos', Icon: Briefcase },
+  { id: 'newsletter', label: 'Mailing', Icon: Mail },
+  { id: 'tienda', label: 'Tienda', Icon: ShoppingBag },
+  { id: 'eventos', label: 'Eventos', Icon: Star },
+  { id: 'hero', label: 'Hero', Icon: Layout },
+  { id: 'galeria', label: 'Galería', Icon: Image },
+  { id: 'cotizador', label: 'Cotizador', Icon: Calculator },
+  { id: 'team', label: 'Team', Icon: Users },
+  { id: 'about', label: 'About', Icon: FileText },
+  { id: 'manifiesto', label: 'Manifiesto', Icon: BookOpen },
+  { id: 'ia', label: 'IA', Icon: Bot },
+];
 
 /** Pantallas que ocupan todo el ancho. */
 function pantallaCompleta(id: SeccionId, r: number): ReactNode | null {
@@ -48,6 +80,7 @@ function pantallaCompleta(id: SeccionId, r: number): ReactNode | null {
     case 'festival': return <FestivalAdmin />;
     case 'tienda': return <TiendaAdmin refreshTrigger={r} />;
     case 'newsletter': return <MailingAdmin />;
+    case 'ia': return <AsistenteIA />;
     default: return null;
   }
 }
@@ -81,6 +114,15 @@ function pantallaDividida(id: SeccionId, r: number): { titulo: string; form: Rea
     case 'galeria': return { titulo: 'Foto de Galería', form: <FormGallery />, lista: <GalleryList refreshTrigger={r} /> };
     case 'contenidos': return { titulo: 'Nuevo Video', form: <FormMultimedia />, lista: <MultimediaList refreshTrigger={r} /> };
     case 'cotizador': return { titulo: 'Configuración', form: <CotizadorConfigAdmin />, lista: <CotizacionesList refreshTrigger={r} /> };
+    case 'empleos': return {
+      titulo: 'Nueva Oferta', form: <FormOfertaEmpleo />,
+      lista: (
+        <div className="space-y-8">
+          <OfertasEmpleoList refreshTrigger={r} />
+          <div className="border-t border-manso-cream/10 pt-8"><PropuestasList refreshTrigger={r} /></div>
+        </div>
+      ),
+    };
     case 'manifiesto': return {
       titulo: 'Editar Manifiesto', form: <FormManifiesto />,
       lista: <Nota icono={<BookOpen size={48} />} titulo="Manifiesto"
@@ -120,29 +162,71 @@ export function Dashboard() {
   const dividida = completa ? null : pantallaDividida(tab, refreshTrigger);
 
   return (
-    <div className="min-h-screen bg-manso-black">
-      <AdminNav tab={tab} onChange={setTab} userEmail={userEmail} />
+    <div className="min-h-screen bg-black">
+      <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto min-h-screen pt-8 sm:pt-10">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 sm:mb-12">
+          <div>
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black italic tracking-tighter uppercase text-manso-cream mb-2">Manso Admin_</h1>
+            <p className="text-[12px] font-bold text-manso-cream/62 uppercase tracking-[0.3em]">Panel de Control Centralizado</p>
+          </div>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-3 w-full sm:w-auto">
+            {userEmail && (
+              <div className="hidden sm:flex items-center gap-2 px-3 py-2 bg-manso-cream/5 text-manso-cream/70 rounded-xl text-[12px] font-medium">
+                <User size={14} />
+                <span className="truncate max-w-[200px]">{userEmail}</span>
+              </div>
+            )}
+            <a
+              href="/login?force=true"
+              className="flex-1 sm:flex-none px-3 py-2 bg-manso-cream/10 text-manso-cream/80 border border-manso-cream/20 rounded-xl text-[12px] font-bold uppercase hover:bg-manso-cream/20 transition-all"
+              title="Cambiar de usuario"
+            >
+              Cambiar usuario
+            </a>
+            <form action={logoutAction} className="flex-1 sm:flex-none">
+              <button type="submit" className="w-full sm:w-auto flex items-center justify-center gap-2 px-4 py-2 bg-manso-cream text-manso-black border border-manso-cream/20 rounded-xl text-[12px] font-bold uppercase hover:opacity-80 transition-all">
+                <LogOut size={14} /> Salir
+              </button>
+            </form>
+          </div>
+        </div>
 
-      <main className="w-full px-4 sm:px-6 lg:px-10 py-8 sm:py-10">
-        {completa}
+        <div role="tablist" className="flex flex-wrap gap-1 sm:gap-2 mb-6 sm:mb-10 bg-manso-cream/10 p-1 rounded-2xl w-full">
+          {TABS.map(({ id, label, Icon }) => (
+            <button
+              key={id}
+              role="tab"
+              aria-selected={tab === id}
+              aria-label={label}
+              title={label}
+              onClick={() => setTab(id)}
+              className={`flex-1 sm:flex-none flex items-center justify-center gap-2 px-3 sm:px-5 py-2.5 sm:py-3 rounded-xl text-[12px] sm:text-[13px] font-black uppercase tracking-wider transition-all ${
+                tab === id
+                  ? (id === 'crm' ? 'bg-manso-terra text-white' : 'bg-manso-cream text-manso-black') + ' shadow-sm'
+                  : 'text-manso-cream/70 hover:text-manso-cream'
+              }`}
+            >
+              <Icon size={16} aria-hidden />
+              <span className="hidden sm:inline">{label}</span>
+            </button>
+          ))}
+        </div>
+
+        {completa && <div className="mb-8">{completa}</div>}
 
         {dividida && (
           <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-12">
             <div className="xl:col-span-5">
-              <h2 className="text-[14px] font-black uppercase tracking-[0.2em] text-manso-cream/70 mb-4 sm:mb-6 ml-2">
-                {dividida.titulo}
-              </h2>
-              <div className="sticky top-44">{dividida.form}</div>
+              <h2 className="text-[13px] font-black uppercase tracking-[0.2em] text-manso-cream/70 mb-4 sm:mb-6 ml-2">{dividida.titulo}</h2>
+              <div className="sticky top-4 sm:top-8">{dividida.form}</div>
             </div>
             <div className="xl:col-span-7">
-              <h2 className="text-[14px] font-black uppercase tracking-[0.2em] text-manso-cream/70 mb-4 sm:mb-6 ml-2">
-                Gestionar existentes
-              </h2>
+              <h2 className="text-[13px] font-black uppercase tracking-[0.2em] text-manso-cream/70 mb-4 sm:mb-6 ml-2">Gestionar existentes</h2>
               {dividida.lista}
             </div>
           </div>
         )}
-      </main>
+      </div>
     </div>
   );
 }
