@@ -80,7 +80,7 @@ export default async function FestivalHome() {
         </p>
         {config.lema && (
           // El margen negativo come parte del gap del contenedor: el lema queda pegado al título.
-          <p className="fest-mono -mt-2 sm:-mt-3 text-[clamp(11px,1.3vw,17px)] uppercase tracking-[0.3em] text-white">{config.lema}</p>
+          <p className="fest-mono -mt-3.5 sm:-mt-3 text-[clamp(11px,1.3vw,17px)] uppercase tracking-[0.3em] text-white">{config.lema}</p>
         )}
         <div className="flex items-center justify-center gap-3 sm:gap-4 mt-2 sm:mt-3">
           <Link
