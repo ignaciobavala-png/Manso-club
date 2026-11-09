@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { fechaCorta, leerConfig, leerLineup } from '@/lib/festival';
+import { fechaCorta, leerConfig, leerEntradas, leerLineup } from '@/lib/festival';
 import { TituloDifuso } from '@/components/festival/TituloDifuso';
 import { DECO, SeccionMarca, type DecoItem, type TemaMarca } from '@/components/festival/SeccionMarca';
 import { GaleriaLocacion } from '@/components/festival/GaleriaLocacion';
@@ -10,7 +10,7 @@ import { LineupCorrido } from '@/components/festival/LineupCorrido';
 import { EscribeTexto } from '@/components/festival/Escribe';
 import { leerTextos } from '@/lib/festival-idioma-servidor';
 import { JsonLd } from '@/components/SEO/JsonLd';
-import { eventoFestival } from '@/lib/festival-seo';
+import { eventoFestival, fechaLarga, MARCA_SEO } from '@/lib/festival-seo';
 
 /**
  * Lo que dice el hero: BLUR con el redondeo difuso de siempre. Ana prefirió
@@ -33,12 +33,12 @@ const BANNER_POR_DEFECTO = '/blur/hero-cabina.jpg';
  * suben por encima de ella al scrollear.
  */
 export default async function FestivalHome() {
-  const [config, lineup, { t }] = await Promise.all([leerConfig(), leerLineup(), leerTextos()]);
+  const [config, lineup, { t }, entradas] = await Promise.all([leerConfig(), leerLineup(), leerTextos(), leerEntradas()]);
   if (!config) notFound();
 
   const fecha = [fechaCorta(config.fecha), config.horario].filter(Boolean).join(' — ');
   const fotos = [...config.locacion_fotos, ...config.home_fotos];
-  const evento = eventoFestival(config, lineup.flatMap(e => e.artistas));
+  const evento = eventoFestival(config, lineup.flatMap(e => e.artistas), entradas);
 
   return (
     <>
@@ -71,8 +71,16 @@ export default async function FestivalHome() {
       />
       <div className="relative z-10 px-4 pb-[12svh] w-full flex flex-col items-center gap-5 sm:gap-6 fest-entra">
         <TituloDifuso texto={TITULO_HERO} />
+        {/* El h1 es solo "Blur" (el logo difuso). Esta línea le dice a Google y a los lectores
+            de pantalla de qué se trata, sin tocar el diseño. */}
+        <p className="sr-only">
+          {MARCA_SEO} Festival: festival de música electrónica de Manso Club
+          {fechaLarga(config.fecha) && ` el ${fechaLarga(config.fecha)}`}
+          {config.lugar && ` en ${config.lugar}`}, Buenos Aires.
+        </p>
         {config.lema && (
-          <p className="fest-mono text-[clamp(11px,1.3vw,17px)] uppercase tracking-[0.3em] text-white">{config.lema}</p>
+          // El margen negativo come parte del gap del contenedor: el lema queda pegado al título.
+          <p className="fest-mono -mt-2 sm:-mt-3 text-[clamp(11px,1.3vw,17px)] uppercase tracking-[0.3em] text-white">{config.lema}</p>
         )}
         <div className="flex items-center justify-center gap-3 sm:gap-4 mt-2 sm:mt-3">
           <Link
