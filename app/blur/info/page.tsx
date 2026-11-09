@@ -5,6 +5,7 @@ import { DECO, SeccionMarca } from '@/components/festival/SeccionMarca';
 import { MARCA_SEO, resumenFestival } from '@/lib/festival-seo';
 import { descripcion } from '@/lib/seo';
 import { leerTextos } from '@/lib/festival-idioma-servidor';
+import { JsonLd } from '@/components/SEO/JsonLd';
 
 export async function generateMetadata(): Promise<Metadata> {
   const [{ t }, config] = await Promise.all([leerTextos(), leerConfig()]);
@@ -18,6 +19,19 @@ export default async function FestivalInfo() {
   if (!config) notFound();
 
   return (
+    <>
+    {faq.length > 0 && (
+      <JsonLd
+        data={{
+          '@type': 'FAQPage',
+          mainEntity: faq.map(p => ({
+            '@type': 'Question',
+            name: p.titulo,
+            acceptedAnswer: { '@type': 'Answer', text: p.texto },
+          })),
+        }}
+      />
+    )}
     <SeccionMarca
       tema="rosa"
       deco={DECO.info}
@@ -53,5 +67,6 @@ export default async function FestivalInfo() {
         </p>
       )}
     </SeccionMarca>
+    </>
   );
 }
