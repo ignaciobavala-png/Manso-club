@@ -6,6 +6,7 @@ import { supabase } from '@/lib/supabase';
 import { codificarFoto, medidaConTope } from '@/lib/comprimir-imagen';
 import { descargarArchivo, esPlanilla, leerPlanilla, type Planilla } from '@/lib/ia-archivos';
 import type { ArchivoIA } from '@/lib/ia-herramientas';
+import { RespuestaIA, separarPasos } from './RespuestaIA';
 
 interface Mail { para: string; asunto: string; texto: string }
 interface Evento { titulo: string; fecha: string; fecha_fin: string | null; descripcion: string | null; categoria: string | null; link_tickets: string | null; imagen_url: string | null }
@@ -376,9 +377,19 @@ export function AsistenteIA() {
               </div>
             ) : (
               <>
-                <p className="whitespace-pre-line text-[15px] leading-relaxed text-manso-cream">{m.content}</p>
+                <RespuestaIA texto={separarPasos(m.content).cuerpo} />
                 {m.archivos?.map((a, j) => <BotonArchivo key={`${i}-a${j}`} archivo={a} />)}
                 {m.propuestas?.map((p, j) => <TarjetaAccion key={`${i}-${j}-${p.firma}`} item={p} onEstado={e => marcarEstado(i, j, e)} />)}
+                {i === mensajes.length - 1 && !cargando && separarPasos(m.content).pasos.length > 0 && (
+                  <div className="flex flex-col items-start gap-0.5 pt-1">
+                    {separarPasos(m.content).pasos.map(p => (
+                      <button key={p} type="button" onClick={() => enviar(p)}
+                        className="rounded-lg py-1 text-left text-[14px] text-manso-cream/70 underline-offset-4 hover:text-manso-cream hover:underline">
+                        → {p}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </>
             )}
           </div>

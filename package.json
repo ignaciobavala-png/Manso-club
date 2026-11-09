@@ -32,6 +32,8 @@
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-email": "^6.6.6",
+    "react-markdown": "^10.1.0",
+    "remark-gfm": "^4.0.1",
     "resend": "^6.17.1",
     "sharp": "^0.35.3",
     "zod": "^4.6.7",
