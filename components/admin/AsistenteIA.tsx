@@ -1,7 +1,7 @@
 'use client';
 
-import { useRef, useState } from 'react';
-import { Bot, Loader2, Send, Mail, X, Check, Paperclip, CalendarPlus } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Bot, Loader2, Send, Mail, X, Check, Paperclip, CalendarPlus, History, Plus, Trash2 } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { codificarFoto, medidaConTope } from '@/lib/comprimir-imagen';
 
@@ -44,8 +44,15 @@ async function subirFoto(file: File): Promise<string> {
     URL.revokeObjectURL(url);
   }
 }
-interface Mensaje { role: 'user' | 'assistant'; content: string; propuestas?: Firmada[] }
 type Estado = 'pendiente' | 'enviando' | 'enviado' | 'descartado' | 'error';
+type Propuesta = Firmada & { estado?: Estado };
+interface Mensaje { role: 'user' | 'assistant'; content: string; propuestas?: Propuesta[] }
+interface Charla { id: string; titulo: string; updated_at: string }
+
+function tituloDe(mensajes: Mensaje[]): string {
+  const primero = mensajes.find(m => m.role === 'user')?.content.replace(MARCA_FOTO, '').trim() ?? '';
+  return primero.slice(0, 60) || 'Charla nueva';
+}
 
 const SUGERENCIAS = [
   '¿Qué tengo pendiente hoy?',
@@ -55,10 +62,14 @@ const SUGERENCIAS = [
   '¿Llegaron propuestas nuevas?',
 ];
 
-function TarjetaAccion({ item }: { item: Firmada }) {
-  const [estado, setEstado] = useState<Estado>('pendiente');
+function TarjetaAccion({ item, onEstado }: { item: Propuesta; onEstado: (e: Estado) => void }) {
+  const [estado, setEstadoLocal] = useState<Estado>(item.estado === 'enviando' ? 'pendiente' : item.estado ?? 'pendiente');
   const [error, setError] = useState<string | null>(null);
   const esMail = item.accion.tipo === 'mail';
+  const setEstado = (e: Estado) => {
+    setEstadoLocal(e);
+    if (e === 'enviado' || e === 'descartado') onEstado(e);
+  };
 
   const ejecutar = async () => {
     setEstado('enviando');
@@ -140,6 +151,75 @@ export function AsistenteIA() {
   const [subiendo, setSubiendo] = useState(false);
   const fin = useRef<HTMLDivElement>(null);
   const archivo = useRef<HTMLInputElement>(null);
+  const [charlas, setCharlas] = useState<Charla[]>([]);
+  const [verCharlas, setVerCharlas] = useState(false);
+  const [charlaId, setCharlaId] = useState<string | null>(null);
+  // Espejo síncrono: evita crear dos filas si se guarda dos veces seguidas.
+  const idRef = useRef<string | null>(null);
+  const mensajesRef = useRef<Mensaje[]>([]);
+
+  const cargarLista = async () => {
+    const { data } = await supabase.from('ia_conversaciones').select('id, titulo, updated_at').order('updated_at', { ascending: false }).limit(30);
+    setCharlas((data as Charla[] | null) ?? []);
+    return (data as Charla[] | null) ?? [];
+  };
+
+  const abrir = async (id: string) => {
+    const { data } = await supabase.from('ia_conversaciones').select('mensajes').eq('id', id).maybeSingle();
+    const ms = Array.isArray(data?.mensajes) ? (data.mensajes as Mensaje[]) : [];
+    idRef.current = id;
+    mensajesRef.current = ms;
+    setCharlaId(id);
+    setMensajes(ms);
+    setError(null);
+    setVerCharlas(false);
+    setTimeout(() => fin.current?.scrollIntoView(), 50);
+  };
+
+  useEffect(() => {
+    cargarLista().then(l => { if (l[0] && !idRef.current) abrir(l[0].id); });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const guardar = async (ms: Mensaje[]) => {
+    mensajesRef.current = ms;
+    try {
+      if (idRef.current) {
+        await supabase.from('ia_conversaciones').update({ mensajes: ms, updated_at: new Date().toISOString() }).eq('id', idRef.current);
+      } else {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) return;
+        const { data } = await supabase.from('ia_conversaciones').insert({ user_id: user.id, titulo: tituloDe(ms), mensajes: ms }).select('id').single();
+        if (data) { idRef.current = data.id; setCharlaId(data.id); }
+      }
+      cargarLista();
+    } catch {
+      // Guardar es una comodidad: si falla, la charla sigue en pantalla.
+    }
+  };
+
+  const nuevaCharla = () => {
+    idRef.current = null;
+    mensajesRef.current = [];
+    setCharlaId(null);
+    setMensajes([]);
+    setError(null);
+    setTexto('');
+    setFoto(null);
+    setVerCharlas(false);
+  };
+
+  const borrarCharla = async (id: string) => {
+    await supabase.from('ia_conversaciones').delete().eq('id', id);
+    if (idRef.current === id) nuevaCharla();
+    cargarLista();
+  };
+
+  const marcarEstado = (i: number, j: number, estado: Estado) => {
+    const ms = mensajesRef.current.map((m, k) => k !== i ? m : { ...m, propuestas: m.propuestas?.map((p, l) => l === j ? { ...p, estado } : p) });
+    setMensajes(ms);
+    guardar(ms);
+  };
 
   const elegirFoto = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
@@ -160,8 +240,10 @@ export function AsistenteIA() {
     const limpio = contenido.trim();
     if ((!limpio && !foto) || cargando || subiendo) return;
     const completo = foto ? `${limpio || 'Te dejo esta foto.'}\n[Foto adjunta: ${foto}]` : limpio;
-    const nuevos: Mensaje[] = [...mensajes, { role: 'user', content: completo }];
+    const nuevos: Mensaje[] = [...mensajesRef.current, { role: 'user', content: completo }];
+    mensajesRef.current = nuevos;
     setMensajes(nuevos);
+    guardar(nuevos);
     setTexto('');
     setFoto(null);
     setError(null);
@@ -175,7 +257,10 @@ export function AsistenteIA() {
       });
       const data = await res.json().catch(() => null);
       if (!res.ok) throw new Error(data?.error ?? 'No se pudo responder.');
-      setMensajes([...nuevos, { role: 'assistant', content: data.respuesta, propuestas: data.propuestas }]);
+      const conRespuesta: Mensaje[] = [...nuevos, { role: 'assistant', content: data.respuesta, propuestas: data.propuestas }];
+      mensajesRef.current = conRespuesta;
+      setMensajes(conRespuesta);
+      guardar(conRespuesta);
       setTimeout(() => fin.current?.scrollIntoView({ behavior: 'smooth' }), 50);
     } catch (e) {
       setError(e instanceof Error ? e.message : 'No se pudo responder.');
@@ -194,7 +279,36 @@ export function AsistenteIA() {
             Consulta lo que necesites del panel y te deja listos mails y eventos nuevos (podés adjuntar la foto con el clip). No hace nada hasta que lo apruebes con el botón.
           </p>
         </div>
+        <div className="ml-auto flex shrink-0 gap-2">
+          <button type="button" onClick={() => setVerCharlas(v => !v)} aria-expanded={verCharlas}
+            className="flex items-center gap-2 rounded-xl border border-manso-cream/15 bg-manso-cream/5 px-3 py-2 text-[13px] font-bold uppercase tracking-wider text-manso-cream/80 hover:bg-manso-cream/10">
+            <History size={14} aria-hidden /> Charlas
+          </button>
+          <button type="button" onClick={nuevaCharla} disabled={mensajes.length === 0}
+            className="flex items-center gap-2 rounded-xl border border-manso-cream/15 bg-manso-cream/5 px-3 py-2 text-[13px] font-bold uppercase tracking-wider text-manso-cream/80 hover:bg-manso-cream/10 disabled:opacity-40">
+            <Plus size={14} aria-hidden /> Nueva
+          </button>
+        </div>
       </header>
+
+      {verCharlas && (
+        <ul className="space-y-1 rounded-xl border border-manso-cream/15 bg-manso-cream/5 p-2">
+          {charlas.length === 0 && <li className="px-3 py-2 text-[14px] text-manso-cream/62">Todavía no hay charlas guardadas.</li>}
+          {charlas.map(c => (
+            <li key={c.id} className="flex items-center gap-2">
+              <button type="button" onClick={() => abrir(c.id)}
+                className={`flex-1 truncate rounded-lg px-3 py-2 text-left text-[14px] hover:bg-manso-cream/10 ${c.id === charlaId ? 'bg-manso-cream/10 text-manso-cream' : 'text-manso-cream/85'}`}>
+                {c.titulo}
+                <span className="ml-2 text-[12px] text-manso-cream/50">{new Date(c.updated_at).toLocaleDateString('es-AR', { day: 'numeric', month: 'short' })}</span>
+              </button>
+              <button type="button" onClick={() => borrarCharla(c.id)} aria-label={`Borrar la charla ${c.titulo}`} title="Borrar"
+                className="rounded-lg p-2 text-manso-cream/62 hover:bg-manso-cream/10 hover:text-red-400">
+                <Trash2 size={14} aria-hidden />
+              </button>
+            </li>
+          ))}
+        </ul>
+      )}
 
       {mensajes.length === 0 && (
         <div className="flex flex-wrap gap-2">
@@ -218,7 +332,7 @@ export function AsistenteIA() {
             ) : (
               <>
                 <p className="whitespace-pre-line text-[15px] leading-relaxed text-manso-cream">{m.content}</p>
-                {m.propuestas?.map((p, j) => <TarjetaAccion key={`${i}-${j}-${p.firma}`} item={p} />)}
+                {m.propuestas?.map((p, j) => <TarjetaAccion key={`${i}-${j}-${p.firma}`} item={p} onEstado={e => marcarEstado(i, j, e)} />)}
               </>
             )}
           </div>

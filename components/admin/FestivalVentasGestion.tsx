@@ -25,6 +25,9 @@ const ORIGENES: [Origen, string][] = [
   ['gestion', 'Manual'],
 ];
 
+/** El mail del QR salió: por Gestión (manuales) o por la web (las compras online). */
+const mailEnviado = (v: VentaGestion) => !!v.qr_mail_enviado_at || !!v.mail_web;
+
 const fecha = (iso: string) => new Date(iso).toLocaleString('es-AR', { dateStyle: 'short', timeStyle: 'short' });
 
 /**
@@ -53,6 +56,25 @@ export function FestivalVentasGestion() {
     }
   }, []);
 
+  const [reenviando, setReenviando] = useState<string | null>(null);
+  const [aviso, setAviso] = useState<string | null>(null);
+  const reenviar = async (v: VentaGestion) => {
+    if (!v.order_ref) return;
+    setReenviando(v.registro_id);
+    setAviso(null);
+    try {
+      const res = await fetch(`/api/festival/ordenes/${v.order_ref}/reenviar`, { method: 'POST' });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error ?? 'No se pudo reenviar');
+      setAviso(`Mail reenviado a ${v.email}. Si es una orden de varias entradas, salen todos los QR juntos.`);
+      cargar();
+    } catch (e) {
+      setAviso(e instanceof Error ? e.message : 'No se pudo reenviar');
+    } finally {
+      setReenviando(null);
+    }
+  };
+
   useEffect(() => {
     cargar();
   }, [cargar]);
@@ -63,7 +85,7 @@ export function FestivalVentasGestion() {
         const filas = ventas.filter(v => v.origen === origen);
         const vendidas = filas.filter(v => v.vendida);
         const verificadas = vendidas.filter(v => v.payment_verified);
-        const sinMail = vendidas.filter(v => !v.qr_mail_enviado_at);
+        const sinMail = vendidas.filter(v => !mailEnviado(v));
         return {
           origen,
           etiqueta,
@@ -113,6 +135,8 @@ export function FestivalVentasGestion() {
         se confirmó contra el banco. El monto suma las vendidas.
       </p>
 
+      {aviso && <p role="status" className="text-[13px] text-manso-cream/80">{aviso}</p>}
+
       {ventas.length === 0 ? (
         <p className="text-[13px] text-manso-cream/62">Gestión no tiene entradas de este festival.</p>
       ) : (
@@ -132,11 +156,11 @@ export function FestivalVentasGestion() {
                     {v.vendida && (
                       <span
                         className={`ml-1 align-middle px-2 py-0.5 rounded-full text-[12px] font-black uppercase tracking-widest ${
-                          v.qr_mail_enviado_at ? 'bg-manso-olive/20 text-manso-olive' : 'bg-manso-terra/20 text-manso-terra'
+                          mailEnviado(v) ? 'bg-manso-olive/20 text-manso-olive' : 'bg-manso-terra/20 text-manso-terra'
                         }`}
-                        title={v.qr_mail_enviado_at ? `Mail del QR enviado el ${fecha(v.qr_mail_enviado_at)}` : 'Gestión no registra que se haya mandado el mail con el QR'}
+                        title={v.qr_mail_enviado_at ? `Mail del QR enviado el ${fecha(v.qr_mail_enviado_at)}` : v.mail_web ? 'La web ya mandó el mail con los QR' : 'No se registra que se haya mandado el mail con el QR'}
                       >
-                        {v.qr_mail_enviado_at ? 'Mail QR enviado' : 'Sin mail QR'}
+                        {mailEnviado(v) ? 'Mail QR enviado' : 'Sin mail QR'}
                       </span>
                     )}
                     {v.vendida && (
@@ -154,6 +178,16 @@ export function FestivalVentasGestion() {
                     {v.vendida && v.qr_mail_enviado_at ? ` · mail QR ${fecha(v.qr_mail_enviado_at)}` : ''}
                   </p>
                 </div>
+                {v.vendida && v.origen === 'web' && v.order_ref && (
+                  <button
+                    type="button"
+                    onClick={() => reenviar(v)}
+                    disabled={reenviando === v.registro_id}
+                    className="rounded-lg border border-manso-cream/20 px-3 py-1.5 text-[12px] font-bold uppercase tracking-wider text-manso-cream/80 hover:bg-manso-cream/10 disabled:opacity-40"
+                  >
+                    {reenviando === v.registro_id ? 'Enviando…' : 'Reenviar mail'}
+                  </button>
+                )}
                 <span className="text-[15px] font-mono text-manso-cream tabular-nums">{v.precio === null ? '—' : formatArs(v.precio)}</span>
               </li>
             );

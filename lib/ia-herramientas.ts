@@ -24,6 +24,7 @@ const TABLAS_LEGIBLES = [
   'cowork_fechas', 'cowork_solicitudes', 'propuestas', 'ofertas_empleo',
   'agenda', 'agenda_inscripciones', 'eventos', 'eventos_home', 'artistas', 'artistas_tracks',
   'productos', 'pedidos', 'ordenes', 'tickets', 'cotizaciones',
+  'festival_plan_tareas', 'festival_plan_hitos',
   'festival_config', 'festival_artistas', 'festival_escenarios', 'festival_entradas', 'festival_ordenes',
   'festival_tickets', 'festival_spots', 'festival_faq', 'festival_lanchas', 'festival_voluntarios',
   'foro_threads', 'foro_replies', 'foro_categorias', 'foro_reportes',
@@ -134,6 +135,44 @@ export function crearHerramientas(ctx: { supabase: SupabaseClient; userId: strin
         const { data, error } = await supabase.from('ofertas_empleo').select('area, descripcion, activo').order('orden').limit(30);
         if (error) return { error: 'No se pudo consultar las ofertas.' };
         return { ofertas: data };
+      },
+    }),
+
+    plan_festival: tool({
+      description: 'Plan interno de producción del festival BLUR (12 de diciembre): tareas con área, responsable, estado, prioridad, deadline y notas, más los hitos. Es una foto de la planilla del 08/11/2026. Usala para "qué falta", "qué tiene X", "qué está atrasado", "cómo va producción".',
+      inputSchema: z.object({
+        area: z.enum(['Comercial y Sponsors', 'Comunicación', 'Diseño', 'Desarrollo', 'Artística', 'Producción', 'Legal y Finanzas']).optional(),
+        estado: z.enum(['Pendiente', 'En curso', 'Hecho', 'Stand by', 'Cotizando']).optional(),
+        responsable: z.string().max(40).optional().describe('Nombre o parte (Ana, Kike, Porti, Fran, Agus, Mati, Julia, Nacho…). Una tarea puede tener varios responsables.'),
+        texto: z.string().max(60).optional().describe('Palabra a buscar en el nombre de la tarea.'),
+        solo_atrasadas: z.boolean().default(false).describe('Deadline ya vencido y sin estar Hecho.'),
+        incluir_hitos: z.boolean().default(false),
+        limite: z.number().int().min(1).max(40).default(25),
+      }),
+      execute: async ({ area, estado, responsable, texto, solo_atrasadas, incluir_hitos, limite }) => {
+        const limpio = (s: string) => s.replace(/[%,()]/g, ' ').trim();
+        let q = supabase
+          .from('festival_plan_tareas')
+          .select('id, area, frente, tarea, responsable, estado, prioridad, next_step, entregable, deadline, notas')
+          .order('deadline', { ascending: true, nullsFirst: false })
+          .limit(limite);
+        if (area) q = q.eq('area', area);
+        if (estado) q = q.eq('estado', estado);
+        if (responsable && limpio(responsable)) q = q.ilike('responsable', `%${limpio(responsable)}%`);
+        if (texto && limpio(texto)) q = q.ilike('tarea', `%${limpio(texto)}%`);
+        if (solo_atrasadas) {
+          const hoy = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/Argentina/Buenos_Aires' }).format(new Date());
+          q = q.lt('deadline', hoy).or('estado.is.null,estado.neq.Hecho');
+        }
+        const { data, error } = await q;
+        if (error) return { error: 'No se pudo consultar el plan del festival.' };
+        const filas = (data ?? []).map(f => Object.fromEntries(Object.entries(f).filter(([, v]) => v !== null).map(([k, v]) => [k, recortar(v)])));
+        const res: Record<string, unknown> = { cantidad: filas.length, tareas: filas };
+        if (incluir_hitos) {
+          const { data: hitos } = await supabase.from('festival_plan_hitos').select('fecha, hito, tipo, tareas').order('fecha');
+          res.hitos = hitos ?? [];
+        }
+        return res;
       },
     }),
 

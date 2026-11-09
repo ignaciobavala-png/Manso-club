@@ -223,6 +223,8 @@ export interface VentaGestion {
   paid_at: string | null;
   mp_expires_at: string | null;
   qr_mail_enviado_at: string | null;
+  /** Solo en el panel: la orden de la web ya mandó su mail (Gestión no lo sabe). */
+  mail_web?: boolean;
   used_at: string | null;
 }
 
