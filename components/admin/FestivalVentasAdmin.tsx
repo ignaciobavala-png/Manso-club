@@ -235,7 +235,7 @@ export function FestivalVentasAdmin() {
                 </span>
               ) : (
                 <span className="text-[12px] font-black uppercase tracking-widest text-manso-cream/62">
-                  {v.estado === 'vencida' ? 'Vencida' : 'Esperando pago'}
+                  {v.estado === 'vencida' ? 'No se pagó · entradas liberadas' : 'Esperando pago'}
                 </span>
               )}
               {v.estado !== 'pagada' && (
