@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import { leerConfig, leerFaq } from '@/lib/festival';
-import { Escribe, EscribeTexto } from '@/components/festival/Escribe';
 import { DECO, SeccionMarca } from '@/components/festival/SeccionMarca';
 import { MARCA_SEO, resumenFestival } from '@/lib/festival-seo';
 import { descripcion } from '@/lib/seo';
@@ -27,7 +26,7 @@ export default async function FestivalInfo() {
       {faq.length === 0 ? (
         <>
           <p className="fest-rotulo mb-8">
-            <EscribeTexto texto={t.info.titulo} />
+            {t.info.titulo}
           </p>
           <p className="fest-mono text-sm opacity-60">{t.muyPronto}</p>
         </>
@@ -36,10 +35,10 @@ export default async function FestivalInfo() {
           {faq.map(p => (
             <article key={p.id} className="break-inside-avoid mb-8">
               <h2 className="fest-angosta text-2xl leading-none mb-2">
-                <EscribeTexto texto={p.titulo} ritmo={35} />
+                {p.titulo}
               </h2>
               <p className="text-[15px] leading-[1.55] opacity-80 whitespace-pre-line">
-                <Escribe parrafos={[[{ texto: p.texto }]]} ritmo={12} maximo={1500} retraso={300} />
+                {p.texto}
               </p>
             </article>
           ))}
