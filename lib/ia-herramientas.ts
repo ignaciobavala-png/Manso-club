@@ -68,10 +68,19 @@ export async function destinatarioValido(supabase: SupabaseClient, para: string,
  * Herramientas del asistente. Las de lectura corren con la sesión del admin
  * (RLS sigue mandando), con columnas explícitas y topes de filas.
  */
+/** Un archivo que el asistente entrega: el navegador lo arma (Excel o PDF) con estos datos. Nada se guarda en el servidor. */
+export interface ArchivoIA {
+  formato: 'excel' | 'pdf';
+  nombre: string;
+  titulo: string | null;
+  hojas: { nombre: string; columnas: string[]; filas: (string | number | null)[][] }[];
+}
+
 export function crearHerramientas(ctx: { supabase: SupabaseClient; userId: string; email: string | null }) {
   const { supabase, userId } = ctx;
   const equipo = emailEquipo(ctx.email);
   const propuestasEmitidas: AccionFirmada[] = [];
+  const archivosEmitidos: ArchivoIA[] = [];
 
   const herramientas = {
     membresias: tool({
@@ -204,6 +213,29 @@ export function crearHerramientas(ctx: { supabase: SupabaseClient; userId: strin
       },
     }),
 
+    crear_archivo: tool({
+      description: 'Entrega un archivo descargable (Excel o PDF) con una o más tablas. Usalo cuando pidan "pasame un Excel/PDF", un listado para bajar o un reporte. Primero consultá los datos reales; no inventes filas. No envía nada: la persona lo descarga con un botón.',
+      inputSchema: z.object({
+        formato: z.enum(['excel', 'pdf']),
+        nombre: z.string().min(2).max(60).describe('Nombre del archivo sin extensión, ej. "membresias-vencidas".'),
+        titulo: z.string().max(100).optional().describe('Título que va arriba del PDF.'),
+        hojas: z.array(z.object({
+          nombre: z.string().min(1).max(31),
+          columnas: z.array(z.string().max(60)).min(1).max(15),
+          filas: z.array(z.array(z.union([z.string().max(500), z.number(), z.null()]))).max(500),
+        })).min(1).max(5),
+      }),
+      execute: async ({ formato, nombre, titulo, hojas }) => {
+        if (archivosEmitidos.length >= 3) return { error: 'Máximo 3 archivos por respuesta.' };
+        const limpio = nombre.trim().replace(/[^\p{L}\p{N}_-]+/gu, '-').replace(/^-+|-+$/g, '').slice(0, 50) || 'manso';
+        archivosEmitidos.push({
+          formato, nombre: limpio, titulo: titulo?.trim() || null,
+          hojas: hojas.map(h => ({ nombre: h.nombre, columnas: h.columnas, filas: h.filas.map(f => h.columnas.map((_, i) => f[i] ?? null)) })),
+        });
+        return { ok: true, mensaje: 'Archivo listo; la persona lo descarga con un botón.' };
+      },
+    }),
+
     proponer_mail: tool({
       description: 'Deja armado un mail para que la persona del equipo lo revise y lo envíe con un botón. NO envía nada. para: un mail que figure en el sistema, o "equipo" para avisar al equipo.',
       inputSchema: z.object({
@@ -253,5 +285,5 @@ export function crearHerramientas(ctx: { supabase: SupabaseClient; userId: strin
     }),
   };
 
-  return { herramientas, propuestasEmitidas, equipo };
+  return { herramientas, propuestasEmitidas, archivosEmitidos, equipo };
 }

@@ -1,9 +1,11 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { Bot, Loader2, Send, Mail, X, Check, Paperclip, CalendarPlus, History, Plus, Trash2 } from 'lucide-react';
+import { Loader2, ArrowUp, Mail, X, Check, Paperclip, CalendarPlus, History, Plus, Trash2, Download, FileSpreadsheet, FileText } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { codificarFoto, medidaConTope } from '@/lib/comprimir-imagen';
+import { descargarArchivo, esPlanilla, leerPlanilla, type Planilla } from '@/lib/ia-archivos';
+import type { ArchivoIA } from '@/lib/ia-herramientas';
 
 interface Mail { para: string; asunto: string; texto: string }
 interface Evento { titulo: string; fecha: string; fecha_fin: string | null; descripcion: string | null; categoria: string | null; link_tickets: string | null; imagen_url: string | null }
@@ -46,7 +48,7 @@ async function subirFoto(file: File): Promise<string> {
 }
 type Estado = 'pendiente' | 'enviando' | 'enviado' | 'descartado' | 'error';
 type Propuesta = Firmada & { estado?: Estado };
-interface Mensaje { role: 'user' | 'assistant'; content: string; propuestas?: Propuesta[] }
+interface Mensaje { role: 'user' | 'assistant'; content: string; propuestas?: Propuesta[]; adjunto?: Planilla; archivos?: ArchivoIA[] }
 interface Charla { id: string; titulo: string; updated_at: string }
 
 function tituloDe(mensajes: Mensaje[]): string {
@@ -56,11 +58,42 @@ function tituloDe(mensajes: Mensaje[]): string {
 
 const SUGERENCIAS = [
   '¿Qué tengo pendiente hoy?',
-  '¿Quién tiene la membresía vencida? Preparame el aviso para cada uno.',
-  '¿Hay solicitudes de cowork sin responder?',
   'Quiero cargar un evento nuevo',
-  '¿Llegaron propuestas nuevas?',
+  '¿Cómo viene el festival?',
 ];
+
+/** Lo que se le manda al modelo: el texto de la planilla va solo en la última que se adjuntó. */
+function paraModelo(ms: Mensaje[]) {
+  const ultima = ms.map(m => !!m.adjunto).lastIndexOf(true);
+  return ms.map((m, i) => ({ m, i })).slice(-12).map(({ m, i }) => {
+    if (!m.adjunto) return { role: m.role, content: m.content };
+    const bloque = i === ultima ? `\n[Archivo: ${m.adjunto.nombre}]\n${m.adjunto.texto}\n[/Archivo]` : `\n[Archivo: ${m.adjunto.nombre} — ya enviado antes]`;
+    return { role: m.role, content: m.content + bloque };
+  });
+}
+
+function BotonArchivo({ archivo }: { archivo: ArchivoIA }) {
+  const [bajando, setBajando] = useState(false);
+  const [error, setError] = useState(false);
+  const Icono = archivo.formato === 'excel' ? FileSpreadsheet : FileText;
+  const filas = archivo.hojas.reduce((n, h) => n + h.filas.length, 0);
+  return (
+    <button type="button" disabled={bajando}
+      onClick={async () => {
+        setBajando(true); setError(false);
+        try { await descargarArchivo(archivo); } catch { setError(true); } finally { setBajando(false); }
+      }}
+      className="flex w-full max-w-sm items-center gap-3 rounded-xl border border-manso-cream/15 px-4 py-3 text-left hover:bg-manso-cream/5 disabled:opacity-60">
+      <Icono size={20} className="shrink-0 text-manso-cream/70" aria-hidden />
+      <span className="min-w-0 flex-1">
+        <span className="block truncate text-[14px] font-bold text-manso-cream">{archivo.nombre}.{archivo.formato === 'excel' ? 'xlsx' : 'pdf'}</span>
+        <span className="block text-[12px] text-manso-cream/62">{error ? 'No se pudo armar el archivo. Probá de nuevo.' : `${filas} ${filas === 1 ? 'fila' : 'filas'}`}</span>
+      </span>
+      {bajando ? <Loader2 size={16} className="animate-spin" aria-hidden /> : <Download size={16} aria-hidden />}
+    </button>
+  );
+}
+
 
 function TarjetaAccion({ item, onEstado }: { item: Propuesta; onEstado: (e: Estado) => void }) {
   const [estado, setEstadoLocal] = useState<Estado>(item.estado === 'enviando' ? 'pendiente' : item.estado ?? 'pendiente');
@@ -149,6 +182,8 @@ export function AsistenteIA() {
   const [error, setError] = useState<string | null>(null);
   const [foto, setFoto] = useState<string | null>(null);
   const [subiendo, setSubiendo] = useState(false);
+  const [planilla, setPlanilla] = useState<Planilla | null>(null);
+  const campo = useRef<HTMLTextAreaElement>(null);
   const fin = useRef<HTMLDivElement>(null);
   const archivo = useRef<HTMLInputElement>(null);
   const [charlas, setCharlas] = useState<Charla[]>([]);
@@ -206,6 +241,7 @@ export function AsistenteIA() {
     setError(null);
     setTexto('');
     setFoto(null);
+    setPlanilla(null);
     setVerCharlas(false);
   };
 
@@ -228,9 +264,17 @@ export function AsistenteIA() {
     setSubiendo(true);
     setError(null);
     try {
-      setFoto(await subirFoto(f));
+      if (esPlanilla(f)) {
+        setPlanilla(await leerPlanilla(f));
+        setFoto(null);
+      } else if (f.type.startsWith('image/')) {
+        setFoto(await subirFoto(f));
+        setPlanilla(null);
+      } else {
+        throw new Error('Puedo leer fotos, Excel (.xlsx) y CSV. Si es .xls, guardalo como .xlsx.');
+      }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'No se pudo subir la foto.');
+      setError(err instanceof Error ? err.message : 'No se pudo leer el archivo.');
     } finally {
       setSubiendo(false);
     }
@@ -238,14 +282,17 @@ export function AsistenteIA() {
 
   const enviar = async (contenido: string) => {
     const limpio = contenido.trim();
-    if ((!limpio && !foto) || cargando || subiendo) return;
-    const completo = foto ? `${limpio || 'Te dejo esta foto.'}\n[Foto adjunta: ${foto}]` : limpio;
-    const nuevos: Mensaje[] = [...mensajesRef.current, { role: 'user', content: completo }];
+    if ((!limpio && !foto && !planilla) || cargando || subiendo) return;
+    const base = limpio || (planilla ? 'Te dejo este archivo.' : 'Te dejo esta foto.');
+    const completo = foto ? `${base}\n[Foto adjunta: ${foto}]` : base;
+    const nuevos: Mensaje[] = [...mensajesRef.current, { role: 'user', content: completo, ...(planilla ? { adjunto: planilla } : {}) }];
     mensajesRef.current = nuevos;
     setMensajes(nuevos);
     guardar(nuevos);
     setTexto('');
     setFoto(null);
+    setPlanilla(null);
+    if (campo.current) campo.current.style.height = 'auto';
     setError(null);
     setCargando(true);
     try {
@@ -253,11 +300,11 @@ export function AsistenteIA() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         // Las propuestas no vuelven al modelo: solo el texto de la charla.
-        body: JSON.stringify({ mensajes: nuevos.slice(-12).map(m => ({ role: m.role, content: m.content })) }),
+        body: JSON.stringify({ mensajes: paraModelo(nuevos) }),
       });
       const data = await res.json().catch(() => null);
       if (!res.ok) throw new Error(data?.error ?? 'No se pudo responder.');
-      const conRespuesta: Mensaje[] = [...nuevos, { role: 'assistant', content: data.respuesta, propuestas: data.propuestas }];
+      const conRespuesta: Mensaje[] = [...nuevos, { role: 'assistant', content: data.respuesta, propuestas: data.propuestas, archivos: data.archivos }];
       mensajesRef.current = conRespuesta;
       setMensajes(conRespuesta);
       guardar(conRespuesta);
@@ -270,29 +317,23 @@ export function AsistenteIA() {
   };
 
   return (
-    <div className="mx-auto max-w-3xl space-y-6">
-      <header className="flex items-start gap-3">
-        <Bot size={28} className="mt-1 text-manso-terra" aria-hidden />
-        <div>
-          <h2 className="text-2xl font-black italic uppercase tracking-tighter text-manso-cream">Asistente</h2>
-          <p className="text-[14px] text-manso-cream/70">
-            Consulta lo que necesites del panel y te deja listos mails y eventos nuevos (podés adjuntar la foto con el clip). No hace nada hasta que lo apruebes con el botón.
-          </p>
-        </div>
-        <div className="ml-auto flex shrink-0 gap-2">
+    <div className="mx-auto flex min-h-[70vh] max-w-3xl flex-col gap-6">
+      <header className="flex items-center gap-2">
+        <h2 className="text-2xl font-black italic uppercase tracking-tighter text-manso-cream">Asistente</h2>
+        <div className="ml-auto flex shrink-0 gap-1">
           <button type="button" onClick={() => setVerCharlas(v => !v)} aria-expanded={verCharlas}
-            className="flex items-center gap-2 rounded-xl border border-manso-cream/15 bg-manso-cream/5 px-3 py-2 text-[13px] font-bold uppercase tracking-wider text-manso-cream/80 hover:bg-manso-cream/10">
+            className="flex items-center gap-2 rounded-xl px-3 py-2 text-[13px] font-bold uppercase tracking-wider text-manso-cream/70 hover:bg-manso-cream/10">
             <History size={14} aria-hidden /> Charlas
           </button>
           <button type="button" onClick={nuevaCharla} disabled={mensajes.length === 0}
-            className="flex items-center gap-2 rounded-xl border border-manso-cream/15 bg-manso-cream/5 px-3 py-2 text-[13px] font-bold uppercase tracking-wider text-manso-cream/80 hover:bg-manso-cream/10 disabled:opacity-40">
+            className="flex items-center gap-2 rounded-xl px-3 py-2 text-[13px] font-bold uppercase tracking-wider text-manso-cream/70 hover:bg-manso-cream/10 disabled:opacity-40">
             <Plus size={14} aria-hidden /> Nueva
           </button>
         </div>
       </header>
 
       {verCharlas && (
-        <ul className="space-y-1 rounded-xl border border-manso-cream/15 bg-manso-cream/5 p-2">
+        <ul className="space-y-1 rounded-xl border border-manso-cream/15 p-2">
           {charlas.length === 0 && <li className="px-3 py-2 text-[14px] text-manso-cream/62">Todavía no hay charlas guardadas.</li>}
           {charlas.map(c => (
             <li key={c.id} className="flex items-center gap-2">
@@ -311,68 +352,88 @@ export function AsistenteIA() {
       )}
 
       {mensajes.length === 0 && (
-        <div className="flex flex-wrap gap-2">
-          {SUGERENCIAS.map(s => (
-            <button key={s} type="button" onClick={() => enviar(s)}
-              className="rounded-xl border border-manso-cream/15 bg-manso-cream/5 px-4 py-2 text-left text-[14px] text-manso-cream/85 hover:bg-manso-cream/10">
-              {s}
-            </button>
-          ))}
+        <div className="flex flex-1 flex-col items-center justify-center gap-5 py-10 text-center">
+          <p className="text-2xl font-bold text-manso-cream">¿En qué te ayudo?</p>
+          <div className="flex flex-col items-center gap-1">
+            {SUGERENCIAS.map(s => (
+              <button key={s} type="button" onClick={() => enviar(s)}
+                className="rounded-lg px-3 py-1.5 text-[15px] text-manso-cream/70 underline-offset-4 hover:text-manso-cream hover:underline">
+                {s}
+              </button>
+            ))}
+          </div>
         </div>
       )}
 
-      <div className="space-y-4" aria-live="polite">
+      <div className="space-y-5" aria-live="polite">
         {mensajes.map((m, i) => (
           <div key={i} className={m.role === 'user' ? 'flex justify-end' : 'space-y-3'}>
             {m.role === 'user' ? (
               <div className="max-w-[85%] space-y-2 rounded-2xl bg-manso-cream px-4 py-2.5 text-[15px] text-manso-black">
                 <p className="whitespace-pre-line">{m.content.replace(MARCA_FOTO, '')}</p>
+                {m.adjunto && <p className="flex items-center gap-2 text-[13px] text-manso-black/70"><FileSpreadsheet size={14} aria-hidden /> {m.adjunto.nombre}</p>}
                 {MARCA_FOTO.exec(m.content) && <img src={MARCA_FOTO.exec(m.content)![1]} alt="Foto adjunta" className="h-24 rounded-lg object-cover" />}
               </div>
             ) : (
               <>
                 <p className="whitespace-pre-line text-[15px] leading-relaxed text-manso-cream">{m.content}</p>
+                {m.archivos?.map((a, j) => <BotonArchivo key={`${i}-a${j}`} archivo={a} />)}
                 {m.propuestas?.map((p, j) => <TarjetaAccion key={`${i}-${j}-${p.firma}`} item={p} onEstado={e => marcarEstado(i, j, e)} />)}
               </>
             )}
           </div>
         ))}
-        {cargando && <p className="flex items-center gap-2 text-[14px] text-manso-cream/70"><Loader2 size={14} className="animate-spin" aria-hidden /> Pensando…</p>}
+        {cargando && <p className="flex items-center gap-2 text-[14px] text-manso-cream/70"><Loader2 size={14} className="animate-spin" aria-hidden /> Un momento…</p>}
         {error && <p role="alert" className="text-[14px] text-red-400">{error}</p>}
         <div ref={fin} />
       </div>
 
-      {(foto || subiendo) && (
-        <div className="flex items-center gap-3 text-[13px] text-manso-cream/80">
-          {subiendo ? <><Loader2 size={14} className="animate-spin" aria-hidden /> Subiendo foto…</> : (
-            <>
-              <img src={foto!} alt="Foto lista para enviar" className="h-14 w-14 rounded-lg object-cover" />
-              <span>Foto lista. Contale al asistente para qué es.</span>
-              <button type="button" onClick={() => setFoto(null)} className="underline">Quitar</button>
-            </>
-          )}
-        </div>
-      )}
-
-      <form onSubmit={e => { e.preventDefault(); enviar(texto); }} className="flex gap-2">
-        <input ref={archivo} type="file" accept="image/*" className="hidden" onChange={elegirFoto} />
-        <button type="button" onClick={() => archivo.current?.click()} disabled={subiendo} aria-label="Adjuntar foto" title="Adjuntar foto"
-          className="rounded-xl border border-manso-cream/15 bg-manso-cream/5 px-3 text-manso-cream/80 hover:bg-manso-cream/10 disabled:opacity-40">
-          <Paperclip size={18} aria-hidden />
-        </button>
-        <input
-          value={texto}
-          onChange={e => setTexto(e.target.value)}
-          maxLength={1000}
-          placeholder="Escribile al asistente… (con el clip podés sumar una foto)"
-          aria-label="Mensaje para el asistente"
-          className="flex-1 rounded-xl border border-manso-cream/10 bg-manso-cream/5 px-4 py-3 text-[15px] text-manso-cream placeholder:text-manso-cream/62 focus:outline-none focus:border-manso-terra"
-        />
-        <button type="submit" disabled={cargando || subiendo || (!texto.trim() && !foto)}
-          className="flex items-center gap-2 rounded-xl bg-manso-terra px-5 py-3 text-[13px] font-bold uppercase tracking-wider text-white disabled:opacity-40">
-          <Send size={14} aria-hidden /> Enviar
-        </button>
-      </form>
+      <div className="sticky bottom-0 mt-auto space-y-2 bg-manso-black pb-2 pt-2">
+        {(foto || subiendo || planilla) && (
+          <div className="flex items-center gap-3 text-[13px] text-manso-cream/80">
+            {subiendo ? <><Loader2 size={14} className="animate-spin" aria-hidden /> Leyendo el archivo…</> : planilla ? (
+              <>
+                <FileSpreadsheet size={16} aria-hidden />
+                <span className="truncate">{planilla.nombre}{planilla.recortado ? ' (muy largo: leo las primeras filas)' : ''}</span>
+                <button type="button" onClick={() => setPlanilla(null)} className="underline">Quitar</button>
+              </>
+            ) : (
+              <>
+                <img src={foto!} alt="Foto lista para enviar" className="h-12 w-12 rounded-lg object-cover" />
+                <span>Foto lista. Contame para qué es.</span>
+                <button type="button" onClick={() => setFoto(null)} className="underline">Quitar</button>
+              </>
+            )}
+          </div>
+        )}
+        <form onSubmit={e => { e.preventDefault(); enviar(texto); }}
+          className="flex items-end gap-2 rounded-2xl border border-manso-cream/15 bg-manso-cream/5 p-2 focus-within:border-manso-cream/40">
+          <input ref={archivo} type="file" accept="image/*,.xlsx,.csv" className="hidden" onChange={elegirFoto} />
+          <button type="button" onClick={() => archivo.current?.click()} disabled={subiendo} aria-label="Adjuntar foto o Excel" title="Adjuntar foto, Excel o CSV"
+            className="rounded-xl p-2.5 text-manso-cream/70 hover:bg-manso-cream/10 disabled:opacity-40">
+            <Paperclip size={18} aria-hidden />
+          </button>
+          <textarea
+            ref={campo}
+            rows={1}
+            value={texto}
+            onChange={e => {
+              setTexto(e.target.value);
+              e.target.style.height = 'auto';
+              e.target.style.height = `${Math.min(e.target.scrollHeight, 160)}px`;
+            }}
+            onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) { e.preventDefault(); enviar(texto); } }}
+            maxLength={2000}
+            placeholder="Escribile al asistente…"
+            aria-label="Mensaje para el asistente"
+            className="max-h-40 flex-1 resize-none bg-transparent px-2 py-2.5 text-[15px] text-manso-cream placeholder:text-manso-cream/50 focus:outline-none"
+          />
+          <button type="submit" disabled={cargando || subiendo || (!texto.trim() && !foto && !planilla)} aria-label="Enviar"
+            className="rounded-xl bg-manso-cream p-2.5 text-manso-black disabled:opacity-30">
+            <ArrowUp size={18} aria-hidden />
+          </button>
+        </form>
+      </div>
     </div>
   );
 }

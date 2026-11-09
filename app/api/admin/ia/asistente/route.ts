@@ -10,7 +10,7 @@ export const maxDuration = 60;
 const Entrada = z.object({
   mensajes: z.array(z.object({
     role: z.enum(['user', 'assistant']),
-    content: z.string().min(1).max(4000),
+    content: z.string().min(1).max(16000),
   })).min(1).max(20),
 });
 
@@ -26,7 +26,7 @@ export async function POST(request: Request) {
   if (!entrada.success) return NextResponse.json({ error: 'Mensaje inválido' }, { status: 400 });
   if (entrada.data.mensajes[entrada.data.mensajes.length - 1].role !== 'user') return NextResponse.json({ error: 'Mensaje inválido' }, { status: 400 });
 
-  const { herramientas, propuestasEmitidas, equipo } = crearHerramientas({
+  const { herramientas, propuestasEmitidas, archivosEmitidos, equipo } = crearHerramientas({
     supabase: auth.supabase, userId: auth.userId, email: auth.email,
   });
 
@@ -42,7 +42,7 @@ export async function POST(request: Request) {
       stopWhen: stepCountIs(6),
       providerOptions: { deepseek: { thinking: { type: 'disabled' } } },
       temperature: 0.3,
-      maxOutputTokens: 1200,
+      maxOutputTokens: 2500,
       abortSignal: request.signal,
     });
 
@@ -57,6 +57,7 @@ export async function POST(request: Request) {
     return NextResponse.json({
       respuesta: result.text || 'No pude armar una respuesta. Probá reformular la pregunta.',
       propuestas: propuestasEmitidas,
+      archivos: archivosEmitidos,
     });
   } catch (err) {
     console.error('[ia/asistente]', err instanceof Error ? err.message : err);
