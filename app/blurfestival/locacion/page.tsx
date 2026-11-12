@@ -11,7 +11,7 @@ import { leerTextos } from '@/lib/festival-idioma-servidor';
 export async function generateMetadata(): Promise<Metadata> {
   const [{ t }, config] = await Promise.all([leerTextos(), leerConfig()]);
   if (!config) return { title: t.locacion.titulo };
-  return { title: t.locacion.titulo, description: descripcion(`Dónde es ${MARCA_SEO}. ${resumenFestival(config)}`) };
+  return { title: t.locacion.titulo, description: descripcion(`Cómo llegar a ${MARCA_SEO} Festival en Manso Club${config.lugar ? `, ${config.lugar}` : ''}. ${resumenFestival(config)}`) };
 }
 
 /**

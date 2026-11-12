@@ -105,7 +105,7 @@ export function metadataFestival(config: FestivalConfig | null): Metadata {
   const resumen = config ? resumenFestival(config) : '';
   // La frase con las palabras clave va primero (es lo que Google muestra); la
   // bajada del panel, que es copy de marca, completa si queda lugar.
-  const intro = `${MARCA_SEO} Festival: música electrónica en vivo`;
+  const intro = `${MARCA_SEO} Festival: música electrónica en vivo en Manso Club, Buenos Aires`;
   const desc =
     descripcion([intro, resumen, config?.bajada].filter(Boolean).join(' — ')) ??
     `${MARCA_SEO} Festival, el festival de música electrónica de Manso Club en Buenos Aires.`;
@@ -142,7 +142,7 @@ export function eventoFestival(config: FestivalConfig, artistas: { nombre: strin
   const precios = entradas.filter(e => e.estado === 'en_venta' && e.precio > 0).map(e => e.precio);
   const enVenta = entradas.some(e => e.estado === 'en_venta');
   const agotado = entradas.length > 0 && entradas.every(e => e.estado === 'agotado');
-  const intro = `${MARCA_SEO} Festival: música electrónica en vivo en ${config.lugar ?? 'Buenos Aires'}`;
+  const intro = `${MARCA_SEO} Festival: música electrónica en vivo en Manso Club, ${config.lugar ?? 'Buenos Aires'}`;
   return {
     '@type': 'MusicEvent',
     '@id': `${SITE_URL}/blurfestival#evento`,
