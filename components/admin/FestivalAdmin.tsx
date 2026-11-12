@@ -25,6 +25,7 @@ import {
 import { formatArs } from '@/lib/precios';
 import { CompactImageUploader } from './CompactImageUploader';
 import { FestivalLineupAdmin } from './FestivalLineupAdmin';
+import { FestivalGrupo } from './FestivalGrupo';
 import { FestivalVentasAdmin } from './FestivalVentasAdmin';
 import { FestivalEntradasGestion } from './FestivalEntradasGestion';
 import { FestivalSpotsAdmin } from './FestivalSpotsAdmin';
@@ -210,6 +211,7 @@ export function FestivalAdmin() {
 
   return (
     <div className="space-y-10 max-w-3xl">
+      <FestivalGrupo titulo="Publicación y cobro" descripcion="Estado, cobro y ventas">
       {/* ── Estado ──────────────────────────────────────────────────── */}
       <section
         className={`rounded-2xl p-4 border flex flex-wrap items-center justify-between gap-4 ${
@@ -289,6 +291,9 @@ export function FestivalAdmin() {
 
       <FestivalVentasAdmin />
 
+      </FestivalGrupo>
+
+      <FestivalGrupo titulo="Datos del festival" descripcion="Fecha, lugar, contacto y avisos">
       {/* ── Datos ───────────────────────────────────────────────────── */}
       <section className={CARD}>
         <h3 className={TITULO}>Datos del festival</h3>
@@ -467,6 +472,9 @@ export function FestivalAdmin() {
         </button>
       </section>
 
+      </FestivalGrupo>
+
+      <FestivalGrupo titulo="Página y marca" descripcion="Textos, imágenes e identidad">
       {/* ── Textos ──────────────────────────────────────────────────── */}
       <section className={CARD}>
         <div>
@@ -642,6 +650,9 @@ export function FestivalAdmin() {
         </button>
       </section>
 
+      </FestivalGrupo>
+
+      <FestivalGrupo titulo="Entradas" descripcion="Tipos de entrada de Gestión">
       {/* ── Entradas ────────────────────────────────────────────────── */}
       <FestivalEntradasGestion>
         <section className="space-y-4">
@@ -789,12 +800,18 @@ export function FestivalAdmin() {
         </section>
       </FestivalEntradasGestion>
 
+      </FestivalGrupo>
+
+      <FestivalGrupo titulo="Line-up y lugares" descripcion="Artistas, lanchas y spots">
       <FestivalSpotsAdmin />
 
       <FestivalLanchasAdmin />
 
       <FestivalLineupAdmin />
 
+      </FestivalGrupo>
+
+      <FestivalGrupo titulo="Info, gente y conteo" descripcion="Preguntas frecuentes, voluntarios y visitas">
       {/* ── Info & FAQ ──────────────────────────────────────────────── */}
       <section className="space-y-4">
         <div>
@@ -899,6 +916,7 @@ export function FestivalAdmin() {
       <FestivalVoluntariosAdmin />
 
       <FestivalConteoAdmin />
+      </FestivalGrupo>
     </div>
   );
 }
