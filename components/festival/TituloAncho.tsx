@@ -7,22 +7,34 @@ import { useLayoutEffect, useRef, useState } from 'react';
  * limita al ancho del párrafo de al lado (`max-w-[62ch]` con la misma
  * tipografía), así que el nombre llena lo mismo que la bio.
  *
- * La medida sale de un span oculto a tamaño fijo (100px) y se escala de forma
- * lineal: no depende del tamaño actual, así que no hay bucle al redimensionar.
+ * Tamaño estándar: el del nombre de referencia (GRANT DELL). Ningún título pasa
+ * ese tamaño, aunque sea corto (un nombre corto quedaría enorme), así que todos
+ * los DJ se ven al mismo tamaño. Los nombres largos sí se achican para caber.
+ *
+ * Las medidas salen de spans ocultos a tamaño fijo (100px) y se escalan de forma
+ * lineal: no dependen del tamaño actual, así que no hay bucle al redimensionar.
  * Antes de medir, el título usa la clase de fallback (`className`).
  */
+const REFERENCIA = 'GRANT DELL';
+
 export function TituloAncho({ texto, className }: { texto: string; className?: string }) {
   const caja = useRef<HTMLDivElement>(null);
   const medida = useRef<HTMLSpanElement>(null);
+  const medidaRef = useRef<HTMLSpanElement>(null);
   const [tam, setTam] = useState<number | null>(null);
 
   useLayoutEffect(() => {
     const ajustar = () => {
       const c = caja.current;
       const m = medida.current;
-      if (!c || !m) return;
+      const r = medidaRef.current;
+      if (!c || !m || !r) return;
       const ancho = m.getBoundingClientRect().width;
-      if (ancho > 0 && c.clientWidth > 0) setTam((100 * c.clientWidth) / ancho);
+      const anchoRef = r.getBoundingClientRect().width;
+      if (ancho > 0 && anchoRef > 0 && c.clientWidth > 0) {
+        // Lo que llena el ancho, pero nunca más grande que el estándar.
+        setTam(Math.min((100 * c.clientWidth) / ancho, (100 * c.clientWidth) / anchoRef));
+      }
     };
     ajustar();
     const ro = new ResizeObserver(ajustar);
@@ -49,6 +61,14 @@ export function TituloAncho({ texto, className }: { texto: string; className?: s
         style={{ fontSize: '100px' }}
       >
         {texto}
+      </span>
+      <span
+        ref={medidaRef}
+        aria-hidden
+        className="fest-ancha leading-[0.88] whitespace-nowrap absolute left-0 top-0 invisible pointer-events-none"
+        style={{ fontSize: '100px' }}
+      >
+        {REFERENCIA}
       </span>
     </div>
   );
