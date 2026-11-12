@@ -39,7 +39,7 @@ function dispositivo(ua: string): Dispositivo {
 function normalizarPath(path: unknown): string | null {
   if (typeof path !== 'string' || path.length > 200) return null;
   const limpio = path.split(/[?#]/)[0].replace(/\/+$/, '') || '/';
-  if (limpio !== '/blur' && !limpio.startsWith('/blur/')) return null;
+  if (limpio !== '/blurfestival' && !limpio.startsWith('/blurfestival/')) return null;
   return limpio.replace(/[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/gi, ':id');
 }
 

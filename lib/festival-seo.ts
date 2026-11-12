@@ -4,16 +4,16 @@ import { ORG_ID, descripcion, og } from '@/lib/seo';
 import type { FestivalConfig, FestivalEntrada } from '@/lib/types/festival';
 
 /**
- * SEO de /blur. El nombre que se busca es BLUR; `config.nombre` ("Subreal") es
+ * SEO de /blurfestival. El nombre que se busca es BLUR; `config.nombre` ("Subreal") es
  * el de la pestaña y el pie, así que el título los junta.
  */
 export const MARCA_SEO = 'BLUR';
 
 /** Foto del hero por defecto, si el panel no tiene ni flyer ni banner. */
-export const IMAGEN_POR_DEFECTO = '/blur/hero-cabina.jpg';
+export const IMAGEN_POR_DEFECTO = '/blurfestival/hero-cabina.jpg';
 
 /**
- * Imagen al compartir. Con flyer cargado en el panel la arma `/blur/og` (el
+ * Imagen al compartir. Con flyer cargado en el panel la arma `/blurfestival/og` (el
  * flyer entero en 1200×630: WhatsApp recorta lo vertical). El `v` es el nombre
  * del archivo: al cambiar el flyer cambia la URL y WhatsApp vuelve a bajarla
  * en vez de mostrar la vieja cacheada. Sin flyer: el banner, o la foto por defecto.
@@ -21,7 +21,7 @@ export const IMAGEN_POR_DEFECTO = '/blur/hero-cabina.jpg';
 function imagenAlCompartir(config: FestivalConfig | null) {
   if (config?.flyer_url) {
     const version = encodeURIComponent(config.flyer_url.split('/').pop() ?? '');
-    return { url: `/blur/og?v=${version}`, width: 1200, height: 630 };
+    return { url: `/blurfestival/og?v=${version}`, width: 1200, height: 630 };
   }
   return { url: config?.banner_url || IMAGEN_POR_DEFECTO };
 }
@@ -127,7 +127,7 @@ export function metadataFestival(config: FestivalConfig | null): Metadata {
   };
 }
 
-/** Event de schema.org para la home de /blur. Null si no hay fecha o ya pasó. */
+/** Event de schema.org para la home de /blurfestival. Null si no hay fecha o ya pasó. */
 export function eventoFestival(config: FestivalConfig, artistas: { nombre: string }[], entradas: FestivalEntrada[] = []) {
   if (!config.fecha || !/^\d{4}-\d{2}-\d{2}$/.test(config.fecha)) return null;
   // La fecha es de calendario argentino, sin hora: se compara con hoy en Buenos Aires.
@@ -145,9 +145,9 @@ export function eventoFestival(config: FestivalConfig, artistas: { nombre: strin
   const intro = `${MARCA_SEO} Festival: música electrónica en vivo en ${config.lugar ?? 'Buenos Aires'}`;
   return {
     '@type': 'MusicEvent',
-    '@id': `${SITE_URL}/blur#evento`,
+    '@id': `${SITE_URL}/blurfestival#evento`,
     name: tituloBusqueda(config),
-    url: `${SITE_URL}/blur`,
+    url: `${SITE_URL}/blurfestival`,
     inLanguage: 'es-AR',
     description: descripcion([intro, config.bajada].filter(Boolean).join('. '), 500),
     ...fechasEvento(config),
@@ -172,7 +172,7 @@ export function eventoFestival(config: FestivalConfig, artistas: { nombre: strin
     ...(artistas.length > 0 && { performer: artistas.map(a => ({ '@type': 'PerformingGroup', name: a.nombre })) }),
     offers: {
       '@type': 'AggregateOffer',
-      url: `${SITE_URL}/blur/tickets`,
+      url: `${SITE_URL}/blurfestival/tickets`,
       priceCurrency: 'ARS',
       ...(precios.length > 0 && { lowPrice: Math.min(...precios), highPrice: Math.max(...precios), offerCount: precios.length }),
       availability: agotado

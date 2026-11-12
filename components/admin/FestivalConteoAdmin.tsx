@@ -284,7 +284,7 @@ export function FestivalConteoAdmin() {
         <div>
           <h3 className={TITULO}>Conteo de visitas</h3>
           <p className={AYUDA}>
-            Cuántas veces se ve cada pantalla de /blur, cuánto se queda la gente y en qué toca. Sin cookies, sin IP
+            Cuántas veces se ve cada pantalla de /blurfestival, cuánto se queda la gente y en qué toca. Sin cookies, sin IP
             ni datos personales; no cuenta borradores ni (si lo dejás prendido) a los admins.
           </p>
         </div>
@@ -484,7 +484,7 @@ export function FestivalConteoAdmin() {
         <div className="divide-y divide-manso-cream/10">
           <Interruptor
             titulo="Conteo activo"
-            ayuda="Apagado, /blur no mide nada. Lo ya guardado se conserva."
+            ayuda="Apagado, /blurfestival no mide nada. Lo ya guardado se conserva."
             valor={config.activo}
             onChange={activo => editar({ activo })}
           />
@@ -508,7 +508,7 @@ export function FestivalConteoAdmin() {
           />
           <Interruptor
             titulo="No contar a los admins"
-            ayuda="Si estás logueado como admin mientras mirás /blur, esas visitas no suman."
+            ayuda="Si estás logueado como admin mientras mirás /blurfestival, esas visitas no suman."
             valor={config.excluir_admin}
             onChange={excluir_admin => editar({ excluir_admin })}
           />
@@ -560,15 +560,15 @@ export function FestivalConteoAdmin() {
           <div className="py-3 space-y-2">
             <p className="text-[13px] font-black uppercase tracking-widest text-manso-cream">Pantallas que no se miden</p>
             <p className="text-[13px] text-manso-cream/62 leading-relaxed">
-              Una ruta por renglón; vale ella y todo lo que cuelga. Ej: <code>/blur/info</code>. Por defecto se
-              miden todas; las de compra se agrupan en una sola (<code>/blur/compra/:id</code>) para no guardar ids de
+              Una ruta por renglón; vale ella y todo lo que cuelga. Ej: <code>/blurfestival/info</code>. Por defecto se
+              miden todas; las de compra se agrupan en una sola (<code>/blurfestival/compra/:id</code>) para no guardar ids de
               órdenes.
             </p>
             <textarea
               value={rutasTexto}
               onChange={e => setRutasTexto(e.target.value)}
               rows={3}
-              placeholder="/blur/compra"
+              placeholder="/blurfestival/compra"
               className={`${INPUT} font-mono text-[13px]`}
             />
           </div>

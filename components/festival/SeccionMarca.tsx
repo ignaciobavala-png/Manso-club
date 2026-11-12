@@ -18,14 +18,14 @@ const TEMAS = {
 
 export type TemaMarca = keyof typeof TEMAS;
 
-/** Los recursos de la diseñadora (`public/blur/marca/`), con su tamaño real. */
+/** Los recursos de la diseñadora (`public/blurfestival/marca/`), con su tamaño real. */
 export const RECURSOS = {
-  figuras: { src: '/blur/marca/ilus-bailando.webp', w: 1100, h: 717, anim: 'fest-baila' },
-  figurasBlancas: { src: '/blur/marca/ilus-bailando-b.webp', w: 1100, h: 717, anim: 'fest-baila' },
-  nota: { src: '/blur/marca/ilus-nota-1.webp', w: 700, h: 556, anim: 'fest-flota' },
-  notas: { src: '/blur/marca/ilus-notas-2.webp', w: 700, h: 538, anim: 'fest-flota' },
-  texturaNaranja: { src: '/blur/marca/textura_1_color.svg', w: 900, h: 800, svg: true, anim: 'fest-brisa' },
-  texturaBlanca: { src: '/blur/marca/textura_1_b.svg', w: 900, h: 800, svg: true, anim: 'fest-brisa' },
+  figuras: { src: '/blurfestival/marca/ilus-bailando.webp', w: 1100, h: 717, anim: 'fest-baila' },
+  figurasBlancas: { src: '/blurfestival/marca/ilus-bailando-b.webp', w: 1100, h: 717, anim: 'fest-baila' },
+  nota: { src: '/blurfestival/marca/ilus-nota-1.webp', w: 700, h: 556, anim: 'fest-flota' },
+  notas: { src: '/blurfestival/marca/ilus-notas-2.webp', w: 700, h: 538, anim: 'fest-flota' },
+  texturaNaranja: { src: '/blurfestival/marca/textura_1_color.svg', w: 900, h: 800, svg: true, anim: 'fest-brisa' },
+  texturaBlanca: { src: '/blurfestival/marca/textura_1_b.svg', w: 900, h: 800, svg: true, anim: 'fest-brisa' },
 } as const;
 
 type Recurso = (typeof RECURSOS)[keyof typeof RECURSOS];

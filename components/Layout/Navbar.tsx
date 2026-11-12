@@ -73,7 +73,7 @@ export const Navbar = () => {
     { name: 'agenda',     href: '/agenda' },
     { name: 'artistas',   href: '/artistas' },
     { name: 'comunidad',  href: '/foro' },
-    { name: 'festival',   href: '/blur' },
+    { name: 'festival',   href: '/blurfestival' },
   ];
 
   const getTextColor = (light: boolean) =>

@@ -21,7 +21,7 @@ import type { FestivalConfig, MedioPago } from '@/lib/types/festival';
  *     `supabase/migration_festival_cripto.sql`:
  *
  *   1. `/api/festival/compra` crea la orden (sin red todavía).
- *   2. En `/blur/compra/[id]` el comprador elige red → `elegirRed` le fija
+ *   2. En `/blurfestival/compra/[id]` el comprador elige red → `elegirRed` le fija
  *      un monto único y desde qué bloque mirar.
  *   3. `sincronizarRed` lee la cadena y acredita la transferencia con ese monto
  *      exacto. La corren la pantalla de pago (cada pocos segundos, con freno)
@@ -130,7 +130,7 @@ export function adminFestival(): SupabaseClient {
 }
 
 export const urlSitio = () => process.env.NEXT_PUBLIC_SITE_URL ?? 'https://mansoclub.com.ar';
-export const urlCompra = (ordenId: string) => `${urlSitio()}/blur/compra/${ordenId}`;
+export const urlCompra = (ordenId: string) => `${urlSitio()}/blurfestival/compra/${ordenId}`;
 
 const normalizar = (o: OrdenFestival): OrdenFestival => ({
   ...o,
@@ -670,7 +670,7 @@ export async function vencerOrdenes(supabase: SupabaseClient) {
  */
 export async function enviarMailTickets(supabase: SupabaseClient, orden: Pick<OrdenFestival, 'id' | 'nombre' | 'email' | 'cantidad_entradas'> & { total_ars?: number }) {
   // Las entradas gratis no llevan mail (pedido de Ana, para cuidar los 100/día
-  // de Resend); las pagas sí. Se ven igual en /blur/compra/[id].
+  // de Resend); las pagas sí. Se ven igual en /blurfestival/compra/[id].
   if (orden.total_ars !== undefined && Number(orden.total_ars) <= 0) return;
   const { data: reclamada } = await supabase
     .from('festival_ordenes')

@@ -4,8 +4,8 @@ import { EscribeTexto } from './Escribe';
 import { leerTextos } from '@/lib/festival-idioma-servidor';
 
 /**
- * Piezas de /blur/compra/[id] que comparte con la demo
- * (/blur/compra/demo): el marco de la página, una fila del resumen y la
+ * Piezas de /blurfestival/compra/[id] que comparte con la demo
+ * (/blurfestival/compra/demo): el marco de la página, una fila del resumen y la
  * vista de la compra pagada con un QR por entrada.
  */
 

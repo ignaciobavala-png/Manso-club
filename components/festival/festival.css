@@ -1,5 +1,5 @@
 /*
- * Subreal (/blur). Fusión de basilarfestival.com —la referencia de Ana—
+ * Subreal (/blurfestival). Fusión de basilarfestival.com —la referencia de Ana—
  * con Manso: la estructura, el menú con ">" y la letra pesada son de Basilar;
  * los colores salen de la paleta de Manso (vienen del panel como variables).
  *
@@ -298,3 +298,41 @@
     animation: none;
   }
 }
+
+/* ── Chat (BotBlur) ────────────────────────────────────────────────────────
+   La burbuja late despacio para que se note sin molestar, y los tres puntos
+   de "escribiendo" suben de a uno. Solo `transform` y `opacity`. */
+@keyframes fest-bot-late {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.07); }
+}
+.fest-bot-late {
+  animation: fest-bot-late 2.8s ease-in-out infinite;
+}
+@keyframes fest-bot-entra {
+  from { opacity: 0; transform: translateY(12px); }
+}
+.fest-bot-entra {
+  animation: fest-bot-entra 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes fest-bot-punto {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.35; }
+  30% { transform: translateY(-3px); opacity: 1; }
+}
+.fest-bot-punto {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+  animation: fest-bot-punto 1.1s ease-in-out infinite;
+}
+.fest-bot-punto:nth-child(2) { animation-delay: 0.15s; }
+.fest-bot-punto:nth-child(3) { animation-delay: 0.3s; }
+@media (prefers-reduced-motion: reduce) {
+  .fest-bot-late,
+  .fest-bot-entra,
+  .fest-bot-punto {
+    animation: none;
+  }
+}
+

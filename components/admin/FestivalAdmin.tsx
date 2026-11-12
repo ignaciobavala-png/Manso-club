@@ -47,7 +47,7 @@ import {
 } from './festivalComun';
 
 /**
- * Sección "Festival": Subreal, el sitio chico de /blur (hero, visión,
+ * Sección "Festival": Subreal, el sitio chico de /blurfestival (hero, visión,
  * locación, line-up con página por artista, tickets e info).
  *
  * Tiene identidad propia —sin navbar de Manso— y mientras no se publique solo
@@ -140,7 +140,7 @@ export function FestivalAdmin() {
     const publicado = !config.publicado;
     if (
       publicado &&
-      !confirm('¿Publicar el festival? La página /blur pasa a verse para cualquiera que tenga el link.')
+      !confirm('¿Publicar el festival? La página /blurfestival pasa a verse para cualquiera que tenga el link.')
     ) {
       return;
     }
@@ -224,13 +224,13 @@ export function FestivalAdmin() {
           </p>
           <p className="text-[13px] text-manso-cream/50 leading-relaxed max-w-md">
             {config.publicado
-              ? 'Cualquiera con el link ve /blur. No está enlazado desde el sitio de Manso.'
-              : 'Solo los admins pueden ver /blur. Para el resto la página no existe.'}
+              ? 'Cualquiera con el link ve /blurfestival. No está enlazado desde el sitio de Manso.'
+              : 'Solo los admins pueden ver /blurfestival. Para el resto la página no existe.'}
           </p>
         </div>
         <div className="flex items-center gap-4">
           <a
-            href="/blur"
+            href="/blurfestival"
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center gap-2 text-[12px] font-black uppercase tracking-widest text-manso-terra hover:text-manso-cream transition-colors"
@@ -262,7 +262,7 @@ export function FestivalAdmin() {
           {(
             [
               ['pago_mercadopago', 'Mercado Pago', 'Se confirma solo. Usa la cuenta de MP de la tienda.'],
-              ['pago_transferencia', 'Transferencia', 'Lleva a quien compra a Manso Gestión (/registro/blur): ahí transfiere, sube el comprobante y ve su QR. Se confirma en Gestión.'],
+              ['pago_transferencia', 'Transferencia', 'Lleva a quien compra a Manso Gestión (/registro/blurfestival): ahí transfiere, sube el comprobante y ve su QR. Se confirma en Gestión.'],
               ['pago_cripto', 'Cripto (USDT en BEP20 o ERC20)', 'Necesita la wallet cargada en Vercel (FESTIVAL_WALLET_EVM). Sin ella no aparece aunque esté prendido.'],
             ] as const
           ).map(([campo, etiqueta, ayuda]) => (
@@ -800,7 +800,7 @@ export function FestivalAdmin() {
         <div>
           <h3 className={TITULO}>Info &amp; FAQ</h3>
           <p className={AYUDA}>
-            Cada pregunta es un bloque de /blur/info: título corto en mayúsculas y un párrafo.
+            Cada pregunta es un bloque de /blurfestival/info: título corto en mayúsculas y un párrafo.
             Se acomodan en tres columnas en este orden.
           </p>
         </div>

@@ -19,7 +19,7 @@ import type { FestivalArtista } from '@/lib/types/festival';
  * resalte pasan al color del texto: si no, con el fondo terra el menú (que va
  * en acento) desaparece.
  *
- * Lo usan el home y /blur/line-up.
+ * Lo usan el home y /blurfestival/line-up.
  */
 
 /** Fondo y texto. La paleta de BLUR (PDF "BLUR - paleta"), con el texto que lee bien sobre cada fondo. */
@@ -93,7 +93,7 @@ export function LineupCorrido({ escenarios }: { escenarios: EscenarioConArtistas
                 {grupo.map((artista, k) => (
                   <span key={artista.id}>
                     {k > 0 && <span className="fest-lineup-b2b"> b2b </span>}
-                    <Link href={`/blur/line-up/${artista.slug}`} onMouseEnter={pintar} className="fest-lineup-nombre">
+                    <Link href={`/blurfestival/line-up/${artista.slug}`} onMouseEnter={pintar} className="fest-lineup-nombre">
                       {artista.nombre}
                       {artista.pais && (
                         <sup className="fest-mono text-[11px] font-normal tracking-[0.2em] opacity-60 ml-1.5 align-top relative top-[0.6em]">

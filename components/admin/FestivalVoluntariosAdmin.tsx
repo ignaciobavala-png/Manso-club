@@ -17,7 +17,7 @@ import { FestivalVoluntariosLink } from './FestivalVoluntariosLink';
 import { AYUDA, BOTON_GUARDAR, BOTON_ICONO, CARD, INPUT, LABEL, TITULO } from './festivalComun';
 
 /**
- * Subsección "Voluntarios" del panel de Festival (/blur/voluntarios).
+ * Subsección "Voluntarios" del panel de Festival (/blurfestival/voluntarios).
  *
  * Reemplaza a la Google Sheet que proponía el brief: las postulaciones llegan
  * por `/api/festival/voluntarios` a `festival_voluntarios` y acá producción las

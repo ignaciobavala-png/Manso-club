@@ -7,6 +7,7 @@ import { VisorFotos } from '@/components/festival/VisorFotos';
 import { leerTextos } from '@/lib/festival-idioma-servidor';
 import { MARCA_SEO } from '@/lib/festival-seo';
 import { descripcion, og } from '@/lib/seo';
+import { TituloAncho } from '@/components/festival/TituloAncho';
 
 /**
  * Página de un artista. Estructura de /speakers/[slug] de la bitconf: volver,
@@ -62,6 +63,22 @@ export default async function FestivalArtistaPage({ params }: { params: Promise<
 
   const { artista, anterior, siguiente } = encontrado;
   const video = idYoutube(artista.youtube_url);
+  // La galería: `fotos` en orden, y si no hay (datos viejos) la foto suelta.
+  const fotos = artista.fotos?.length ? artista.fotos : artista.foto_url ? [artista.foto_url] : [];
+
+  // El video va debajo de la bio, a todo el ancho de la columna (como en KNDR).
+  const videoEl = video && (
+    <div className="aspect-video bg-[var(--fest-texto)]/[0.06]">
+      <iframe
+        src={`https://www.youtube-nocookie.com/embed/${video}?rel=0&modestbranding=1&iv_load_policy=3&playsinline=1&color=white`}
+        title={t.lineup.youtube(artista.nombre)}
+        loading="lazy"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        allowFullScreen
+        className="w-full h-full"
+      />
+    </div>
+  );
 
   const set = [
     [t.lineup.dia, artista.dia],
@@ -77,7 +94,7 @@ export default async function FestivalArtistaPage({ params }: { params: Promise<
   return (
     <div className="px-4 sm:px-7 pt-6 sm:pt-10 pb-20 sm:pb-24 fest-entra">
       <Link
-        href="/blur/line-up"
+        href="/blurfestival/line-up"
         className="fest-angosta text-base opacity-55 hover:opacity-100 hover:text-[var(--fest-acento)] transition"
       >
         {t.lineup.todo}
@@ -85,29 +102,29 @@ export default async function FestivalArtistaPage({ params }: { params: Promise<
 
       <div
         className={`mt-8 grid gap-9 md:gap-14 items-start ${
-          artista.foto_url ? 'md:grid-cols-[minmax(220px,380px)_1fr]' : ''
+          fotos.length ? 'md:grid-cols-[minmax(220px,380px)_1fr]' : ''
         }`}
       >
-        {artista.foto_url && (
-          <VisorFotos fotos={[artista.foto_url]} alt={artista.nombre} className="max-w-[300px] md:max-w-none">
-            <button type="button" data-foto={0} aria-label={t.lineup.ampliar(artista.nombre)} className="block w-full cursor-zoom-in">
-              <Image
-                src={artista.foto_url}
-                alt={artista.nombre}
-                width={0}
-                height={0}
-                sizes="(min-width: 768px) 380px, 300px"
-                priority
-                className="block w-full h-auto"
-              />
-            </button>
+        {fotos.length > 0 && (
+          <VisorFotos fotos={fotos} alt={artista.nombre} className="flex flex-col gap-4 w-full max-w-[300px] md:max-w-none">
+            {fotos.map((foto, i) => (
+              <button key={`${foto}-${i}`} type="button" data-foto={i} aria-label={t.lineup.ampliar(artista.nombre)} className="block w-full cursor-zoom-in">
+                <Image
+                  src={foto}
+                  alt={artista.nombre}
+                  width={0}
+                  height={0}
+                  sizes="(min-width: 768px) 380px, 300px"
+                  priority={i === 0}
+                  className="block w-full h-auto"
+                />
+              </button>
+            ))}
           </VisorFotos>
         )}
 
         <div className="min-w-0">
-          <h1 className="fest-ancha leading-[0.88] text-[clamp(2.6rem,7.5vw,7.5rem)] break-words">
-            {artista.nombre}
-          </h1>
+          <TituloAncho texto={artista.nombre} className="text-[clamp(2.6rem,7.5vw,7.5rem)]" />
 
           {(artista.origen || artista.pais) && (
             <p className="mt-3.5 fest-mono text-[13px] tracking-[0.2em] uppercase text-[var(--fest-resalte)]">
@@ -130,23 +147,12 @@ export default async function FestivalArtistaPage({ params }: { params: Promise<
           )}
 
           {artista.bio && (
-            <p className="mt-8 max-w-[62ch] text-[clamp(16px,1.35vw,19px)] leading-[1.6] opacity-85 whitespace-pre-line">
+            <p className="mt-8 max-w-[62ch] text-[clamp(17px,1.5vw,21px)] leading-[1.6] opacity-85 whitespace-pre-line">
               {artista.bio}
             </p>
           )}
 
-          {video && (
-            <div className="mt-8 max-w-[720px] aspect-video bg-[var(--fest-texto)]/[0.06]">
-              <iframe
-                src={`https://www.youtube-nocookie.com/embed/${video}`}
-                title={t.lineup.youtube(artista.nombre)}
-                loading="lazy"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full h-full"
-              />
-            </div>
-          )}
+          {video && <div className="mt-8 max-w-[720px]">{videoEl}</div>}
 
           {redes.length > 0 && (
             <div className="mt-8 flex flex-wrap gap-x-[22px] gap-y-2">
@@ -173,7 +179,7 @@ export default async function FestivalArtistaPage({ params }: { params: Promise<
         >
           {anterior ? (
             <Link
-              href={`/blur/line-up/${anterior.slug}`}
+              href={`/blurfestival/line-up/${anterior.slug}`}
               className="fest-angosta text-[clamp(20px,2.4vw,32px)] leading-tight hover:text-[var(--fest-acento)] transition-colors"
             >
               <small className="block fest-mono text-[10px] tracking-[0.3em] font-normal opacity-55">{t.lineup.anterior}</small>
@@ -184,7 +190,7 @@ export default async function FestivalArtistaPage({ params }: { params: Promise<
           )}
           {siguiente && (
             <Link
-              href={`/blur/line-up/${siguiente.slug}`}
+              href={`/blurfestival/line-up/${siguiente.slug}`}
               className="fest-angosta text-right text-[clamp(20px,2.4vw,32px)] leading-tight hover:text-[var(--fest-acento)] transition-colors"
             >
               <small className="block fest-mono text-[10px] tracking-[0.3em] font-normal opacity-55">{t.lineup.siguiente}</small>

@@ -17,7 +17,7 @@ import { GuiaUsdt } from './GuiaUsdt';
  * el pago sin pedirle nada al comprador. Por eso se insiste en "exactamente".
  *
  * Con `demo` no toca la API: elegir red arma datos de ejemplo en el navegador
- * y la dirección es un texto que no es una dirección (`/blur/compra/demo`).
+ * y la dirección es un texto que no es una dirección (`/blurfestival/compra/demo`).
  */
 
 /** Ni un formato de dirección válido: que nadie pueda mandarle plata a esto. */

@@ -9,7 +9,7 @@ import { Copiar } from './PagoCripto';
 import { useTextos } from './Idioma';
 
 /**
- * Pantallas de pago en pesos de /blur/compra/[id], mientras la orden no
+ * Pantallas de pago en pesos de /blurfestival/compra/[id], mientras la orden no
  * está pagada. Cuando se paga, la página pasa sola a mostrar los QR.
  */
 

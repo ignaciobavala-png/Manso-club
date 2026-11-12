@@ -17,7 +17,7 @@ import {
   Trash2,
 } from 'lucide-react';
 import { FestivalArtista, FestivalEscenario } from '@/lib/types/festival';
-import { CompactImageUploader } from './CompactImageUploader';
+import { GaleriaFotosAdmin } from './GaleriaFotosAdmin';
 import {
   AYUDA,
   BOTON_AGREGAR,
@@ -34,7 +34,7 @@ import {
 
 /**
  * Line-up de Subreal: escenarios y, adentro de cada uno, sus artistas. Cada
- * artista tiene página propia en /blur/line-up/[slug]; en el listado se
+ * artista tiene página propia en /blurfestival/line-up/[slug]; en el listado se
  * muestra en el orden de acá, y "B2B con el de arriba" lo pega al anterior.
  *
  * Las fichas de artista arrancan cerradas: con diez artistas y doce campos
@@ -254,7 +254,7 @@ export function FestivalLineupAdmin() {
                   placeholder={toSlug(a.nombre)}
                   className={`${INPUT} font-mono`}
                 />
-                <p className={AYUDA}>/blur/line-up/{toSlug(a.slug) || toSlug(a.nombre)}</p>
+                <p className={AYUDA}>/blurfestival/line-up/{toSlug(a.slug) || toSlug(a.nombre)}</p>
               </div>
             </div>
 
@@ -289,33 +289,20 @@ export function FestivalLineupAdmin() {
               <div>
                 <label className={`${LABEL} flex items-center gap-2`}>
                   <ImageIcon size={14} />
-                  Foto
+                  Fotos ({a.fotos.length})
                 </label>
-                <CompactImageUploader
-                  key={a.foto_url ?? `sin-foto-${a.id}`}
-                  bucket="flyers"
+                <GaleriaFotosAdmin
+                  fotos={a.fotos}
                   folder="festival/artistas"
                   maxLado={1200}
-                  height="h-40"
-                  initialPreview={a.foto_url}
-                  onUpload={url => {
-                    editarArtista(a.id, { foto_url: url });
-                    guardarFila('festival_artistas', a.id, { foto_url: url });
+                  onChange={fotos => {
+                    // La primera es la principal: listado, OG y sitemap usan `foto_url`.
+                    const principal = fotos[0] ?? null;
+                    editarArtista(a.id, { fotos, foto_url: principal });
+                    guardarFila('festival_artistas', a.id, { fotos, foto_url: principal });
                   }}
                 />
-                <p className={AYUDA}>Cuadrada. Se guarda al subirla.</p>
-                {a.foto_url && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      editarArtista(a.id, { foto_url: null });
-                      guardarFila('festival_artistas', a.id, { foto_url: null });
-                    }}
-                    className="mt-2 text-[12px] font-black uppercase tracking-widest text-manso-cream/62 hover:text-manso-terra transition-colors"
-                  >
-                    Quitar
-                  </button>
-                )}
+                <p className={AYUDA}>Varias a la vez; la primera es la principal. Se guardan solas.</p>
               </div>
               <div>
                 <label className={LABEL}>Bio</label>
@@ -345,7 +332,7 @@ export function FestivalLineupAdmin() {
             <div>
               <label className={LABEL}>Video de YouTube</label>
               <input type="text" value={a.youtube_url ?? ''} onChange={e => editarArtista(a.id, { youtube_url: e.target.value })} placeholder="https://www.youtube.com/watch?v=…" className={INPUT} />
-              <p className={AYUDA}>Un set o un tema. Se ve embebido en su página, debajo de la bio.</p>
+              <p className={AYUDA}>Un set o un tema. Se ve embebido en su página, cuadrado debajo de la foto (si no tiene foto, a la derecha de la bio).</p>
             </div>
 
             <div className="flex flex-wrap items-center justify-between gap-3">
@@ -355,7 +342,7 @@ export function FestivalLineupAdmin() {
                   Guardar
                 </button>
                 <a
-                  href={`/blur/line-up/${a.slug}`}
+                  href={`/blurfestival/line-up/${a.slug}`}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-1.5 text-[12px] font-black uppercase tracking-widest text-manso-cream/62 hover:text-manso-cream transition-colors"

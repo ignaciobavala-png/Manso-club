@@ -191,7 +191,7 @@ export function FestivalVentasAdmin() {
               <span className="text-[15px] font-mono text-manso-cream tabular-nums">{formatArs(v.total_ars)}</span>
               {v.estado === 'pagada' ? (
                 <a
-                  href={`/blur/compra/${v.id}`}
+                  href={`/blurfestival/compra/${v.id}`}
                   target="_blank"
                   rel="noreferrer"
                   className="inline-flex items-center gap-1.5 text-[12px] font-black uppercase tracking-widest text-manso-olive hover:text-manso-cream"

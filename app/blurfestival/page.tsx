@@ -20,7 +20,7 @@ import { eventoFestival, fechaLarga, MARCA_SEO } from '@/lib/festival-seo';
 const TITULO_HERO = 'Blur';
 
 /** Foto de fondo mientras no se cargue un banner desde el panel. */
-const BANNER_POR_DEFECTO = '/blur/hero-cabina.jpg';
+const BANNER_POR_DEFECTO = '/blurfestival/hero-cabina.jpg';
 
 /**
  * Home de BLUR. Arranca con el hero a pantalla completa —la foto a sangre tal
@@ -62,7 +62,7 @@ export default async function FestivalHome() {
       <div aria-hidden className="absolute inset-0 z-[1] pointer-events-none bg-[linear-gradient(to_bottom,transparent_60%,rgba(13,46,19,0.88))]" />
       <Image
         aria-hidden
-        src="/blur/marca/textura_1_color.svg"
+        src="/blurfestival/marca/textura_1_color.svg"
         alt=""
         width={900}
         height={800}
@@ -84,13 +84,13 @@ export default async function FestivalHome() {
         )}
         <div className="flex items-center justify-center gap-3 sm:gap-4 mt-2 sm:mt-3">
           <Link
-            href="/blur/tickets"
+            href="/blurfestival/tickets"
             className="fest-menu fest-brillo relative overflow-hidden bg-[var(--fest-acento)] text-[var(--fest-fondo)] hover:bg-[var(--fest-texto)] transition-colors text-[clamp(17px,1.9vw,25px)] leading-none px-[0.9em] py-[0.5em]"
           >
-            {t.menu['/blur/tickets']}
+            {t.menu['/blurfestival/tickets']}
           </Link>
           <Link
-            href="/blur/info"
+            href="/blurfestival/info"
             className="fest-menu border-2 border-[var(--fest-texto)] text-[var(--fest-texto)] hover:bg-[var(--fest-texto)] hover:text-[var(--fest-fondo)] transition-colors text-[clamp(17px,1.9vw,25px)] leading-none px-[0.9em] py-[0.5em]"
           >
             Info
@@ -114,7 +114,7 @@ export default async function FestivalHome() {
     {fotos.length > 0 && (
       <Seccion
         rotulo={t.home.locacion}
-        href="/blur/locacion"
+        href="/blurfestival/locacion"
         ver={t.home.verLocacion}
         tema="gris"
         deco={DECO.locacion}
@@ -133,7 +133,7 @@ export default async function FestivalHome() {
     )}
 
     {lineup.length > 0 && (
-      <Seccion rotulo={t.home.lineup} href="/blur/line-up" ver={t.home.verLineup} tema="verde" deco={DECO.lineup}>
+      <Seccion rotulo={t.home.lineup} href="/blurfestival/line-up" ver={t.home.verLineup} tema="verde" deco={DECO.lineup}>
         <LineupCorrido escenarios={lineup} />
       </Seccion>
     )}

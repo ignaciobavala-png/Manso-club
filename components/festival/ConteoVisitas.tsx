@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation';
 import { CargaVisita, ConteoConfig } from '@/lib/types/festival-conteo';
 
 /**
- * Medidor de /blur: por cada pantalla cuenta el tiempo y los clicks y se lo
+ * Medidor de /blurfestival: por cada pantalla cuenta el tiempo y los clicks y se lo
  * manda a /api/festival/visitas. No renderiza nada.
  *
  * Tiempo: corre solo mientras la pestaña está a la vista (si el panel lo pide)

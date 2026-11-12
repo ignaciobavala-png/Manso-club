@@ -42,7 +42,7 @@ function mensajeReserva(codigo: string): { error: string; status: number } {
 
 /**
  * Arma la orden y devuelve a dónde mandar al comprador: el checkout de Mercado
- * Pago, o su compra (`/blur/compra/[id]`) para transferencia y cripto.
+ * Pago, o su compra (`/blurfestival/compra/[id]`) para transferencia y cripto.
  * Precios, cantidades y cotización se resuelven acá: del navegador solo se
  * toma qué entradas, cuántas y con qué medio.
  */
@@ -189,5 +189,5 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  return NextResponse.json({ url: `/blur/compra/${orden.id}` });
+  return NextResponse.json({ url: `/blurfestival/compra/${orden.id}` });
 }

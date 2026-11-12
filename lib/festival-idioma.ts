@@ -1,7 +1,7 @@
 import type { EstadoEntrada, MedioPago } from '@/lib/types/festival';
 
 /**
- * Idioma de /blur (es | en). Sin dependencias ni `next/headers`, así lo
+ * Idioma de /blurfestival (es | en). Sin dependencias ni `next/headers`, así lo
  * importan tanto los componentes de servidor como los de cliente. Para leer
  * cuál toca en una request: `leerIdioma` en `festival-idioma-servidor`.
  *
@@ -38,19 +38,35 @@ export function enIdioma<T extends object>(fila: T, idioma: Idioma, campos: (key
 
 const es = {
   menu: {
-    '/blur': 'Home',
-    '/blur/vision': 'Visión',
-    '/blur/locacion': 'Locación',
-    '/blur/spots': 'Spots',
-    '/blur/line-up': 'Line up',
-    '/blur/tickets': 'Tickets',
-    '/blur/info': 'Info & FAQ',
-    '/blur/voluntarios': 'Voluntarios',
+    '/blurfestival': 'Home',
+    '/blurfestival/vision': 'Visión',
+    '/blurfestival/locacion': 'Locación',
+    '/blurfestival/spots': 'Spots',
+    '/blurfestival/line-up': 'Line up',
+    '/blurfestival/tickets': 'Tickets',
+    '/blurfestival/info': 'Info & FAQ',
+    '/blurfestival/voluntarios': 'Voluntarios',
   },
   idiomaEtiqueta: 'Idioma',
   borrador: 'Borrador — sin publicar, solo lo ven los admins',
   contacto: 'Contacto',
   muyPronto: 'Muy pronto.',
+
+  bot: {
+    abrir: 'Abrir el chat de BLUR',
+    cerrar: 'Cerrar el chat',
+    titulo: 'Preguntale a BLUR',
+    sugerencias: ['¿Cuándo y dónde es?', '¿Cómo llego?', '¿A qué hora toca cada artista?', '¿Cómo consigo entrada?'],
+    placeholder: 'Escribí tu pregunta…',
+    enviar: 'Enviar',
+    escribiendo: 'Escribiendo',
+    aviso: 'Respuestas automáticas: pueden contener errores. Ante la duda, escribinos.',
+    errores: {
+      limite: 'Alcanzaste el límite de mensajes por ahora. Volvé a intentarlo en un rato.',
+      'no-disponible': 'El chat no está disponible en este momento. Probá de nuevo en un rato.',
+      invalido: 'No pude leer ese mensaje. Probá con una pregunta más corta.',
+    },
+  },
 
   home: {
     locacion: 'Locación',
@@ -272,19 +288,35 @@ export type Textos = typeof es;
 
 const en: Textos = {
   menu: {
-    '/blur': 'Home',
-    '/blur/vision': 'Vision',
-    '/blur/locacion': 'Location',
-    '/blur/spots': 'Spots',
-    '/blur/line-up': 'Line up',
-    '/blur/tickets': 'Tickets',
-    '/blur/info': 'Info & FAQ',
-    '/blur/voluntarios': 'Volunteers',
+    '/blurfestival': 'Home',
+    '/blurfestival/vision': 'Vision',
+    '/blurfestival/locacion': 'Location',
+    '/blurfestival/spots': 'Spots',
+    '/blurfestival/line-up': 'Line up',
+    '/blurfestival/tickets': 'Tickets',
+    '/blurfestival/info': 'Info & FAQ',
+    '/blurfestival/voluntarios': 'Volunteers',
   },
   idiomaEtiqueta: 'Language',
   borrador: 'Draft — unpublished, only admins can see it',
   contacto: 'Contact',
   muyPronto: 'Coming soon.',
+
+  bot: {
+    abrir: 'Open the BLUR chat',
+    cerrar: 'Close the chat',
+    titulo: 'Ask BLUR',
+    sugerencias: ['When and where is it?', 'How do I get there?', 'What time does each artist play?', 'How do I get a ticket?'],
+    placeholder: 'Type your question…',
+    enviar: 'Send',
+    escribiendo: 'Typing',
+    aviso: 'Automatic answers may contain errors. If in doubt, contact us.',
+    errores: {
+      limite: "You've reached the message limit for now. Please try again in a while.",
+      'no-disponible': 'The chat is not available right now. Please try again in a while.',
+      invalido: "I couldn't read that message. Please try a shorter question.",
+    },
+  },
 
   home: {
     locacion: 'Location',

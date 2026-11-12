@@ -46,18 +46,18 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const escenariosVisibles = new Set((festEscenarios ?? []).map((e) => e.id));
   const festivalRoutes: MetadataRoute.Sitemap = festivalPublico
     ? [
-        { url: `${BASE}/blur`, changeFrequency: 'daily', priority: 0.9 },
+        { url: `${BASE}/blurfestival`, changeFrequency: 'daily', priority: 0.9 },
         ...['vision', 'locacion', 'spots', 'tickets', 'info'].map((r) => ({
-          url: `${BASE}/blur/${r}`,
+          url: `${BASE}/blurfestival/${r}`,
           changeFrequency: 'weekly' as const,
           priority: r === 'tickets' ? 0.9 : 0.7,
         })),
         ...(festival?.lineup_visible
           ? [
-              { url: `${BASE}/blur/line-up`, changeFrequency: 'daily' as const, priority: 0.8 },
+              { url: `${BASE}/blurfestival/line-up`, changeFrequency: 'daily' as const, priority: 0.8 },
               ...(festArtistas ?? [])
                 .filter((a) => a.slug && escenariosVisibles.has(a.escenario_id))
-                .map((a) => ({ url: `${BASE}/blur/line-up/${a.slug}`, changeFrequency: 'weekly' as const, priority: 0.6 })),
+                .map((a) => ({ url: `${BASE}/blurfestival/line-up/${a.slug}`, changeFrequency: 'weekly' as const, priority: 0.6 })),
             ]
           : []),
       ]

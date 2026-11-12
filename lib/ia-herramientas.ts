@@ -32,6 +32,8 @@ const TABLAS_LEGIBLES = [
   'streaming_contenido', 'streaming_categorias', 'multimedia_videos', 'gallery_images', 'hero_config',
   'team_members', 'espacio_salas', 'espacio_config', 'cultura_config', 'cultura_bloques', 'about_us', 'manifiesto',
   'chat_salas', 'chat_miembros', 'ai_agent_log',
+  // Lo que el público le pregunta al chat de /blurfestival (sin datos de quién).
+  'festival_bot_consultas',
 ] as const;
 
 const COLUMNA_SENSIBLE = /token|secret|password|api_?key|hash|cbu|wallet|private/i;

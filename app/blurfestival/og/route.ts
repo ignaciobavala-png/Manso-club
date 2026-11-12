@@ -3,7 +3,7 @@ import { createSupabaseAnon } from '@/lib/supabase';
 import { IMAGEN_POR_DEFECTO } from '@/lib/festival-seo';
 
 /**
- * Imagen al compartir /blur (WhatsApp, Instagram, X): el flyer que Ana sube en
+ * Imagen al compartir /blurfestival (WhatsApp, Instagram, X): el flyer que Ana sube en
  * Festival → Datos, entero y sobre el fondo del festival.
  *
  * WhatsApp recorta al centro cualquier og:image que no sea apaisada, así que un

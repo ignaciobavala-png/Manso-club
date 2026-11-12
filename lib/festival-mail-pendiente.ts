@@ -9,7 +9,7 @@ import { MARCA_MAIL, filaLogoMail } from './festival-mail-marca';
  * Se manda una sola vez por orden, la primera vez que la persona elige red
  * (ahí ya hay monto y dirección). Sirve para volver: quien paga desde el
  * celular sale a Lemon o Binance y puede perder la pestaña. Lleva el monto
- * exacto, la dirección y el link a `/blur/compra/[id]`.
+ * exacto, la dirección y el link a `/blurfestival/compra/[id]`.
  *
  * Misma pieza que el mail de entradas (tablas e inline, paleta y logo de BLUR). El
  * HTML es una función pura para poder renderizarla sin servidor.

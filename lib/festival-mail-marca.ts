@@ -3,7 +3,7 @@ import { SITE_URL } from './constants';
 /**
  * Identidad de BLUR para los mails (PDF "BLUR - paleta"). Los clientes de mail
  * no leen SVG ni WebP, así que logo y textura son PNG chicos de
- * `public/blur/marca/`, pedidos por URL pública. Si el cliente bloquea las
+ * `public/blurfestival/marca/`, pedidos por URL pública. Si el cliente bloquea las
  * imágenes se ve el texto alternativo "BLUR".
  */
 export const MARCA_MAIL = {
@@ -13,8 +13,8 @@ export const MARCA_MAIL = {
   /** Letra sobre el botón naranja. */
   negro: '#1A1A1A',
   resalte: '#FFA7FE',
-  logo: `${SITE_URL}/blur/marca/logo-mail.png`,
-  textura: `${SITE_URL}/blur/marca/textura-mail.png`,
+  logo: `${SITE_URL}/blurfestival/marca/logo-mail.png`,
+  textura: `${SITE_URL}/blurfestival/marca/textura-mail.png`,
 } as const;
 
 const FUENTE = 'Helvetica,Arial,sans-serif';

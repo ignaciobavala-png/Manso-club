@@ -1,5 +1,5 @@
 /**
- * Conteo de visitas de /blur. Los parámetros viven en `festival_conteo_config`
+ * Conteo de visitas de /blurfestival. Los parámetros viven en `festival_conteo_config`
  * (una fila) y se editan desde el panel; ver supabase/migration_festival_conteo.sql
  * para qué hace cada uno.
  */
@@ -84,17 +84,17 @@ export interface ConteoDia {
 /** Nombre legible de una ruta del festival, para el panel. */
 export function nombrePantalla(path: string): string {
   const fijas: Record<string, string> = {
-    '/blur': 'Home',
-    '/blur/vision': 'Visión',
-    '/blur/locacion': 'Locación',
-    '/blur/spots': 'Spots',
-    '/blur/line-up': 'Line up',
-    '/blur/tickets': 'Tickets',
-    '/blur/info': 'Info & FAQ',
-    '/blur/voluntarios': 'Voluntarios',
-    '/blur/compra/:id': 'Compra',
+    '/blurfestival': 'Home',
+    '/blurfestival/vision': 'Visión',
+    '/blurfestival/locacion': 'Locación',
+    '/blurfestival/spots': 'Spots',
+    '/blurfestival/line-up': 'Line up',
+    '/blurfestival/tickets': 'Tickets',
+    '/blurfestival/info': 'Info & FAQ',
+    '/blurfestival/voluntarios': 'Voluntarios',
+    '/blurfestival/compra/:id': 'Compra',
   };
   if (fijas[path]) return fijas[path];
-  if (path.startsWith('/blur/line-up/')) return `Artista · ${path.slice('/blur/line-up/'.length)}`;
+  if (path.startsWith('/blurfestival/line-up/')) return `Artista · ${path.slice('/blurfestival/line-up/'.length)}`;
   return path;
 }

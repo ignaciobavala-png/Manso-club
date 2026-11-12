@@ -29,7 +29,7 @@ const SECCION = 'px-4 sm:px-7 py-14 sm:py-20';
 const ANCLA = 'scroll-mt-16';
 
 /**
- * /blur/voluntarios — una sola página, corta y directa (brief del 04/11): hero,
+ * /blurfestival/voluntarios — una sola página, corta y directa (brief del 04/11): hero,
  * qué es BLUR, áreas, beneficios, a quién buscamos, cómo
  * funciona, formulario y FAQ. Los textos finales del brief están en
  * `festival-voluntarios-textos`; los datos que quedaron "A DEFINIR" (turnos,

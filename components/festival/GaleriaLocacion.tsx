@@ -9,7 +9,7 @@ interface Props {
 }
 
 /**
- * Mosaico de /blur/locacion: cada renglón llena el ancho justo y las fotos
+ * Mosaico de /blurfestival/locacion: cada renglón llena el ancho justo y las fotos
  * se ven enteras, sin recorte y sin huecos.
  *
  * Antes eran todas a la misma altura en un `flex-wrap`, y en el celular una

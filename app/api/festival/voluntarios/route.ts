@@ -15,7 +15,7 @@ import {
 import { enviarConfirmacion } from '@/lib/festival-voluntarios-servidor';
 
 /**
- * Recibe las postulaciones de /blur/voluntarios. Es el único camino de
+ * Recibe las postulaciones de /blurfestival/voluntarios. Es el único camino de
  * escritura: las tablas no tienen insert público. Valida de nuevo todo lo que
  * el formulario ya validó (el brief lo pide: lo que llega es input de
  * cualquiera) y, por la misma razón, recorta las listas a los valores que

@@ -6,7 +6,7 @@ import { SITE_URL } from '@/lib/constants';
 import { BOTON_GUARDAR, CARD, INPUT, TITULO, AYUDA } from './festivalComun';
 
 /** La página no está linkeada en el sitio: este es el único lugar donde se saca el link. */
-export const RUTA_VOLUNTARIOS = '/blur/voluntarios';
+export const RUTA_VOLUNTARIOS = '/blurfestival/voluntarios';
 
 /**
  * Link privado de la convocatoria de voluntarios. La página sigue viva pero

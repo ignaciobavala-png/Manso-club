@@ -16,7 +16,7 @@ import {
 import { TEXTOS_VOLUNTARIOS, llenar } from '@/lib/festival-voluntarios-textos';
 
 /**
- * Formulario de /blur/voluntarios: un solo paso, los 14 campos del brief.
+ * Formulario de /blurfestival/voluntarios: un solo paso, los 14 campos del brief.
  * Valida en el navegador con la misma función que la API (`validarPostulacion`).
  *
  * Sin librerías de formularios: `<label>` en cada campo, errores en texto

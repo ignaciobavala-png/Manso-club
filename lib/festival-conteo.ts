@@ -3,7 +3,7 @@ import { createSupabaseServer } from '@/lib/supabase';
 import { CONTEO_CONFIG_POR_DEFECTO, ConteoConfig } from '@/lib/types/festival-conteo';
 
 /**
- * Parámetros del conteo para el layout de /blur. Con el cliente con cookies,
+ * Parámetros del conteo para el layout de /blurfestival. Con el cliente con cookies,
  * igual que `leerConfig`: el RLS decide quién la lee.
  *
  * `omitir` es true si quien mira es un admin y el panel pide no contarlo; así

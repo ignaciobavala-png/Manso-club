@@ -1,5 +1,5 @@
 /**
- * Contenido de /blur — la sección "Festival" del panel.
+ * Contenido de /blurfestival — la sección "Festival" del panel.
  *
  * Es un sitio chico con identidad propia (no usa el navbar de Manso): hero,
  * visión, locación, line-up con una página por artista, tickets e info. Mientras
@@ -26,7 +26,7 @@ export interface FestivalConfig {
   banner_url: string | null;
   /** Obsoleta: la reemplazó `locacion_fotos`. Queda en la tabla, nadie la lee. */
   foto_url: string | null;
-  /** Galería de /blur/locacion, en el orden en que se muestra. */
+  /** Galería de /blurfestival/locacion, en el orden en que se muestra. */
   locacion_fotos: string[];
   /** Fotos que el home muestra después de las de Locación. */
   home_fotos: string[];
@@ -34,9 +34,9 @@ export interface FestivalConfig {
   aviso: string | null;
   /** Segunda cajita del hero, debajo de la fecha. */
   lema: string | null;
-  /** Texto de /blur/vision. Ver `TextoResaltado` para la marca de color. */
+  /** Texto de /blurfestival/vision. Ver `TextoResaltado` para la marca de color. */
   vision: string | null;
-  /** Texto de /blur/locacion. */
+  /** Texto de /blurfestival/locacion. */
   locacion: string | null;
   /** Usuario de Instagram, sin @. */
   instagram: string | null;
@@ -84,7 +84,7 @@ export interface FestivalEscenario {
   activo: boolean;
 }
 
-/** Un artista del line-up, con página propia en /blur/line-up/[slug]. */
+/** Un artista del line-up, con página propia en /blurfestival/line-up/[slug]. */
 export interface FestivalArtista {
   id: string;
   slug: string;
@@ -99,7 +99,10 @@ export interface FestivalArtista {
   origen_en: string | null;
   bio_en: string | null;
   dia_en: string | null;
+  /** Primera foto de `fotos`, para el listado, el OG y el sitemap. */
   foto_url: string | null;
+  /** Galería de la página del artista, en orden. */
+  fotos: string[];
   bio: string | null;
   dia: string | null;
   horario: string | null;
@@ -112,7 +115,7 @@ export interface FestivalArtista {
   activo: boolean;
 }
 
-/** Un lugar de la fiesta en /blur/spots: título, texto y fotos en orden. */
+/** Un lugar de la fiesta en /blurfestival/spots: título, texto y fotos en orden. */
 export interface FestivalSpot {
   id: string;
   titulo: string;
@@ -135,7 +138,7 @@ export interface FestivalLancha {
   activo: boolean;
 }
 
-/** Una pregunta de /blur/info. */
+/** Una pregunta de /blurfestival/info. */
 export interface FestivalFaq {
   id: string;
   titulo: string;

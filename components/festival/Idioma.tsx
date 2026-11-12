@@ -6,7 +6,7 @@ import { COOKIE_IDIOMA, TEXTOS, type Idioma, type Textos } from '@/lib/festival-
 
 const Contexto = createContext<Idioma>('es');
 
-/** Lleva el idioma del servidor a los componentes de cliente de /blur. */
+/** Lleva el idioma del servidor a los componentes de cliente de /blurfestival. */
 export function IdiomaProvider({ idioma, children }: { idioma: Idioma; children: React.ReactNode }) {
   // El `<html lang>` es del layout raíz de Manso, que es en castellano.
   useEffect(() => {

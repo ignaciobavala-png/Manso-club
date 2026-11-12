@@ -7,7 +7,7 @@ import { usePathname } from 'next/navigation';
  * propia, así que no llevan navbar, footer ni los flotantes (player, WhatsApp,
  * calendario, vinilo, cursor). El panel (/mansoadm) trae su propia barra.
  */
-const RUTAS_SIN_CHROME = ['/blur', '/mansoadm'];
+const RUTAS_SIN_CHROME = ['/blurfestival', '/mansoadm'];
 
 export function ChromeManso({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();

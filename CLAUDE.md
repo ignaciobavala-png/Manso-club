@@ -134,23 +134,23 @@ dos circuitos distintos.
   / registrado / membresía activa). Otorgar reusa `UsuarioDrawer`; si la persona
   no tiene cuenta, el botón ofrece copiar el link de registro.
 
-### Festival — Subreal (`/blur`)
+### Festival — Subreal (`/blurfestival`)
 
 Sitio chico de un festival que nace de Manso pero con **identidad propia**:
 `ChromeManso` (en el root layout) le saca navbar, footer y flotantes. La
 estructura copia basilarfestival.com (pedido de Ana): un menú `> HOME > VISIÓN >
-LOCACIÓN > SPOTS > LINE UP > TICKETS > INFO & FAQ` en `app/blur/layout.tsx` y una
+LOCACIÓN > SPOTS > LINE UP > TICKETS > INFO & FAQ` en `app/blurfestival/layout.tsx` y una
 página por sección. Todas leen por `lib/festival.ts` (cacheado por request).
 
-- `/blur` — el hero a pantalla completa (la foto `fixed` y **sin filtros**:
-  `banner_url`, o `public/blur/hero-cabina.jpg` si el panel no tiene banner;
+- `/blurfestival` — el hero a pantalla completa (la foto `fixed` y **sin filtros**:
+  `banner_url`, o `public/blurfestival/hero-cabina.jpg` si el panel no tiene banner;
   el título BLUR difuso, el `lema` debajo y una franja con fecha, horario y `lugar`) y después
   scrollea por un adelanto de secciones, cada una con su link: fotos
   (`locacion_fotos` + `home_fotos`, las extra que Ana sume desde el panel),
   Visión y line-up. Las secciones tienen fondo propio y suben por encima de la
   foto. El título dice **BLUR** (`TITULO_HERO`) con el filtro difuso de
   `TituloDifuso` (Ana lo prefirió al logo de la diseñadora, 04/11); el logo SVG
-  (`LogoBlur`, en `public/blur/marca/`) queda en el pie y los mails. No es
+  (`LogoBlur`, en `public/blurfestival/marca/`) queda en el pie y los mails. No es
   `config.nombre`, que sigue siendo "Subreal" y es el que sale en la pestaña y
   el pie. Todos los textos salen del panel: el código
   no lleva copy fijo.
@@ -182,7 +182,7 @@ página por sección. Todas leen por `lib/festival.ts` (cacheado por request).
 - `/info` — `festival_faq` en tres columnas.
 
 Identidad (desde el 04/11, con los recursos de la diseñadora — PDF "BLUR -
-paleta" y `public/blur/marca/`): paleta `#003009` verde profundo (fondo del
+paleta" y `public/blurfestival/marca/`): paleta `#003009` verde profundo (fondo del
 panel), `#FFFCDC` crema (texto), `#F65200` naranja (acento), `#FFA7FE` rosa
 (resalte), más `#EAEAEA`, `#005B15`, `#2F3A1E` y `#1A1A1A`. El panel guarda
 fondo/texto/acento/resalte; el resto vive en `SeccionMarca`, que alterna una
@@ -196,7 +196,7 @@ animan con `fest-flota`/`fest-baila`/`fest-brisa` (solo `transform`, respeta
 `prefers-reduced-motion`). Las figuras en color son verde oscuro: sobre fondo
 verde no se ven, ahí va la silueta blanca. Los mails (`lib/festival-mail-marca.ts`)
 llevan logo y textura en PNG por URL pública: los clientes de mail no leen SVG.
-Las pantallas de pago (`/blur/compra/[id]`) siguen en verde a propósito.
+Las pantallas de pago (`/blurfestival/compra/[id]`) siguen en verde a propósito.
 
 Diseño: fusión Basilar + Manso. (Lo anterior, fondo `#1C1410` y terra
 `#E2532B`, quedó reemplazado por la paleta de arriba.)
@@ -231,7 +231,7 @@ panel (Festival → Cobro). Se ofrece un medio solo si está prendido *y*
 configurado (`mediosDePago` en `lib/festival-compra.ts`): MP necesita
 `MP_ACCESS_TOKEN`, transferencia un CBU o alias en `checkout_config`, cripto las
 wallets. Los tres terminan en `festival_emitir_orden` (marca pagada + un ticket
-por persona) y el mismo mail con el link a `/blur/compra/[id]`.
+por persona) y el mismo mail con el link a `/blurfestival/compra/[id]`.
 
 - **Mercado Pago**: la API crea la preferencia con `external_reference =
   festival:<orden>` (el prefijo la separa de los pedidos de la tienda). Confirman
@@ -252,7 +252,7 @@ Tron, Polygon, Base y USDC).
 
 1. COMPRAR pide nombre y mail → `/api/festival/compra` arma la orden en
    `festival_ordenes` (pesos del panel ÷ blue, resuelto en el servidor).
-2. `/blur/compra/[id]` (`PagoCripto`): el comprador elige red (BSC o
+2. `/blurfestival/compra/[id]` (`PagoCripto`): el comprador elige red (BSC o
    Ethereum) y recibe un **monto único** —total + 1 a 99 centavos— que no
    comparte con ninguna otra pendiente de esa red (índice único). Es lo que
    permite reconocer el pago sin pedirle nada.
@@ -272,7 +272,7 @@ Tron, Polygon, Base y USDC).
   (`4a71` por `4f71`) y apuntaba a una dirección vacía.
 - Sin `FESTIVAL_WALLET_EVM` cripto no se ofrece aunque la perilla esté
   prendida. La misma dirección 0x sirve en las dos redes.
-- `/blur/compra/demo` muestra la pantalla con datos inventados (sin API ni
+- `/blurfestival/compra/demo` muestra la pantalla con datos inventados (sin API ni
   cadena, y con una "dirección" que no es una dirección) para enseñarla sin
   wallets; `?estado=pagada` muestra las entradas.
 - Una orden vence a los 60 min de elegir red, pero un pago exacto que llegue
@@ -296,6 +296,40 @@ el panel muestra los tipos de Gestión sin editarlos.
 - El mail lleva los QR adentro como adjuntos `cid:`.
 - Una orden sin `gestion_event_id` es de antes de conectarlo: QR con el código
   pelado, que el lector no reconoce. Esas se cargaron a mano en Gestión.
+
+**La URL es `/blurfestival`** desde el 12/11 (a Ana no le gustaba `/blur`
+solo). Antes fue `/festival` y después `/blur`: las dos redirigen (308) desde
+`next.config.ts`, porque hay mails de compra enviados, vueltas de Mercado Pago y
+páginas indexadas con las rutas viejas. Los redirects corren **antes** que los
+archivos de `public/`, así que `public/blur` se mudó entero a
+`public/blurfestival`: las imágenes de los mails ya enviados
+(`/blur/marca/*.png`) llegan por el redirect. El conteo de visitas guarda la
+ruta de cada pantalla: `supabase/migration_festival_blurfestival.sql` pasa las
+viejas a la ruta nueva. El slug `blur` de `FESTIVAL_GESTION_SLUG` es de Manso
+Gestión y no cambia.
+
+**Chat del festival** (`BotBlur`, la burbuja de `/blurfestival`): asistente
+público que contesta cómo llegar, horarios, entradas y lo básico de Manso. Usa
+el mismo DeepSeek que el asistente del panel (`getModeloIA`), pero es otro
+circuito a propósito:
+
+- **El modelo no tiene herramientas ni lee la base.** `/api/festival/bot` le
+  arma en cada pregunta una ficha con lo público (`fichaBot` en
+  `lib/festival-bot.ts`: las fichas de los dos `llms.txt` —`lib/festival-ficha.ts`
+  y `lib/manso-ficha.ts`— más horarios por artista y lanchas) y esa es su única
+  fuente. Es el freno contra filtrar datos internos: no hay mails ni órdenes a
+  su alcance. Para que sepa algo nuevo, sumarlo a la ficha; no darle una
+  herramienta de lectura.
+- Responde entero, sin streaming; el "se está escribiendo" es un efecto del
+  navegador (`Escrito`).
+- Freno de uso en la base (`festival_bot_permitir`, topes en `LIMITES_BOT`):
+  por IP (ráfaga y día) y general por día. La IP no se guarda, solo un hash que
+  cambia cada día. Si la base no contesta, el chat corta en vez de quedar sin freno.
+- Cada pregunta queda en `festival_bot_consultas` (sin IP ni cuenta). No tiene
+  pantalla: Ana la consulta por el asistente del panel, que la tiene en
+  `TABLAS_LEGIBLES`.
+- La burbuja solo aparece con el festival publicado y `DEEPSEEK_API_KEY`
+  cargada. En el celular va arriba del TICKETS fijo.
 
 ### Precios de la tienda
 

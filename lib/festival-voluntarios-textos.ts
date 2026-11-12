@@ -2,7 +2,7 @@ import type { CodigoError } from '@/lib/festival-voluntarios';
 import type { Idioma } from '@/lib/festival-idioma';
 
 /**
- * Textos de /blur/voluntarios. Los de castellano se copian tal cual del brief
+ * Textos de /blurfestival/voluntarios. Los de castellano se copian tal cual del brief
  * del 04/11 ("Los textos entre comillas son finales"). Los de inglés los
  * escribimos nosotros: el brief dice que los entregan aparte, así que son
  * provisorios hasta que lleguen.
