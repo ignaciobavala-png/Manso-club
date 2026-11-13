@@ -13,17 +13,19 @@ export const MARCA_SEO = 'BLUR';
 export const IMAGEN_POR_DEFECTO = '/blurfestival/hero-cabina.jpg';
 
 /**
- * Imagen al compartir. Con flyer cargado en el panel la arma `/blurfestival/og` (el
- * flyer entero en 1200×630: WhatsApp recorta lo vertical). El `v` es el nombre
- * del archivo: al cambiar el flyer cambia la URL y WhatsApp vuelve a bajarla
- * en vez de mostrar la vieja cacheada. Sin flyer: el banner, o la foto por defecto.
+ * Imagen al compartir: el banner del hero de /blurfestival (lo que Ana quiere que
+ * se vea al mandar el link). Si no hay banner, cae al flyer armado por
+ * `/blurfestival/og` (el flyer entero en 1200×630: WhatsApp recorta lo vertical);
+ * el `v` es el nombre del archivo, así al cambiarlo WhatsApp vuelve a bajarla.
+ * Sin ninguno: la foto por defecto.
  */
 function imagenAlCompartir(config: FestivalConfig | null) {
+  if (config?.banner_url) return { url: config.banner_url };
   if (config?.flyer_url) {
     const version = encodeURIComponent(config.flyer_url.split('/').pop() ?? '');
     return { url: `/blurfestival/og?v=${version}`, width: 1200, height: 630 };
   }
-  return { url: config?.banner_url || IMAGEN_POR_DEFECTO };
+  return { url: IMAGEN_POR_DEFECTO };
 }
 
 const FECHA_LARGA = new Intl.DateTimeFormat('es-AR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
