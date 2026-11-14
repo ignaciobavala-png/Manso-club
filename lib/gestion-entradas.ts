@@ -179,6 +179,12 @@ export async function guardarTipoGestion(t: TipoGuardar): Promise<string> {
   return data as string;
 }
 
+/** Reordena los tipos del evento: `ids` en el orden nuevo. Los que falten quedan al final. */
+export async function ordenarTiposGestion(ids: string[]): Promise<void> {
+  const { error } = await gestion().rpc('web_ordenar_tipos', { p_event_id: eventoGestion(), p_ids: ids });
+  if (error) throw fallo('web_ordenar_tipos', error);
+}
+
 export async function borrarTipoGestion(id: string): Promise<void> {
   const { error } = await gestion().rpc('web_borrar_tipo', { p_event_id: eventoGestion(), p_id: id });
   if (error) throw fallo('web_borrar_tipo', error);

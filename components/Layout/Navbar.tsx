@@ -259,7 +259,7 @@ export const Navbar = () => {
               target={link.external ? '_blank' : undefined}
               rel={link.external ? 'noopener noreferrer' : undefined}
               onClick={() => setIsSidebarOpen(false)}
-              className="text-2xl font-black uppercase italic tracking-tighter text-manso-cream hover:text-manso-terra transition-colors duration-300 leading-none"
+              className="text-2xl font-black lowercase italic tracking-tighter text-manso-cream hover:text-manso-terra transition-colors duration-300 leading-none"
             >
               {link.name}
             </Link>

@@ -1,7 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { Loader2, Pencil, Plus, Trash2 } from 'lucide-react';
+import { ArrowDown, ArrowUp, Loader2, Pencil, Plus, Trash2 } from 'lucide-react';
 import { formatArs } from '@/lib/precios';
 import { ESTADOS_ENTRADA, etiquetaEstado, type EstadoEntrada } from '@/lib/types/festival';
 import type { TipoGestionAdmin } from '@/lib/gestion-entradas';
@@ -113,6 +113,27 @@ export function FestivalEntradasGestion({ children }: { children: React.ReactNod
     await cargar();
   };
 
+  /** Cambia el lugar de un tipo y manda el orden completo a Gestión. */
+  const mover = async (indice: number, delta: number) => {
+    const destino = indice + delta;
+    if (destino < 0 || destino >= tipos.length) return;
+    const nuevos = [...tipos];
+    [nuevos[indice], nuevos[destino]] = [nuevos[destino], nuevos[indice]];
+    setTipos(nuevos);
+    setOcupado('orden');
+    const res = await fetch('/api/festival/gestion/tipos/orden', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ids: nuevos.map(t => t.id) }),
+    });
+    setOcupado(null);
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      alert(data.error ?? 'No se pudo cambiar el orden');
+    }
+    await cargar();
+  };
+
   const borrar = async (t: TipoGestionAdmin) => {
     if (!confirm(`¿Borrar "${t.nombre}"? No se puede deshacer.`)) return;
     setOcupado(t.id);
@@ -142,7 +163,7 @@ export function FestivalEntradasGestion({ children }: { children: React.ReactNod
         <p className="text-[13px] text-manso-terra">{error}</p>
       ) : (
         <ul className="divide-y divide-manso-cream/10">
-          {tipos.map(t => (
+          {tipos.map((t, i) => (
             <li key={t.id} className={`py-3 flex flex-wrap items-center gap-x-4 gap-y-1 ${t.activo ? '' : 'opacity-50'}`}>
               <div className="min-w-0 flex-1">
                 <p className="text-[15px] text-manso-cream truncate">{t.nombre}</p>
@@ -156,6 +177,26 @@ export function FestivalEntradasGestion({ children }: { children: React.ReactNod
                 </p>
               </div>
               <span className="text-[15px] font-mono text-manso-cream tabular-nums">{formatArs(t.precio)}</span>
+              <button
+                type="button"
+                onClick={() => mover(i, -1)}
+                disabled={i === 0 || ocupado === 'orden'}
+                className={BOTON_ICONO}
+                title="Subir"
+                aria-label={`Subir ${t.nombre}`}
+              >
+                <ArrowUp size={13} />
+              </button>
+              <button
+                type="button"
+                onClick={() => mover(i, 1)}
+                disabled={i === tipos.length - 1 || ocupado === 'orden'}
+                className={BOTON_ICONO}
+                title="Bajar"
+                aria-label={`Bajar ${t.nombre}`}
+              >
+                <ArrowDown size={13} />
+              </button>
               <button
                 type="button"
                 onClick={() => setEditando(aBorrador(t))}
