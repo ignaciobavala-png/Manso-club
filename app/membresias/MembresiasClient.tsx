@@ -12,25 +12,16 @@ import { MembresiaCard } from '@/components/ui/MembresiaCard';
 import { gridMembresias } from '@/lib/membresia-grid';
 import { CoworkModal, PARAM_FORM, FORM_OPEN_COWORK } from '@/components/ui/CoworkModal';
 import { HeroFotos } from '@/components/membresias/HeroFotos';
-import { OpenCowork } from '@/components/membresias/OpenCowork';
-
-export interface ProximaFechaCowork {
-  fecha: string;
-  horario: string | null;
-  restantes: number;
-  total: number;
-}
 
 interface Props {
   membresias: Membresia[];
   galeria: { id: string; src: string }[];
   textoIntro: string;
-  proximasFechas: ProximaFechaCowork[];
   /** Fotos que pasan en la card Cultural Manso al pasar el mouse. */
   fotosCultural: string[];
 }
 
-export function MembresiasClient({ membresias, galeria, textoIntro, proximasFechas, fotosCultural }: Props) {
+export function MembresiasClient({ membresias, galeria, textoIntro, fotosCultural }: Props) {
   // Una foto borrada del storage deja la fila viva en la DB: si no carga, se
   // saca del mosaico en vez de mostrar el ícono de imagen rota.
   const [fotosRotas, setFotosRotas] = useState<string[]>([]);
@@ -90,13 +81,6 @@ export function MembresiasClient({ membresias, galeria, textoIntro, proximasFech
           />
         }
       >
-        {/* Open Cowork: la puerta de entrada gratuita, antes de pagar un plan. Va
-            arriba de las cards y con la fecha como protagonista (tickets). */}
-        <OpenCowork
-          fechas={proximasFechas}
-          onAbrir={() => setOpenCoworkAbierto(true)}
-        />
-
         {membresias.length === 0 ? (
           <div className="text-center py-20">
             <Crown size={48} className="text-manso-cream/20 mx-auto mb-4" />

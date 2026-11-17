@@ -234,13 +234,16 @@ export const MembresiaCard = ({ membresia, currency, rate, posicion, claro = fal
               <p className={`text-xs sm:text-base leading-snug mb-4 sm:mb-6 ${cMuted}`}>{descripcion}</p>
             )}
 
-            {/* SELECCIONAR abre el formulario de inscripción, no el checkout: el
+            {/* "Conocer más" (Ana pidió que ya no diga SELECCIONAR) lleva al detalle del
+                plan, donde está el botón que abre el formulario. Si el plan no
+                tiene página (sin slug), el botón abre el formulario directo.
+                El formulario de inscripción es una solicitud que Ana aprueba, no el checkout: el
                 alta al cowork pasa primero por una solicitud que Ana aprueba.
                 Redondo como el resto de los botones del sitio (la cultural también,
                 pero en blanco para diferenciarse). La cultural no se solicita: su botón es parte del link que
                 envuelve la card, así que va como <span> —un <a> dentro de otro
                 <a> no es HTML válido— y el click lo toma la capa de abajo. */}
-            {cultural ? (
+            {cultural || detalle ? (
               <span
                 className={`flex items-center justify-center w-full px-[7px] sm:px-[14px] min-h-[32px] sm:min-h-[36px] rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-[0.1em] sm:tracking-[0.25em] transition-opacity duration-200 group-hover:opacity-80 ${cBoton}`}
               >
@@ -253,7 +256,7 @@ export const MembresiaCard = ({ membresia, currency, rate, posicion, claro = fal
                 onClick={() => setFormAbierto(true)}
                 className={`pointer-events-auto flex items-center justify-center w-full px-[7px] sm:px-[14px] min-h-[32px] sm:min-h-[36px] rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-[0.1em] sm:tracking-[0.25em] transition-colors duration-300 active:scale-[0.98] ${cBoton}`}
               >
-                Seleccionar
+                Conocer más
               </button>
             )}
           </div>
