@@ -10,6 +10,10 @@ interface AdaptiveSectionLayoutProps {
   customBg?: string;
   forceDark?: boolean;
   forceLight?: boolean;
+  /** Pieza a la derecha del título (en celular va debajo). */
+  aside?: React.ReactNode;
+  /** Texto bajo el subtítulo, dentro del mismo bloque que el título. */
+  intro?: React.ReactNode;
 }
 
 export function AdaptiveSectionLayout({
@@ -18,7 +22,9 @@ export function AdaptiveSectionLayout({
   children,
   customBg,
   forceDark,
-  forceLight
+  forceLight,
+  aside,
+  intro
 }: AdaptiveSectionLayoutProps) {
   const pathname = usePathname();
 
@@ -79,13 +85,17 @@ export function AdaptiveSectionLayout({
       } : undefined}
     >
       <div className="max-w-[1400px] mx-auto">
-        <div className="mb-10">
-          <h1 className={`${TYPE.h1} ${theme.titleColor}`}>
-            {title}<span className="text-zinc-200 cursor-blink">_</span>
-          </h1>
-          <p className={`${TYPE.label} ${theme.subtitleColor} mt-4 ml-2 italic`}>
-            {subtitle}
-          </p>
+        <div className={`mb-10 ${aside ? 'flex flex-col md:flex-row md:items-start md:justify-between gap-8' : ''}`}>
+          <div className={aside ? 'md:flex-1 min-w-0' : undefined}>
+            <h1 className={`${TYPE.h1} ${theme.titleColor}`}>
+              {title}<span className="text-zinc-200 cursor-blink">_</span>
+            </h1>
+            <p className={`${TYPE.label} ${theme.subtitleColor} mt-4 ml-2 italic`}>
+              {subtitle}
+            </p>
+            {intro}
+          </div>
+          {aside}
         </div>
         <div className="w-full">
           {children}

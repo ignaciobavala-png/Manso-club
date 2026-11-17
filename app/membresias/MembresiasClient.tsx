@@ -11,6 +11,7 @@ import { useCurrency } from '@/store/useCurrency';
 import { MembresiaCard } from '@/components/ui/MembresiaCard';
 import { gridMembresias } from '@/lib/membresia-grid';
 import { CoworkModal, PARAM_FORM, FORM_OPEN_COWORK } from '@/components/ui/CoworkModal';
+import { HeroFotos } from '@/components/membresias/HeroFotos';
 
 export interface ProximaFechaCowork {
   fecha: string;
@@ -51,18 +52,26 @@ export function MembresiasClient({ membresias, galeria, textoIntro, proximaFecha
         title="Membresías"
         subtitle="Acceso exclusivo_"
         customBg="bg-transparent"
+        // Párrafo de gancho: va pegado al título, en el mismo bloque que la foto.
+        intro={
+          textoIntro.trim() ? (
+            <div className="mt-8 max-w-2xl space-y-4">
+              {textoIntro.trim().split(/\n\n+/).map((p, i) => (
+                <p key={i} className="text-manso-cream/80 text-base sm:text-lg leading-relaxed text-pretty">
+                  {p.replace(/\s(\S+)$/, ' $1')}
+                </p>
+              ))}
+            </div>
+          ) : undefined
+        }
+        aside={
+          <HeroFotos
+            fotos={galleryVisible}
+            destino="el-espacio"
+            onError={(id) => setFotosRotas((prev) => (prev.includes(id) ? prev : [...prev, id]))}
+          />
+        }
       >
-        {/* Párrafo de gancho */}
-        {textoIntro.trim() && (
-          <div className="mb-16 max-w-2xl space-y-4">
-            {textoIntro.trim().split(/\n\n+/).map((p, i) => (
-              <p key={i} className="text-manso-cream/80 text-base sm:text-lg leading-relaxed text-pretty">
-                {p.replace(/\s(\S+)$/, ' $1')}
-              </p>
-            ))}
-          </div>
-        )}
-
         {membresias.length === 0 ? (
           <div className="text-center py-20">
             <Crown size={48} className="text-manso-cream/20 mx-auto mb-4" />
@@ -148,7 +157,7 @@ export function MembresiasClient({ membresias, galeria, textoIntro, proximaFecha
 
         {/* Galería mosaico del cowork — cierre visual */}
         {galleryVisible.length > 0 && (
-          <div className="mt-20">
+          <div id="el-espacio" className="mt-20 scroll-mt-24">
             <div className="flex items-center gap-4 mb-6">
               <span className="text-[9px] font-black uppercase tracking-[0.6em] text-manso-terra">
                 El espacio

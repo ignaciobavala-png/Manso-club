@@ -2,10 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { Bricolage_Grotesque } from 'next/font/google';
 import { Membresia } from '@/lib/types/membresia';
 import { fondoAcento, fondoAcentoHoverBoton, fondoHoverPorPosicion } from '@/lib/membresia-color';
 import { formatPrecioPlan, precioParaMostrar } from '@/lib/precios';
 import { CoworkModal, PARAM_FORM } from './CoworkModal';
+
+/** Solo para los precios: dígitos con más carácter que la Helvetica del sitio. */
+const numeros = Bricolage_Grotesque({ subsets: ['latin'], weight: '800' });
 
 interface MembresiaCardProps {
   membresia: Membresia;
@@ -70,6 +74,13 @@ export const MembresiaCard = ({ membresia, currency, rate, posicion }: Membresia
   const precio = formatPrecioPlan(monto, moneda);
 
   const descripcion = membresia.descripcion_corta?.trim() || membresia.descripcion?.trim();
+  // Un bullet por cosa que ofrece el plan: por renglón y también por " + "
+  // ("Cowork 3 días por semana + café"), con punto final parejo.
+  const features = (descripcion ?? '')
+    .split(/\n|\s\+\s/)
+    .map((l) => l.trim())
+    .filter(Boolean)
+    .map((l) => (/[.!?…]$/.test(l) ? l : `${l}.`));
   // Cultural Manso tiene página propia —y su propia sección en el panel—, así
   // que su card sale del detalle genérico y va derecho ahí.
   const detalle = cultural
@@ -92,20 +103,7 @@ export const MembresiaCard = ({ membresia, currency, rate, posicion }: Membresia
       )}
 
       <div className="relative z-10 flex w-full pointer-events-none">
-        {/* Margen izquierdo con el precio rotado, como en la refe. Cultural
-            Manso no es un plan y no tiene precio: el margen queda vacío para
-            que el título siga alineado con el de las cards vecinas. */}
-        <div className="w-6 sm:w-10 shrink-0 flex items-end justify-center pb-2.5 sm:pb-5">
-          {!cultural && (
-            <span
-              className={`[writing-mode:vertical-rl] rotate-180 whitespace-nowrap text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.1em] sm:tracking-[0.2em] transition-colors duration-300 ${cMuted}`}
-            >
-              {precio} / {membresia.periodo}
-            </span>
-          )}
-        </div>
-
-        <div className="flex-1 flex flex-col min-w-0 p-2.5 pl-0 sm:p-6 sm:pl-0">
+        <div className="flex-1 flex flex-col min-w-0 p-3 sm:p-6">
           {/* El slot va siempre, con o sin badge: si no, el título de la card
               destacada baja y queda desalineado del de las vecinas. */}
           <span className="h-3 sm:h-4 text-[7px] sm:text-[9px] font-black uppercase tracking-[0.15em] sm:tracking-[0.3em] text-manso-terra group-hover/card:text-manso-cream transition-colors duration-300">
@@ -149,11 +147,40 @@ export const MembresiaCard = ({ membresia, currency, rate, posicion }: Membresia
             })()}
           </h3>
 
-          <div className="mt-auto pt-4 sm:pt-8">
-            {descripcion && (
-              <p className={`text-[10px] sm:text-xs leading-relaxed whitespace-pre-line mb-4 sm:mb-6 transition-colors duration-300 ${cMuted}`}>
-                {descripcion}
+          {/* Precio centrado en el hueco entre el nombre y las features: grande
+              y en negrita, para que la card no quede vacía en el medio.
+              Cultural Manso no es un plan y no lleva precio. */}
+          <div className="flex flex-col items-center text-center mt-6 sm:mt-12 min-h-[56px] sm:min-h-[96px]">
+            {!cultural && (
+              <p className={`transition-colors duration-300 ${cText}`}>
+                <span className={`${numeros.className} block font-extrabold tracking-[-0.03em] leading-none text-[30px] sm:text-[3.6rem]`}>
+                  {precio}
+                </span>
+                <span className={`block mt-1.5 sm:mt-2 text-[10px] sm:text-sm font-bold uppercase tracking-[0.2em] ${cMuted}`}>
+                  / {membresia.periodo}
+                </span>
               </p>
+            )}
+          </div>
+
+          {/* Cada cosa que ofrece el plan, con su bullet. Van justo debajo del
+              precio (no pegadas al botón) para que arranquen a la misma altura
+              en las tres cards; el punto queda fuera del texto (`flex` + gap)
+              para que un renglón largo que baje no se meta bajo el bullet. */}
+          {!cultural && features.length > 0 && (
+            <ul className={`mt-6 sm:mt-8 space-y-2 text-xs sm:text-base leading-snug text-left transition-colors duration-300 ${cMuted}`}>
+              {features.map((f, i) => (
+                <li key={i} className="flex items-start gap-2.5">
+                  <span aria-hidden className="mt-[0.5em] size-1.5 shrink-0 rounded-full bg-current" />
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <div className="mt-auto pt-6">
+            {cultural && descripcion && (
+              <p className={`text-xs sm:text-base leading-snug mb-4 sm:mb-6 ${cMuted}`}>{descripcion}</p>
             )}
 
             {/* SELECCIONAR abre el formulario de inscripción, no el checkout: el
