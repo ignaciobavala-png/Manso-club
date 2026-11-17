@@ -351,6 +351,16 @@ lleva navbar (`ChromeManso`), es `noindex` y está en el `disallow` de robots.
 - **Qué se puede hacer**: tildar ítems como resueltos, editarlos con un click,
   sumar y borrar. Es anónimo (una clave para todos): no queda registro de quién
   cambió qué.
+- **Plan de tareas** (tercera pestaña, `org_tareas`): lista de tareas por zona con
+  área (Diseño, Producción, Técnica, Comunicación, Operaciones), prioridad
+  (Alta/Media/Baja) y si está hecha. Se filtra por zona, área y prioridad o se
+  busca por texto; tildar, editar con un click, cambiar la prioridad tocando su
+  etiqueta, sumar y borrar. La zona es texto (con su orden) y no una FK a los
+  espacios de los mapas: el plan trae zonas que ahí no están (p. ej. la Carpa
+  Beduina). Se carga con `scripts/org-importar-tareas.mjs`.
+- **Ojo con los imports**: `lib/org.ts` usa `next/headers` (solo servidor). Lo
+  que necesite el navegador (constantes, tipos) va en `lib/org-tipos.ts`; si un
+  componente de cliente importa un valor de `lib/org.ts`, el build falla.
 - **Carga inicial**: `scripts/org-importar.mjs` lee los dos HTML originales
   (generan el SQL de carga). Son dos mapas separados a propósito: se superponen
   en seis espacios con datos que a veces se contradicen (p. ej. dónde quedan los

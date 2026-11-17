@@ -73,3 +73,47 @@
 .org-login-caja button:disabled{opacity:.5;cursor:not-allowed}
 .org-login-msg{margin:0;font-size:13px;color:var(--mut)}
 @media (max-width:700px){.org-top h1{font-size:22px}.org .rowlab{width:104px;min-width:104px}.org .hd th.col{width:230px;min-width:230px}}
+
+/* ── Plan de tareas ─────────────────────────────────────────────────────── */
+.org-t-filtros{flex-direction:column;align-items:stretch;gap:8px}
+.org-t-fila{display:flex;flex-wrap:wrap;align-items:center;gap:6px}
+.org-t-fila .lbl{width:72px;color:var(--mut);font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.06em}
+.org-t-chip{border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 11px;font:500 12px var(--font-org-cuerpo),sans-serif;color:var(--ink);cursor:pointer;transition:.12s}
+.org-t-chip:hover{border-color:var(--ink)}
+.org-t-chip.on{background:var(--dark);color:#fff;border-color:var(--dark)}
+.org-t-chip small{opacity:.55;margin-left:5px}
+.org-t-check{display:inline-flex;align-items:center;gap:6px;margin-left:8px;font-size:12px;color:var(--mut);cursor:pointer}
+.org-t-buscar{flex:1;min-width:180px;max-width:320px;border:1px solid var(--line);border-radius:999px;padding:6px 14px;font:inherit;background:#fff;color:var(--ink)}
+.org-t-limpiar{margin-left:auto;border:0;background:none;color:var(--accent);font:600 12.5px var(--font-org-cuerpo),sans-serif;cursor:pointer}
+.org-t-lista{padding:16px 22px 40px}
+.org-t-lista>*{max-width:1100px;margin-left:auto;margin-right:auto}
+.org-t-cuenta{margin:0 auto 12px;color:var(--mut);font-size:13px}
+.org-t-cuenta b{color:var(--ink)}
+.org-t-vacio{padding:50px;text-align:center;color:var(--mut)}
+.org-t-zona{margin-bottom:22px}
+.org-t-zona h2{margin:0 auto 8px;font:700 16px var(--font-org-cuerpo),sans-serif;display:flex;align-items:center;gap:10px}
+.org-t-zona h2 em{font:500 12px var(--font-org-cuerpo);color:var(--mut);font-style:normal}
+.org-t-tarea{display:grid;grid-template-columns:auto 118px 1fr 64px 20px;gap:12px;align-items:start;background:#fff;border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin-bottom:6px}
+.org-t-tarea input[type=checkbox]{margin:4px 0 0;accent-color:var(--accent);cursor:pointer}
+.org-t-area{appearance:none;border:0;color:#fff;font:600 11px var(--font-org-cuerpo),sans-serif;letter-spacing:.05em;text-transform:uppercase;padding:4px 8px;border-radius:5px;text-align:center;cursor:pointer}
+.org-t-area option{color:#000;background:#fff;text-transform:none}
+.org-t-texto{cursor:text;border-radius:3px}
+.org-t-texto:hover{background:#0000000a}
+.org-t-tarea.hecha .org-t-texto{text-decoration:line-through;color:var(--mut)}
+.org-t-tarea.hecha{opacity:.7}
+.org-t-tarea textarea{font:inherit;padding:2px 4px;border:1px solid var(--ink);border-radius:4px;resize:vertical;background:#fff;color:var(--ink)}
+.org-t-prio{border:0;font:600 11px var(--font-org-cuerpo),sans-serif;text-align:center;padding:4px 0;border-radius:5px;cursor:pointer}
+.org-t-prio.Alta{background:#f8cbad;color:#7a2a0c}.org-t-prio.Media{background:#ffe699;color:#6a4b00}.org-t-prio.Baja{background:#c6e0b4;color:#2d5a14}
+.org-t-x{border:0;background:transparent;color:#a39a90;font-size:18px;line-height:1;cursor:pointer;opacity:0;padding:0}
+.org-t-tarea:hover .org-t-x{opacity:1}
+.org-t-x:hover{color:var(--accent)}
+.org-t-mas{border:0;background:transparent;color:var(--mut);font:500 12px var(--font-org-cuerpo),sans-serif;cursor:pointer;padding:4px 2px;opacity:.6}
+.org-t-zona:hover .org-t-mas{opacity:1}
+.org-t-mas:hover{color:var(--ink)}
+.org-t-nueva{display:flex;flex-wrap:wrap;gap:6px;margin-top:4px}
+.org-t-nueva input{flex:1;min-width:200px;padding:6px 10px;border:1px solid var(--ink);border-radius:6px;font:inherit;background:#fff;color:var(--ink)}
+.org-t-nueva select{padding:6px;border:1px solid var(--line);border-radius:6px;font:inherit;background:#fff;color:var(--ink)}
+.org-t-nueva button{border:0;border-radius:6px;padding:6px 14px;background:var(--dark);color:#fff;font:600 12px var(--font-org-cuerpo),sans-serif;cursor:pointer}
+.org-t-nueva button:disabled{opacity:.4;cursor:not-allowed}
+.org-t-nueva button.cancelar{background:transparent;color:var(--mut)}
+@media (max-width:640px){.org-t-tarea{grid-template-columns:auto 1fr 56px}.org-t-tarea .org-t-area{grid-column:2/3;justify-self:start}.org-t-tarea .org-t-texto,.org-t-tarea textarea{grid-column:1/4}.org-t-x{opacity:.6}.org-t-fila .lbl{width:100%}}

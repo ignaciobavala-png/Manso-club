@@ -1,4 +1,4 @@
-import { haySesionOrg, leerMapas, orgConfigurada } from '@/lib/org';
+import { haySesionOrg, leerMapas, leerTareas, orgConfigurada } from '@/lib/org';
 import { OrgLogin } from '@/components/org/OrgLogin';
 import { OrgMapa } from '@/components/org/OrgMapa';
 
@@ -8,5 +8,6 @@ export default async function OrgPage() {
   if (!orgConfigurada() || !(await haySesionOrg())) {
     return <OrgLogin cerrada={!orgConfigurada()} />;
   }
-  return <OrgMapa mapasIniciales={await leerMapas()} />;
+  const [mapas, tareas] = await Promise.all([leerMapas(), leerTareas()]);
+  return <OrgMapa mapasIniciales={mapas} tareasIniciales={tareas} />;
 }

@@ -62,3 +62,21 @@ ALTER TABLE org_fases ENABLE ROW LEVEL SECURITY;
 ALTER TABLE org_espacios ENABLE ROW LEVEL SECURITY;
 ALTER TABLE org_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE org_intentos ENABLE ROW LEVEL SECURITY;
+
+-- ── Plan de tareas por zona (pestaña "Plan de tareas" de /org) ──────────────
+-- Una tarea tiene zona, área responsable, prioridad y si ya se hizo. La zona va
+-- como texto (con su orden) porque el plan incluye zonas que no están en los
+-- mapas (p. ej. la Carpa Beduina) y no hace falta atarlas.
+CREATE TABLE IF NOT EXISTS org_tareas (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  zona text NOT NULL,
+  zona_orden int NOT NULL DEFAULT 0,
+  area text NOT NULL CHECK (area IN ('Diseño','Producción','Técnica','Comunicación','Operaciones')),
+  texto text NOT NULL,
+  prioridad text NOT NULL DEFAULT 'Media' CHECK (prioridad IN ('Alta','Media','Baja')),
+  hecho boolean NOT NULL DEFAULT false,
+  orden int NOT NULL DEFAULT 0,
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS org_tareas_zona_idx ON org_tareas (zona_orden, orden);
+ALTER TABLE org_tareas ENABLE ROW LEVEL SECURITY;

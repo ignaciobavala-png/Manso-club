@@ -11,6 +11,9 @@ import { cookies } from 'next/headers';
  * con HMAC que vence a los 30 días; no hay cuentas por persona.
  */
 
+export * from './org-tipos';
+import type { OrgTarea } from './org-tipos';
+
 export const ORG_COOKIE = 'org_sesion';
 export const ORG_SESION_DIAS = 30;
 
@@ -120,4 +123,14 @@ export async function leerMapas(): Promise<OrgMapa[]> {
       .filter((f) => f.mapa_id === m.id)
       .map((f) => ({ id: f.id, nombre: f.nombre, espacios: espaciosPorFase.get(f.id) ?? [] })),
   }));
+}
+
+/** Plan de tareas por zona, en el orden del plan original. */
+export async function leerTareas(): Promise<OrgTarea[]> {
+  const { data } = await adminOrg()
+    .from('org_tareas')
+    .select('id, zona, zona_orden, area, texto, prioridad, hecho, orden')
+    .order('zona_orden')
+    .order('orden');
+  return (data ?? []) as OrgTarea[];
 }

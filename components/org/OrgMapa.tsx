@@ -1,7 +1,8 @@
 'use client';
 
 import { useMemo, useRef, useState } from 'react';
-import type { Nivel, OrgItem, OrgMapa as Mapa } from '@/lib/org';
+import type { Nivel, OrgItem, OrgMapa as Mapa, OrgTarea } from '@/lib/org';
+import { OrgTareas } from './OrgTareas';
 
 const FILAS: { k: Nivel; n: string; c: string }[] = [
   { k: 'staff', n: 'Staff', c: '#b53fbd' },
@@ -30,13 +31,14 @@ async function api(url: string, method: string, body?: unknown) {
  * puede sumar o borrar. Los cambios se guardan al instante (optimista: si el
  * servidor falla, se avisa y se recarga el estado).
  */
-export function OrgMapa({ mapasIniciales }: { mapasIniciales: Mapa[] }) {
+export function OrgMapa({ mapasIniciales, tareasIniciales }: { mapasIniciales: Mapa[]; tareasIniciales: OrgTarea[] }) {
   const [mapas, setMapas] = useState(mapasIniciales);
   const [mapaId, setMapaId] = useState(mapasIniciales[0]?.id ?? '');
   const [ocultas, setOcultas] = useState<Nivel[]>([]);
   const [aviso, setAviso] = useState('');
   const wrap = useRef<HTMLDivElement>(null);
 
+  const enTareas = mapaId === 'tareas';
   const mapa = mapas.find((m) => m.id === mapaId) ?? mapas[0];
 
   const cambiarItem = (id: string, fn: (i: OrgItem) => OrgItem) =>
@@ -121,14 +123,23 @@ export function OrgMapa({ mapasIniciales }: { mapasIniciales: Mapa[] }) {
         <h1>Blur <span>·</span> Organización</h1>
         <div className="org-tabs" role="tablist" aria-label="Mapa">
           {mapas.map((m) => (
-            <button key={m.id} role="tab" aria-selected={m.id === mapa.id} className={m.id === mapa.id ? 'on' : ''} onClick={() => setMapaId(m.id)}>
+            <button key={m.id} role="tab" aria-selected={m.id === mapaId} className={m.id === mapaId ? 'on' : ''} onClick={() => setMapaId(m.id)}>
               {m.titulo}
             </button>
           ))}
+          <button role="tab" aria-selected={enTareas} className={enTareas ? 'on' : ''} onClick={() => setMapaId('tareas')}>
+            Plan de tareas
+          </button>
         </div>
-        <span className="org-prog">{totales.h} / {totales.t} resueltos</span>
+        {!enTareas && <span className="org-prog">{totales.h} / {totales.t} resueltos</span>}
       </header>
 
+      {aviso && <p className="org-aviso" role="alert">{aviso}</p>}
+
+      {enTareas ? (
+        <OrgTareas tareasIniciales={tareasIniciales} onAviso={setAviso} />
+      ) : (
+        <>
       <div className="org-filtros">
         <span className="lbl">Niveles</span>
         {FILAS.map((f) => (
@@ -147,7 +158,6 @@ export function OrgMapa({ mapasIniciales }: { mapasIniciales: Mapa[] }) {
           ))}
         </div>
       </div>
-      {aviso && <p className="org-aviso" role="alert">{aviso}</p>}
 
       <div className="org-wrap" ref={wrap}>
         <table>
@@ -200,6 +210,8 @@ export function OrgMapa({ mapasIniciales }: { mapasIniciales: Mapa[] }) {
           </tbody>
         </table>
       </div>
+        </>
+      )}
     </div>
   );
 }
