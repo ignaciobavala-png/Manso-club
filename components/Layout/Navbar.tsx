@@ -87,7 +87,11 @@ export const Navbar = () => {
    * sobre el `bg-manso-black` del checkout. El checkout hoy es una página
    * oscura, así que le corresponde el tratamiento claro de cualquier otra.
    */
-  const isLight = isCartOpen || isScrolled;
+  // /membresias es una página clara (crema): arriba de todo necesita texto y
+  // logo negros, o quedarían crema sobre crema. Solo la ruta exacta: el detalle
+  // de cada plan (/membresias/[slug]) es de color pleno.
+  const paginaClara = pathname === '/membresias';
+  const isLight = isCartOpen || isScrolled || paginaClara;
 
   // Iniciales del usuario para el avatar
   const userInitial = profile?.display_name

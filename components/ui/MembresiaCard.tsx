@@ -17,6 +17,8 @@ interface MembresiaCardProps {
   rate: number | null;
   /** Lugar de la card entre los planes: decide el color del hover. */
   posicion?: number;
+  /** Modo claro de la página: la card pasa a negro sobre el fondo crema. */
+  claro?: boolean;
 }
 
 /**
@@ -30,7 +32,7 @@ interface MembresiaCardProps {
  * "descripción de la tarjetita" y los beneficios viven en el bloque INCLUYE de
  * la página de detalle.
  */
-export const MembresiaCard = ({ membresia, currency, rate, posicion }: MembresiaCardProps) => {
+export const MembresiaCard = ({ membresia, currency, rate, posicion, claro = false }: MembresiaCardProps) => {
   const [formAbierto, setFormAbierto] = useState(false);
   const cultural = membresia.es_cultural;
 
@@ -45,23 +47,28 @@ export const MembresiaCard = ({ membresia, currency, rate, posicion }: Membresia
   // La cultural va en color pleno y sin precio; el resto en crema. Al pasar
   // el mouse por cualquier parte de la card (Ana lo pidió así, no solo por
   // SELECCIONAR), se llena con su color de hover y el texto pasa a crema.
-  const cText = cultural
+  // En modo claro la card es negra sobre el crema de la página (crema sobre
+  // crema se perdería): texto crema de entrada, y el mismo hover de color.
+  const sobreOscuro = cultural || claro;
+  const cText = sobreOscuro
     ? 'text-manso-cream'
     : 'text-manso-black group-hover/card:text-manso-cream';
-  const cMuted = cultural
+  const cMuted = sobreOscuro
     ? 'text-manso-cream/70'
     : 'text-manso-black/55 group-hover/card:text-manso-cream/70';
   const cBorde = cultural
     ? 'border-transparent'
-    : 'border-manso-black/20 hover:border-transparent';
+    : claro
+      ? 'border-manso-black hover:border-transparent'
+      : 'border-manso-black/20 hover:border-transparent';
   const cFondo = cultural
     ? fondoAcento(membresia.color_acento)
-    : `bg-manso-cream ${
+    : `${claro ? 'bg-manso-black' : 'bg-manso-cream'} ${
         posicion === undefined
           ? fondoAcentoHoverBoton(membresia.color_acento)
           : fondoHoverPorPosicion(posicion)
       }`;
-  const cBoton = cultural
+  const cBoton = sobreOscuro
     ? 'bg-manso-cream text-manso-black'
     : 'bg-manso-black text-manso-cream hover:bg-manso-cream hover:text-manso-black';
 

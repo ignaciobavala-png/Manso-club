@@ -33,6 +33,11 @@ export function MembresiasClient({ membresias, galeria, textoIntro, proximaFecha
   const [openCoworkAbierto, setOpenCoworkAbierto] = useState(false);
   const { currency, rate } = useCurrency();
 
+  // La sección es clara (crema con cards negras): el navbar la reconoce por la
+  // ruta (ver `paginaClara` en Navbar). Las piezas siguen recibiendo `claro` por
+  // si algún día vuelve el modo oscuro.
+  const claro = true;
+
   // Un link compartido (?form=open-cowork) cae directo en el formulario.
   // Se lee de window en vez de useSearchParams para no forzar un Suspense en
   // una página que se prerenderiza estática.
@@ -44,20 +49,28 @@ export function MembresiasClient({ membresias, galeria, textoIntro, proximaFecha
   const galleryVisible = galeria.filter(img => !fotosRotas.includes(img.id));
 
   return (
-    <div className="relative min-h-screen bg-manso-black">
+    <div
+      className={`relative min-h-screen transition-colors duration-500 ${claro ? 'bg-manso-cream' : 'bg-manso-black'}`}
+      style={claro ? {
+        backgroundImage: 'linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px)',
+        backgroundSize: '48px 48px',
+      } : undefined}
+    >
       {/* Canvas de partículas — siempre montado, no se ve afectado por cambios de estado */}
-      <ParticleBackground />
+      <ParticleBackground mode={claro ? 'light' : 'dark'} />
 
       <AdaptiveSectionLayout
         title="Membresías"
         subtitle="Acceso exclusivo_"
         customBg="bg-transparent"
+        forceDark={!claro}
+        forceLight={claro}
         // Párrafo de gancho: va pegado al título, en el mismo bloque que la foto.
         intro={
           textoIntro.trim() ? (
-            <div className="mt-8 max-w-2xl space-y-4">
+            <div className="max-w-2xl space-y-5">
               {textoIntro.trim().split(/\n\n+/).map((p, i) => (
-                <p key={i} className="text-manso-cream/80 text-base sm:text-lg leading-relaxed text-pretty">
+                <p key={i} className={`${claro ? 'text-manso-black/80' : 'text-manso-cream/80'} text-lg sm:text-xl lg:text-2xl leading-snug text-pretty`}>
                   {p.replace(/\s(\S+)$/, ' $1')}
                 </p>
               ))}
@@ -68,6 +81,7 @@ export function MembresiasClient({ membresias, galeria, textoIntro, proximaFecha
           <HeroFotos
             fotos={galleryVisible}
             destino="el-espacio"
+            claro={claro}
             onError={(id) => setFotosRotas((prev) => (prev.includes(id) ? prev : [...prev, id]))}
           />
         }
@@ -97,16 +111,16 @@ export function MembresiasClient({ membresias, galeria, textoIntro, proximaFecha
                 <div key={categoria}>
                   {/* Encabezado de categoría */}
                   <div className={`flex items-center gap-4 ${ci === 0 ? 'mb-6' : 'mb-10'}`}>
-                    <span className="text-[9px] font-black uppercase tracking-[0.6em] text-manso-cream/50">
+                    <span className={`text-[9px] font-black uppercase tracking-[0.6em] ${claro ? 'text-manso-black/60' : 'text-manso-cream/50'}`}>
                       {categoria}
                     </span>
-                    <div className="flex-1 h-px bg-manso-cream/10" />
+                    <div className={`flex-1 h-px ${claro ? 'bg-manso-black/15' : 'bg-manso-cream/10'}`} />
                   </div>
 
                   {/* El toggle de moneda es parte de las cards: va bajo la primera línea */}
                   {ci === 0 && (
                     <div className="flex justify-start mb-8">
-                      <CurrencyToggle />
+                      <CurrencyToggle claro={claro} />
                     </div>
                   )}
 
@@ -118,6 +132,7 @@ export function MembresiasClient({ membresias, galeria, textoIntro, proximaFecha
                         currency={currency}
                         rate={rate}
                         posicion={i}
+                        claro={claro}
                       />
                     ))}
                   </div>
@@ -131,19 +146,19 @@ export function MembresiasClient({ membresias, galeria, textoIntro, proximaFecha
         <div className="mt-4">
           <button
             onClick={() => setOpenCoworkAbierto(true)}
-            className="group w-full flex items-center justify-between gap-5 border border-manso-cream/15 rounded-3xl p-5 md:p-7 hover:border-manso-terra/50 hover:bg-manso-cream/5 transition-all duration-500 text-left"
+            className={`group w-full flex items-center justify-between gap-5 border rounded-3xl p-5 md:p-7 hover:border-manso-terra/50 transition-all duration-500 text-left ${claro ? 'border-manso-black/15 hover:bg-manso-black/5' : 'border-manso-cream/15 hover:bg-manso-cream/5'}`}
           >
             <div>
-              <h2 className="text-xl md:text-3xl font-black uppercase italic tracking-tighter leading-none text-manso-cream">
+              <h2 className={`text-xl md:text-3xl font-black uppercase italic tracking-tighter leading-none ${claro ? 'text-manso-black' : 'text-manso-cream'}`}>
                 Open Cowork
               </h2>
-              <p className="text-sm text-manso-cream/40 font-light mt-2 max-w-md leading-relaxed">
+              <p className={`text-sm font-light mt-2 max-w-md leading-relaxed ${claro ? 'text-manso-black/60' : 'text-manso-cream/40'}`}>
                 Abrimos el cowork para que vengan a conocer a otras personas de la comunidad,
                 compartir ideas, proyectos, charlas.
               </p>
-              {proximaFecha && <CuposProximaFecha fecha={proximaFecha} />}
+              {proximaFecha && <CuposProximaFecha fecha={proximaFecha} claro={claro} />}
             </div>
-            <span className="shrink-0 w-11 h-11 flex items-center justify-center rounded-full border border-manso-cream/20 text-manso-cream group-hover:bg-manso-cream group-hover:text-manso-black group-hover:border-manso-cream transition-all duration-500 text-lg">
+            <span className={`shrink-0 w-11 h-11 flex items-center justify-center rounded-full border transition-all duration-500 text-lg ${claro ? 'border-manso-black/20 text-manso-black group-hover:bg-manso-black group-hover:text-manso-cream group-hover:border-manso-black' : 'border-manso-cream/20 text-manso-cream group-hover:bg-manso-cream group-hover:text-manso-black group-hover:border-manso-cream'}`}>
               →
             </span>
           </button>
@@ -190,7 +205,7 @@ export function MembresiasClient({ membresias, galeria, textoIntro, proximaFecha
 }
 
 /** Próximo encuentro y cuántos lugares quedan: es lo que decide si alguien se anota. */
-function CuposProximaFecha({ fecha }: { fecha: ProximaFechaCowork }) {
+function CuposProximaFecha({ fecha, claro }: { fecha: ProximaFechaCowork; claro: boolean }) {
   const d = new Date(`${fecha.fecha}T00:00:00`);
   const dia = d.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });
   const hora = fecha.horario ? ` · ${fecha.horario.slice(0, 5)} hs` : '';
@@ -198,9 +213,9 @@ function CuposProximaFecha({ fecha }: { fecha: ProximaFechaCowork }) {
   const quedan = fecha.restantes === 1 ? 'Queda 1 lugar' : `Quedan ${fecha.restantes} lugares`;
 
   return (
-    <p className="mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-black uppercase tracking-[0.15em] text-manso-cream/60">
+    <p className={`mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-black uppercase tracking-[0.15em] ${claro ? 'text-manso-black/60' : 'text-manso-cream/60'}`}>
       <span>Próximo: {dia}{hora}</span>
-      <span className={lleno ? 'text-manso-cream/40' : 'text-manso-terra'}>
+      <span className={lleno ? (claro ? 'text-manso-black/40' : 'text-manso-cream/40') : 'text-manso-terra'}>
         {lleno ? 'Completo' : quedan}
       </span>
     </p>

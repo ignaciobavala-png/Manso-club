@@ -9,6 +9,7 @@ interface Props {
   onError?: (id: string) => void;
   /** Id del bloque al que baja el click (el mosaico "El espacio"). */
   destino?: string;
+  claro?: boolean;
 }
 
 const CADA_MS = 4500;
@@ -20,7 +21,7 @@ const CADA_MS = 4500;
  *
  * Se pausa con el mouse encima y no rota si la persona pidió menos movimiento.
  */
-export function HeroFotos({ fotos, onError, destino }: Props) {
+export function HeroFotos({ fotos, onError, destino, claro = false }: Props) {
   const [actual, setActual] = useState(0);
   const [pausado, setPausado] = useState(false);
   const [reducido, setReducido] = useState(false);
@@ -56,7 +57,7 @@ export function HeroFotos({ fotos, onError, destino }: Props) {
       onMouseEnter={() => setPausado(true)}
       onMouseLeave={() => setPausado(false)}
       aria-label="Ver las fotos del espacio"
-      className="group relative block w-full md:w-[46%] lg:w-[52%] shrink-0 aspect-[16/10] md:aspect-[4/3] overflow-hidden rounded-2xl border border-manso-cream/20 bg-manso-black text-left"
+      className={`group relative block w-full md:w-[46%] lg:w-[52%] shrink-0 aspect-[16/10] md:aspect-[4/3] overflow-hidden rounded-2xl border ${claro ? 'border-manso-black/20' : 'border-manso-cream/20'} bg-manso-black text-left`}
     >
       {fotos.map((f, i) => (
         <Image
