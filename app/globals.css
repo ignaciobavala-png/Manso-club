@@ -285,3 +285,24 @@
   }
 }
 
+
+/* Open Cowork (/membresias): los brillos de fondo derivan despacio por dentro
+   del contenedor. Solo `transform`, así corre en el compositor; las dos luces
+   van a ritmos distintos para que no se vea un loop evidente. */
+@keyframes cowork-deriva-a {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  33%  { transform: translate3d(38vw, 4rem, 0) scale(1.25); }
+  66%  { transform: translate3d(14vw, 7rem, 0) scale(0.9); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+@keyframes cowork-deriva-b {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  40%  { transform: translate3d(-34vw, -5rem, 0) scale(1.2); }
+  75%  { transform: translate3d(-12vw, -2rem, 0) scale(0.85); }
+  100% { transform: translate3d(0, 0, 0) scale(1); }
+}
+.cowork-luz-a { animation: cowork-deriva-a 16s ease-in-out infinite; will-change: transform; }
+.cowork-luz-b { animation: cowork-deriva-b 21s ease-in-out infinite; will-change: transform; }
+@media (prefers-reduced-motion: reduce) {
+  .cowork-luz-a, .cowork-luz-b { animation: none; }
+}

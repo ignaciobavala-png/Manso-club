@@ -12,21 +12,25 @@ import { MembresiaCard } from '@/components/ui/MembresiaCard';
 import { gridMembresias } from '@/lib/membresia-grid';
 import { CoworkModal, PARAM_FORM, FORM_OPEN_COWORK } from '@/components/ui/CoworkModal';
 import { HeroFotos } from '@/components/membresias/HeroFotos';
+import { OpenCowork } from '@/components/membresias/OpenCowork';
 
 export interface ProximaFechaCowork {
   fecha: string;
   horario: string | null;
   restantes: number;
+  total: number;
 }
 
 interface Props {
   membresias: Membresia[];
   galeria: { id: string; src: string }[];
   textoIntro: string;
-  proximaFecha: ProximaFechaCowork | null;
+  proximasFechas: ProximaFechaCowork[];
+  /** Fotos que pasan en la card Cultural Manso al pasar el mouse. */
+  fotosCultural: string[];
 }
 
-export function MembresiasClient({ membresias, galeria, textoIntro, proximaFecha }: Props) {
+export function MembresiasClient({ membresias, galeria, textoIntro, proximasFechas, fotosCultural }: Props) {
   // Una foto borrada del storage deja la fila viva en la DB: si no carga, se
   // saca del mosaico en vez de mostrar el ícono de imagen rota.
   const [fotosRotas, setFotosRotas] = useState<string[]>([]);
@@ -86,6 +90,13 @@ export function MembresiasClient({ membresias, galeria, textoIntro, proximaFecha
           />
         }
       >
+        {/* Open Cowork: la puerta de entrada gratuita, antes de pagar un plan. Va
+            arriba de las cards y con la fecha como protagonista (tickets). */}
+        <OpenCowork
+          fechas={proximasFechas}
+          onAbrir={() => setOpenCoworkAbierto(true)}
+        />
+
         {membresias.length === 0 ? (
           <div className="text-center py-20">
             <Crown size={48} className="text-manso-cream/20 mx-auto mb-4" />
@@ -133,6 +144,7 @@ export function MembresiasClient({ membresias, galeria, textoIntro, proximaFecha
                         rate={rate}
                         posicion={i}
                         claro={claro}
+                        fotos={fotosCultural}
                       />
                     ))}
                   </div>
@@ -141,28 +153,6 @@ export function MembresiasClient({ membresias, galeria, textoIntro, proximaFecha
             </div>
           );
         })()}
-
-        {/* Open Cowork — va entre las cards y las fotos, solo en esta sección */}
-        <div className="mt-4">
-          <button
-            onClick={() => setOpenCoworkAbierto(true)}
-            className={`group w-full flex items-center justify-between gap-5 border rounded-3xl p-5 md:p-7 hover:border-manso-terra/50 transition-all duration-500 text-left ${claro ? 'border-manso-black/15 hover:bg-manso-black/5' : 'border-manso-cream/15 hover:bg-manso-cream/5'}`}
-          >
-            <div>
-              <h2 className={`text-xl md:text-3xl font-black uppercase italic tracking-tighter leading-none ${claro ? 'text-manso-black' : 'text-manso-cream'}`}>
-                Open Cowork
-              </h2>
-              <p className={`text-sm font-light mt-2 max-w-md leading-relaxed ${claro ? 'text-manso-black/60' : 'text-manso-cream/40'}`}>
-                Abrimos el cowork para que vengan a conocer a otras personas de la comunidad,
-                compartir ideas, proyectos, charlas.
-              </p>
-              {proximaFecha && <CuposProximaFecha fecha={proximaFecha} claro={claro} />}
-            </div>
-            <span className={`shrink-0 w-11 h-11 flex items-center justify-center rounded-full border transition-all duration-500 text-lg ${claro ? 'border-manso-black/20 text-manso-black group-hover:bg-manso-black group-hover:text-manso-cream group-hover:border-manso-black' : 'border-manso-cream/20 text-manso-cream group-hover:bg-manso-cream group-hover:text-manso-black group-hover:border-manso-cream'}`}>
-              →
-            </span>
-          </button>
-        </div>
 
         <CoworkModal
           open={openCoworkAbierto}
@@ -201,23 +191,5 @@ export function MembresiasClient({ membresias, galeria, textoIntro, proximaFecha
         )}
       </AdaptiveSectionLayout>
     </div>
-  );
-}
-
-/** Próximo encuentro y cuántos lugares quedan: es lo que decide si alguien se anota. */
-function CuposProximaFecha({ fecha, claro }: { fecha: ProximaFechaCowork; claro: boolean }) {
-  const d = new Date(`${fecha.fecha}T00:00:00`);
-  const dia = d.toLocaleDateString('es-AR', { weekday: 'long', day: 'numeric', month: 'long' });
-  const hora = fecha.horario ? ` · ${fecha.horario.slice(0, 5)} hs` : '';
-  const lleno = fecha.restantes <= 0;
-  const quedan = fecha.restantes === 1 ? 'Queda 1 lugar' : `Quedan ${fecha.restantes} lugares`;
-
-  return (
-    <p className={`mt-4 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] font-black uppercase tracking-[0.15em] ${claro ? 'text-manso-black/60' : 'text-manso-cream/60'}`}>
-      <span>Próximo: {dia}{hora}</span>
-      <span className={lleno ? (claro ? 'text-manso-black/40' : 'text-manso-cream/40') : 'text-manso-terra'}>
-        {lleno ? 'Completo' : quedan}
-      </span>
-    </p>
   );
 }

@@ -2,13 +2,14 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Bricolage_Grotesque } from 'next/font/google';
 import { Membresia } from '@/lib/types/membresia';
 import { fondoAcento, fondoAcentoHoverBoton, fondoHoverPorPosicion } from '@/lib/membresia-color';
 import { formatPrecioPlan, precioParaMostrar } from '@/lib/precios';
 import { CoworkModal, PARAM_FORM } from './CoworkModal';
 
-/** Solo para los precios: dígitos con más carácter que la Helvetica del sitio. */
+/** Tipografía de display de la card: nombre del plan y precio, juntos. El resto va en la del sitio. */
 const numeros = Bricolage_Grotesque({ subsets: ['latin'], weight: '800' });
 
 interface MembresiaCardProps {
@@ -19,6 +20,8 @@ interface MembresiaCardProps {
   posicion?: number;
   /** Modo claro de la página: la card pasa a negro sobre el fondo crema. */
   claro?: boolean;
+  /** Solo la card cultural: fotos que pasan mientras el mouse está encima. */
+  fotos?: string[];
 }
 
 /**
@@ -32,9 +35,24 @@ interface MembresiaCardProps {
  * "descripción de la tarjetita" y los beneficios viven en el bloque INCLUYE de
  * la página de detalle.
  */
-export const MembresiaCard = ({ membresia, currency, rate, posicion, claro = false }: MembresiaCardProps) => {
+export const MembresiaCard = ({ membresia, currency, rate, posicion, claro = false, fotos = [] }: MembresiaCardProps) => {
   const [formAbierto, setFormAbierto] = useState(false);
   const cultural = membresia.es_cultural;
+
+  // Cultural Manso: en reposo es terracota; con el mouse encima, sus fotos pasan
+  // a pantalla completa como un flipbook (corte seco, no fundido). En celular no
+  // hay hover y la card queda terracota. Con `prefers-reduced-motion` se ve una
+  // sola foto fija. Todas se montan desde el inicio (opacity 0) para que ya
+  // estén cargadas cuando llega el mouse.
+  const hayFotos = cultural && fotos.length > 0;
+  const [pasando, setPasando] = useState(false);
+  const [foto, setFoto] = useState(0);
+  useEffect(() => {
+    if (!hayFotos || !pasando || fotos.length < 2) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const t = setInterval(() => setFoto((i) => (i + 1) % fotos.length), 700);
+    return () => clearInterval(t);
+  }, [hayFotos, pasando, fotos.length]);
 
   // Link compartido de este plan (?form=<id>): abre su formulario al entrar.
   useEffect(() => {
@@ -47,9 +65,9 @@ export const MembresiaCard = ({ membresia, currency, rate, posicion, claro = fal
   // La cultural va en color pleno y sin precio; el resto en crema. Al pasar
   // el mouse por cualquier parte de la card (Ana lo pidió así, no solo por
   // SELECCIONAR), se llena con su color de hover y el texto pasa a crema.
-  // En modo claro la card es negra sobre el crema de la página (crema sobre
-  // crema se perdería): texto crema de entrada, y el mismo hover de color.
-  const sobreOscuro = cultural || claro;
+  // En modo claro la card es blanca con borde negro fino sobre el crema de la
+  // página (refe de Huerta): texto negro de entrada y el mismo hover de color.
+  const sobreOscuro = cultural;
   const cText = sobreOscuro
     ? 'text-manso-cream'
     : 'text-manso-black group-hover/card:text-manso-cream';
@@ -63,7 +81,7 @@ export const MembresiaCard = ({ membresia, currency, rate, posicion, claro = fal
       : 'border-manso-black/20 hover:border-transparent';
   const cFondo = cultural
     ? fondoAcento(membresia.color_acento)
-    : `${claro ? 'bg-manso-black' : 'bg-manso-cream'} ${
+    : `${claro ? 'bg-white' : 'bg-manso-cream'} ${
         posicion === undefined
           ? fondoAcentoHoverBoton(membresia.color_acento)
           : fondoHoverPorPosicion(posicion)
@@ -98,8 +116,30 @@ export const MembresiaCard = ({ membresia, currency, rate, posicion, claro = fal
 
   return (
     <article
+      onMouseEnter={hayFotos ? () => setPasando(true) : undefined}
+      onMouseLeave={hayFotos ? () => { setPasando(false); setFoto(0); } : undefined}
       className={`group group/card relative flex w-full h-full min-h-[218px] sm:min-h-[440px] border ${cBorde} ${cFondo} transition-colors duration-300`}
     >
+      {hayFotos && (
+        <div
+          aria-hidden
+          className={`absolute inset-0 z-[1] pointer-events-none transition-opacity duration-300 ${pasando ? 'opacity-100' : 'opacity-0'}`}
+        >
+          {fotos.map((src, i) => (
+            <Image
+              key={src}
+              src={src}
+              alt=""
+              fill
+              loading="eager"
+              sizes="(min-width: 1024px) 25vw, 50vw"
+              className={`object-cover ${i === foto ? 'opacity-100' : 'opacity-0'}`}
+            />
+          ))}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/40" />
+        </div>
+      )}
+
       {/* El cuerpo de la card lleva al detalle; el botón, directo al formulario.
           Va como capa debajo del contenido en vez de envolverlo porque un
           <button> dentro de un <a> no es HTML válido. */}
@@ -139,7 +179,7 @@ export const MembresiaCard = ({ membresia, currency, rate, posicion, claro = fal
               más) para que las cuatro entren siempre en una sola línea con
               `whitespace-nowrap` fijo (ver cards.png). */}
           <h3
-            className={`font-montreal font-black tracking-[-0.03em] leading-[0.95] text-[16.5px] sm:text-[2.25rem] break-words transition-colors duration-300 ${cText}`}
+            className={`${numeros.className} font-extrabold tracking-[-0.03em] leading-[0.95] text-[16.5px] sm:text-[2.25rem] break-words transition-colors duration-300 ${cText}`}
           >
             {(() => {
               const match = membresia.nombre.match(/^(.*)\s(x week)$/i);
