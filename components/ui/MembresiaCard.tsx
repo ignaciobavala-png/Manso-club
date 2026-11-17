@@ -2,10 +2,15 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
+import { Bricolage_Grotesque } from 'next/font/google';
 import { Membresia } from '@/lib/types/membresia';
 import { fondoAcento, fondoAcentoHoverBoton, fondoHoverPorPosicion } from '@/lib/membresia-color';
 import { formatPrecioPlan, precioParaMostrar } from '@/lib/precios';
 import { CoworkModal, PARAM_FORM } from './CoworkModal';
+
+/** Tipografía de display de la card: nombre del plan y precio, juntos. El resto va en la del sitio. */
+const numeros = Bricolage_Grotesque({ subsets: ['latin'], weight: '800' });
 
 interface MembresiaCardProps {
   membresia: Membresia;
@@ -13,6 +18,10 @@ interface MembresiaCardProps {
   rate: number | null;
   /** Lugar de la card entre los planes: decide el color del hover. */
   posicion?: number;
+  /** Modo claro de la página: la card pasa a negro sobre el fondo crema. */
+  claro?: boolean;
+  /** Solo la card cultural: fotos que pasan mientras el mouse está encima. */
+  fotos?: string[];
 }
 
 /**
@@ -26,9 +35,24 @@ interface MembresiaCardProps {
  * "descripción de la tarjetita" y los beneficios viven en el bloque INCLUYE de
  * la página de detalle.
  */
-export const MembresiaCard = ({ membresia, currency, rate, posicion }: MembresiaCardProps) => {
+export const MembresiaCard = ({ membresia, currency, rate, posicion, claro = false, fotos = [] }: MembresiaCardProps) => {
   const [formAbierto, setFormAbierto] = useState(false);
   const cultural = membresia.es_cultural;
+
+  // Cultural Manso: en reposo es terracota; con el mouse encima, sus fotos pasan
+  // a pantalla completa como un flipbook (corte seco, no fundido). En celular no
+  // hay hover y la card queda terracota. Con `prefers-reduced-motion` se ve una
+  // sola foto fija. Todas se montan desde el inicio (opacity 0) para que ya
+  // estén cargadas cuando llega el mouse.
+  const hayFotos = cultural && fotos.length > 0;
+  const [pasando, setPasando] = useState(false);
+  const [foto, setFoto] = useState(0);
+  useEffect(() => {
+    if (!hayFotos || !pasando || fotos.length < 2) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const t = setInterval(() => setFoto((i) => (i + 1) % fotos.length), 700);
+    return () => clearInterval(t);
+  }, [hayFotos, pasando, fotos.length]);
 
   // Link compartido de este plan (?form=<id>): abre su formulario al entrar.
   useEffect(() => {
@@ -41,23 +65,28 @@ export const MembresiaCard = ({ membresia, currency, rate, posicion }: Membresia
   // La cultural va en color pleno y sin precio; el resto en crema. Al pasar
   // el mouse por cualquier parte de la card (Ana lo pidió así, no solo por
   // SELECCIONAR), se llena con su color de hover y el texto pasa a crema.
-  const cText = cultural
+  // En modo claro la card es blanca con borde negro fino sobre el crema de la
+  // página (refe de Huerta): texto negro de entrada y el mismo hover de color.
+  const sobreOscuro = cultural;
+  const cText = sobreOscuro
     ? 'text-manso-cream'
     : 'text-manso-black group-hover/card:text-manso-cream';
-  const cMuted = cultural
+  const cMuted = sobreOscuro
     ? 'text-manso-cream/70'
     : 'text-manso-black/55 group-hover/card:text-manso-cream/70';
   const cBorde = cultural
     ? 'border-transparent'
-    : 'border-manso-black/20 hover:border-transparent';
+    : claro
+      ? 'border-manso-black hover:border-transparent'
+      : 'border-manso-black/20 hover:border-transparent';
   const cFondo = cultural
     ? fondoAcento(membresia.color_acento)
-    : `bg-manso-cream ${
+    : `${claro ? 'bg-white' : 'bg-manso-cream'} ${
         posicion === undefined
           ? fondoAcentoHoverBoton(membresia.color_acento)
           : fondoHoverPorPosicion(posicion)
       }`;
-  const cBoton = cultural
+  const cBoton = sobreOscuro
     ? 'bg-manso-cream text-manso-black'
     : 'bg-manso-black text-manso-cream hover:bg-manso-cream hover:text-manso-black';
 
@@ -70,6 +99,17 @@ export const MembresiaCard = ({ membresia, currency, rate, posicion }: Membresia
   const precio = formatPrecioPlan(monto, moneda);
 
   const descripcion = membresia.descripcion_corta?.trim() || membresia.descripcion?.trim();
+  // Un bullet por cosa que ofrece el plan: por renglón y también por " + "
+  // ("Cowork 3 días por semana + espacios comunes"), con mayúscula inicial
+  // (al cortar por "+" quedan en minúscula) y punto final parejo. El café no se
+  // lista: no es algo que haya que contar. Es solo de presentación; el texto
+  // cargado en el panel no se toca.
+  const features = (descripcion ?? '')
+    .split(/\n|\s\+\s/)
+    .map((l) => l.trim())
+    .filter((l) => l && !/^caf[eé]([\s.,;:!]|$)/i.test(l))
+    .map((l) => l.charAt(0).toUpperCase() + l.slice(1))
+    .map((l) => (/[.!?…]$/.test(l) ? l : `${l}.`));
   // Cultural Manso tiene página propia —y su propia sección en el panel—, así
   // que su card sale del detalle genérico y va derecho ahí.
   const detalle = cultural
@@ -80,8 +120,30 @@ export const MembresiaCard = ({ membresia, currency, rate, posicion }: Membresia
 
   return (
     <article
+      onMouseEnter={hayFotos ? () => setPasando(true) : undefined}
+      onMouseLeave={hayFotos ? () => { setPasando(false); setFoto(0); } : undefined}
       className={`group group/card relative flex w-full h-full min-h-[218px] sm:min-h-[440px] border ${cBorde} ${cFondo} transition-colors duration-300`}
     >
+      {hayFotos && (
+        <div
+          aria-hidden
+          className={`absolute inset-0 z-[1] pointer-events-none transition-opacity duration-300 ${pasando ? 'opacity-100' : 'opacity-0'}`}
+        >
+          {fotos.map((src, i) => (
+            <Image
+              key={src}
+              src={src}
+              alt=""
+              fill
+              loading="eager"
+              sizes="(min-width: 1024px) 25vw, 50vw"
+              className={`object-cover ${i === foto ? 'opacity-100' : 'opacity-0'}`}
+            />
+          ))}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-black/40" />
+        </div>
+      )}
+
       {/* El cuerpo de la card lleva al detalle; el botón, directo al formulario.
           Va como capa debajo del contenido en vez de envolverlo porque un
           <button> dentro de un <a> no es HTML válido. */}
@@ -92,20 +154,7 @@ export const MembresiaCard = ({ membresia, currency, rate, posicion }: Membresia
       )}
 
       <div className="relative z-10 flex w-full pointer-events-none">
-        {/* Margen izquierdo con el precio rotado, como en la refe. Cultural
-            Manso no es un plan y no tiene precio: el margen queda vacío para
-            que el título siga alineado con el de las cards vecinas. */}
-        <div className="w-6 sm:w-10 shrink-0 flex items-end justify-center pb-2.5 sm:pb-5">
-          {!cultural && (
-            <span
-              className={`[writing-mode:vertical-rl] rotate-180 whitespace-nowrap text-[8px] sm:text-[10px] font-bold uppercase tracking-[0.1em] sm:tracking-[0.2em] transition-colors duration-300 ${cMuted}`}
-            >
-              {precio} / {membresia.periodo}
-            </span>
-          )}
-        </div>
-
-        <div className="flex-1 flex flex-col min-w-0 p-2.5 pl-0 sm:p-6 sm:pl-0">
+        <div className="flex-1 flex flex-col min-w-0 p-3 sm:p-6">
           {/* El slot va siempre, con o sin badge: si no, el título de la card
               destacada baja y queda desalineado del de las vecinas. */}
           <span className="h-3 sm:h-4 text-[7px] sm:text-[9px] font-black uppercase tracking-[0.15em] sm:tracking-[0.3em] text-manso-terra group-hover/card:text-manso-cream transition-colors duration-300">
@@ -134,7 +183,7 @@ export const MembresiaCard = ({ membresia, currency, rate, posicion }: Membresia
               más) para que las cuatro entren siempre en una sola línea con
               `whitespace-nowrap` fijo (ver cards.png). */}
           <h3
-            className={`font-montreal font-black tracking-[-0.03em] leading-[0.95] text-[16.5px] sm:text-[2.25rem] break-words transition-colors duration-300 ${cText}`}
+            className={`${numeros.className} font-extrabold tracking-[-0.03em] leading-[0.95] text-[16.5px] sm:text-[2.25rem] break-words transition-colors duration-300 ${cText}`}
           >
             {(() => {
               const match = membresia.nombre.match(/^(.*)\s(x week)$/i);
@@ -149,20 +198,52 @@ export const MembresiaCard = ({ membresia, currency, rate, posicion }: Membresia
             })()}
           </h3>
 
-          <div className="mt-auto pt-4 sm:pt-8">
-            {descripcion && (
-              <p className={`text-[10px] sm:text-xs leading-relaxed whitespace-pre-line mb-4 sm:mb-6 transition-colors duration-300 ${cMuted}`}>
-                {descripcion}
+          {/* Precio centrado en el hueco entre el nombre y las features: grande
+              y en negrita, para que la card no quede vacía en el medio.
+              Cultural Manso no es un plan y no lleva precio. */}
+          <div className="flex flex-col items-center text-center mt-6 sm:mt-12 min-h-[56px] sm:min-h-[96px]">
+            {!cultural && (
+              <p className={`transition-colors duration-300 ${cText}`}>
+                <span className={`${numeros.className} block font-extrabold tracking-[-0.03em] leading-none text-[30px] sm:text-[3.6rem]`}>
+                  {precio}
+                </span>
+                <span className={`block mt-1.5 sm:mt-2 text-[10px] sm:text-sm font-bold uppercase tracking-[0.2em] ${cMuted}`}>
+                  / {membresia.periodo}
+                </span>
               </p>
             )}
+          </div>
 
-            {/* SELECCIONAR abre el formulario de inscripción, no el checkout: el
+          {/* Cada cosa que ofrece el plan, con su bullet. Van justo debajo del
+              precio (no pegadas al botón) para que arranquen a la misma altura
+              en las tres cards; el punto queda fuera del texto (`flex` + gap)
+              para que un renglón largo que baje no se meta bajo el bullet. */}
+          {!cultural && features.length > 0 && (
+            <ul className={`mt-6 sm:mt-8 space-y-2 text-xs sm:text-base leading-snug text-left transition-colors duration-300 ${cMuted}`}>
+              {features.map((f, i) => (
+                <li key={i} className="flex items-start gap-2.5">
+                  <span aria-hidden className="mt-[0.5em] size-1.5 shrink-0 rounded-full bg-current" />
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+
+          <div className="mt-auto pt-6">
+            {cultural && descripcion && (
+              <p className={`text-xs sm:text-base leading-snug mb-4 sm:mb-6 ${cMuted}`}>{descripcion}</p>
+            )}
+
+            {/* "Conocer más" (Ana pidió que ya no diga SELECCIONAR) lleva al detalle del
+                plan, donde está el botón que abre el formulario. Si el plan no
+                tiene página (sin slug), el botón abre el formulario directo.
+                El formulario de inscripción es una solicitud que Ana aprueba, no el checkout: el
                 alta al cowork pasa primero por una solicitud que Ana aprueba.
                 Redondo como el resto de los botones del sitio (la cultural también,
                 pero en blanco para diferenciarse). La cultural no se solicita: su botón es parte del link que
                 envuelve la card, así que va como <span> —un <a> dentro de otro
                 <a> no es HTML válido— y el click lo toma la capa de abajo. */}
-            {cultural ? (
+            {cultural || detalle ? (
               <span
                 className={`flex items-center justify-center w-full px-[7px] sm:px-[14px] min-h-[32px] sm:min-h-[36px] rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-[0.1em] sm:tracking-[0.25em] transition-opacity duration-200 group-hover:opacity-80 ${cBoton}`}
               >
@@ -175,7 +256,7 @@ export const MembresiaCard = ({ membresia, currency, rate, posicion }: Membresia
                 onClick={() => setFormAbierto(true)}
                 className={`pointer-events-auto flex items-center justify-center w-full px-[7px] sm:px-[14px] min-h-[32px] sm:min-h-[36px] rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-[0.1em] sm:tracking-[0.25em] transition-colors duration-300 active:scale-[0.98] ${cBoton}`}
               >
-                Seleccionar
+                Conocer más
               </button>
             )}
           </div>

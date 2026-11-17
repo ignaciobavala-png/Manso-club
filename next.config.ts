@@ -41,6 +41,9 @@ const nextConfig: NextConfig = {
     ];
   },
   images: {
+    // Next 16 solo sirve las calidades listadas: sin el 90, el `quality={90}`
+    // del hero de /membresias caía en silencio al 75 por defecto.
+    qualities: [75, 90],
     remotePatterns: [
       {
         protocol: 'https',

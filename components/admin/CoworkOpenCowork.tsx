@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 import { supabase } from '@/lib/supabase';
-import { Plus, Trash2, Users, Pencil, Check, X } from 'lucide-react';
+import { Plus, Trash2, Users, Pencil, Check, X, Link2 } from 'lucide-react';
 import { CoworkSolicitudCard } from './CoworkSolicitudCard';
+import { PARAM_FORM, FORM_OPEN_COWORK } from '@/components/ui/CoworkModal';
 import {
   fechaLarga,
   esPasada,
@@ -50,6 +51,7 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
   const [nueva, setNueva] = useState({ fecha: '', horario: '', horario_fin: '', cupos_maximos: '20' });
   const [ventana, setVentana] = useState<Ventana>('proximas');
   const [editando, setEditando] = useState<string | null>(null);
+  const [linkCopiado, setLinkCopiado] = useState(false);
   const [edicion, setEdicion] = useState({ fecha: '', horario: '', horario_fin: '', cupos_maximos: '20' });
 
   const agregarFecha = async () => {
@@ -115,6 +117,19 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
     onRefetch();
   };
 
+  // El formulario ya no tiene un bloque propio en /membresias, pero la página lo
+  // abre sola con este link: es el que Ana comparte (por ejemplo, por Instagram).
+  const copiarLinkFormulario = async () => {
+    const link = `${window.location.origin}/membresias?${PARAM_FORM}=${FORM_OPEN_COWORK}`;
+    try {
+      await navigator.clipboard.writeText(link);
+      setLinkCopiado(true);
+      setTimeout(() => setLinkCopiado(false), 2500);
+    } catch {
+      window.prompt('Copiá el link del formulario:', link);
+    }
+  };
+
   // Con 20 cupos por encuentro la lista de fechas se acumula rápido, así que
   // por defecto solo se ven las próximas y el archivo se abre por ventanas.
   const desdeVentana = VENTANAS.find(v => v.id === ventana)!.desde();
@@ -145,6 +160,26 @@ export function CoworkOpenCowork({ fechas, solicitudes, onRefetch, onEstado, onB
 
   return (
     <div className="space-y-8">
+      {/* Link del formulario, para compartir */}
+      <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-manso-cream/15 bg-manso-cream/5 p-4">
+        <div className="min-w-0">
+          <p className="text-[13px] font-black uppercase tracking-[0.2em] text-manso-cream/50">
+            Formulario de Open Cowork
+          </p>
+          <p className="mt-1 text-[14px] text-manso-cream/70">
+            Un link que abre el formulario directo, para mandar por Instagram o WhatsApp.
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={copiarLinkFormulario}
+          className="inline-flex items-center gap-2 rounded-full bg-manso-cream px-5 py-2.5 text-[12px] font-black uppercase tracking-[0.15em] text-manso-black hover:bg-manso-terra hover:text-manso-cream transition-colors"
+        >
+          {linkCopiado ? <Check size={15} /> : <Link2 size={15} />}
+          {linkCopiado ? 'Link copiado' : 'Copiar link'}
+        </button>
+      </div>
+
       {/* Alta de fecha */}
       <div>
         <p className="text-[13px] font-black uppercase tracking-[0.2em] text-manso-cream/50 mb-3">

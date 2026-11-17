@@ -9,14 +9,30 @@ import { CurrencyToggle } from '@/components/ui/CurrencyToggle';
 import { useCurrency } from '@/store/useCurrency';
 import { MembresiaCard } from '@/components/ui/MembresiaCard';
 import { gridMembresias } from '@/lib/membresia-grid';
+import { fotosCultural } from '@/lib/cultura-fotos';
 
 export const MembresiasHome = () => {
   const [membresias, setMembresias] = useState<Membresia[]>([]);
   const [loading, setLoading] = useState(true);
+  // Fotos que pasan en la card Cultural Manso al pasar el mouse.
+  const [fotos, setFotos] = useState<string[]>([]);
   const { currency, rate } = useCurrency();
+
+  const fetchFotosCultural = async () => {
+    const [banners, bloques] = await Promise.all([
+      supabase.from('cultura_banners').select('imagen_url').eq('activo', true).order('orden', { ascending: true }),
+      supabase
+        .from('cultura_bloques')
+        .select('foto_izquierda_url, foto_derecha_url')
+        .eq('activo', true)
+        .order('orden', { ascending: true }),
+    ]);
+    setFotos(fotosCultural(banners.data, bloques.data));
+  };
 
   useEffect(() => {
     fetchMembresias();
+    fetchFotosCultural();
   }, []);
 
   const fetchMembresias = async () => {
@@ -100,6 +116,7 @@ export const MembresiasHome = () => {
                         currency={currency}
                         rate={rate}
                         posicion={i}
+                        fotos={fotos}
                       />
                     ))}
                   </div>

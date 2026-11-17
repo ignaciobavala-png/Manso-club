@@ -10,6 +10,10 @@ interface AdaptiveSectionLayoutProps {
   customBg?: string;
   forceDark?: boolean;
   forceLight?: boolean;
+  /** Pieza a la derecha del título (en celular va debajo). */
+  aside?: React.ReactNode;
+  /** Texto bajo el subtítulo, dentro del mismo bloque que el título. */
+  intro?: React.ReactNode;
 }
 
 export function AdaptiveSectionLayout({
@@ -18,7 +22,9 @@ export function AdaptiveSectionLayout({
   children,
   customBg,
   forceDark,
-  forceLight
+  forceLight,
+  aside,
+  intro
 }: AdaptiveSectionLayoutProps) {
   const pathname = usePathname();
 
@@ -38,7 +44,7 @@ export function AdaptiveSectionLayout({
       return {
         bg: customBg || 'bg-white',
         titleColor: 'text-manso-black',
-        subtitleColor: 'text-zinc-400'
+        subtitleColor: 'text-manso-black/60'
       };
     }
 
@@ -79,13 +85,17 @@ export function AdaptiveSectionLayout({
       } : undefined}
     >
       <div className="max-w-[1400px] mx-auto">
-        <div className="mb-10">
-          <h1 className={`${TYPE.h1} ${theme.titleColor}`}>
-            {title}<span className="text-zinc-200 cursor-blink">_</span>
-          </h1>
-          <p className={`${TYPE.label} ${theme.subtitleColor} mt-4 ml-2 italic`}>
-            {subtitle}
-          </p>
+        <div className={`mb-10 ${aside ? 'flex flex-col md:flex-row md:items-stretch md:justify-between gap-8' : ''}`}>
+          <div className={aside ? 'md:flex-1 min-w-0 flex flex-col' : undefined}>
+            <h1 className={`${aside ? 'font-black uppercase italic tracking-[-0.03em] leading-none text-[clamp(2.25rem,5.2vw,4.75rem)]' : TYPE.h1} ${theme.titleColor}`}>
+              {title}<span className={`${theme.isDark ? 'text-zinc-200' : 'text-zinc-400'} cursor-blink`}>_</span>
+            </h1>
+            <p className={`${aside ? 'text-xs sm:text-base font-bold uppercase tracking-[0.4em] mt-5 ml-1' : `${TYPE.label} mt-4 ml-2`} ${theme.subtitleColor} italic`}>
+              {subtitle}
+            </p>
+            {intro && <div className="mt-auto pt-8">{intro}</div>}
+          </div>
+          {aside}
         </div>
         <div className="w-full">
           {children}
