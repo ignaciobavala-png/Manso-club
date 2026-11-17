@@ -331,6 +331,31 @@ circuito a propósito:
 - La burbuja solo aparece con el festival publicado y `DEEPSEEK_API_KEY`
   cargada. En el celular va arriba del TICKETS fijo.
 
+### Organización de BLUR (`/org`)
+
+Herramienta interna de la organización del festival, que coordinaba con dos HTML
+sueltos (sin hosting ni base). Los dos mapas de experiencia viven ahora en
+Supabase y se editan desde la web. **No está enlazada desde ningún lado**, no
+lleva navbar (`ChromeManso`), es `noindex` y está en el `disallow` de robots.
+
+- **Acceso**: una clave compartida en `ORG_PASS` (entorno, nunca en el repo).
+  `/api/org/login` la compara con `timingSafeEqual` y deja una cookie httpOnly
+  firmada con HMAC (30 días). Como la clave es corta, frena la fuerza bruta: 5
+  errores en 15 min por IP (`org_intentos`, solo un hash de la IP que cambia
+  cada día). Sin `ORG_PASS` cargada la sección queda cerrada para todos.
+- **Datos** (`supabase/migration_org.sql`): `org_mapas` → `org_fases` →
+  `org_espacios` (las columnas) → `org_items` (las filas: staff, señalética,
+  touchpoints, necesidades, herramientas, desafíos, dolor, emociones). RLS
+  prendida y **sin ninguna policy**: solo el servidor (service role, `lib/org.ts`)
+  las toca, después de validar la cookie.
+- **Qué se puede hacer**: tildar ítems como resueltos, editarlos con un click,
+  sumar y borrar. Es anónimo (una clave para todos): no queda registro de quién
+  cambió qué.
+- **Carga inicial**: `scripts/org-importar.mjs` lee los dos HTML originales
+  (generan el SQL de carga). Son dos mapas separados a propósito: se superponen
+  en seis espacios con datos que a veces se contradicen (p. ej. dónde quedan los
+  baños) y eso lo resuelve la organización, no el código.
+
 ### Precios de la tienda
 
 Cada producto guarda su **moneda de referencia** en `productos.moneda`

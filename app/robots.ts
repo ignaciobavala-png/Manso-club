@@ -11,6 +11,7 @@ export default function robots(): MetadataRoute.Robots {
         // hacer en un buscador.
         disallow: [
           '/mansoadm/',
+          '/org',
           '/api/',
           '/mi-cuenta',
           '/checkout',

@@ -1,0 +1,75 @@
+/* /org — mapas de experiencia de BLUR. Estilos del HTML original de la
+   organización, con scope `.org` para que no toquen el resto del sitio. */
+.org{--bg:#f6f3ee;--panel:#fffdf9;--ink:#1c1714;--mut:#756c63;--line:#e4ddd2;--accent:#e8321f;--dark:#17090a;
+  position:fixed;inset:0;z-index:50;display:flex;flex-direction:column;background:var(--bg);color:var(--ink);
+  font:13px/1.45 var(--font-org-cuerpo),system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+.org *{box-sizing:border-box}
+.org-top{flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;padding:14px 22px;background:var(--dark);color:#fff}
+.org-top h1,.org-login-caja h1{margin:0;font:800 26px/1 var(--font-org-titulo),sans-serif;letter-spacing:.04em;text-transform:uppercase}
+.org-top h1 span,.org-login-caja h1 span{color:var(--accent)}
+.org-tabs{display:flex;gap:4px;flex-wrap:wrap}
+.org-tabs button{border:0;background:transparent;color:#cdb9b4;font:500 12.5px var(--font-org-cuerpo),sans-serif;padding:7px 12px;border-radius:999px;cursor:pointer;transition:.15s}
+.org-tabs button:hover{color:#fff;background:#ffffff14}
+.org-tabs button.on{background:var(--accent);color:#fff}
+.org-prog{margin-left:auto;font-size:12px;color:#cdb9b4}
+.org-filtros{flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:10px 22px;border-bottom:1px solid var(--line);background:var(--panel)}
+.org-filtros .lbl{color:var(--mut);font-size:12px;margin-right:4px}
+.org .chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#fff;border-radius:999px;padding:4px 11px 4px 8px;font:500 12px var(--font-org-cuerpo),sans-serif;color:var(--ink);cursor:pointer;transition:.15s}
+.org .chip i{width:9px;height:9px;border-radius:50%;background:var(--c)}
+.org .chip.off{opacity:.45;background:transparent}
+.org .chip.off i{background:#bbb}
+.org-fasesnav{margin-left:auto;display:flex;gap:4px;flex-wrap:wrap}
+.org-fasesnav button{border:1px solid var(--line);background:transparent;border-radius:999px;padding:4px 10px;font:500 12px var(--font-org-cuerpo),sans-serif;color:var(--mut);cursor:pointer}
+.org-fasesnav button:hover{color:var(--ink);border-color:var(--ink)}
+.org-aviso{flex:none;margin:0;padding:8px 22px;background:#fde8e6;color:#8a1c12;font-weight:600}
+.org-wrap{flex:1;min-height:0;overflow:auto}
+.org table{border-collapse:separate;border-spacing:10px 8px;margin:0 8px 14px}
+.org th,.org td{vertical-align:top;padding:0;text-align:left}
+.org td{height:1px}
+.org .stick{position:sticky;left:0;z-index:3;background:var(--bg)}
+.org .ph th.phase{box-shadow:0 -10px 0 var(--bg);position:sticky;top:0;z-index:5;background:var(--bg);padding:10px 2px 0;font:700 11px var(--font-org-cuerpo),sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--mut)}
+.org .ph th.phase span{display:block;border-top:2px solid var(--ink);padding-top:6px}
+.org .hd th.col{box-shadow:0 -10px 0 var(--bg),0 4px 0 var(--bg);position:sticky;top:34px;z-index:4;background:var(--bg);width:260px;min-width:260px;padding:2px 2px 8px}
+.org .hd .stick{top:34px;z-index:6}
+.org .ph .stick{top:0;z-index:7}
+.org .num{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;background:var(--dark);color:#fff;font:700 11px var(--font-org-cuerpo);margin-bottom:6px}
+.org .col b{display:block;font:700 15px/1.2 var(--font-org-cuerpo),sans-serif}
+.org .med{display:block;margin-top:5px;font:400 11px/1.35 var(--font-org-cuerpo);color:var(--mut);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.org .med.ce{-webkit-line-clamp:6;color:#5c544c}.org .med.ce b{display:inline;font:600 11px var(--font-org-cuerpo);color:var(--ink)}
+.org .rowlab{width:132px;min-width:132px}
+.org .rowlab div{position:sticky;top:120px;background:var(--c);color:#fff;font:600 12.5px/1.25 var(--font-org-cuerpo);padding:10px 12px;border-radius:8px}
+.org .card{height:100%;background:color-mix(in srgb,var(--c) 11%,#fff);border:1px solid color-mix(in srgb,var(--c) 28%,#fff);border-left:4px solid var(--c);border-radius:8px;padding:10px 12px}
+.org .card ul{margin:0;padding:0;list-style:none}
+.org .card li{position:relative;display:flex;align-items:flex-start;gap:6px;margin:3px 0}
+.org .card li input[type=checkbox]{flex:none;margin:3px 0 0;accent-color:var(--c);cursor:pointer}
+.org .card li .txt{flex:1;cursor:text;border-radius:3px}
+.org .card li .txt:hover{background:#0000000a}
+.org .card li.hecho .txt{text-decoration:line-through;color:var(--mut)}
+.org .card li .x{flex:none;border:0;background:transparent;color:#a39a90;font-size:16px;line-height:1;cursor:pointer;opacity:0;padding:0 2px}
+.org .card li:hover .x{opacity:1}
+.org .card li .x:hover{color:var(--accent)}
+.org .card li textarea{flex:1;font:inherit;padding:2px 4px;border:1px solid var(--c);border-radius:4px;resize:vertical;background:#fff;color:var(--ink)}
+.org .card li.risk{flex-wrap:wrap;padding:5px 8px;margin:6px 0 2px;background:#fff3d6;border:1px solid #f0d58f;border-radius:6px;color:#5a3b00}
+.org .rk{display:inline-block;padding:0 6px;border-radius:4px;background:#e0a21b;color:#fff;font:700 9.5px/16px var(--font-org-cuerpo);letter-spacing:.06em;text-transform:uppercase}
+.org .card.des{background:var(--dark);border-color:var(--dark);border-left-color:var(--accent);color:#fff;font:500 13.5px/1.5 var(--font-org-cuerpo);padding:12px 14px}
+.org .card.des li input[type=checkbox]{accent-color:var(--accent)}
+.org .card.des li.hecho .txt{color:#b9a9a4}
+.org .card.des .x,.org .card.des .mas{color:#cdb9b4}
+.org .card.des textarea{color:var(--ink)}
+.org .card.emo ul{display:flex;flex-wrap:wrap;gap:5px}
+.org .card.emo li{align-items:center;padding:3px 10px;margin:0;border-radius:999px;background:var(--c);color:#fff;font-weight:500;font-size:12px}
+.org .card.emo li input[type=checkbox]{display:none}
+.org .card.emo li .x{color:#ffffffb0}
+.org .mas{margin-top:6px;border:0;background:transparent;color:var(--mut);font:500 11.5px var(--font-org-cuerpo),sans-serif;cursor:pointer;padding:2px 0;opacity:.55}
+.org .card:hover .mas{opacity:1}
+.org .mas:hover{color:var(--ink)}
+.org .card.des .mas:hover{color:#fff}
+.org .nuevo{width:100%;margin-top:6px;font:inherit;padding:4px 6px;border:1px solid var(--c);border-radius:4px;background:#fff;color:var(--ink)}
+.org-login{align-items:center;justify-content:center}
+.org-login-caja{display:flex;flex-direction:column;gap:12px;width:min(320px,86vw);text-align:center}
+.org-login-caja h1{color:var(--ink);font-size:34px;margin-bottom:6px}
+.org-login-caja input{padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:#fff;font:600 16px var(--font-org-cuerpo),sans-serif;text-align:center;letter-spacing:.3em}
+.org-login-caja button{padding:12px;border:0;border-radius:10px;background:var(--dark);color:#fff;font:600 13px var(--font-org-cuerpo),sans-serif;cursor:pointer}
+.org-login-caja button:disabled{opacity:.5;cursor:not-allowed}
+.org-login-msg{margin:0;font-size:13px;color:var(--mut)}
+@media (max-width:700px){.org-top h1{font-size:22px}.org .rowlab{width:104px;min-width:104px}.org .hd th.col{width:230px;min-width:230px}}

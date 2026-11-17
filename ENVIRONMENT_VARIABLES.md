@@ -75,6 +75,7 @@ Se cobra solo USDT, en BNB Smart Chain (BEP20) y Ethereum (ERC20).
 
 ```bash
 FESTIVAL_WALLET_EVM=0x...   # dirección 0x de Manso: la misma sirve en Ethereum y BSC
+ORG_PASS=...              # clave compartida de /org (mapas de la organización); sin ella /org queda cerrada
 ```
 
 Opcionales:
