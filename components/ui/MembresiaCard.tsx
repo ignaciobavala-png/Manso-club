@@ -100,11 +100,15 @@ export const MembresiaCard = ({ membresia, currency, rate, posicion, claro = fal
 
   const descripcion = membresia.descripcion_corta?.trim() || membresia.descripcion?.trim();
   // Un bullet por cosa que ofrece el plan: por renglón y también por " + "
-  // ("Cowork 3 días por semana + café"), con punto final parejo.
+  // ("Cowork 3 días por semana + espacios comunes"), con mayúscula inicial
+  // (al cortar por "+" quedan en minúscula) y punto final parejo. El café no se
+  // lista: no es algo que haya que contar. Es solo de presentación; el texto
+  // cargado en el panel no se toca.
   const features = (descripcion ?? '')
     .split(/\n|\s\+\s/)
     .map((l) => l.trim())
-    .filter(Boolean)
+    .filter((l) => l && !/^caf[eé]([\s.,;:!]|$)/i.test(l))
+    .map((l) => l.charAt(0).toUpperCase() + l.slice(1))
     .map((l) => (/[.!?…]$/.test(l) ? l : `${l}.`));
   // Cultural Manso tiene página propia —y su propia sección en el panel—, así
   // que su card sale del detalle genérico y va derecho ahí.
