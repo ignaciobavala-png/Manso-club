@@ -9,6 +9,7 @@ import { leerTextos } from '@/lib/festival-idioma-servidor';
 import { leerConteo } from '@/lib/festival-conteo';
 import { ConteoVisitas } from '@/components/festival/ConteoVisitas';
 import { LogoBlur } from '@/components/festival/LogoBlur';
+import { PixelBlur } from '@/components/festival/PixelBlur';
 import { BotBlur } from '@/components/festival/BotBlur';
 import { metadataFestival } from '@/lib/festival-seo';
 
@@ -77,6 +78,9 @@ export default async function FestivalLayout({ children }: { children: React.Rea
 
       {/* Borrador: solo lo ven admins, no se mide. */}
       {config.publicado && !conteo.omitir && <ConteoVisitas config={conteo.config} idioma={idioma} />}
+
+      {/* Píxel de Meta de BLUR; el borrador no se mide. */}
+      {config.publicado && !conteo.omitir && <PixelBlur />}
 
       <FestivalMenu />
 
