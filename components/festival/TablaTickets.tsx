@@ -4,6 +4,7 @@ import { FormEvent, useMemo, useState } from 'react';
 import { FestivalEntrada, MedioPago } from '@/lib/types/festival';
 import { useTextos } from './Idioma';
 import { formatArs } from '@/lib/precios';
+import { pixelBlur } from '@/lib/pixel-blur';
 
 /**
  * Tabla de venta (modelo Passline): una fila por tipo de entrada. Solo las que
@@ -51,11 +52,37 @@ export function TablaTickets({
     [entradas, cantidades]
   );
 
-  const cambiar = (entrada: FestivalEntrada, delta: number) =>
+  const cambiar = (entrada: FestivalEntrada, delta: number) => {
+    // El evento sale acá y no dentro del updater de setState: ahí React puede ejecutarlo dos veces.
+    if (delta > 0 && (cantidades[entrada.id] ?? 0) < entrada.max_por_compra) {
+      void pixelBlur('AddToCart', {
+        content_ids: [entrada.id],
+        content_name: entrada.nombre,
+        content_type: 'product',
+        value: entrada.precio,
+        currency: 'ARS',
+      });
+    }
     setCantidades(prev => {
       const n = Math.min(entrada.max_por_compra, Math.max(0, (prev[entrada.id] ?? 0) + delta));
       return { ...prev, [entrada.id]: n };
     });
+  };
+
+  // COMPRAR: la persona decide pagar. Sale también con transferencia, que después
+  // sigue en la página de Gestión (otro dominio, donde este píxel no corre).
+  const iniciarCompra = () => {
+    const elegidas = entradas.filter(e => (cantidades[e.id] ?? 0) > 0);
+    void pixelBlur('InitiateCheckout', {
+      value: total,
+      currency: 'ARS',
+      content_type: 'product',
+      content_ids: elegidas.map(e => e.id),
+      contents: elegidas.map(e => ({ id: e.id, quantity: cantidades[e.id], item_price: e.precio })),
+      num_items: elegidas.reduce((n, e) => n + cantidades[e.id], 0),
+    });
+    setDatosAbiertos(true);
+  };
 
   const comprar = async (ev: FormEvent) => {
     ev.preventDefault();
@@ -176,7 +203,7 @@ export function TablaTickets({
         <button
           type="button"
           disabled={total === 0 || !metodo}
-          onClick={() => setDatosAbiertos(true)}
+          onClick={iniciarCompra}
           className="fest-menu text-[16px] sm:text-[18px] leading-[1.3] px-6 py-2.5 border-2 border-[var(--fest-acento)] bg-[var(--fest-acento)] text-[#1A1A1A] enabled:hover:bg-[var(--fest-texto)] enabled:hover:border-[var(--fest-texto)] enabled:hover:text-[var(--fest-fondo)] transition-colors disabled:bg-transparent disabled:border-[var(--fest-texto)]/35 disabled:text-[var(--fest-texto)]/45 disabled:cursor-not-allowed"
         >
           {t.tickets.comprar}

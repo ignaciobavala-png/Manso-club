@@ -21,6 +21,7 @@ import { PagoCripto } from '@/components/festival/PagoCripto';
 import { EsperandoMP, PagoTransferencia } from '@/components/festival/PagoPesos';
 import { leerTextos } from '@/lib/festival-idioma-servidor';
 import { CompraPagada, Dato, Marco, qrDeEntrada } from '@/components/festival/CompraPagada';
+import { PixelCompra } from '@/components/festival/PixelCompra';
 
 export async function generateMetadata(): Promise<Metadata> {
   const { t } = await leerTextos();
@@ -102,6 +103,11 @@ export default async function CompraFestival({
 
   return (
     <Marco>
+      <PixelCompra
+        ordenId={orden.id}
+        valor={orden.total_ars}
+        items={orden.items.map(i => ({ entrada_id: i.entrada_id, cantidad: i.cantidad, precio_ars: i.precio_ars }))}
+      />
       <CompraPagada
         email={orden.email}
         tickets={tickets}

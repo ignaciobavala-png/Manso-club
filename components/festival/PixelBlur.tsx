@@ -2,43 +2,33 @@
 
 import { useEffect } from 'react';
 import { usePathname } from 'next/navigation';
+import { activarPixelBlur, pixelBlur } from '@/lib/pixel-blur';
 
 /**
- * Píxel de Meta propio de BLUR (/blurfestival). El del root layout es el de
- * Manso y también corre acá (carga fbevents.js); este se suma como segundo
- * píxel con `init` y sus PageView van con `trackSingle`, para que cada píxel
- * cuente solo lo suyo. Una visita a BLUR cuenta también en el de Manso, que es
- * lo esperado: es una página del mismo dominio.
+ * Píxel de Meta propio de BLUR (/blurfestival). Ver `lib/pixel-blur.ts`: el del
+ * root layout es el de Manso; este se suma como segundo píxel. Una visita a
+ * BLUR cuenta también en el de Manso, que es lo esperado: es una página del
+ * mismo dominio.
+ *
+ * Acá van los eventos de navegación (PageView en cada pantalla, ViewContent en
+ * la de tickets). Los de compra viven donde pasa la acción: `TablaTickets`
+ * (AddToCart, InitiateCheckout) y `PixelCompra` (Purchase).
  */
-const PIXEL_BLUR = '999072999344305';
-
-type Fbq = (...args: unknown[]) => void;
-
 export function PixelBlur() {
   const ruta = usePathname();
 
+  // Habilita el píxel mientras este componente esté montado (borrador y admins no lo montan).
   useEffect(() => {
-    const w = window as unknown as { fbq?: Fbq; __pixelBlur?: boolean };
-    const enviar = () => {
-      if (!w.fbq) return false;
-      if (!w.__pixelBlur) {
-        w.fbq('init', PIXEL_BLUR);
-        w.__pixelBlur = true;
-      }
-      // Cada pantalla es un PageView: el App Router navega sin recargar.
-      w.fbq('trackSingle', PIXEL_BLUR, 'PageView');
-      return true;
-    };
-    if (enviar()) return;
-    // El script del root (afterInteractive) puede llegar después de la hidratación.
-    const t = setInterval(() => {
-      if (enviar()) clearInterval(t);
-    }, 300);
-    const corte = setTimeout(() => clearInterval(t), 10000);
-    return () => {
-      clearInterval(t);
-      clearTimeout(corte);
-    };
+    activarPixelBlur(true);
+    return () => activarPixelBlur(false);
+  }, []);
+
+  useEffect(() => {
+    // Cada pantalla es un PageView: el App Router navega sin recargar.
+    void pixelBlur('PageView');
+    if (ruta === '/blurfestival/tickets') {
+      void pixelBlur('ViewContent', { content_name: 'Entradas BLUR', content_type: 'product' });
+    }
   }, [ruta]);
 
   return null;
