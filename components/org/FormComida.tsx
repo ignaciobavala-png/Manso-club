@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { AREAS_COMIDA, AREA_ARTISTAS, BEBIDAS, COMER_ARTISTA, COMIDAS, DIETAS, LINEUP_HOSP } from '@/lib/org-tipos';
 
 const BORRADOR = 'blur-org-comida';
+const BORRADOR_ARTISTAS = 'blur-org-comida-artistas';
 const VACIO = { nombre: '', area: '', comidas: [] as string[], dieta: [] as string[], alergias: '', bebida: [] as string[], extras: '', artista: '', comer: '', bebida_set: '', web: '' };
 type Datos = typeof VACIO;
 
@@ -26,12 +27,13 @@ function Chips({ nombre, opciones, valor, onChange }: { nombre: string; opciones
 }
 
 /** Formulario público. Guarda un borrador en el navegador para que no se pierda si cierran la pestaña. */
-export function FormComida({ token }: { token: string }) {
+export function FormComida({ token, soloArtistas = false }: { token: string; soloArtistas?: boolean }) {
+  const clave = soloArtistas ? BORRADOR_ARTISTAS : BORRADOR;
   const [d, setD] = useState<Datos>(VACIO);
   // El borrador se lee después de montar: en el render del servidor no hay localStorage y el HTML tiene que coincidir.
   useEffect(() => {
     try {
-      const g = JSON.parse(localStorage.getItem(BORRADOR) ?? 'null');
+      const g = JSON.parse(localStorage.getItem(clave) ?? 'null');
       if (g) setD({ ...VACIO, ...g, web: '' });
     } catch { /* sin localStorage: el formulario anda igual */ }
   }, []);
@@ -39,13 +41,13 @@ export function FormComida({ token }: { token: string }) {
   const [enviando, setEnviando] = useState(false);
   const [listo, setListo] = useState<null | { actualizado: boolean }>(null);
 
-  const esArtista = d.area === AREA_ARTISTAS;
+  const esArtista = soloArtistas;
   const slot = LINEUP_HOSP.find((a) => a.n === d.artista);
 
   const set = <K extends keyof Datos>(k: K, v: Datos[K]) =>
     setD((p) => {
       const n = { ...p, [k]: v };
-      try { localStorage.setItem(BORRADOR, JSON.stringify(n)); } catch { /* sin localStorage: el formulario anda igual */ }
+      try { localStorage.setItem(clave, JSON.stringify(n)); } catch { /* sin localStorage: el formulario anda igual */ }
       return n;
     });
 
@@ -54,12 +56,12 @@ export function FormComida({ token }: { token: string }) {
     if (esArtista) {
       if (!d.artista) return setErr('Elegí tu nombre.');
       if (!d.comer) return setErr('Elegí si querés comer antes o después del set.');
-    } else if (!d.nombre.trim() || !d.area) return setErr('Completá tu nombre y tu área.');
+    } else if (!d.nombre.trim() || !d.area || d.area === AREA_ARTISTAS) return setErr('Completá tu nombre y tu área.');
     else if (!d.comidas.length) return setErr('Elegí al menos una comida.');
     setErr('');
     setEnviando(true);
     try {
-      const res = await fetch('/api/org/comida', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...d, token }) });
+      const res = await fetch('/api/org/comida', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...d, area: soloArtistas ? AREA_ARTISTAS : d.area, token }) });
       const j = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(j.error || 'fallo');
       setListo({ actualizado: Boolean(j.actualizado) });
@@ -90,17 +92,17 @@ export function FormComida({ token }: { token: string }) {
             <label className="f" htmlFor="nombre">Nombre y apellido <em>*</em></label>
             <input id="nombre" type="text" autoComplete="name" value={d.nombre} maxLength={120} onChange={(e) => set('nombre', e.target.value)} />
           </div>}
-          <div className="full">
+          {!soloArtistas && <div className="full">
             <label className="f">Tu área <em>*</em></label>
             <div className="chips">
-              {AREAS_COMIDA.map((a) => (
+              {AREAS_COMIDA.filter((a) => a !== AREA_ARTISTAS).map((a) => (
                 <label key={a}>
                   <input type="radio" name="area" checked={d.area === a} onChange={() => set('area', a)} />
                   <span>{a}</span>
                 </label>
               ))}
             </div>
-          </div>
+          </div>}
           {esArtista && (
             <>
               <div className="full">

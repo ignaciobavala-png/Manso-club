@@ -18,7 +18,9 @@ export function OrgComidaPanel({ inicial, token, onAviso }: { inicial: OrgComida
   const [copiado, setCopiado] = useState(false);
   const [q, setQ] = useState('');
 
-  const link = `${typeof window === 'undefined' ? '' : window.location.origin}/org/comida/${token}`;
+  const base = `${typeof window === 'undefined' ? '' : window.location.origin}/org/comida/${token}`;
+  const link = base;
+  const linkArtistas = `${base}/artistas`;
 
   const resumen = useMemo(() => {
     const cuenta = (campo: 'comidas' | 'dieta' | 'bebida') => {
@@ -73,6 +75,8 @@ export function OrgComidaPanel({ inicial, token, onAviso }: { inicial: OrgComida
           <input readOnly value={link} onFocus={(e) => e.currentTarget.select()} aria-label="Link del formulario" />
         </div>
         <div className="org-c-btns">
+          <a href={`https://wa.me/?text=${encodeURIComponent(`Completá tu hospitality para BLUR (1 minuto): ${linkArtistas}`)}`} target="_blank" rel="noopener noreferrer">Link artistas: WhatsApp</a>
+          <button onClick={() => navigator.clipboard.writeText(linkArtistas).then(() => onAviso('Link de artistas copiado.'), () => onAviso('No se pudo copiar.'))}>Copiar link artistas</button>
           <button onClick={copiar}>{copiado ? '¡Copiado!' : 'Copiar link'}</button>
           <a href={wa} target="_blank" rel="noopener noreferrer">Mandar por WhatsApp</a>
           <a href={link} target="_blank" rel="noopener noreferrer">Ver formulario</a>
