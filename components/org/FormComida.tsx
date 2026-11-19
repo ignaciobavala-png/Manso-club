@@ -91,24 +91,33 @@ export function FormComida({ token }: { token: string }) {
             <input id="nombre" type="text" autoComplete="name" value={d.nombre} maxLength={120} onChange={(e) => set('nombre', e.target.value)} />
           </div>}
           <div className="full">
-            <label className="f" htmlFor="area">Tu área <em>*</em></label>
-            <select id="area" value={d.area} onChange={(e) => set('area', e.target.value)}>
-              <option value="">—</option>
-              {AREAS_COMIDA.map((a) => <option key={a}>{a}</option>)}
-            </select>
+            <label className="f">Tu área <em>*</em></label>
+            <div className="chips">
+              {AREAS_COMIDA.map((a) => (
+                <label key={a}>
+                  <input type="radio" name="area" checked={d.area === a} onChange={() => set('area', a)} />
+                  <span>{a}</span>
+                </label>
+              ))}
+            </div>
           </div>
           {esArtista && (
             <>
               <div className="full">
-                <label className="f" htmlFor="artista">Elegí tu nombre <em>*</em></label>
-                <select id="artista" value={d.artista} onChange={(e) => set('artista', e.target.value)}>
-                  <option value="">—</option>
-                  {[...new Set(LINEUP_HOSP.map((a) => a.stage))].map((st) => (
-                    <optgroup key={st} label={st}>
-                      {LINEUP_HOSP.filter((a) => a.stage === st).map((a) => <option key={a.n}>{a.n}</option>)}
-                    </optgroup>
-                  ))}
-                </select>
+                <label className="f">Elegí tu nombre <em>*</em></label>
+                {[...new Set(LINEUP_HOSP.map((a) => a.stage))].map((st) => (
+                  <div key={st} style={{ marginBottom: 12 }}>
+                    <span className="mono" style={{ display: 'block', opacity: 0.65, margin: '0 0 6px' }}>{st}</span>
+                    <div className="chips">
+                      {LINEUP_HOSP.filter((a) => a.stage === st).map((a) => (
+                        <label key={a.n}>
+                          <input type="radio" name="artista" checked={d.artista === a.n} onChange={() => set('artista', a.n)} />
+                          <span>{a.n}</span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
               {slot && (
                 <div className="full slot">
