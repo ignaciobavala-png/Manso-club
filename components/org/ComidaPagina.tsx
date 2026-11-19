@@ -6,8 +6,8 @@ import '@/app/org/comida/comida.css';
 const cuerpo = Inter_Tight({ subsets: ['latin'], variable: '--font-comida-cuerpo' });
 const mono = Courier_Prime({ subsets: ['latin'], weight: '400', variable: '--font-comida-mono' });
 
-/** Cáscara compartida del formulario público: la organización y los artistas ven la misma pieza con textos distintos. */
-export function ComidaPagina({ token, soloArtistas = false }: { token: string; soloArtistas?: boolean }) {
+/** Cáscara del formulario público de hospitality de artistas. */
+export function ComidaPagina({ token }: { token: string }) {
   return (
     <div className={`comida ${cuerpo.variable} ${mono.variable}`}>
       <div className="portada">
@@ -19,11 +19,11 @@ export function ComidaPagina({ token, soloArtistas = false }: { token: string; s
       </div>
       <main>
         <header>
-          <div className="kicker mono">{soloArtistas ? 'Hospitality · Artistas' : 'Organización · Comida'}</div>
-          <h2>{soloArtistas ? 'Hospitality para artistas' : '¿Qué querés comer?'}</h2>
+          <div className="kicker mono">Hospitality · Artistas</div>
+          <h2>Hospitality para artistas</h2>
           <p>Completalo una sola vez. Si te equivocás, volvé a cargarlo y se actualiza.</p>
         </header>
-        <FormComida token={token} soloArtistas={soloArtistas} />
+        <FormComida token={token} />
         <div className="pie">
           <Image src="/org/comida-pie.jpg" alt="BLUR · Sáb 12-12 · 2PM-4AM · Delta, Tigre" width={1080} height={441} sizes="720px" />
         </div>

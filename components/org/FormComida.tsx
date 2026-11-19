@@ -1,11 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { AREAS_COMIDA, AREA_ARTISTAS, BEBIDAS, COMER_ARTISTA, COMIDAS, DIETAS, LINEUP_HOSP } from '@/lib/org-tipos';
+import { AREA_ARTISTAS, BEBIDAS, COMER_ARTISTA, DIETAS, LINEUP_HOSP } from '@/lib/org-tipos';
 
-const BORRADOR = 'blur-org-comida';
-const BORRADOR_ARTISTAS = 'blur-org-comida-artistas';
-const VACIO = { nombre: '', area: '', comidas: [] as string[], dieta: [] as string[], alergias: '', bebida: [] as string[], extras: '', artista: '', comer: '', bebida_set: '', web: '' };
+const BORRADOR = 'blur-org-comida-artistas';
+const VACIO = { dieta: [] as string[], alergias: '', bebida: [] as string[], extras: '', artista: '', comer: '', bebida_set: '', web: '' };
 type Datos = typeof VACIO;
 
 function Chips({ nombre, opciones, valor, onChange }: { nombre: string; opciones: readonly string[]; valor: string[]; onChange: (v: string[]) => void }) {
@@ -27,13 +26,12 @@ function Chips({ nombre, opciones, valor, onChange }: { nombre: string; opciones
 }
 
 /** Formulario público. Guarda un borrador en el navegador para que no se pierda si cierran la pestaña. */
-export function FormComida({ token, soloArtistas = false }: { token: string; soloArtistas?: boolean }) {
-  const clave = soloArtistas ? BORRADOR_ARTISTAS : BORRADOR;
+export function FormComida({ token }: { token: string }) {
   const [d, setD] = useState<Datos>(VACIO);
   // El borrador se lee después de montar: en el render del servidor no hay localStorage y el HTML tiene que coincidir.
   useEffect(() => {
     try {
-      const g = JSON.parse(localStorage.getItem(clave) ?? 'null');
+      const g = JSON.parse(localStorage.getItem(BORRADOR) ?? 'null');
       if (g) setD({ ...VACIO, ...g, web: '' });
     } catch { /* sin localStorage: el formulario anda igual */ }
   }, []);
@@ -41,27 +39,23 @@ export function FormComida({ token, soloArtistas = false }: { token: string; sol
   const [enviando, setEnviando] = useState(false);
   const [listo, setListo] = useState<null | { actualizado: boolean }>(null);
 
-  const esArtista = soloArtistas;
   const slot = LINEUP_HOSP.find((a) => a.n === d.artista);
 
   const set = <K extends keyof Datos>(k: K, v: Datos[K]) =>
     setD((p) => {
       const n = { ...p, [k]: v };
-      try { localStorage.setItem(clave, JSON.stringify(n)); } catch { /* sin localStorage: el formulario anda igual */ }
+      try { localStorage.setItem(BORRADOR, JSON.stringify(n)); } catch { /* sin localStorage: el formulario anda igual */ }
       return n;
     });
 
   async function enviar(e: React.FormEvent) {
     e.preventDefault();
-    if (esArtista) {
-      if (!d.artista) return setErr('Elegí tu nombre.');
-      if (!d.comer) return setErr('Elegí si querés comer antes o después del set.');
-    } else if (!d.nombre.trim() || !d.area || d.area === AREA_ARTISTAS) return setErr('Completá tu nombre y tu área.');
-    else if (!d.comidas.length) return setErr('Elegí al menos una comida.');
+    if (!d.artista) return setErr('Elegí tu nombre.');
+    if (!d.comer) return setErr('Elegí si querés comer antes o después del set.');
     setErr('');
     setEnviando(true);
     try {
-      const res = await fetch('/api/org/comida', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...d, area: soloArtistas ? AREA_ARTISTAS : d.area, token }) });
+      const res = await fetch('/api/org/comida', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...d, area: AREA_ARTISTAS, token }) });
       const j = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(j.error || 'fallo');
       setListo({ actualizado: Boolean(j.actualizado) });
@@ -77,7 +71,7 @@ export function FormComida({ token, soloArtistas = false }: { token: string; sol
     return (
       <section>
         <h3><b>✓</b> {listo.actualizado ? 'Actualizado' : 'Recibido'}</h3>
-        <p className="sub" style={{ margin: 0 }}>Gracias, {(esArtista ? d.artista : d.nombre.trim()).split(' ')[0]}. Ya tenemos tu comida. Nos vemos en la isla.</p>
+        <p className="sub" style={{ margin: 0 }}>Gracias, {d.artista.split(' ')[0]}. Ya tenemos tu comida. Nos vemos en la isla.</p>
         <button type="button" className="otro" onClick={() => setListo(null)}>Editar mis respuestas</button>
       </section>
     );
@@ -88,23 +82,6 @@ export function FormComida({ token, soloArtistas = false }: { token: string; sol
       <section>
         <h3><b>01</b> Quién sos</h3>
         <div className="grid">
-          {!esArtista && <div className="full">
-            <label className="f" htmlFor="nombre">Nombre y apellido <em>*</em></label>
-            <input id="nombre" type="text" autoComplete="name" value={d.nombre} maxLength={120} onChange={(e) => set('nombre', e.target.value)} />
-          </div>}
-          {!soloArtistas && <div className="full">
-            <label className="f">Tu área <em>*</em></label>
-            <div className="chips">
-              {AREAS_COMIDA.filter((a) => a !== AREA_ARTISTAS).map((a) => (
-                <label key={a}>
-                  <input type="radio" name="area" checked={d.area === a} onChange={() => set('area', a)} />
-                  <span>{a}</span>
-                </label>
-              ))}
-            </div>
-          </div>}
-          {esArtista && (
-            <>
               <div className="full">
                 <label className="f">Elegí tu nombre <em>*</em></label>
                 {[...new Set(LINEUP_HOSP.map((a) => a.stage))].map((st) => (
@@ -127,8 +104,6 @@ export function FormComida({ token, soloArtistas = false }: { token: string; sol
                   <div><span className="mono">Horario</span><strong>{slot.time}</strong></div>
                 </div>
               )}
-            </>
-          )}
           {/* Honeypot: una persona no lo ve ni lo llena. */}
           <div className="trampa" aria-hidden="true">
             <input type="text" tabIndex={-1} autoComplete="off" value={d.web} onChange={(e) => setD((p) => ({ ...p, web: e.target.value }))} />
@@ -139,8 +114,7 @@ export function FormComida({ token, soloArtistas = false }: { token: string; sol
       <section>
         <h3><b>02</b> Comida</h3>
         <div className="grid">
-          {esArtista ? (
-            <div className="full">
+          <div className="full">
               <label className="f">¿Cuándo querés comer? <em>*</em></label>
               <div className="chips">
                 {COMER_ARTISTA.map((c) => (
@@ -150,13 +124,7 @@ export function FormComida({ token, soloArtistas = false }: { token: string; sol
                   </label>
                 ))}
               </div>
-            </div>
-          ) : (
-            <div className="full">
-              <label className="f">¿Qué comidas necesitás ese día? <em>*</em></label>
-              <Chips nombre="comidas" opciones={COMIDAS} valor={d.comidas} onChange={(v) => set('comidas', v)} />
-            </div>
-          )}
+          </div>
           <div className="full">
             <label className="f">Dieta</label>
             <Chips nombre="dieta" opciones={DIETAS} valor={d.dieta} onChange={(v) => set('dieta', v)} />
@@ -172,12 +140,10 @@ export function FormComida({ token, soloArtistas = false }: { token: string; sol
         <h3><b>03</b> Bebida</h3>
         <p className="sub">Agua siempre disponible.</p>
         <Chips nombre="bebida" opciones={BEBIDAS} valor={d.bebida} onChange={(v) => set('bebida', v)} />
-        {esArtista && (
-          <div style={{ marginTop: 18 }}>
+        <div style={{ marginTop: 18 }}>
             <label className="f" htmlFor="bebida_set">¿Qué querés tener en cabina mientras tocás?</label>
             <input id="bebida_set" type="text" maxLength={300} placeholder="ej. agua con gas fría y un gin tonic" value={d.bebida_set} onChange={(e) => set('bebida_set', e.target.value)} />
-          </div>
-        )}
+        </div>
       </section>
 
       <section>

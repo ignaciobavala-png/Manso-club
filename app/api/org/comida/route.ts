@@ -1,5 +1,5 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { AREAS_COMIDA, AREA_ARTISTAS, COMER_ARTISTA, LINEUP_HOSP, BEBIDAS, COMIDAS, DIETAS, adminOrg, haySesionOrg, tokenComidaValido } from '@/lib/org';
+import { AREA_ARTISTAS, COMER_ARTISTA, LINEUP_HOSP, BEBIDAS, DIETAS, adminOrg, haySesionOrg, tokenComidaValido } from '@/lib/org';
 
 export const dynamic = 'force-dynamic';
 
@@ -20,27 +20,19 @@ export async function POST(req: NextRequest) {
   // Honeypot: un campo oculto que una persona nunca llena.
   if (texto(b.web, 50)) return NextResponse.json({ ok: true });
 
-  let nombre = texto(b.nombre, 120);
-  const area = texto(b.area, 60);
-  const esArtista = area === AREA_ARTISTAS;
-  // Artistas: eligen su nombre del line-up (con escenario y horario) y dicen si comen antes o después del set.
-  const artista = esArtista ? LINEUP_HOSP.find((a) => a.n === texto(b.artista, 120)) : undefined;
-  const comer = esArtista ? (COMER_ARTISTA as readonly string[]).find((c) => c === b.comer) : undefined;
-  const comidas = lista(b.comidas, COMIDAS);
-  if (esArtista) {
-    if (!artista || !comer) return NextResponse.json({ error: 'Elegí tu nombre y cuándo querés comer.' }, { status: 400 });
-    nombre = artista.n;
-  } else if (!nombre || !(AREAS_COMIDA as readonly string[]).includes(area) || !comidas.length) {
-    return NextResponse.json({ error: 'Completá tu nombre, tu área y qué comidas necesitás.' }, { status: 400 });
-  }
+  // Solo artistas: eligen su nombre del line-up (con escenario y horario) y dicen si comen antes o después del set.
+  const artista = LINEUP_HOSP.find((a) => a.n === texto(b.artista, 120));
+  const comer = (COMER_ARTISTA as readonly string[]).find((c) => c === b.comer);
+  if (!artista || !comer) return NextResponse.json({ error: 'Elegí tu nombre y cuándo querés comer.' }, { status: 400 });
+  const nombre = artista.n;
   const fila = {
-    escenario: artista?.stage ?? null,
-    horario: artista?.time ?? null,
-    comer: comer ?? null,
-    bebida_set: esArtista ? texto(b.bebida_set, 300) || null : null,
+    escenario: artista.stage,
+    horario: artista.time,
+    comer,
+    bebida_set: texto(b.bebida_set, 300) || null,
     nombre,
-    area,
-    comidas: esArtista ? [] : comidas,
+    area: AREA_ARTISTAS,
+    comidas: [],
     dieta: lista(b.dieta, DIETAS),
     alergias: texto(b.alergias, 300) || null,
     bebida: lista(b.bebida, BEBIDAS),

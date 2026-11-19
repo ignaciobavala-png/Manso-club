@@ -5,7 +5,7 @@ import { tokenComidaValido } from '@/lib/org';
 
 // Pública pero sin nombre adivinable: solo abre con el código del link (404 si
 // no). El layout de /org ya pone noindex y robots la tiene en el disallow.
-export const metadata: Metadata = { title: 'Comida · Organización BLUR' };
+export const metadata: Metadata = { title: 'Hospitality artistas · BLUR' };
 
 export const dynamic = 'force-dynamic';
 

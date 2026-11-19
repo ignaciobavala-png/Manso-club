@@ -363,15 +363,14 @@ lleva navbar (`ChromeManso`), es `noindex` y está en el `disallow` de robots.
   WhatsApp). El código (`tokenComida()`, un HMAC de `ORG_PASS`) hace que la
   dirección no se pueda adivinar: sin él, 404 y la API rechaza; cambiar la clave
   lo rota.
-  Parte del HTML "Hospitality artistas" pero pensado para la org: nombre + área en
-  vez del line-up, y comidas del día (desayuno a madrugada). `POST /api/org/comida`
+  Es el HTML "Hospitality artistas" que mandó la producción y **es solo para
+  artistas** (no hay formulario para el resto de la org): elige su nombre del
+  line-up (`LINEUP_HOSP` en `lib/org-tipos.ts`, con escenario y horario; si cambia el
+  line-up se edita ahí), si come antes o después del set, dieta, bebida y qué quiere
+  en cabina. `POST /api/org/comida`
   pide el código (valida contra las listas de `lib/org-tipos.ts`, honeypot, tope de 500
-  filas, y si el nombre ya estaba actualiza); `GET`/`DELETE` piden la cookie. La
-  pestaña da el link (copiar / WhatsApp). Los artistas tienen **su propio link**
-  (`/org/comida/<código>/artistas`, mismo código): elige su nombre del line-up
-  (`LINEUP_HOSP` en `lib/org-tipos.ts`, con escenario y horario), si come antes o
-  después del set y qué quiere en cabina; el de la organización no lleva esa opción.
-  La pestaña da el link (copiar / WhatsApp), conteo por comida, dieta y bebida,
+  filas, y si el artista ya estaba actualiza); `GET`/`DELETE` piden la cookie. La
+  pestaña da el link (copiar / WhatsApp), conteo de cuándo comen, dieta y bebida,
   alergias aparte y CSV. Imágenes en `public/org/`.
 - **Ojo con los imports**: `lib/org.ts` usa `next/headers` (solo servidor). Lo
   que necesite el navegador (constantes, tipos) va en `lib/org-tipos.ts`; si un
