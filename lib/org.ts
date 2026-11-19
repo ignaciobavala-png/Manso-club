@@ -12,7 +12,7 @@ import { cookies } from 'next/headers';
  */
 
 export * from './org-tipos';
-import type { OrgTarea } from './org-tipos';
+import type { OrgComida, OrgTarea } from './org-tipos';
 
 export const ORG_COOKIE = 'org_sesion';
 export const ORG_SESION_DIAS = 30;
@@ -133,4 +133,29 @@ export async function leerTareas(): Promise<OrgTarea[]> {
     .order('zona_orden')
     .order('orden');
   return (data ?? []) as OrgTarea[];
+}
+
+/** Respuestas del formulario de comida, la más nueva primero. */
+export async function leerComida(): Promise<OrgComida[]> {
+  const { data } = await adminOrg()
+    .from('org_comida')
+    .select('id, created_at, nombre, area, comidas, dieta, alergias, bebida, extras')
+    .order('created_at', { ascending: false });
+  return (data ?? []) as OrgComida[];
+}
+
+/**
+ * Código del link público de /org/comida. Sale de `ORG_PASS` con un HMAC, así que
+ * no hay otra variable que cargar en Vercel: el link es estable mientras no se
+ * cambie la clave, y cambiarla lo invalida (y manda a todos a pedir el nuevo).
+ */
+export function tokenComida(): string {
+  return createHmac('sha256', secreto()).update('comida').digest('hex').slice(0, 20);
+}
+
+export function tokenComidaValido(t: unknown): boolean {
+  if (typeof t !== 'string' || !orgConfigurada()) return false;
+  const a = Buffer.from(tokenComida());
+  const b = Buffer.from(t);
+  return a.length === b.length && timingSafeEqual(a, b);
 }

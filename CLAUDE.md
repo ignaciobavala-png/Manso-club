@@ -358,6 +358,17 @@ lleva navbar (`ChromeManso`), es `noindex` y está en el `disallow` de robots.
   etiqueta, sumar y borrar. La zona es texto (con su orden) y no una FK a los
   espacios de los mapas: el plan trae zonas que ahí no están (p. ej. la Carpa
   Beduina). Se carga con `scripts/org-importar-tareas.mjs`.
+- **Comida** (cuarta pestaña, `org_comida`): `/org/comida/<código>` es la **única
+  página pública** de `/org` (sin clave, para mandar el link a toda la org por
+  WhatsApp). El código (`tokenComida()`, un HMAC de `ORG_PASS`) hace que la
+  dirección no se pueda adivinar: sin él, 404 y la API rechaza; cambiar la clave
+  lo rota.
+  Parte del HTML "Hospitality artistas" pero pensado para la org: nombre + área en
+  vez del line-up, y comidas del día (desayuno a madrugada). `POST /api/org/comida`
+  pide el código (valida contra las listas de `lib/org-tipos.ts`, honeypot, tope de 500
+  filas, y si el nombre ya estaba actualiza); `GET`/`DELETE` piden la cookie. La
+  pestaña da el link (copiar / WhatsApp), conteo por comida, dieta y bebida,
+  alergias aparte y CSV. Imágenes en `public/org/`.
 - **Ojo con los imports**: `lib/org.ts` usa `next/headers` (solo servidor). Lo
   que necesite el navegador (constantes, tipos) va en `lib/org-tipos.ts`; si un
   componente de cliente importa un valor de `lib/org.ts`, el build falla.

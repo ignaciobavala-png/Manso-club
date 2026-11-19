@@ -1,0 +1,45 @@
+/* /org/comida — formulario público de comida para la organización. Scope `.comida`. */
+.comida{--bg:#0f110d;--card:#171a14;--line:rgba(236,231,221,.16);--text:#ece7dd;--muted:rgba(236,231,221,.6);--warn:#f2b08a;
+  --mono:var(--font-comida-mono),ui-monospace,monospace;min-height:100vh;background:var(--bg);color:var(--text);
+  font:16px/1.45 var(--font-comida-cuerpo),system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+.comida *{box-sizing:border-box}
+.comida .mono{font-family:var(--mono);text-transform:uppercase;letter-spacing:.12em;font-size:11px}
+.comida .portada{position:relative;height:min(62vh,520px);overflow:hidden;display:flex;align-items:flex-end}
+.comida .portada img:not(.logo){object-fit:cover}
+.comida .portada::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(15,17,13,.1),rgba(15,17,13,.2) 40%,var(--bg))}
+.comida .portada-in{position:relative;z-index:1;width:100%;max-width:720px;margin:0 auto;padding:0 20px 8px}
+.comida .logo{width:min(380px,70vw);height:auto;display:block;margin-bottom:16px}
+.comida main{max-width:720px;margin:0 auto;padding:16px 20px 80px}
+.comida header .kicker{color:var(--muted);margin:18px 0 10px}
+.comida header h2{font-weight:400;font-size:clamp(32px,6vw,44px);letter-spacing:-.02em;line-height:1.05;margin:0 0 14px}
+.comida header p{color:var(--muted);margin:0 0 6px;max-width:56ch}
+.comida section{background:var(--card);border:1px solid var(--line);border-radius:4px;padding:24px;margin-top:20px}
+.comida section h3{font-weight:400;font-size:22px;letter-spacing:-.01em;margin:0 0 18px;display:flex;gap:12px;align-items:baseline}
+.comida section h3 b{font-family:var(--mono);font-weight:400;color:var(--muted);font-size:12px;letter-spacing:.12em}
+.comida .sub{color:var(--muted);font-size:14px;margin:-12px 0 18px}
+.comida .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.comida .full{grid-column:1/-1}
+@media(max-width:560px){.comida .grid{grid-template-columns:1fr}}
+.comida label.f{display:block;font-family:var(--mono);text-transform:uppercase;letter-spacing:.1em;font-size:11px;color:var(--muted);margin-bottom:7px}
+.comida label.f em{color:var(--text);font-style:normal}
+.comida input[type=text],.comida select{width:100%;background:rgba(0,0,0,.3);border:1px solid var(--line);border-radius:4px;color:var(--text);
+  font:inherit;padding:11px 12px;outline:none;transition:border-color .15s}
+.comida input::placeholder{color:rgba(236,231,221,.32)}
+.comida input:focus,.comida select:focus{border-color:var(--text)}
+.comida select option{background:#171a14}
+.comida .chips{display:flex;flex-wrap:wrap;gap:8px}
+.comida .chips label{cursor:pointer;position:relative}
+.comida .chips input{position:absolute;opacity:0;pointer-events:none}
+.comida .chips span{display:inline-block;border:1px solid rgba(236,231,221,.4);border-radius:99px;padding:7px 14px;font-size:14px;transition:all .15s;user-select:none}
+.comida .chips input:checked+span{background:var(--text);color:var(--bg);border-color:var(--text)}
+.comida .chips input:focus-visible+span{outline:2px solid var(--text);outline-offset:2px}
+.comida .trampa{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
+.comida .actions{margin-top:28px;display:flex;flex-direction:column;gap:10px}
+.comida .err{color:var(--warn);font-size:14px;min-height:1em}
+.comida .enviar{appearance:none;border:1px solid var(--text);border-radius:99px;background:var(--text);color:var(--bg);font:500 16px var(--font-comida-cuerpo),sans-serif;padding:15px 18px;cursor:pointer}
+.comida .enviar:hover{background:#fff}
+.comida .enviar:disabled{opacity:.6;cursor:wait}
+.comida .otro{appearance:none;border:1px solid var(--line);border-radius:99px;background:transparent;color:var(--text);font:500 15px var(--font-comida-cuerpo),sans-serif;padding:12px 18px;cursor:pointer;margin-top:18px}
+.comida .pie{margin-top:20px;border-radius:4px;overflow:hidden;border:1px solid var(--line)}
+.comida .pie img{display:block;width:100%;height:auto}
+.comida footer{color:var(--muted);margin-top:36px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;border-top:1px solid var(--line);padding-top:16px}

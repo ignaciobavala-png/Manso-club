@@ -1,8 +1,9 @@
 'use client';
 
 import { useMemo, useRef, useState } from 'react';
-import type { Nivel, OrgItem, OrgMapa as Mapa, OrgTarea } from '@/lib/org';
+import type { Nivel, OrgComida, OrgItem, OrgMapa as Mapa, OrgTarea } from '@/lib/org';
 import { OrgTareas } from './OrgTareas';
+import { OrgComidaPanel } from './OrgComida';
 
 const FILAS: { k: Nivel; n: string; c: string }[] = [
   { k: 'staff', n: 'Staff', c: '#b53fbd' },
@@ -31,7 +32,7 @@ async function api(url: string, method: string, body?: unknown) {
  * puede sumar o borrar. Los cambios se guardan al instante (optimista: si el
  * servidor falla, se avisa y se recarga el estado).
  */
-export function OrgMapa({ mapasIniciales, tareasIniciales }: { mapasIniciales: Mapa[]; tareasIniciales: OrgTarea[] }) {
+export function OrgMapa({ mapasIniciales, tareasIniciales, comidaInicial, tokenComida }: { mapasIniciales: Mapa[]; tareasIniciales: OrgTarea[]; comidaInicial: OrgComida[]; tokenComida: string }) {
   const [mapas, setMapas] = useState(mapasIniciales);
   const [mapaId, setMapaId] = useState(mapasIniciales[0]?.id ?? '');
   const [ocultas, setOcultas] = useState<Nivel[]>([]);
@@ -39,6 +40,7 @@ export function OrgMapa({ mapasIniciales, tareasIniciales }: { mapasIniciales: M
   const wrap = useRef<HTMLDivElement>(null);
 
   const enTareas = mapaId === 'tareas';
+  const enComida = mapaId === 'comida';
   const mapa = mapas.find((m) => m.id === mapaId) ?? mapas[0];
 
   const cambiarItem = (id: string, fn: (i: OrgItem) => OrgItem) =>
@@ -130,13 +132,18 @@ export function OrgMapa({ mapasIniciales, tareasIniciales }: { mapasIniciales: M
           <button role="tab" aria-selected={enTareas} className={enTareas ? 'on' : ''} onClick={() => setMapaId('tareas')}>
             Plan de tareas
           </button>
+          <button role="tab" aria-selected={enComida} className={enComida ? 'on' : ''} onClick={() => setMapaId('comida')}>
+            Comida
+          </button>
         </div>
-        {!enTareas && <span className="org-prog">{totales.h} / {totales.t} resueltos</span>}
+        {!enTareas && !enComida && <span className="org-prog">{totales.h} / {totales.t} resueltos</span>}
       </header>
 
       {aviso && <p className="org-aviso" role="alert">{aviso}</p>}
 
-      {enTareas ? (
+      {enComida ? (
+        <div className="org-wrap"><OrgComidaPanel inicial={comidaInicial} token={tokenComida} onAviso={setAviso} /></div>
+      ) : enTareas ? (
         <OrgTareas tareasIniciales={tareasIniciales} onAviso={setAviso} />
       ) : (
         <>

@@ -117,3 +117,26 @@
 .org-t-nueva button:disabled{opacity:.4;cursor:not-allowed}
 .org-t-nueva button.cancelar{background:transparent;color:var(--mut)}
 @media (max-width:640px){.org-t-tarea{grid-template-columns:auto 1fr 56px}.org-t-tarea .org-t-area{grid-column:2/3;justify-self:start}.org-t-tarea .org-t-texto,.org-t-tarea textarea{grid-column:1/4}.org-t-x{opacity:.6}.org-t-fila .lbl{width:100%}}
+
+/* Pestaña Comida */
+.org-c-link{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-end;justify-content:space-between;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:18px}
+.org-c-link p{margin:2px 0 8px;color:var(--mut);font-size:12.5px}
+.org-c-link input{width:min(420px,78vw);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font:inherit;background:#fff;color:var(--ink)}
+.org-c-btns{display:flex;gap:6px;flex-wrap:wrap}
+.org-c-btns button,.org-c-btns a{border:0;border-radius:999px;background:var(--dark);color:#fff;font:600 12.5px var(--font-org-cuerpo),sans-serif;padding:9px 15px;cursor:pointer;text-decoration:none}
+.org-c-btns a:nth-child(n+2){background:transparent;color:var(--ink);border:1px solid var(--line)}
+.org-c-resumen{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:18px}
+.org-c-resumen>div{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.org-c-resumen h3{margin:0 0 6px;font:700 12px var(--font-org-cuerpo),sans-serif;text-transform:uppercase;letter-spacing:.06em;color:var(--mut)}
+.org-c-resumen p{margin:0;display:flex;justify-content:space-between;gap:10px;padding:2px 0}
+.org-c-resumen .alergias{grid-column:1/-1}
+.org-c-resumen .alergias i{color:#8a1c12;font-style:normal;text-align:right}
+.org-c-barra{display:flex;align-items:center;gap:10px;margin:0 auto 10px}
+.org-c-fila{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px;margin-bottom:8px}
+.org-c-fila .top{display:flex;flex-wrap:wrap;gap:4px 12px;align-items:baseline;margin-bottom:4px}
+.org-c-fila .area{color:var(--accent);font-weight:600;font-size:12px}
+.org-c-fila .fec{color:var(--mut);font-size:12px}
+.org-c-fila .top button{margin-left:auto;border:0;background:none;color:var(--mut);font:500 12px var(--font-org-cuerpo),sans-serif;cursor:pointer}
+.org-c-fila .top button:hover{color:#8a1c12}
+.org-c-fila p{margin:1px 0}
+.org-c-fila em{font-style:normal;color:var(--mut);font-size:11px;text-transform:uppercase;letter-spacing:.06em;margin-right:6px}
