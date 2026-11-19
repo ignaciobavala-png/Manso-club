@@ -1,6 +1,6 @@
 'use client';
 
-import { FormEvent, useMemo, useState } from 'react';
+import { FormEvent, useEffect, useMemo, useState } from 'react';
 import { FestivalEntrada, MedioPago } from '@/lib/types/festival';
 import { useTextos } from './Idioma';
 import { formatArs } from '@/lib/precios';
@@ -39,6 +39,21 @@ export function TablaTickets({
   const [metodo, setMetodo] = useState<MedioPago | undefined>(medios[0]);
   const [enviando, setEnviando] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // ViewContent: ven la tabla de entradas. El valor es el de la entrada en venta más barata
+  // (en pesos) y los ids son los de las que están a la venta; sin ninguna, sale sin precio.
+  useEffect(() => {
+    const enVenta = entradas.filter(e => e.estado === 'en_venta' && e.precio > 0);
+    void pixelBlur('ViewContent', {
+      content_name: 'Entradas BLUR',
+      content_type: 'product',
+      ...(enVenta.length > 0 && {
+        content_ids: enVenta.map(e => e.id),
+        value: Math.min(...enVenta.map(e => e.precio)),
+        currency: 'ARS' as const,
+      }),
+    });
+  }, [entradas]);
 
   const { total, unidades } = useMemo(
     () =>
