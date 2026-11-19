@@ -43,3 +43,6 @@
 .comida .pie{margin-top:20px;border-radius:4px;overflow:hidden;border:1px solid var(--line)}
 .comida .pie img{display:block;width:100%;height:auto}
 .comida footer{color:var(--muted);margin-top:36px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px;border-top:1px solid var(--line);padding-top:16px}
+.comida .slot{display:grid;grid-template-columns:1fr 1fr;gap:12px;border:1px solid rgba(236,231,221,.4);border-radius:12px;padding:14px 16px;background:rgba(0,0,0,.25)}
+.comida .slot span{display:block;opacity:.65;margin-bottom:4px}
+.comida .slot strong{font-weight:500;font-size:18px}

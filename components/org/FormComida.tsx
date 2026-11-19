@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { AREAS_COMIDA, BEBIDAS, COMIDAS, DIETAS } from '@/lib/org-tipos';
+import { AREAS_COMIDA, AREA_ARTISTAS, BEBIDAS, COMER_ARTISTA, COMIDAS, DIETAS, LINEUP_HOSP } from '@/lib/org-tipos';
 
 const BORRADOR = 'blur-org-comida';
-const VACIO = { nombre: '', area: '', comidas: [] as string[], dieta: [] as string[], alergias: '', bebida: [] as string[], extras: '', web: '' };
+const VACIO = { nombre: '', area: '', comidas: [] as string[], dieta: [] as string[], alergias: '', bebida: [] as string[], extras: '', artista: '', comer: '', bebida_set: '', web: '' };
 type Datos = typeof VACIO;
 
 function Chips({ nombre, opciones, valor, onChange }: { nombre: string; opciones: readonly string[]; valor: string[]; onChange: (v: string[]) => void }) {
@@ -39,6 +39,9 @@ export function FormComida({ token }: { token: string }) {
   const [enviando, setEnviando] = useState(false);
   const [listo, setListo] = useState<null | { actualizado: boolean }>(null);
 
+  const esArtista = d.area === AREA_ARTISTAS;
+  const slot = LINEUP_HOSP.find((a) => a.n === d.artista);
+
   const set = <K extends keyof Datos>(k: K, v: Datos[K]) =>
     setD((p) => {
       const n = { ...p, [k]: v };
@@ -48,8 +51,11 @@ export function FormComida({ token }: { token: string }) {
 
   async function enviar(e: React.FormEvent) {
     e.preventDefault();
-    if (!d.nombre.trim() || !d.area) return setErr('Completá tu nombre y tu área.');
-    if (!d.comidas.length) return setErr('Elegí al menos una comida.');
+    if (esArtista) {
+      if (!d.artista) return setErr('Elegí tu nombre.');
+      if (!d.comer) return setErr('Elegí si querés comer antes o después del set.');
+    } else if (!d.nombre.trim() || !d.area) return setErr('Completá tu nombre y tu área.');
+    else if (!d.comidas.length) return setErr('Elegí al menos una comida.');
     setErr('');
     setEnviando(true);
     try {
@@ -69,7 +75,7 @@ export function FormComida({ token }: { token: string }) {
     return (
       <section>
         <h3><b>✓</b> {listo.actualizado ? 'Actualizado' : 'Recibido'}</h3>
-        <p className="sub" style={{ margin: 0 }}>Gracias, {d.nombre.trim().split(' ')[0]}. Ya tenemos tu comida. Nos vemos en la isla.</p>
+        <p className="sub" style={{ margin: 0 }}>Gracias, {(esArtista ? d.artista : d.nombre.trim()).split(' ')[0]}. Ya tenemos tu comida. Nos vemos en la isla.</p>
         <button type="button" className="otro" onClick={() => setListo(null)}>Editar mis respuestas</button>
       </section>
     );
@@ -80,10 +86,10 @@ export function FormComida({ token }: { token: string }) {
       <section>
         <h3><b>01</b> Quién sos</h3>
         <div className="grid">
-          <div className="full">
+          {!esArtista && <div className="full">
             <label className="f" htmlFor="nombre">Nombre y apellido <em>*</em></label>
             <input id="nombre" type="text" autoComplete="name" value={d.nombre} maxLength={120} onChange={(e) => set('nombre', e.target.value)} />
-          </div>
+          </div>}
           <div className="full">
             <label className="f" htmlFor="area">Tu área <em>*</em></label>
             <select id="area" value={d.area} onChange={(e) => set('area', e.target.value)}>
@@ -91,6 +97,27 @@ export function FormComida({ token }: { token: string }) {
               {AREAS_COMIDA.map((a) => <option key={a}>{a}</option>)}
             </select>
           </div>
+          {esArtista && (
+            <>
+              <div className="full">
+                <label className="f" htmlFor="artista">Elegí tu nombre <em>*</em></label>
+                <select id="artista" value={d.artista} onChange={(e) => set('artista', e.target.value)}>
+                  <option value="">—</option>
+                  {[...new Set(LINEUP_HOSP.map((a) => a.stage))].map((st) => (
+                    <optgroup key={st} label={st}>
+                      {LINEUP_HOSP.filter((a) => a.stage === st).map((a) => <option key={a.n}>{a.n}</option>)}
+                    </optgroup>
+                  ))}
+                </select>
+              </div>
+              {slot && (
+                <div className="full slot">
+                  <div><span className="mono">Escenario</span><strong>{slot.stage}</strong></div>
+                  <div><span className="mono">Horario</span><strong>{slot.time}</strong></div>
+                </div>
+              )}
+            </>
+          )}
           {/* Honeypot: una persona no lo ve ni lo llena. */}
           <div className="trampa" aria-hidden="true">
             <input type="text" tabIndex={-1} autoComplete="off" value={d.web} onChange={(e) => setD((p) => ({ ...p, web: e.target.value }))} />
@@ -101,10 +128,24 @@ export function FormComida({ token }: { token: string }) {
       <section>
         <h3><b>02</b> Comida</h3>
         <div className="grid">
-          <div className="full">
-            <label className="f">¿Qué comidas necesitás ese día? <em>*</em></label>
-            <Chips nombre="comidas" opciones={COMIDAS} valor={d.comidas} onChange={(v) => set('comidas', v)} />
-          </div>
+          {esArtista ? (
+            <div className="full">
+              <label className="f">¿Cuándo querés comer? <em>*</em></label>
+              <div className="chips">
+                {COMER_ARTISTA.map((c) => (
+                  <label key={c}>
+                    <input type="radio" name="comer" checked={d.comer === c} onChange={() => set('comer', c)} />
+                    <span>{c}</span>
+                  </label>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <div className="full">
+              <label className="f">¿Qué comidas necesitás ese día? <em>*</em></label>
+              <Chips nombre="comidas" opciones={COMIDAS} valor={d.comidas} onChange={(v) => set('comidas', v)} />
+            </div>
+          )}
           <div className="full">
             <label className="f">Dieta</label>
             <Chips nombre="dieta" opciones={DIETAS} valor={d.dieta} onChange={(v) => set('dieta', v)} />
@@ -120,6 +161,12 @@ export function FormComida({ token }: { token: string }) {
         <h3><b>03</b> Bebida</h3>
         <p className="sub">Agua siempre disponible.</p>
         <Chips nombre="bebida" opciones={BEBIDAS} valor={d.bebida} onChange={(v) => set('bebida', v)} />
+        {esArtista && (
+          <div style={{ marginTop: 18 }}>
+            <label className="f" htmlFor="bebida_set">¿Qué querés tener en cabina mientras tocás?</label>
+            <input id="bebida_set" type="text" maxLength={300} placeholder="ej. agua con gas fría y un gin tonic" value={d.bebida_set} onChange={(e) => set('bebida_set', e.target.value)} />
+          </div>
+        )}
       </section>
 
       <section>

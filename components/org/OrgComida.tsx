@@ -51,8 +51,8 @@ export function OrgComidaPanel({ inicial, token, onAviso }: { inicial: OrgComida
   };
 
   const descargar = () => {
-    const cab = ['Fecha', 'Nombre', 'Área', 'Comidas', 'Dieta', 'Alergias', 'Bebida', 'Extras'];
-    const rows = filas.map((f) => [fecha(f.created_at), f.nombre, f.area, f.comidas.join(', '), f.dieta.join(', '), f.alergias ?? '', f.bebida.join(', '), f.extras ?? '']);
+    const cab = ['Fecha', 'Nombre', 'Área', 'Comidas', 'Dieta', 'Alergias', 'Bebida', 'Extras', 'Escenario', 'Horario', 'Come', 'En cabina'];
+    const rows = filas.map((f) => [fecha(f.created_at), f.nombre, f.area, f.comidas.join(', '), f.dieta.join(', '), f.alergias ?? '', f.bebida.join(', '), f.extras ?? '', f.escenario ?? '', f.horario ?? '', f.comer ?? '', f.bebida_set ?? '']);
     const blob = new Blob(['﻿' + [cab, ...rows].map((r) => r.map(csv).join(',')).join('\n')], { type: 'text/csv;charset=utf-8' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
@@ -105,10 +105,13 @@ export function OrgComidaPanel({ inicial, token, onAviso }: { inicial: OrgComida
             <b>{f.nombre}</b><span className="area">{f.area}</span><span className="fec">{fecha(f.created_at)}</span>
             <button onClick={() => borrar(f)} aria-label={`Borrar a ${f.nombre}`}>Borrar</button>
           </div>
-          <p><em>Comidas</em> {f.comidas.join(', ')}</p>
+          {f.escenario && <p><em>Set</em> {f.escenario} · {f.horario}</p>}
+          {f.comer && <p><em>Come</em> {f.comer}</p>}
+          {f.comidas.length > 0 && <p><em>Comidas</em> {f.comidas.join(', ')}</p>}
           {f.dieta.length > 0 && <p><em>Dieta</em> {f.dieta.join(', ')}</p>}
           {f.alergias && <p><em>Alergias</em> {f.alergias}</p>}
           {f.bebida.length > 0 && <p><em>Bebida</em> {f.bebida.join(', ')}</p>}
+          {f.bebida_set && <p><em>En cabina</em> {f.bebida_set}</p>}
           {f.extras && <p><em>Extras</em> {f.extras}</p>}
         </div>
       ))}
