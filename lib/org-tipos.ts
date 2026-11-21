@@ -37,10 +37,28 @@ export const LINEUP_HOSP = [
   { n: 'Ácido Fácil (live)', stage: 'Sound & Vision', time: '18:10 — 19:30' },
 ] as const;
 export const COMER_ARTISTA = ['Antes del set', 'Después del set'] as const;
+export const COMER_CHARLA = ['Antes de la charla', 'Después de la charla'] as const;
+/** Áreas del staff: las de la org y las operativas, sin la de artistas (que tiene su propio formulario). */
+export const AREAS_STAFF = AREAS_COMIDA.filter((a) => a !== AREA_ARTISTAS);
+
+/**
+ * Los tres formularios de /org/comida comparten tabla, API y panel; `tipo` los
+ * separa. Cada uno tiene su link con su propio código (ver `tokenComida`), así
+ * que mandar el de staff no abre el de artistas.
+ */
+export const TIPOS_COMIDA = ['artistas', 'charlas', 'staff'] as const;
+export type TipoComida = (typeof TIPOS_COMIDA)[number];
+export const COMIDA_TIPOS: Record<TipoComida, { etiqueta: string; kicker: string; titulo: string; para: string; ruta: string; wa: string }> = {
+  artistas: { etiqueta: 'Artistas', kicker: 'Hospitality · Artistas', titulo: 'Hospitality para artistas', para: 'los artistas', ruta: '/org/comida', wa: 'Completá tu hospitality para BLUR (te lleva 1 minuto)' },
+  charlas: { etiqueta: 'Panel de charlas', kicker: 'Hospitality · Panel de charlas', titulo: 'Hospitality para el panel de charlas', para: 'el panel de charlas', ruta: '/org/comida/charlas', wa: 'Completá tu hospitality de la charla en BLUR (te lleva 1 minuto)' },
+  staff: { etiqueta: 'Staff', kicker: 'Comida · Staff', titulo: 'Comida para el staff', para: 'el staff', ruta: '/org/comida/staff', wa: 'Completá tu comida para BLUR (te lleva 1 minuto)' },
+};
+export const esTipoComida = (t: unknown): t is TipoComida => (TIPOS_COMIDA as readonly unknown[]).includes(t);
 
 export interface OrgComida {
   id: string;
   created_at: string;
+  tipo: TipoComida;
   nombre: string;
   area: string;
   comidas: string[];
@@ -48,7 +66,7 @@ export interface OrgComida {
   alergias: string | null;
   bebida: string[];
   extras: string | null;
-  /** Solo artistas. */
+  /** Artistas (escenario) y charlas (nombre de la charla o panel). */
   escenario: string | null;
   horario: string | null;
   comer: string | null;

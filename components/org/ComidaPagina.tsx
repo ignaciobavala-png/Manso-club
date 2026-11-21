@@ -1,13 +1,15 @@
 import Image from 'next/image';
 import { Inter_Tight, Courier_Prime } from 'next/font/google';
 import { FormComida } from '@/components/org/FormComida';
+import { COMIDA_TIPOS, type TipoComida } from '@/lib/org-tipos';
 import '@/app/org/comida/comida.css';
 
 const cuerpo = Inter_Tight({ subsets: ['latin'], variable: '--font-comida-cuerpo' });
 const mono = Courier_Prime({ subsets: ['latin'], weight: '400', variable: '--font-comida-mono' });
 
-/** Cáscara del formulario público de hospitality de artistas. */
-export function ComidaPagina({ token }: { token: string }) {
+/** Cáscara de los formularios públicos de comida (artistas, charlas y staff). */
+export function ComidaPagina({ token, tipo }: { token: string; tipo: TipoComida }) {
+  const t = COMIDA_TIPOS[tipo];
   return (
     <div className={`comida ${cuerpo.variable} ${mono.variable}`}>
       <div className="portada">
@@ -19,11 +21,11 @@ export function ComidaPagina({ token }: { token: string }) {
       </div>
       <main>
         <header>
-          <div className="kicker mono">Hospitality · Artistas</div>
-          <h2>Hospitality para artistas</h2>
+          <div className="kicker mono">{t.kicker}</div>
+          <h2>{t.titulo}</h2>
           <p>Completalo una sola vez. Si te equivocás, volvé a cargarlo y se actualiza.</p>
         </header>
-        <FormComida token={token} />
+        <FormComida token={token} tipo={tipo} />
         <div className="pie">
           <Image src="/org/comida-pie.jpg" alt="BLUR · Sáb 12-12 · 2PM-4AM · Delta, Tigre" width={1080} height={441} sizes="720px" />
         </div>

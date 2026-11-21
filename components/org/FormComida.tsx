@@ -1,10 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { AREA_ARTISTAS, BEBIDAS, COMER_ARTISTA, DIETAS, LINEUP_HOSP } from '@/lib/org-tipos';
+import { AREAS_STAFF, BEBIDAS, COMER_ARTISTA, COMER_CHARLA, COMIDAS, DIETAS, LINEUP_HOSP, type TipoComida } from '@/lib/org-tipos';
 
-const BORRADOR = 'blur-org-comida-artistas';
-const VACIO = { dieta: [] as string[], alergias: '', bebida: [] as string[], extras: '', artista: '', comer: '', bebida_set: '', web: '' };
+const VACIO = { dieta: [] as string[], alergias: '', bebida: [] as string[], extras: '', artista: '', comer: '', bebida_set: '', web: '', nombre: '', charla: '', horario: '', area: '', comidas: [] as string[] };
 type Datos = typeof VACIO;
 
 function Chips({ nombre, opciones, valor, onChange }: { nombre: string; opciones: readonly string[]; valor: string[]; onChange: (v: string[]) => void }) {
@@ -26,7 +25,10 @@ function Chips({ nombre, opciones, valor, onChange }: { nombre: string; opciones
 }
 
 /** Formulario público. Guarda un borrador en el navegador para que no se pierda si cierran la pestaña. */
-export function FormComida({ token }: { token: string }) {
+export function FormComida({ token, tipo }: { token: string; tipo: TipoComida }) {
+  // Un borrador por formulario: el de staff no pisa al de artistas si alguien abre los dos.
+  const BORRADOR = `blur-org-comida-${tipo}`;
+  const opcionesComer = tipo === 'charlas' ? COMER_CHARLA : COMER_ARTISTA;
   const [d, setD] = useState<Datos>(VACIO);
   // El borrador se lee después de montar: en el render del servidor no hay localStorage y el HTML tiene que coincidir.
   useEffect(() => {
@@ -34,6 +36,7 @@ export function FormComida({ token }: { token: string }) {
       const g = JSON.parse(localStorage.getItem(BORRADOR) ?? 'null');
       if (g) setD({ ...VACIO, ...g, web: '' });
     } catch { /* sin localStorage: el formulario anda igual */ }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const [err, setErr] = useState('');
   const [enviando, setEnviando] = useState(false);
@@ -50,12 +53,23 @@ export function FormComida({ token }: { token: string }) {
 
   async function enviar(e: React.FormEvent) {
     e.preventDefault();
-    if (!d.artista) return setErr('Elegí tu nombre.');
-    if (!d.comer) return setErr('Elegí si querés comer antes o después del set.');
+    if (tipo === 'artistas') {
+      if (!d.artista) return setErr('Elegí tu nombre.');
+      if (!d.comer) return setErr('Elegí si querés comer antes o después del set.');
+    } else {
+      if (!d.nombre.trim()) return setErr('Escribí tu nombre.');
+      if (tipo === 'charlas') {
+        if (!d.charla.trim()) return setErr('Escribí de qué charla o panel sos.');
+        if (!d.comer) return setErr('Elegí si querés comer antes o después de la charla.');
+      } else {
+        if (!d.area) return setErr('Elegí tu área.');
+        if (d.comidas.length === 0) return setErr('Elegí qué comidas necesitás.');
+      }
+    }
     setErr('');
     setEnviando(true);
     try {
-      const res = await fetch('/api/org/comida', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...d, area: AREA_ARTISTAS, token }) });
+      const res = await fetch('/api/org/comida', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...d, tipo, token }) });
       const j = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(j.error || 'fallo');
       setListo({ actualizado: Boolean(j.actualizado) });
@@ -71,7 +85,7 @@ export function FormComida({ token }: { token: string }) {
     return (
       <section>
         <h3><b>✓</b> {listo.actualizado ? 'Actualizado' : 'Recibido'}</h3>
-        <p className="sub" style={{ margin: 0 }}>Gracias, {d.artista.split(' ')[0]}. Ya tenemos tu comida. Nos vemos en la isla.</p>
+        <p className="sub" style={{ margin: 0 }}>Gracias, {(tipo === 'artistas' ? d.artista : d.nombre).trim().split(' ')[0]}. Ya tenemos tu comida. Nos vemos en la isla.</p>
         <button type="button" className="otro" onClick={() => setListo(null)}>Editar mis respuestas</button>
       </section>
     );
@@ -82,6 +96,8 @@ export function FormComida({ token }: { token: string }) {
       <section>
         <h3><b>01</b> Quién sos</h3>
         <div className="grid">
+          {tipo === 'artistas' ? (
+            <>
               <div className="full">
                 <label className="f">Elegí tu nombre <em>*</em></label>
                 {[...new Set(LINEUP_HOSP.map((a) => a.stage))].map((st) => (
@@ -104,6 +120,39 @@ export function FormComida({ token }: { token: string }) {
                   <div><span className="mono">Horario</span><strong>{slot.time}</strong></div>
                 </div>
               )}
+            </>
+          ) : (
+            <>
+              <div className="full">
+                <label className="f" htmlFor="nombre">Tu nombre <em>*</em></label>
+                <input id="nombre" type="text" maxLength={120} autoComplete="name" value={d.nombre} onChange={(e) => set('nombre', e.target.value)} />
+              </div>
+              {tipo === 'charlas' ? (
+                <>
+                  <div className="full">
+                    <label className="f" htmlFor="charla">¿De qué charla o panel sos? <em>*</em></label>
+                    <input id="charla" type="text" maxLength={160} value={d.charla} onChange={(e) => set('charla', e.target.value)} />
+                  </div>
+                  <div className="full">
+                    <label className="f" htmlFor="horario">Horario de tu charla</label>
+                    <input id="horario" type="text" maxLength={60} placeholder="Opcional · ej. 17:00 a 18:00" value={d.horario} onChange={(e) => set('horario', e.target.value)} />
+                  </div>
+                </>
+              ) : (
+                <div className="full">
+                  <label className="f">Tu área <em>*</em></label>
+                  <div className="chips">
+                    {AREAS_STAFF.map((a) => (
+                      <label key={a}>
+                        <input type="radio" name="area" checked={d.area === a} onChange={() => set('area', a)} />
+                        <span>{a}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
+          )}
           {/* Honeypot: una persona no lo ve ni lo llena. */}
           <div className="trampa" aria-hidden="true">
             <input type="text" tabIndex={-1} autoComplete="off" value={d.web} onChange={(e) => setD((p) => ({ ...p, web: e.target.value }))} />
@@ -114,17 +163,24 @@ export function FormComida({ token }: { token: string }) {
       <section>
         <h3><b>02</b> Comida</h3>
         <div className="grid">
-          <div className="full">
+          {tipo === 'staff' ? (
+            <div className="full">
+              <label className="f">¿Qué comidas necesitás? <em>*</em></label>
+              <Chips nombre="comidas" opciones={COMIDAS} valor={d.comidas} onChange={(v) => set('comidas', v)} />
+            </div>
+          ) : (
+            <div className="full">
               <label className="f">¿Cuándo querés comer? <em>*</em></label>
               <div className="chips">
-                {COMER_ARTISTA.map((c) => (
+                {opcionesComer.map((c) => (
                   <label key={c}>
                     <input type="radio" name="comer" checked={d.comer === c} onChange={() => set('comer', c)} />
                     <span>{c}</span>
                   </label>
                 ))}
               </div>
-          </div>
+            </div>
+          )}
           <div className="full">
             <label className="f">Dieta</label>
             <Chips nombre="dieta" opciones={DIETAS} valor={d.dieta} onChange={(v) => set('dieta', v)} />
@@ -140,10 +196,12 @@ export function FormComida({ token }: { token: string }) {
         <h3><b>03</b> Bebida</h3>
         <p className="sub">Agua siempre disponible.</p>
         <Chips nombre="bebida" opciones={BEBIDAS} valor={d.bebida} onChange={(v) => set('bebida', v)} />
-        <div style={{ marginTop: 18 }}>
-            <label className="f" htmlFor="bebida_set">¿Qué querés tener en cabina mientras tocás?</label>
-            <input id="bebida_set" type="text" maxLength={300} placeholder="ej. agua con gas fría y un gin tonic" value={d.bebida_set} onChange={(e) => set('bebida_set', e.target.value)} />
-        </div>
+        {tipo !== 'staff' && (
+          <div style={{ marginTop: 18 }}>
+            <label className="f" htmlFor="bebida_set">{tipo === 'charlas' ? '¿Qué querés tener en la mesa durante la charla?' : '¿Qué querés tener en cabina mientras tocás?'}</label>
+            <input id="bebida_set" type="text" maxLength={300} placeholder={tipo === 'charlas' ? 'ej. agua sin gas y un café' : 'ej. agua con gas fría y un gin tonic'} value={d.bebida_set} onChange={(e) => set('bebida_set', e.target.value)} />
+          </div>
+        )}
       </section>
 
       <section>

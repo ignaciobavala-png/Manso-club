@@ -2,6 +2,7 @@
 
 import { useMemo, useRef, useState } from 'react';
 import type { Nivel, OrgComida, OrgItem, OrgMapa as Mapa, OrgTarea } from '@/lib/org';
+import { COMIDA_TIPOS, TIPOS_COMIDA, type TipoComida } from '@/lib/org-tipos';
 import { OrgTareas } from './OrgTareas';
 import { OrgComidaPanel } from './OrgComida';
 
@@ -32,9 +33,10 @@ async function api(url: string, method: string, body?: unknown) {
  * puede sumar o borrar. Los cambios se guardan al instante (optimista: si el
  * servidor falla, se avisa y se recarga el estado).
  */
-export function OrgMapa({ mapasIniciales, tareasIniciales, comidaInicial, tokenComida }: { mapasIniciales: Mapa[]; tareasIniciales: OrgTarea[]; comidaInicial: OrgComida[]; tokenComida: string }) {
+export function OrgMapa({ mapasIniciales, tareasIniciales, comidaInicial, tokensComida }: { mapasIniciales: Mapa[]; tareasIniciales: OrgTarea[]; comidaInicial: OrgComida[]; tokensComida: Record<TipoComida, string> }) {
   const [mapas, setMapas] = useState(mapasIniciales);
   const [mapaId, setMapaId] = useState(mapasIniciales[0]?.id ?? '');
+  const [tipoComida, setTipoComida] = useState<TipoComida>('artistas');
   const [ocultas, setOcultas] = useState<Nivel[]>([]);
   const [aviso, setAviso] = useState('');
   const wrap = useRef<HTMLDivElement>(null);
@@ -142,7 +144,16 @@ export function OrgMapa({ mapasIniciales, tareasIniciales, comidaInicial, tokenC
       {aviso && <p className="org-aviso" role="alert">{aviso}</p>}
 
       {enComida ? (
-        <div className="org-wrap"><OrgComidaPanel inicial={comidaInicial} token={tokenComida} onAviso={setAviso} /></div>
+        <div className="org-wrap">
+          <div className="org-tabs" role="tablist" aria-label="Formulario de comida" style={{ marginBottom: 14 }}>
+            {TIPOS_COMIDA.map((t) => (
+              <button key={t} role="tab" aria-selected={tipoComida === t} className={tipoComida === t ? 'on' : ''} onClick={() => setTipoComida(t)}>
+                {COMIDA_TIPOS[t].etiqueta}
+              </button>
+            ))}
+          </div>
+          <OrgComidaPanel inicial={comidaInicial} tipo={tipoComida} token={tokensComida[tipoComida]} onAviso={setAviso} />
+        </div>
       ) : enTareas ? (
         <OrgTareas tareasIniciales={tareasIniciales} onAviso={setAviso} />
       ) : (

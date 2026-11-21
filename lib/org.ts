@@ -12,7 +12,7 @@ import { cookies } from 'next/headers';
  */
 
 export * from './org-tipos';
-import type { OrgComida, OrgTarea } from './org-tipos';
+import type { OrgComida, OrgTarea, TipoComida } from './org-tipos';
 
 export const ORG_COOKIE = 'org_sesion';
 export const ORG_SESION_DIAS = 30;
@@ -139,7 +139,7 @@ export async function leerTareas(): Promise<OrgTarea[]> {
 export async function leerComida(): Promise<OrgComida[]> {
   const { data } = await adminOrg()
     .from('org_comida')
-    .select('id, created_at, nombre, area, comidas, dieta, alergias, bebida, extras')
+    .select('id, created_at, tipo, nombre, area, comidas, dieta, alergias, bebida, extras, escenario, horario, comer, bebida_set')
     .order('created_at', { ascending: false });
   return (data ?? []) as OrgComida[];
 }
@@ -149,13 +149,15 @@ export async function leerComida(): Promise<OrgComida[]> {
  * no hay otra variable que cargar en Vercel: el link es estable mientras no se
  * cambie la clave, y cambiarla lo invalida (y manda a todos a pedir el nuevo).
  */
-export function tokenComida(): string {
-  return createHmac('sha256', secreto()).update('comida').digest('hex').slice(0, 20);
+export function tokenComida(tipo: TipoComida = 'artistas'): string {
+  // El de artistas conserva su semilla original: los links ya enviados siguen abriendo.
+  const semilla = tipo === 'artistas' ? 'comida' : `comida-${tipo}`;
+  return createHmac('sha256', secreto()).update(semilla).digest('hex').slice(0, 20);
 }
 
-export function tokenComidaValido(t: unknown): boolean {
+export function tokenComidaValido(t: unknown, tipo: TipoComida = 'artistas'): boolean {
   if (typeof t !== 'string' || !orgConfigurada()) return false;
-  const a = Buffer.from(tokenComida());
+  const a = Buffer.from(tokenComida(tipo));
   const b = Buffer.from(t);
   return a.length === b.length && timingSafeEqual(a, b);
 }
