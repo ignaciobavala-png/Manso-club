@@ -281,7 +281,7 @@ export function FestivalLineupAdmin() {
               </div>
               <div className="col-span-2">
                 <label className={LABEL}>Horario del set</label>
-                <input type="text" value={a.horario ?? ''} onChange={e => editarArtista(a.id, { horario: e.target.value })} placeholder="02:00 — 04:00" className={INPUT} />
+                <input type="text" value={a.horario ?? ''} onChange={e => editarArtista(a.id, { horario: e.target.value })} placeholder="02:00 a 04:00" className={INPUT} />
               </div>
             </div>
 
