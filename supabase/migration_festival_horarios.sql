@@ -25,3 +25,17 @@ FROM (VALUES
   ('acido-facil', '18:10 a 19:30')
 ) AS v(s, h)
 WHERE a.slug = v.s;
+
+-- Orden, B2B y nombres según la grilla (misma fecha). El line-up ordena por
+-- `orden` dentro de cada escenario; `b2b = true` pega la fila con la de arriba.
+UPDATE festival_artistas a SET orden = v.o, b2b = v.b, nombre = COALESCE(v.n, a.nombre)
+FROM (VALUES
+  ('mestizo', 0, false, NULL), ('kndr', 1, false, NULL), ('ana-hagen', 2, false, NULL),
+  ('portiwav', 3, false, NULL), ('grant-dell', 4, false, NULL), ('malena', 5, false, NULL),
+  ('qoa', 0, false, NULL), ('tom-terzi-live', 1, false, 'TOM TERZI (HYBRID)'),
+  ('mijkalova', 2, false, NULL), ('matiasmauger', 3, false, NULL), ('sego', 4, true, NULL),
+  ('samnaidu', 5, false, NULL), ('ludmila', 6, false, NULL),
+  ('orquesta', 0, false, 'ORQUESTA TBA'), ('mariano-moreira-massimo-pasquini', 1, false, NULL),
+  ('pipol', 2, false, NULL), ('acido-facil', 3, false, NULL)
+) AS v(s, o, b, n)
+WHERE a.slug = v.s;
