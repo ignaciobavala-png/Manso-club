@@ -1,0 +1,8 @@
+allowBuilds:
+  canvas: true
+  core-js: false
+  esbuild: true
+  sharp: true
+overrides:
+  react: ^19.2.0
+  react-dom: ^19.2.0
