@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint .",
     "email": "email dev --dir emails",
-    "mails:preview": "tsx scripts/preview-institucionales.tsx"
+    "mails:preview": "tsx scripts/preview-institucionales.tsx",
+    "festival:auditar": "tsx scripts/festival-auditar-mails.tsx"
   },
   "dependencies": {
     "@ai-sdk/deepseek": "^3.0.81",
