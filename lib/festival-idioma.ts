@@ -110,7 +110,7 @@ const es = {
   tickets: {
     titulo: 'Tickets',
     yaCompraste: '¿Ya compraste?',
-    recuperar: 'Recuperá tus entradas',
+    recuperar: 'Ver las entradas',
     pronto: 'Las entradas se anuncian pronto.',
     tipo: 'Tipo de ticket',
     valor: 'Valor',
@@ -182,8 +182,8 @@ const es = {
   },
   misEntradas: {
     titulo: 'Mis entradas',
-    intro: 'Poné el mail con el que compraste y te mandamos el link a tus entradas.',
-    mail: 'Tu mail',
+    intro: 'Poné el mail con el que se compraron las entradas y te mandamos el link. Si compraste para varias personas, están todas juntas.',
+    mail: 'Mail de la compra',
     placeholder: 'tu@mail.com',
     enviar: 'Mandame mis entradas',
     enviando: 'Enviando…',
@@ -398,7 +398,7 @@ const en: Textos = {
   tickets: {
     titulo: 'Tickets',
     yaCompraste: 'Already bought?',
-    recuperar: 'Find your tickets',
+    recuperar: 'See your tickets',
     pronto: 'Tickets will be announced soon.',
     tipo: 'Ticket type',
     valor: 'Price',
@@ -470,8 +470,8 @@ const en: Textos = {
   },
   misEntradas: {
     titulo: 'My tickets',
-    intro: 'Enter the email you bought with and we will send you the link to your tickets.',
-    mail: 'Your email',
+    intro: 'Enter the email the tickets were bought with and we will send you the link. If you bought for several people, they are all together.',
+    mail: 'Email used for the purchase',
     placeholder: 'you@mail.com',
     enviar: 'Send me my tickets',
     enviando: 'Sending…',

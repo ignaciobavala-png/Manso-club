@@ -32,9 +32,9 @@ export default async function FestivalTickets() {
           <EscribeTexto texto={t.tickets.titulo} />
         </p>
         <TablaTickets entradas={entradas} aviso={config.aviso} medios={medios} cotizacion={cotizacion} urlTransferencia={urlTransferenciaGestion()} />
-        <p className="mt-10 text-[15px]">
+        <p className="mt-12 fest-angosta text-2xl sm:text-3xl leading-tight">
           {t.tickets.yaCompraste}{' '}
-          <Link href="/blurfestival/mis-entradas" className="underline font-bold">
+          <Link href="/blurfestival/mis-entradas" className="underline decoration-2 underline-offset-4 hover:text-[var(--fest-acento)]">
             {t.tickets.recuperar}
           </Link>
         </p>
