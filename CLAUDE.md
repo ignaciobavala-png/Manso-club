@@ -297,6 +297,19 @@ el panel muestra los tipos de Gestión sin editarlos.
 - Una orden sin `gestion_event_id` es de antes de conectarlo: QR con el código
   pelado, que el lector no reconoce. Esas se cargaron a mano en Gestión.
 
+**Recuperar las entradas** (`/blurfestival/mis-entradas`, `lib/festival-recuperar.ts`):
+la persona pone su mail y recibe un mail con el link a cada compra pagada. La
+respuesta es **siempre la misma** haya o no compra (no sirve para averiguar quién
+compró) y el mail sale solo a la casilla de la compra. Frenos en la base
+(`festival_bot_permitir`): por IP, por casilla (3/día) y general (30/día, para no
+gastar los 100/día de Resend). La búsqueda usa `ilike` con `_` y `%` escapados:
+son comodines y `_` es común en un mail. La compra pagada (`CompraPagada`) muestra
+el QR grande, en pantalla completa sobre blanco para la puerta (`QrEntrada`), con
+guardar imagen y copiar/compartir el link. El mail de compra lleva un botón al
+link arriba (por si el cliente bloquea imágenes) y versión en texto plano. Un
+rebote de Outlook no se detecta: `mail_enviado` se marca antes de enviar;
+`pnpm festival:auditar` cruza las órdenes con el historial de Resend.
+
 **La URL es `/blurfestival`** desde el 12/11 (a Ana no le gustaba `/blur`
 solo). Antes fue `/festival` y después `/blur`: las dos redirigen (308) desde
 `next.config.ts`, porque hay mails de compra enviados, vueltas de Mercado Pago y

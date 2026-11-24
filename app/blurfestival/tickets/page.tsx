@@ -9,6 +9,7 @@ import { EscribeTexto } from '@/components/festival/Escribe';
 import { DECO, SeccionMarca } from '@/components/festival/SeccionMarca';
 import { MARCA_SEO, resumenFestival } from '@/lib/festival-seo';
 import { descripcion } from '@/lib/seo';
+import Link from 'next/link';
 import { leerTextos } from '@/lib/festival-idioma-servidor';
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -31,6 +32,12 @@ export default async function FestivalTickets() {
           <EscribeTexto texto={t.tickets.titulo} />
         </p>
         <TablaTickets entradas={entradas} aviso={config.aviso} medios={medios} cotizacion={cotizacion} urlTransferencia={urlTransferenciaGestion()} />
+        <p className="mt-10 text-[15px]">
+          {t.tickets.yaCompraste}{' '}
+          <Link href="/blurfestival/mis-entradas" className="underline font-bold">
+            {t.tickets.recuperar}
+          </Link>
+        </p>
       </div>
     </SeccionMarca>
   );

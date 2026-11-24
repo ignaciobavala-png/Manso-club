@@ -691,7 +691,8 @@ export async function enviarMailTickets(supabase: SupabaseClient, orden: Pick<Or
       from: EMAIL_FROM,
       to: orden.email,
       subject: tickets.length > 0 ? `Tus entradas — ${tickets.length === 1 ? '1 QR' : `${tickets.length} QR`}` : 'Tus entradas del festival',
-      html: tickets.length > 0 ? htmlMailConQr(orden.nombre, tickets) : htmlMailConLink(orden, link),
+      html: tickets.length > 0 ? htmlMailConQr(orden.nombre, tickets, link) : htmlMailConLink(orden, link),
+      text: textoMailTickets(orden.nombre, tickets.length || orden.cantidad_entradas, link),
       attachments: tickets.map((t, i) => ({
         content: qrs[i].toString('base64'),
         filename: `entrada-${i + 1}.png`,
@@ -704,6 +705,15 @@ export async function enviarMailTickets(supabase: SupabaseClient, orden: Pick<Or
     await supabase.from('festival_ordenes').update({ mail_enviado: false }).eq('id', orden.id);
     console.error(`No se pudo mandar el mail de la orden ${orden.id}:`, e);
   }
+}
+
+function textoMailTickets(nombre: string, cantidad: number, link: string) {
+  return `${nombre}, ¡compra realizada con éxito!
+
+Tus ${cantidad === 1 ? 'entrada' : `${cantidad} entradas`}: ${link}
+
+Cada QR es una entrada. Sacales una captura: en el festival puede no haber señal.
+Si perdés este mail, pedí tus entradas de nuevo en ${urlSitio()}/blurfestival/mis-entradas`;
 }
 
 function htmlMailConLink(orden: Pick<OrdenFestival, 'nombre' | 'cantidad_entradas'>, link: string) {
@@ -725,31 +735,35 @@ ${filaTexturaMail()}
 }
 
 /** Una pieza sola, en tablas e inline como piden los clientes de mail. */
-export function htmlMailConQr(nombre: string, tickets: TicketFestival[]) {
-  const { fondo, texto } = MARCA_MAIL;
+export function htmlMailConQr(nombre: string, tickets: TicketFestival[], link: string) {
+  const { fondo, texto, acento, negro } = MARCA_MAIL;
   const filas = tickets
     .map(
       (t, i) => `<tr><td style="padding:0 0 28px" align="center">
-  <img src="cid:qr-${i}" width="220" height="220" alt="QR de la entrada ${i + 1}" style="display:block;border:0;background:#fff">
+  <img src="cid:qr-${i}" width="260" height="260" alt="QR de la entrada ${i + 1}" style="display:block;border:0;background:#fff">
   <p style="margin:12px 0 0;font:700 15px Helvetica,Arial,sans-serif;color:${texto}">${escapar(nombreTicket(t))}</p>
   <p style="margin:4px 0 0;font:12px 'Courier New',monospace;letter-spacing:2px;color:${texto};opacity:.6">${i + 1} de ${tickets.length} · ${codigoVisible(t)}</p>
 </td></tr>`
     )
     .join('');
   return `<!doctype html><html><body style="margin:0;background:${fondo}">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0">Tus entradas están acá: si no ves los QR, tocá "Ver mis entradas".</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:${fondo}"><tr><td align="center" style="padding:40px 16px">
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:480px">
 ${filaLogoMail()}
-<tr><td style="padding:0 0 32px;font:15px/1.5 Helvetica,Arial,sans-serif;color:${texto}" align="center">
+<tr><td style="padding:0 0 24px;font:15px/1.5 Helvetica,Arial,sans-serif;color:${texto}" align="center">
   <span style="font-weight:700;font-size:20px">${escapar(nombre)}</span><br>¡Compra realizada con éxito!
 </td></tr>
+<tr><td align="center" style="padding:0 0 28px"><a href="${link}" style="display:inline-block;background:${acento};color:${negro};font:700 16px Helvetica,Arial,sans-serif;text-decoration:none;padding:14px 32px">Ver mis entradas</a>
+  <p style="margin:10px 0 0;font:12px/1.4 Helvetica,Arial,sans-serif;color:${texto};opacity:.7">Si no ves los QR de abajo, este botón los abre en la web.</p></td></tr>
 ${filas}
 <tr><td style="padding:8px 0 0;font:14px/1.5 Helvetica,Arial,sans-serif;color:${texto}">
   <p style="margin:0 0 12px;font-weight:700;font-size:16px" align="center">Algunos consejos</p>
   <ul style="margin:0;padding:0 0 0 20px">
     <li style="margin:0 0 8px">Presentá tu entrada en el acceso del evento con tu teléfono.</li>
     <li style="margin:0 0 8px">Guardá este mail: cada QR es una entrada.</li>
-    <li>Llevá tus entradas abiertas en el celular.</li>
+    <li style="margin:0 0 8px">Sacale una captura a cada QR: en el festival puede no haber señal.</li>
+    <li>Si lo perdés, pedí tus entradas de nuevo en ${urlSitio()}/blurfestival/mis-entradas</li>
   </ul>
 </td></tr>
 ${filaTexturaMail()}

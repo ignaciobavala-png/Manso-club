@@ -41,7 +41,7 @@ const DIA = 24 * 60 * 60;
  * secreto del servidor y la fecha, cortado. Cambia cada día, así que no sirve
  * para seguir a nadie.
  */
-function huellaIp(ip: string): string {
+export function huellaIp(ip: string): string {
   const dia = new Date().toISOString().slice(0, 10);
   return createHmac('sha256', process.env.SUPABASE_SERVICE_ROLE_KEY!).update(`${ip}|${dia}`).digest('hex').slice(0, 24);
 }

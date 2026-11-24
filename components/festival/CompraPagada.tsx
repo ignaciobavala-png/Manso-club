@@ -1,6 +1,8 @@
 import QRCode from 'qrcode';
 import { REDES, type RedCripto } from '@/lib/cripto-redes';
 import { EscribeTexto } from './Escribe';
+import { QrEntrada } from './QrEntrada';
+import { AccionesCompra } from './AccionesCompra';
 import { leerTextos } from '@/lib/festival-idioma-servidor';
 
 /**
@@ -18,7 +20,7 @@ export interface EntradaConQr {
 }
 
 export const qrDeEntrada = (codigo: string) =>
-  QRCode.toDataURL(codigo, { width: 220, margin: 1, color: { dark: '#000000', light: '#FFFCDC' } });
+  QRCode.toDataURL(codigo, { width: 480, margin: 2, errorCorrectionLevel: 'M', color: { dark: '#000000', light: '#FFFFFF' } });
 
 export async function CompraPagada({
   email,
@@ -42,21 +44,22 @@ export async function CompraPagada({
       <h1 className="fest-angosta text-4xl sm:text-5xl leading-none">{L.compra.pagoConfirmado}</h1>
       <p className="mt-4 text-[15px] opacity-75">{L.compra.qrIntro(email)}</p>
 
-      <ul className="mt-12 grid gap-6 sm:grid-cols-2">
+      <ul className="mt-10 grid gap-6 sm:grid-cols-2">
         {tickets.map((t, i) => (
-          <li key={t.id} className="border border-[var(--fest-texto)]/25 p-5 flex gap-5 items-center">
-            <img src={t.qr} alt={L.compra.qrAlt(t.codigo)} width={120} height={120} className="shrink-0" />
-            <div className="min-w-0">
-              <p className="fest-mono text-[10px] uppercase tracking-[0.25em] opacity-55">
-                {L.compra.entradaN(i + 1, tickets.length)}
-              </p>
-              <p className="fest-angosta text-2xl leading-none mt-1.5">{t.entrada_nombre}</p>
-              <p className="fest-mono text-sm mt-2 tracking-[0.15em]">{t.codigo}</p>
-              {t.usado && <p className="fest-mono text-[10px] uppercase mt-1 text-[var(--fest-acento)]">{L.compra.usada}</p>}
-            </div>
-          </li>
+          <QrEntrada
+            key={t.id}
+            qr={t.qr}
+            alt={L.compra.qrAlt(t.codigo)}
+            titulo={t.entrada_nombre}
+            codigo={t.codigo}
+            rotulo={L.compra.entradaN(i + 1, tickets.length)}
+            usado={t.usado}
+            nombreArchivo={`entrada-${i + 1}-de-${tickets.length}.png`}
+          />
         ))}
       </ul>
+
+      <AccionesCompra />
 
       {children}
       {!pago && medio && <p className="mt-3 fest-mono text-[12px] opacity-60">{L.compra.pagadoCon(medio)}</p>}
