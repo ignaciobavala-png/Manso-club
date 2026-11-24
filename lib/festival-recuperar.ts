@@ -10,8 +10,9 @@ import { TEXTOS, type Idioma } from '@/lib/festival-idioma';
  * compra pagada. Es público y manda mails, así que el diseño apunta a que no
  * sirva para nada más que eso:
  *
- * - La respuesta es SIEMPRE la misma haya o no compra: no se puede usar para
- *   averiguar quién compró.
+ * - Si el mail no tiene compra pagada se avisa ("no tenemos entradas con ese
+ *   mail", pedido de Ana). Cuesta que alguien pueda probar mails para ver si
+ *   compraron; lo acota el freno por IP (5 cada 10 min, 15 por día).
  * - El mail sale solo a la casilla de la compra, nunca a una que escriba la
  *   persona en otro lado.
  * - Lleva el link a /blurfestival/compra/[id] (la llave de cada orden), no los
@@ -34,7 +35,7 @@ const MAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
 export const mailValido = (m: string) => m.length <= 254 && MAIL.test(m);
 
-export type ResultadoRecuperar = 'ok' | 'limite' | 'caido';
+export type ResultadoRecuperar = 'ok' | 'sin_compra' | 'limite' | 'caido';
 
 /** La casilla va al freno como HMAC: la tabla de límites no guarda mails. */
 const huellaMail = (mail: string) =>
@@ -89,8 +90,9 @@ export async function recuperarEntradas(mailCrudo: string, ip: string, idioma: I
     return 'caido';
   }
   const ordenes = (data ?? []) as OrdenCorta[];
-  // Sin compra: misma respuesta que con compra, sin mandar nada.
-  if (ordenes.length === 0) return 'ok';
+  // Sin compra: se le dice a la persona (pedido de Ana). El freno por IP de
+  // arriba es lo que limita usar esto para averiguar quién compró.
+  if (ordenes.length === 0) return 'sin_compra';
 
   // 3. Frenos del envío. Si se pasa, también responde "ok": no se distingue.
   for (const [clave, max, ventana] of [

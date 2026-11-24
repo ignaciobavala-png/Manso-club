@@ -298,9 +298,10 @@ el panel muestra los tipos de Gestión sin editarlos.
   pelado, que el lector no reconoce. Esas se cargaron a mano en Gestión.
 
 **Recuperar las entradas** (`/blurfestival/mis-entradas`, `lib/festival-recuperar.ts`):
-la persona pone su mail y recibe un mail con el link a cada compra pagada. La
-respuesta es **siempre la misma** haya o no compra (no sirve para averiguar quién
-compró) y el mail sale solo a la casilla de la compra. Frenos en la base
+la persona pone su mail y recibe un mail con el link a cada compra pagada. Si el
+mail **no tiene compra pagada** se le dice ("No tenemos entradas con ese mail",
+pedido de Ana, 23/11; el API responde 404 `sin_compra`). Eso permite sondear qué
+mails compraron: lo acotan los frenos por IP. El mail sale solo a la casilla de la compra. Frenos en la base
 (`festival_bot_permitir`): por IP, por casilla (3/día) y general (30/día, para no
 gastar los 100/día de Resend). La búsqueda usa `ilike` con `_` y `%` escapados:
 son comodines y `_` es común en un mail. La compra pagada (`CompraPagada`) muestra

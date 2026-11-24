@@ -5,8 +5,8 @@ import { mailValido, recuperarEntradas } from '@/lib/festival-recuperar';
 
 /**
  * "Mis entradas" (ver `lib/festival-recuperar`): recibe un mail y, si tiene
- * compras pagadas, le manda el link a esa casilla. Responde 200 igual haya o no
- * compra. El navegador traduce el código de error: acá no hay copy.
+ * compras pagadas, le manda el link a esa casilla. Si no hay compra pagada
+ * responde 404 `sin_compra`. El navegador traduce el código de error: acá no hay copy.
  */
 export const maxDuration = 30;
 
@@ -22,6 +22,7 @@ export async function POST(request: Request) {
 
   const ip = request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() || request.headers.get('x-real-ip') || 'desconocida';
   const resultado = await recuperarEntradas(cuerpo.data.mail, ip, await leerIdioma());
+  if (resultado === 'sin_compra') return NextResponse.json({ error: 'sin_compra' }, { status: 404 });
   if (resultado === 'limite') return NextResponse.json({ error: 'limite' }, { status: 429 });
   if (resultado === 'caido') return NextResponse.json({ error: 'caido' }, { status: 503 });
   return NextResponse.json({ ok: true });

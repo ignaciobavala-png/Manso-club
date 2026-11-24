@@ -4,10 +4,9 @@ import { useRef, useState } from 'react';
 import { useTextos } from '@/components/festival/Idioma';
 
 /**
- * Formulario de /blurfestival/mis-entradas. La respuesta del servidor es la
- * misma haya o no compra, así que la pantalla de éxito nunca afirma que hubo
- * una: dice "si hay una compra con este mail…". Siempre ofrece WhatsApp, por si
- * compró con otro mail.
+ * Formulario de /blurfestival/mis-entradas. Si el mail no tiene compra pagada
+ * el servidor lo dice (404) y se muestra bajo el campo. Siempre ofrece
+ * WhatsApp, por si compró con otro mail.
  */
 
 const CAMPO =
@@ -16,7 +15,7 @@ const BOTON =
   'fest-menu inline-flex items-center justify-center bg-[var(--fest-acento)] text-black px-8 py-4 text-[17px] disabled:opacity-60 min-h-[52px]';
 
 type Estado = { fase: 'form' } | { fase: 'enviando' } | { fase: 'listo'; mail: string };
-type Fallo = 'erroneo' | 'limite' | 'caido' | null;
+type Fallo = 'erroneo' | 'sin_compra' | 'limite' | 'caido' | null;
 
 export function MisEntradasForm({ whatsapp }: { whatsapp: string }) {
   const t = useTextos().misEntradas;
@@ -46,7 +45,7 @@ export function MisEntradasForm({ whatsapp }: { whatsapp: string }) {
         body: JSON.stringify({ mail: limpio, web }),
       });
       if (r.ok) return setEstado({ fase: 'listo', mail: limpio });
-      setFallo(r.status === 429 ? 'limite' : r.status === 400 ? 'erroneo' : 'caido');
+      setFallo(r.status === 404 ? 'sin_compra' : r.status === 429 ? 'limite' : r.status === 400 ? 'erroneo' : 'caido');
     } catch {
       setFallo('caido');
     }
@@ -97,10 +96,10 @@ export function MisEntradasForm({ whatsapp }: { whatsapp: string }) {
         value={mail}
         onChange={e => {
           setMail(e.target.value);
-          if (fallo === 'erroneo') setFallo(null);
+          if (fallo === 'erroneo' || fallo === 'sin_compra') setFallo(null);
         }}
         placeholder={t.placeholder}
-        aria-invalid={fallo === 'erroneo'}
+        aria-invalid={fallo === 'erroneo' || fallo === 'sin_compra'}
         aria-describedby={mensaje ? 'mis-entradas-error' : undefined}
         className={CAMPO}
       />
