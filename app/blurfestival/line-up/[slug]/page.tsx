@@ -101,20 +101,20 @@ export default async function FestivalArtistaPage({ params }: { params: Promise<
       </Link>
 
       <div
-        className={`mt-8 grid gap-9 md:gap-14 items-start ${
+        className={`mt-8 grid md:gap-14 items-start ${
           fotos.length ? 'md:grid-cols-[minmax(220px,380px)_1fr]' : ''
         }`}
       >
         {fotos.length > 0 && (
-          <VisorFotos fotos={fotos} alt={artista.nombre} className="flex flex-col gap-4 w-full max-w-[300px] md:max-w-none">
+          <VisorFotos fotos={fotos} alt={artista.nombre} className="flex md:flex-col gap-3 md:gap-4 w-full overflow-x-auto md:overflow-visible snap-x snap-mandatory max-md:order-2 max-md:mt-7 max-md:-mx-4 max-md:px-4">
             {fotos.map((foto, i) => (
-              <button key={`${foto}-${i}`} type="button" data-foto={i} aria-label={t.lineup.ampliar(artista.nombre)} className="block w-full cursor-zoom-in">
+              <button key={`${foto}-${i}`} type="button" data-foto={i} aria-label={t.lineup.ampliar(artista.nombre)} className="block shrink-0 snap-start w-[34%] max-w-[150px] md:w-full md:max-w-none cursor-zoom-in">
                 <Image
                   src={foto}
                   alt={artista.nombre}
                   width={0}
                   height={0}
-                  sizes="(min-width: 768px) 380px, 300px"
+                  sizes="(min-width: 768px) 380px, 150px"
                   priority={i === 0}
                   className="block w-full h-auto"
                 />
@@ -123,7 +123,8 @@ export default async function FestivalArtistaPage({ params }: { params: Promise<
           </VisorFotos>
         )}
 
-        <div className="min-w-0">
+        <div className="min-w-0 max-md:contents">
+          <div className="max-md:order-1">
           <TituloAncho texto={artista.nombre} className="text-[clamp(2.6rem,7.5vw,7.5rem)]" />
 
           {(artista.origen || artista.pais) && (
@@ -145,17 +146,20 @@ export default async function FestivalArtistaPage({ params }: { params: Promise<
               ))}
             </dl>
           )}
+          </div>
 
+          <div className="max-md:order-3 max-md:mt-7">
           {artista.bio && (
-            <p className="mt-8 max-w-[62ch] text-[clamp(17px,1.5vw,21px)] leading-[1.6] opacity-85 whitespace-pre-line">
+            <p className="mt-8 max-md:mt-0 max-w-[62ch] text-[clamp(17px,1.5vw,21px)] leading-[1.6] opacity-85 whitespace-pre-line">
               {artista.bio}
             </p>
           )}
 
           {video && <div className="mt-8 max-w-[720px]">{videoEl}</div>}
+          </div>
 
           {redes.length > 0 && (
-            <div className="mt-8 flex flex-wrap gap-x-[22px] gap-y-2">
+            <div className="mt-8 flex flex-wrap gap-x-[22px] gap-y-2 max-md:order-4">
               {redes.map(([nombre, href]) => (
                 <a
                   key={nombre}
