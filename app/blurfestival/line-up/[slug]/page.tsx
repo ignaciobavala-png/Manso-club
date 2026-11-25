@@ -101,8 +101,8 @@ export default async function FestivalArtistaPage({ params }: { params: Promise<
       </Link>
 
       <div
-        className={`mt-8 grid md:gap-14 items-start ${
-          fotos.length ? 'md:grid-cols-[minmax(220px,380px)_1fr]' : ''
+        className={`mt-8 grid grid-cols-[minmax(0,1fr)] md:gap-14 items-start ${
+          fotos.length ? 'md:grid-cols-[minmax(220px,380px)_minmax(0,1fr)]' : ''
         }`}
       >
         {fotos.length > 0 && (
