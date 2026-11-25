@@ -108,15 +108,15 @@ export default async function FestivalArtistaPage({ params }: { params: Promise<
         {fotos.length > 0 && (
           <VisorFotos fotos={fotos} alt={artista.nombre} className="flex md:flex-col gap-3 md:gap-4 w-full overflow-x-auto md:overflow-visible snap-x snap-mandatory max-md:order-2 max-md:mt-7 max-md:-mx-4 max-md:px-4">
             {fotos.map((foto, i) => (
-              <button key={`${foto}-${i}`} type="button" data-foto={i} aria-label={t.lineup.ampliar(artista.nombre)} className="block shrink-0 snap-start w-[34%] max-w-[150px] md:w-full md:max-w-none cursor-zoom-in">
+              <button key={`${foto}-${i}`} type="button" data-foto={i} aria-label={t.lineup.ampliar(artista.nombre)} className="block shrink-0 snap-start h-[170px] md:h-auto md:w-full cursor-zoom-in">
                 <Image
                   src={foto}
                   alt={artista.nombre}
                   width={0}
                   height={0}
-                  sizes="(min-width: 768px) 380px, 150px"
+                  sizes="(min-width: 768px) 380px, 260px"
                   priority={i === 0}
-                  className="block w-full h-auto"
+                  className="block h-full w-auto md:w-full md:h-auto"
                 />
               </button>
             ))}
