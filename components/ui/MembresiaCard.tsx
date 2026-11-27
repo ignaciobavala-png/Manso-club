@@ -164,55 +164,24 @@ export const MembresiaCard = ({ membresia, currency, rate, posicion, claro = fal
           {/* `break-words` y no `truncate`: un nombre largo baja de línea, que es
               justo lo que hace la refe con "Half day pass" (y lo que necesita
               "Cultural Manso" para partir en dos líneas sin salirse del
-              contenedor). Ana pidió que "x week" salga sin negrita y más
-              chico que el resto del nombre, en el mismo renglón (ver
-              cards_cowork.jpeg): si el nombre termina en " x week", ese
-              sufijo se separa en un span aparte, más chico y sin bold, y sólo
-              ese fragmento va con `whitespace-nowrap` para no partirse él
-              solo. Desktop -10% del original (2.75rem → 2.5rem). Mobile pasó
-              por -10% (15px → 13.5px) y después +10% en mobile solamente,
-              pero calculado sobre el original (15px → 16.5px) y no sobre el
-              13.5px ya reducido: aplicar el +10% en cadena sobre el valor
-              reducido daba apenas 14.85px, casi indistinguible del 13.5px
-              anterior y todavía por debajo del original —por eso se veía
-              "reducido" en vez de agrandado.
-              "FULL 3D x week" (el nombre más largo) no puede quedar como la
-              única card con "week" en un renglón aparte: rompía la
-              consistencia entre las 4 cards. En vez de dejar que envuelva,
-              el título en desktop baja otro toque (2.5rem → 2.25rem, ~10%
-              más) para que las cuatro entren siempre en una sola línea con
-              `whitespace-nowrap` fijo (ver cards.png). */}
+              contenedor). El sufijo " x week" que traen los nombres del panel
+              no se muestra: Ana pidió sacarlo (27/11). Se corta acá y no en la
+              base para no tocar los nombres que ya guardaron las solicitudes. */}
           <h3
             className={`${numeros.className} font-extrabold tracking-[-0.03em] leading-[0.95] text-[16.5px] sm:text-[2.25rem] break-words transition-colors duration-300 ${cText}`}
           >
-            {(() => {
-              const match = membresia.nombre.match(/^(.*)\s(x week)$/i);
-              if (!match) return membresia.nombre;
-              const [, resto, xWeek] = match;
-              return (
-                <span className="whitespace-nowrap">
-                  {resto}{' '}
-                  <span className="font-normal text-[9px] sm:text-sm align-baseline">{xWeek}</span>
-                </span>
-              );
-            })()}
+            {membresia.nombre.replace(/\s+x\s*week\s*$/i, '')}
           </h3>
 
-          {/* Precio centrado en el hueco entre el nombre y las features: grande
-              y en negrita, para que la card no quede vacía en el medio.
+          {/* Precio justo abajo del nombre y a tamaño normal: Ana lo pidió así
+              (27/11) porque grande y centrado quedaba desproporcionado.
               Cultural Manso no es un plan y no lleva precio. */}
-          <div className="flex flex-col items-center text-center mt-6 sm:mt-12 min-h-[56px] sm:min-h-[96px]">
-            {!cultural && (
-              <p className={`transition-colors duration-300 ${cText}`}>
-                <span className={`${numeros.className} block font-extrabold tracking-[-0.03em] leading-none text-[30px] sm:text-[3.6rem]`}>
-                  {precio}
-                </span>
-                <span className={`block mt-1.5 sm:mt-2 text-[10px] sm:text-sm font-bold uppercase tracking-[0.2em] ${cMuted}`}>
-                  / {membresia.periodo}
-                </span>
-              </p>
-            )}
-          </div>
+          {!cultural && (
+            <p className={`mt-1.5 sm:mt-3 text-sm sm:text-lg font-medium transition-colors duration-300 ${cText}`}>
+              {precio}
+              <span className={`ml-1 text-[10px] sm:text-sm ${cMuted}`}>/ {membresia.periodo}</span>
+            </p>
+          )}
 
           {/* Cada cosa que ofrece el plan, con su bullet. Van justo debajo del
               precio (no pegadas al botón) para que arranquen a la misma altura
